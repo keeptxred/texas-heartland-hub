@@ -163,7 +163,7 @@ function NewsPage() {
           editorial context in each article.
         </p>
         <div className="mt-4 flex flex-wrap gap-x-5 gap-y-2 text-sm font-semibold">
-          <Link to="/policy/elections" className="text-primary hover:underline">Texas election policy →</Link>
+          <Link to="/policy/$slug" params={{ slug: "elections" }} className="text-primary hover:underline">Texas election policy →</Link>
           <Link to="/authors" className="text-primary hover:underline">Our authors &amp; editorial desks →</Link>
           <Link to="/editorial-standards" className="text-primary hover:underline">Sourcing &amp; editorial standards →</Link>
         </div>
