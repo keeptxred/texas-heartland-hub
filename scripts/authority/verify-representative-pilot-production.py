@@ -67,6 +67,9 @@ READY = (
     "tom-oliverson", "alma-allen", "mike-schofield", "mano-deayala",
     "ann-johnson", "jon-rosenthal", "john-bucy", "gene-wu",
     "lacey-hull", "charlene-ward-johnson", "armando-walle",
+    "senfronia-thompson", "harold-dutton", "ana-hernandez", "mary-ann-perez",
+    "christina-morales", "lauren-simmons", "jo-jones", "penny-morales-shaw",
+    "hubert-vo", "valoree-swanson",
 )
 NOT_READY = ("dan-crenshaw", "john-cornyn", "greg-abbott", "jeff-barry")
 NS = {"sm": "http://www.sitemaps.org/schemas/sitemap/0.9"}
