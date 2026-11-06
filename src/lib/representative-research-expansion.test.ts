@@ -26,8 +26,8 @@ describe("representative Script 2 source-first certification", () => {
     }
   });
 
-  it("requires all six genuine quality gates for 133 individually reviewed expansion profiles", () => {
-    expect(SCRIPT2_REVIEWED_SLUGS).toHaveLength(133);
+  it("requires all six genuine quality gates for 142 individually reviewed expansion profiles", () => {
+    expect(SCRIPT2_REVIEWED_SLUGS).toHaveLength(142);
     for (const slug of SCRIPT2_REVIEWED_SLUGS) {
       const records = pilotResearchFor(slug);
       if (slug === "dustin-burrows") {
@@ -279,6 +279,51 @@ describe("representative Script 2 source-first certification", () => {
       expect(EDITORIAL_REVIEWS[slug].biography).toMatch(/House biography page|House biography/);
       expect(EDITORIAL_REVIEWS[slug].source).not.toContain("/biography");
     }
+  });
+
+  it("requires nine HD121-129 person-specific 89th House facts, outcomes and all source gates", () => {
+    const expected: readonly [string, string, string][] = [
+      ["marc-lahood", "4595", "HB1193"],
+      ["mark-dorazio", "4145", "HB1056"],
+      ["diego-bernal", "3110", "HB2"],
+      ["josey-garcia", "4170", "HB1875"],
+      ["ray-lopez", "3915", "HB132"],
+      ["sam-harless", "3775", "HB2282"],
+      ["charles-cunningham", "4130", "HB1178"],
+      ["briscoe-cain", "3265", "HB1397"],
+      ["dennis-paul", "3090", "HB138"],
+    ];
+    const distinctReviews = new Set<string>();
+    for (const [slug, id, bill] of expected) {
+      expect(SCRIPT2_REVIEWED_SLUGS).toContain(slug);
+      const review = EDITORIAL_REVIEWS[slug];
+      expect(review?.officialUrl).toBe("https://house.texas.gov/members/" + id);
+      expect(findRepresentativeBySlug(slug)?.website).toBe(review?.officialUrl);
+      expect(review?.identityChecked).toBe("2026-11-06");
+      expect(review.biography.length, slug).toBeGreaterThan(300);
+      distinctReviews.add(review.biography);
+      const authority = applyPilotEditorial(slug, getRepresentativeAuthority(slug) ?? null);
+      expect(authority?.sources.some(source => source.url ===
+        "https://www.house.texas.gov/pdfs/committees/89R-Assignments-by-Member.pdf")).toBe(true);
+      expect(authority?.sources.some(source => source.url ===
+        "https://capitol.texas.gov/BillLookup/History.aspx?LegSess=89R&Bill=" + bill)).toBe(true);
+      const records = pilotResearchFor(slug);
+      expect(records.length, slug + " 89R primary histories").toBeGreaterThanOrEqual(16);
+      expect(new Set(records.map(x => x.sponsor_role)).size, slug).toBeGreaterThanOrEqual(2);
+      expect(new Set(records.map(x => x.current_status_label)).size, slug).toBeGreaterThanOrEqual(2);
+      expect(new Set(records.map(x => x.bill_id + ":" + x.sponsor_role)).size).toBe(records.length);
+      expect(records.every(x => x.legislature_number === 89 &&
+        x.source_url.startsWith("https://capitol.texas.gov/BillLookup/History.aspx?")
+      ), slug).toBe(true);
+      const report = certificationFor(slug);
+      expect(report.state, slug + ": " + report.reasons.join("; ")).toBe("AUTHORITY_READY");
+      expect(Object.values(report.gates).every(Boolean), slug).toBe(true);
+    }
+    expect(distinctReviews.size).toBe(expected.length);
+    expect(EDITORIAL_REVIEWS["marc-lahood"].source).toContain("legdir.capitol.texas.gov");
+    const cain = applyPilotEditorial("briscoe-cain", getRepresentativeAuthority("briscoe-cain") ?? null);
+    expect(cain?.sources.some(x => x.url.endsWith("Bill=HB2520"))).toBe(true);
+    expect(EDITORIAL_REVIEWS["briscoe-cain"].biography).toContain("vetoed");
   });
 
   it("requires diverse, dated primary-source Speaker records instead of fictional sponsorship", () => {

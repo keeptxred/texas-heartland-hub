@@ -29,6 +29,60 @@ type EditorialReview = {
  * A synchronized roster change that disagrees with a review FAILS CLOSED.
  */
 export const EDITORIAL_REVIEWS: Record<string, EditorialReview> = {
+  "marc-lahood": {
+    name: "Marc LaHood", office: "Texas House", district: "House District 121", party: "R",
+    officialUrl: "https://house.texas.gov/members/4595",
+    biography: "Marc LaHood began serving San Antonio's House District 121 in January 2025. The Texas House biography page contains no substantive text; the official Legislative Directory identifies him as a lawyer and lists a law degree from St. Mary's School of Law. In the 89th Legislature he was appointed to Judiciary and Civil Jurisprudence, its Family and Fiduciary Relationships subcommittee, and Transportation. He authored HB 1193 addressing confidentiality of particular information in a declaration of informal marriage; the 2025 official bill history records it as effective. The documented office, training and bill outcome stand on distinct government sources rather than assumptions from an empty biography.",
+    identityChecked: "2026-11-06", source: "https://legdir.capitol.texas.gov/MemberInfo.aspx?Chamber=H&Code=A4595",
+  },
+  "mark-dorazio": {
+    name: "Mark Dorazio", office: "Texas House", district: "House District 122", party: "R",
+    officialUrl: "https://house.texas.gov/members/4145",
+    biography: "Mark Dorazio serves House District 122 in Bexar County. His official House biography describes a construction career that began in residential carpentry and grew into Dorazio Enterprises, a San Antonio-area industrial and civil construction business. The published 89th Legislature committee roster places him on Homeland Security, Public Safety and Veterans' Affairs and Human Services, with the vice chairmanship of the Defense and Veterans' Affairs subcommittee. He authored HB 1056 concerning recognition of gold and silver specie as legal tender and a gold-and-silver transactional currency; the official 2025 history records the measure as effective, not merely introduced.",
+    identityChecked: "2026-11-06", source: "https://house.texas.gov/members/4145/biography",
+  },
+  "diego-bernal": {
+    name: "Diego Bernal", office: "Texas House", district: "House District 123", party: "D",
+    officialUrl: "https://house.texas.gov/members/3110",
+    biography: "Diego Bernal represents House District 123 in San Antonio. A graduate of the University of Michigan's undergraduate, social-work and law programs, he previously served as a social worker and as a MALDEF staff attorney in San Antonio, according to his official House biography. His 89th Legislature appointments were Public Education, where he was vice chair, and Ways and Means with its Property Tax Appraisals subcommittee. He authored HB 2 on public education and school finance; the official 89th Legislature history records that bill as signed by the governor. That dated result is distinguishable from earlier legislation and from his other sponsored measures.",
+    identityChecked: "2026-11-06", source: "https://house.texas.gov/members/3110/biography",
+  },
+  "josey-garcia": {
+    name: "Josey Garcia", office: "Texas House", district: "House District 124", party: "D",
+    officialUrl: "https://house.texas.gov/members/4170",
+    biography: "Josey Garcia represents House District 124 on San Antonio's west side. Her Texas House biography documents 20 years of U.S. Air Force service, including deployments overseas, followed by community organizing and cofounding Uniting America Outreach in 2020. The 89th Legislature committee assignment document places her on Energy Resources, Natural Resources and Redistricting. She authored HB 1875 directing a General Land Office study concerning Texas veterans cemeteries; the official bill history records the 2025 measure as effective. That source-backed example is more precise than treating all activity under the broad category of veterans policy as enacted legislation.",
+    identityChecked: "2026-11-06", source: "https://house.texas.gov/members/4170/biography",
+  },
+  "ray-lopez": {
+    name: "Ray Lopez", office: "Texas House", district: "House District 125", party: "D",
+    officialUrl: "https://house.texas.gov/members/3915",
+    biography: "Reynaldo T. 'Ray' Lopez represents House District 125 in west and northwest San Antonio. His Texas House biography records a telecommunications career at AT&T, service in the Army Reserve, and earlier election to the Northside Independent School District board, including its presidency. His 89th Legislature assignments were Homeland Security, Public Safety and Veterans' Affairs, where he was vice chair, and Land and Resource Management. He authored HB 132 regarding confidentiality of information connected with prevention and investigation of hostile acts by foreign adversaries; the official 2025 bill history records it as effective. The profile retains separate bill roles and recorded statuses rather than a claimed vote tally.",
+    identityChecked: "2026-11-06", source: "https://house.texas.gov/members/3915/biography",
+  },
+  "sam-harless": {
+    name: "Sam Harless", office: "Texas House", district: "House District 126", party: "R",
+    officialUrl: "https://house.texas.gov/members/3775",
+    biography: "Sam Harless represents House District 126 in northwest Harris County. His official House biography describes ownership of Fred Fincher Motors with his wife Patricia, service on local law-enforcement training advisory boards, and support for community education and arts organizations in the Spring area. The dated 89th Legislature committee roster names him chair of Corrections, alongside House Administration and Licensing and Administrative Procedures. He authored HB 2282 concerning reimbursement fees for peace officers' services in processing arrests; the official 2025 legislative history lists it as effective. These specific committee and bill records are not interchangeable with unsupported campaign claims.",
+    identityChecked: "2026-11-06", source: "https://house.texas.gov/members/3775/biography",
+  },
+  "charles-cunningham": {
+    name: "Charles Cunningham", office: "Texas House", district: "House District 127", party: "R",
+    officialUrl: "https://house.texas.gov/members/4130",
+    biography: "Charles Cunningham first won House District 127 in 2022, representing Humble, Huffman, Kingwood and Atascocita. The Texas House biography documents long-standing service in the area including leadership with Humble Area Assistance Ministries and community school organizations, as well as U.S. Army service. During the 89th Legislature he sat on Local and Consent Calendars, Public Education and Public Health, including its Disease Prevention and Women's and Children's Health subcommittee. He authored HB 1178 creating a temporary certification path for teachers certified in other states; the official bill history lists it as effective. This outcome is grounded in the dated source, not inferred from its introduction.",
+    identityChecked: "2026-11-06", source: "https://house.texas.gov/members/4130/biography",
+  },
+  "briscoe-cain": {
+    name: "Briscoe Cain", office: "Texas House", district: "House District 128", party: "R",
+    officialUrl: "https://house.texas.gov/members/3265",
+    biography: "Briscoe Cain represents House District 128 in east Harris County. The official Texas House biography documents his University of Houston-Downtown degree, South Texas College of Law training, private law practice and service in the Texas State Guard. For the 89th Legislature he was assigned to Agriculture and Livestock and Delivery of Government Efficiency. The legislative record illustrates why outcomes must be checked separately: Cain authored HB 1397 on state custody and display of historic founding documents, listed as effective, while his separate HB 2520 on open meetings was vetoed. Neither authorship nor the bill's subject should be mistaken for a personal roll-call vote.",
+    identityChecked: "2026-11-06", source: "https://house.texas.gov/members/3265/biography",
+  },
+  "dennis-paul": {
+    name: "Dennis Paul", office: "Texas House", district: "House District 129", party: "R",
+    officialUrl: "https://house.texas.gov/members/3090",
+    biography: "Dennis Paul represents House District 129 in the Houston–Clear Lake area. His official House biography documents engineering degrees from the University of Houston, including a structural-engineering master's degree, and founding Paul Engineering in Webster after earlier private-sector engineering work. In the 89th Legislature he served on Insurance and Transportation and was vice chair of the Transportation Funding subcommittee. His authored HB 138 established the Health Impact, Cost and Coverage Analysis Program and is recorded as effective in the official 2025 bill history. The linked legislative sample differentiates individual sponsorship, committee assignments and the recorded disposition of each measure.",
+    identityChecked: "2026-11-06", source: "https://house.texas.gov/members/3090/biography",
+  },
   "rhetta-bowers": {
     name: "Rhetta Bowers", office: "Texas House", district: "House District 113", party: "D",
     officialUrl: "https://house.texas.gov/members/3565",
@@ -894,6 +948,7 @@ export const SCRIPT2_REVIEWED_SLUGS = [
   "david-cook", "john-mcqueeney", "giovanni-capriglione", "charlie-geren", "venton-jones",
   "chris-turner", "ana-maria-rodriguez-ramos", "rafael-anchia", "jessica-gonzalez", "terry-meza", "jared-patterson", "linda-garcia", "morgan-meyer", "aicha-davis", "toni-rose", "yvonne-davis", "angie-button",
   "rhetta-bowers", "john-bryant", "cas-garcia-hernandez", "trey-martinez-fischer", "philip-cortez", "john-lujan", "liz-campos", "barbara-gervin-hawkins",
+  "marc-lahood", "mark-dorazio", "diego-bernal", "josey-garcia", "ray-lopez", "sam-harless", "charles-cunningham", "briscoe-cain", "dennis-paul",
 ] as const;
 
 export const CERTIFICATION_CANDIDATE_SLUGS = [
@@ -908,7 +963,7 @@ export function applyPilotEditorial(
   const review = EDITORIAL_REVIEWS[slug];
   if (!authority || !review) return authority;
   const official89RCommittees = "https://www.house.texas.gov/pdfs/committees/89R-Assignments-by-Member.pdf";
-  const cohort = ["david-lowe","salman-bhojani","tony-tinderholt","nicole-collier","david-cook","john-mcqueeney","giovanni-capriglione","charlie-geren","venton-jones","chris-turner","ana-maria-rodriguez-ramos","rafael-anchia","jessica-gonzalez","terry-meza","jared-patterson","linda-garcia","morgan-meyer","aicha-davis","toni-rose","yvonne-davis","angie-button","rhetta-bowers","john-bryant","cas-garcia-hernandez","trey-martinez-fischer","philip-cortez","john-lujan","liz-campos","barbara-gervin-hawkins"] as readonly string[];
+  const cohort = ["david-lowe","salman-bhojani","tony-tinderholt","nicole-collier","david-cook","john-mcqueeney","giovanni-capriglione","charlie-geren","venton-jones","chris-turner","ana-maria-rodriguez-ramos","rafael-anchia","jessica-gonzalez","terry-meza","jared-patterson","linda-garcia","morgan-meyer","aicha-davis","toni-rose","yvonne-davis","angie-button","rhetta-bowers","john-bryant","cas-garcia-hernandez","trey-martinez-fischer","philip-cortez","john-lujan","liz-campos","barbara-gervin-hawkins","marc-lahood","mark-dorazio","diego-bernal","josey-garcia","ray-lopez","sam-harless","charles-cunningham","briscoe-cain","dennis-paul"] as readonly string[];
   const authoredBillHighlights: Record<string, string> = {
     "rhetta-bowers": "HB1734",
     "john-bryant": "HB2703",
@@ -918,18 +973,34 @@ export function applyPilotEditorial(
     "john-lujan": "HB1211",
     "liz-campos": "HB1866",
     "barbara-gervin-hawkins": "HB2894",
+    "marc-lahood": "HB1193",
+    "mark-dorazio": "HB1056",
+    "diego-bernal": "HB2",
+    "josey-garcia": "HB1875",
+    "ray-lopez": "HB132",
+    "sam-harless": "HB2282",
+    "charles-cunningham": "HB1178",
+    "briscoe-cain": "HB1397",
+    "dennis-paul": "HB138",
   };
   const sourceList = cohort.includes(slug) && !authority.sources.some((item) => item.url === official89RCommittees)
     ? [...authority.sources, { label: "Official House 89th Legislature standing committee assignment roster", url: official89RCommittees }]
     : authority.sources;
   const billNumber = authoredBillHighlights[slug];
   const billHistory = billNumber ? `https://capitol.texas.gov/BillLookup/History.aspx?LegSess=89R&Bill=${billNumber}` : null;
+  const contrastingVetoUrl = slug === "briscoe-cain" ? "https://capitol.texas.gov/BillLookup/History.aspx?LegSess=89R&Bill=HB2520" : null;
   return {
     ...authority,
     biography: review.biography,
-    sources: billHistory && !sourceList.some((item) => item.url === billHistory)
-      ? [...sourceList, { label: `Official 89th Legislature authored bill history (${billNumber})`, url: billHistory }]
-      : sourceList,
+    sources: [
+      ...sourceList,
+      ...(billHistory && !sourceList.some((item) => item.url === billHistory)
+        ? [{ label: `Official 89th Legislature authored bill history (${billNumber})`, url: billHistory }]
+        : []),
+      ...(contrastingVetoUrl && !sourceList.some((item) => item.url === contrastingVetoUrl)
+        ? [{ label: "Official 89th Legislature open-meetings bill history (HB2520; vetoed)", url: contrastingVetoUrl }]
+        : []),
+    ],
   };
 }
 
