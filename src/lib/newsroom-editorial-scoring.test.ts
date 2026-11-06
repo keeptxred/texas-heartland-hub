@@ -104,7 +104,24 @@ describe("newsroom editorial scoring", () => {
     };
     expect(verifiedEditorialPublisherCounts([gov, tdem])).toEqual({ sourceCount: 1, primarySourceCount: 1 });
     expect(verifiedEditorialPublisherCounts([tdem, gov])).toEqual({ sourceCount: 1, primarySourceCount: 1 });
-    expect(verifiedEditorialPublisherCounts([gov, { ...tdem, title: "TDEM announces a separate independently sourced federal evacuation funding agreement" }])).toEqual({ sourceCount: 2, primarySourceCount: 2 });
+    // Same parent publisher family: even distinct Texas agencies on texas.gov
+    // do not establish a second independent publisher by themselves.
+    expect(verifiedEditorialPublisherCounts([gov, { ...tdem, title: "TDEM announces a separate independently sourced federal evacuation funding agreement" }])).toEqual({ sourceCount: 1, primarySourceCount: 1 });
+
+    // A second agency on a DIFFERENT government publisher family may host
+    // the identical long release; that is still only one original report.
+    const federal = {
+      url: "https://www.fema.gov/press-release/texas-flood-response",
+      name: "FEMA — Direct News Release",
+      title: shared,
+      flaggedPrimary: true,
+    };
+    expect(verifiedEditorialPublisherCounts([gov, federal])).toEqual({ sourceCount: 1, primarySourceCount: 1 });
+    expect(verifiedEditorialPublisherCounts([federal, gov])).toEqual({ sourceCount: 1, primarySourceCount: 1 });
+    expect(verifiedEditorialPublisherCounts([gov, {
+      ...federal,
+      title: "FEMA releases separate independently sourced Texas flood risk assessments and response guidance",
+    }])).toEqual({ sourceCount: 2, primarySourceCount: 2 });
   });
 
   it("retains authentic official-record credit if a nonprimary syndicated copy appeared first", () => {
