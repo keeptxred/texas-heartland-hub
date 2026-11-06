@@ -8688,7 +8688,7 @@ export const TEXAS_LEGISLATIVE_SEATS: TexasLegislativeSeat[] = [
     chamber: "house",
     district: 134,
     party: "D",
-    website: "https://house.texas.gov/members/134",
+    website: "https://house.texas.gov/members/3985",
     imageUrl: "https://house.texas.gov/images/members/3985.jpg?v=1",
     officialCode: null,
     home: "5601 W. Loop South Suite C218, Houston, TX 77081",
@@ -8733,7 +8733,7 @@ export const TEXAS_LEGISLATIVE_SEATS: TexasLegislativeSeat[] = [
       sources: [
         {
           label: "Official Texas House member page",
-          url: "https://house.texas.gov/members/134",
+          url: "https://house.texas.gov/members/3985",
         },
         {
           label: "Official member biography",
@@ -8756,7 +8756,7 @@ export const TEXAS_LEGISLATIVE_SEATS: TexasLegislativeSeat[] = [
     chamber: "house",
     district: 135,
     party: "D",
-    website: "https://house.texas.gov/members/135",
+    website: "https://house.texas.gov/members/3635",
     imageUrl: "https://house.texas.gov/images/members/3635.jpg?v=1",
     officialCode: null,
     home: "8440 Greenhouse Road Suite #A104, Cypress, TX 77433",
@@ -8801,7 +8801,7 @@ export const TEXAS_LEGISLATIVE_SEATS: TexasLegislativeSeat[] = [
       sources: [
         {
           label: "Official Texas House member page",
-          url: "https://house.texas.gov/members/135",
+          url: "https://house.texas.gov/members/3635",
         },
         {
           label: "Official member biography",
@@ -8824,7 +8824,7 @@ export const TEXAS_LEGISLATIVE_SEATS: TexasLegislativeSeat[] = [
     chamber: "house",
     district: 136,
     party: "D",
-    website: "https://house.texas.gov/members/136",
+    website: "https://house.texas.gov/members/3595",
     imageUrl: "https://house.texas.gov/images/members/3595.jpg?v=5",
     officialCode: null,
     home: null,
@@ -8863,7 +8863,7 @@ export const TEXAS_LEGISLATIVE_SEATS: TexasLegislativeSeat[] = [
       sources: [
         {
           label: "Official Texas House member page",
-          url: "https://house.texas.gov/members/136",
+          url: "https://house.texas.gov/members/3595",
         },
         {
           label: "Official member biography",
@@ -9017,7 +9017,7 @@ export const TEXAS_LEGISLATIVE_SEATS: TexasLegislativeSeat[] = [
     chamber: "house",
     district: 139,
     party: "D",
-    website: "https://house.texas.gov/members/139",
+    website: "https://house.texas.gov/members/4785",
     imageUrl: "https://www.house.texas.gov/images/members/4785.jpg?v=3",
     officialCode: null,
     home: "630 W. Little York Road, Houston, TX 77091",
@@ -9061,7 +9061,7 @@ export const TEXAS_LEGISLATIVE_SEATS: TexasLegislativeSeat[] = [
       sources: [
         {
           label: "Official Texas House member page",
-          url: "https://house.texas.gov/members/139",
+          url: "https://house.texas.gov/members/4785",
         },
         {
           label: "Official member biography",
