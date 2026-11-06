@@ -1,0 +1,93 @@
+name: Representative authority certification inventory
+
+on:
+  workflow_dispatch:
+  schedule:
+    # Weekly Tuesday after the separate Monday authoritative roster sync.
+    - cron: "27 14 * * 2"
+  push:
+    branches: [main]
+    paths:
+      - src/lib/representative-quality-gates.ts
+      - src/data/representative-research-pilot.json
+      - src/data/representative-research-script2.json
+      - src/data/representative-speaker-activity.ts
+      - src/data/texas-legislators.generated.ts
+      - src/data/representatives.ts
+      - scripts/authority/report-representative-rollout.ts
+      - .github/workflows/representative-authority-inventory.yml
+  pull_request:
+    paths:
+      - scripts/authority/report-representative-rollout.ts
+      - .github/workflows/representative-authority-inventory.yml
+
+permissions:
+  contents: write
+  pull-requests: write
+  actions: write
+
+concurrency:
+  group: representative-authority-inventory-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  ledger:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || 'main' }}
+          fetch-depth: 0
+      - uses: oven-sh/setup-bun@v2
+      - name: Generate exhaustive same-gate representative inventory
+        run: bun scripts/authority/report-representative-rollout.ts
+
+      - name: Verify complete per-profile dispositions and official-source guardrails
+        run: |
+          node --input-type=module <<'NODE'
+          import fs from "node:fs";
+          import assert from "node:assert/strict";
+          const json = JSON.parse(fs.readFileSync("docs/operations/representative-authority-inventory.json", "utf8"));
+          const rows = json.currentProfiles;
+          assert(rows.length >= 200, "Current representative roster is unexpectedly small");
+          assert.equal(new Set(rows.map(row => row.slug)).size, rows.length);
+          assert.equal(json.counts.totalCurrentProfiles, rows.length);
+          assert.equal(json.counts.authorityReady + json.counts.notReady + json.counts.verificationFailed, rows.length);
+          assert.equal(json.counts.limitedOwnerExceptions, 2);
+          assert(rows.every(row => row.qualifiedForRepresentativeSitemap === (row.certification === "AUTHORITY_READY")));
+          assert(rows.every(row => row.serverRobotsPolicy === (row.qualifiedForRepresentativeSitemap ? "index,follow" : "noindex,follow")));
+          assert(rows.every(row => Object.keys(row.gates).length === 6 && row.canonicalUrl === "https://keeptxred.com/representatives/" + row.slug));
+          assert(json.historicalRetainedProfiles.every(row => !row.qualifiedForRepresentativeSitemap));
+          for (const slug of ["dan-crenshaw", "john-cornyn"]) {
+            const item = rows.find(row => row.slug === slug);
+            assert(item && item.ownerApprovedException && item.certification === "NOT_READY" && !item.qualifiedForRepresentativeSitemap);
+          }
+          console.log("Complete representative disposition ledger:", json.counts);
+          NODE
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: representative-certification-inventory
+          path: |
+            docs/operations/representative-authority-inventory.json
+            docs/operations/representative-authority-inventory.md
+          retention-days: 30
+
+      - name: Publish changed authoritative inventory through protected PR
+        if: ${{ github.event_name != 'pull_request' }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_TITLE: Refresh full representative authority certification inventory
+          PR_BODY: Generated from the same strict six-gate source policy as representative detail pages and sitemaps. Complete per-profile disposition; does not claim live Google indexing, ranking or unverified deployment. Master checkpoint #3428 remains open until every profile is verified.
+          COMMIT_MESSAGE: "docs(representatives): reconcile full authority certification inventory"
+        shell: bash
+        run: |
+          set -euo pipefail
+          files=(docs/operations/representative-authority-inventory.json docs/operations/representative-authority-inventory.md)
+          if git diff --quiet -- "${files[@]}" &&
+             [[ -z "$(git ls-files --others --exclude-standard -- "${files[@]}")" ]]; then
+            echo 'All authority dispositions already match the current source and quality gates.'
+            exit 0
+          fi
+          bash scripts/ci/publish-automation-pr.sh representative-inventory "${files[@]}"
