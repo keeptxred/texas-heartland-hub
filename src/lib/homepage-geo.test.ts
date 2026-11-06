@@ -51,6 +51,17 @@ describe("homepage GEO signals", () => {
     expect(source).toContain("Trace a bill through the Legislature");
   });
 
+  it("honestly labels the dated archive and never links the newsroom to retired Election Central", () => {
+    const homepage = homepageSource();
+    const newsroom = readFileSync(join(process.cwd(), "src/routes/news.index.tsx"), "utf8");
+    const electionPolicy = readFileSync(join(process.cwd(), "src/data/policy-trackers.ts"), "utf8");
+
+    expect(homepage).toContain('{latest.length > 0 ? "Latest Texas News" : "Browse dated Texas reporting"}');
+    expect(newsroom).toContain('<Link to="/policy/elections"');
+    expect(newsroom).not.toContain('<Link to="/elections"');
+    expect(electionPolicy).not.toContain('label: "Election Central", href: "/elections/2026"');
+  });
+
   it("does not offer a subscription when the newsletter feature is disabled", () => {
     const source = homepageSource();
 
