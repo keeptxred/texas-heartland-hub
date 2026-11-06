@@ -154,6 +154,16 @@ async function validateProduction(token, signoff) {
     successful.some(j => /post.deploy newsroom smoke/i.test(j.name));
 }
 
+async function validateEditorialEvidence(token, signoff) {
+  const id = signoff.final_editorial_evidence.match(/#issuecomment-(\d+)$/)?.[1];
+  if (!id) return false;
+  const comment = await api(token, "/repos/" + REPO + "/issues/comments/" + id);
+  return comment.issue_url === "https://api.github.com/repos/" + REPO + "/issues/" + ISSUE &&
+    comment.user?.login === signoff.approver &&
+    (comment.body || "").includes("KTR_PHASE2A_EDITORIAL_SIGNOFF_388") &&
+    (comment.body || "").includes("no unresolved findings");
+}
+
 async function commentsContainMarker(token) {
   for (let page = 1; page <= 30; page++) {
     const result = await api(token, "/repos/" + REPO + "/issues/" + ISSUE + "/comments?per_page=100&page=" + page);
@@ -173,6 +183,10 @@ export async function main({ token = process.env.GITHUB_TOKEN } = {}) {
     return { notified: false, gate };
   }
   if (!token) throw new Error("GITHUB_TOKEN is required for the verified completion gate");
+  if (!await validateEditorialEvidence(token, signoff)) {
+    console.log("Completion withheld: identified maintainer did not post the required final editorial certification on issue #3421");
+    return { notified: false, editorialEvidence: false };
+  }
   const verified = await collectReports(token, rows, signoff.verification_not_before);
   console.log("Post-release production URL evidence: " + verified.verified + "/" + verified.total);
   if (!verified.complete) return { notified: false, verified };
