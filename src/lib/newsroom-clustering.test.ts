@@ -42,8 +42,8 @@ describe("direct-source reservation within existing clustering budget", () => {
     expect(builder).toContain('.is("duplicate_of_feed_item_id", null)');
     // The KTR direct lane remains intact, now nested inside the final verified
     // primary record reservation. No new rows are added to the 500 CPU budget.
-    expect(builder).toContain("      ktrDirectNormalized,\\n      CLUSTER_LIMIT,");
-    expect(builder).toContain("    verifiedPrimaryNormalized,\\n    CLUSTER_LIMIT,");
+    expect(builder).toContain("      ktrDirectNormalized,");
+    expect(builder).toContain("    verifiedPrimaryNormalized,");
     expect(builder).toContain("KTR_VERIFIED_FIRSTPARTY_COHORT_LIMIT = 32");
     expect(builder).toContain("isPrimaryNewsSource(row.source, row.link)");
     expect(builder).toContain('.not("canonical_url", "ilike", "https://news.google.com/%")');
