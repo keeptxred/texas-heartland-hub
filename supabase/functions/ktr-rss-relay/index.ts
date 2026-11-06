@@ -94,6 +94,20 @@ Deno.serve(async (req: Request) => {
       ? { ...UPSTREAM_HEADERS, Accept: "text/html,application/xhtml+xml,*/*" }
       : UPSTREAM_HEADERS;
     const upstream = await fetch(upstreamUrl, { headers, redirect: "follow", signal: AbortSignal.timeout(15000) });
+    // Prevent an upstream error redirect or fallback page from being stored as
+    // evidence under the requested original article's URL.
+    if (officialDpsArticle && upstream.ok) {
+      const final = new URL(upstream.url);
+      const requested = new URL(officialDpsArticle);
+      const trimSlash = (path: string) => path.replace(/\/$/, "");
+      if (final.protocol !== "https:" || final.hostname !== requested.hostname
+        || trimSlash(final.pathname) !== trimSlash(requested.pathname)
+        || final.search || final.hash) {
+        return new Response("DPS article redirected away from the verified source", {
+          status: 502, headers: { "Cache-Control": "no-store" },
+        });
+      }
+    }
     const body = await upstream.arrayBuffer();
     return new Response(body, {
       status: upstream.status,
