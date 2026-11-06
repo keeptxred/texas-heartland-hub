@@ -7848,7 +7848,7 @@ export const TEXAS_LEGISLATIVE_SEATS: TexasLegislativeSeat[] = [
     chamber: "house",
     district: 121,
     party: "R",
-    website: "https://house.texas.gov/members/121",
+    website: "https://house.texas.gov/members/4595",
     imageUrl: "https://www.house.texas.gov/images/members/4595.jpg?v=1",
     officialCode: null,
     home: "1635 NE Loop 410 Suite 901, San Antonio, TX 78209",
@@ -7888,7 +7888,7 @@ export const TEXAS_LEGISLATIVE_SEATS: TexasLegislativeSeat[] = [
       sources: [
         {
           label: "Official Texas House member page",
-          url: "https://house.texas.gov/members/121",
+          url: "https://house.texas.gov/members/4595",
         },
         {
           label: "Official member biography",
@@ -7911,7 +7911,7 @@ export const TEXAS_LEGISLATIVE_SEATS: TexasLegislativeSeat[] = [
     chamber: "house",
     district: 122,
     party: "R",
-    website: "https://house.texas.gov/members/122",
+    website: "https://house.texas.gov/members/4145",
     imageUrl: "https://house.texas.gov/images/members/4145.jpg?v=2",
     officialCode: null,
     home: "4634 De Zavala Road, San Antonio, TX 78249",
@@ -7951,7 +7951,7 @@ export const TEXAS_LEGISLATIVE_SEATS: TexasLegislativeSeat[] = [
       sources: [
         {
           label: "Official Texas House member page",
-          url: "https://house.texas.gov/members/122",
+          url: "https://house.texas.gov/members/4145",
         },
         {
           label: "Official member biography",
@@ -8037,7 +8037,7 @@ export const TEXAS_LEGISLATIVE_SEATS: TexasLegislativeSeat[] = [
     chamber: "house",
     district: 124,
     party: "D",
-    website: "https://house.texas.gov/members/124",
+    website: "https://house.texas.gov/members/4170",
     imageUrl: "https://house.texas.gov/images/members/4170.jpg?v=1",
     officialCode: null,
     home: "9258 Culebra Road Suite 121, San Antonio, TX 78251",
@@ -8082,7 +8082,7 @@ export const TEXAS_LEGISLATIVE_SEATS: TexasLegislativeSeat[] = [
       sources: [
         {
           label: "Official Texas House member page",
-          url: "https://house.texas.gov/members/124",
+          url: "https://house.texas.gov/members/4170",
         },
         {
           label: "Official member biography",
