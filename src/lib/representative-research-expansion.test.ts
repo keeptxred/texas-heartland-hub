@@ -26,8 +26,8 @@ describe("representative Script 2 source-first certification", () => {
     }
   });
 
-  it("requires all six genuine quality gates for 125 individually reviewed expansion profiles", () => {
-    expect(SCRIPT2_REVIEWED_SLUGS).toHaveLength(125);
+  it("requires all six genuine quality gates for 133 individually reviewed expansion profiles", () => {
+    expect(SCRIPT2_REVIEWED_SLUGS).toHaveLength(133);
     for (const slug of SCRIPT2_REVIEWED_SLUGS) {
       const records = pilotResearchFor(slug);
       if (slug === "dustin-burrows") {
@@ -233,6 +233,50 @@ describe("representative Script 2 source-first certification", () => {
     expect(biographies.size).toBe(entries.length);
     for (const slug of ["linda-garcia", "aicha-davis"]) {
       expect(EDITORIAL_REVIEWS[slug].biography).toContain("biography");
+      expect(EDITORIAL_REVIEWS[slug].source).not.toContain("/biography");
+    }
+  });
+
+  it("verifies HD113-120 against exact House IDs, 89th Legislature authored bills and six quality gates", () => {
+    const entries: readonly [string, string, string][] = [
+      ["rhetta-bowers", "3565", "HB1734"],
+      ["john-bryant", "4120", "HB2703"],
+      ["cas-garcia-hernandez", "4495", "HB4325"],
+      ["trey-martinez-fischer", "2835", "HB20"],
+      ["philip-cortez", "2365", "HB1052"],
+      ["john-lujan", "3145", "HB1211"],
+      ["liz-campos", "3950", "HB1866"],
+      ["barbara-gervin-hawkins", "3445", "HB2894"],
+    ];
+    const originals = new Set<string>();
+    for (const [slug, memberId, bill] of entries) {
+      expect(SCRIPT2_REVIEWED_SLUGS).toContain(slug);
+      const review = EDITORIAL_REVIEWS[slug];
+      expect(review.officialUrl).toBe("https://house.texas.gov/members/" + memberId);
+      expect(findRepresentativeBySlug(slug)?.website).toBe(review.officialUrl);
+      expect(review.biography.length).toBeGreaterThan(300);
+      expect(review.identityChecked).toBe("2026-11-06");
+      originals.add(review.biography);
+      const authority = applyPilotEditorial(slug, getRepresentativeAuthority(slug) ?? null);
+      expect(authority?.sources.some(source => source.url ===
+        "https://www.house.texas.gov/pdfs/committees/89R-Assignments-by-Member.pdf")).toBe(true);
+      expect(authority?.sources.some(source => source.url ===
+        "https://capitol.texas.gov/BillLookup/History.aspx?LegSess=89R&Bill=" + bill)).toBe(true);
+      const records = pilotResearchFor(slug);
+      expect(records.length, slug + " original government histories").toBeGreaterThanOrEqual(16);
+      expect(new Set(records.map(row => row.sponsor_role)).size).toBeGreaterThanOrEqual(2);
+      expect(new Set(records.map(row => row.current_status_label)).size).toBeGreaterThanOrEqual(2);
+      expect(new Set(records.map(row => row.bill_id + ":" + row.sponsor_role)).size).toBe(records.length);
+      expect(records.every(row => row.legislature_number === 89 &&
+        row.source_url.startsWith("https://capitol.texas.gov/BillLookup/History.aspx?")
+      )).toBe(true);
+      const result = certificationFor(slug);
+      expect(result.state, slug + ": " + result.reasons.join("; ")).toBe("AUTHORITY_READY");
+      expect(Object.values(result.gates).every(Boolean), slug).toBe(true);
+    }
+    expect(originals.size).toBe(entries.length);
+    for (const slug of ["john-bryant", "cas-garcia-hernandez"]) {
+      expect(EDITORIAL_REVIEWS[slug].biography).toMatch(/House biography page|House biography/);
       expect(EDITORIAL_REVIEWS[slug].source).not.toContain("/biography");
     }
   });

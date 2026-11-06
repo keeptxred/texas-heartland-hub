@@ -300,6 +300,10 @@ function houseRoster(html) {
         "Giovanni Capriglione:98": "2345",
         "Linda Garcia:107": "4485",
         "Aicha Davis:109": "4465",
+        "Cassandra Garcia Hernandez:115": "4495",
+        "Elizabeth Campos:119": "3950",
+        'Elizabeth "Liz" Campos:119': "3950",
+        "Barbara Gervin-Hawkins:120": "3445",
       })[`${reverseHouseName(member.member_name)}:${Number(member.id)}`] ?? member.member_bill_code}`,
       imageUrl: new URL(member.image, "https://house.texas.gov/").href,
     }))
