@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { readFileSync } from "node:fs";
-import { dpsOfficialArticleRelayUrl } from "./dps-firstparty-article-relay";
+import { dpsOfficialArticleRelayUrl } from "./dps-firstparty-article-relay";\nimport { fetchReadableNewsroomSource, isVerifiedDpsRelayHtml } from "./newsroom-source-page.server";\nimport { vi } from "vitest";
 
 describe("bounded DPS article evidence egress", () => {
   it("accepts only exact DPS first-party article URLs", () => {
@@ -35,7 +35,45 @@ describe("bounded DPS article evidence egress", () => {
     expect(hydration).toContain("dpsOfficialArticleRelayUrl(url)");
     expect(hydration).toContain('/too many redirects/i.test(');
     expect(hydration).toContain("trimTdemPressReleaseArchive(url, extracted)");
-    expect(hydration).toContain("extractReadableNewsroomHtml(await response.text())");
+    expect(hydration).toContain("extractReadableNewsroomHtml(body)");
+    expect(hydration).toContain("isVerifiedDpsRelayHtml({");
     expect(hydration).not.toContain("return extracted ? trimTdemPressReleaseArchive(relay, extracted)");
+  });
+});
+
+describe("original DPS HTML mislabeled text/plain", () => {
+  const sourceUrl = "https://www.dps.texas.gov/news/waco-repeat-offender-named-featured-fugitive-november";
+  const relayUrl = dpsOfficialArticleRelayUrl(sourceUrl)!;
+  const release = Array.from({ length: 18 }, (_, index) =>
+    `The Texas Department of Public Safety reports documented event number ${index + 1}; the verified agency release describes a distinct case fact, response and official action in the state of Texas.`
+  ).join(" ");
+  const dpsHtml = `<!DOCTYPE html><html><head><title>Agency news release | Department of Public Safety</title></head><body><main><article><h1>Waco Repeat Offender Named Featured Fugitive for November</h1><p>${release}</p></article></main></body></html>`;
+
+  it("accepts only visibly official HTML at the exact fixed source relay", () => {
+    expect(isVerifiedDpsRelayHtml({ sourceUrl, responseUrl: relayUrl, contentType: "text/plain; charset=utf-8", body: dpsHtml })).toBe(true);
+    expect(isVerifiedDpsRelayHtml({ sourceUrl, responseUrl: relayUrl, contentType: "text/plain", body: "A plain text report ".repeat(100) })).toBe(false);
+    expect(isVerifiedDpsRelayHtml({ sourceUrl, responseUrl: relayUrl, contentType: "text/plain", body: "<html><head><title>Unknown newsroom</title></head><body>Not DPS</body></html>" })).toBe(false);
+    expect(isVerifiedDpsRelayHtml({ sourceUrl, responseUrl: "https://unrelated.example/relay", contentType: "text/plain", body: dpsHtml })).toBe(false);
+    expect(isVerifiedDpsRelayHtml({ sourceUrl: "https://example.com/news/story", responseUrl: relayUrl, contentType: "text/plain", body: dpsHtml })).toBe(false);
+    expect(isVerifiedDpsRelayHtml({ sourceUrl, responseUrl: relayUrl, contentType: "application/json", body: dpsHtml })).toBe(false);
+    expect(isVerifiedDpsRelayHtml({ sourceUrl, responseUrl: relayUrl, contentType: "text/plain", body: "<html>checking your browser Department of Public Safety</html>" })).toBe(false);
+  });
+
+  it("hydrates genuine original release text after a redirect loop, never arbitrary plain text", async () => {
+    let calls = 0;
+    vi.stubGlobal("fetch", vi.fn(async (url: string) => {
+      calls++;
+      if (url === sourceUrl) throw new TypeError("Too many redirects");
+      if (url === relayUrl) return new Response(dpsHtml, { status: 200, headers: { "Content-Type": "text/plain; charset=UTF-8" } });
+      throw new Error("Unexpected network request");
+    }));
+    try {
+      const body = await fetchReadableNewsroomSource(sourceUrl);
+      expect(calls).toBe(2);
+      expect(body).toContain("The Texas Department of Public Safety reports documented event number 1");
+      expect(body?.length).toBeGreaterThan(500);
+    } finally {
+      vi.unstubAllGlobals();
+    }
   });
 });
