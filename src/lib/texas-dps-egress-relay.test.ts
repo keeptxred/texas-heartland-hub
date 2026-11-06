@@ -7,7 +7,7 @@ const relay = readFileSync("supabase/functions/ktr-rss-relay/index.ts", "utf8");
 describe("DPS first-party HTML egress recovery", () => {
   it("uses a fixed source key instead of allowing an arbitrary URL", () => {
     expect(relay).toContain('"official-texas-dps-press-index": "https://www.dps.texas.gov/news/press-releases"');
-    expect(relay).toContain('const upstreamUrl = FEEDS[key]');
+    expect(relay).toContain('const upstreamUrl = officialDpsArticle ?? (key === "official-texas-dps-article" ? undefined : FEEDS[key])');
     expect(relay).toContain('if (!upstreamUrl) return new Response("Unknown feed"');
     expect(relay).toContain('key === "official-texas-dps-press-index"');
     expect(relay).toContain('Accept: "text/html,application/xhtml+xml,*/*"');
