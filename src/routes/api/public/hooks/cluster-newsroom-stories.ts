@@ -16,6 +16,25 @@ const DIRECT_PUBLISHER_COHORT_LIMIT = 320;
 // wrappers cannot displace KTR's original reporting before clustering.
 const KTR_DIRECT_PUBLISHER_COHORT_LIMIT = 240;
 const KTR_DIRECT_NORMALIZATION_BATCH_SIZE = 80;
+// A genuine primary record can fall outside even the direct-link window:
+// 269 newer direct KTR records existed ahead of a real DPS release on Nov 6.
+// Preserve a tiny verified official-source lane *within* the same 500 budget.
+const KTR_VERIFIED_FIRSTPARTY_COHORT_LIMIT = 32;
+const KTR_FIRSTPARTY_LOOKUP_LIMIT = 48;
+// Candidate retrieval only; true primary status is still reverified later
+// against the original URL, and publication source/evidence gates are unchanged.
+const KTR_FIRSTPARTY_SOURCE_NAMES = [
+  "Texas DPS — Direct Press Releases",
+  "Texas Division of Emergency Management — Direct Releases",
+  "Texas Attorney General — Direct News Releases",
+  "Texas Secretary of State",
+  "Texas Register",
+  "Office of the Governor",
+  "Texas Comptroller",
+  "Texas Department of Insurance — News Releases",
+  "Texas Department of Insurance — Direct News Releases",
+  "Texas Legislative Reference Library — Daily News Clips",
+] as const;
 const CLUSTER_VERSION = 1;
 
 type NormalizationRow = {
@@ -129,15 +148,49 @@ async function handler() {
   const ktrNormalizationError = ktrNormalizedResults.find((result) => result.error)?.error;
   if (ktrNormalizationError) return Response.json({ ok: false, error: ktrNormalizationError.message }, { status: 500 });
   const ktrDirectNormalized = ktrNormalizedResults.flatMap((result) => result.data ?? []) as NormalizationRow[];
+  // A fixed, limited subset of real government ORIGINAL URLs must not be
+  // displaced by newer local publisher traffic or Google News discovery.
+  // Never trust the source label alone: isPrimaryNewsSource rejects news
+  // clipping wrappers even when their source name includes ".gov".
+  const { data: officialRows, error: officialReadError } = await newsroomDb
+    .from("texas_news_feed")
+    .select("id,source,link")
+    .eq("target_site", "keeptxred")
+    .gte("pub_date", since)
+    .in("source", [...KTR_FIRSTPARTY_SOURCE_NAMES])
+    .not("link", "ilike", "https://news.google.com/%")
+    .order("pub_date", { ascending: false })
+    .limit(KTR_FIRSTPARTY_LOOKUP_LIMIT);
+  if (officialReadError) return Response.json({ ok: false, error: officialReadError.message }, { status: 500 });
+  const verifiedPrimaryFeedIds = (officialRows ?? [])
+    .filter((row: { source: string | null; link: string | null }) => isPrimaryNewsSource(row.source, row.link))
+    .slice(0, KTR_VERIFIED_FIRSTPARTY_COHORT_LIMIT)
+    .map((row: { id: number }) => row.id);
+  const primaryNormalization = verifiedPrimaryFeedIds.length
+    ? await newsroomDb.from("news_feed_normalization")
+        .select("feed_item_id,normalized_title,source_key,observed_at")
+        .in("feed_item_id", verifiedPrimaryFeedIds)
+        .gte("observed_at", since)
+        .is("duplicate_of_feed_item_id", null)
+        .order("observed_at", { ascending: false })
+    : { data: [], error: null };
+  if (primaryNormalization.error) return Response.json({ ok: false, error: primaryNormalization.error.message }, { status: 500 });
+  const verifiedPrimaryNormalized = (primaryNormalization.data ?? []) as NormalizationRow[];
   const normalizedRows = reserveDirectPublisherCohort(
     reserveDirectPublisherCohort(
-      (normalizationData ?? []) as NormalizationRow[],
-      (directData ?? []) as NormalizationRow[],
+      reserveDirectPublisherCohort(
+        (normalizationData ?? []) as NormalizationRow[],
+        (directData ?? []) as NormalizationRow[],
+        CLUSTER_LIMIT,
+      ),
+      ktrDirectNormalized,
       CLUSTER_LIMIT,
     ),
-    ktrDirectNormalized,
+    verifiedPrimaryNormalized,
     CLUSTER_LIMIT,
   );
+  const verifiedPrimaryCohortIds = new Set(verifiedPrimaryNormalized.map((row) => row.feed_item_id));
+  const verifiedPrimaryCohortIncluded = normalizedRows.filter((row) => verifiedPrimaryCohortIds.has(row.feed_item_id)).length;
   // Keep the original 500-row O(N²) similarity budget. The oldest Google
   // wrappers are displaced by original-publisher records, not stacked on top.
   const latestIds = new Set((normalizationData ?? []).map((row: NormalizationRow) => row.feed_item_id));
@@ -385,6 +438,7 @@ async function handler() {
     distinctPrimarySources,
     clusterVersion: CLUSTER_VERSION,
     directCohortUnique,
+    verifiedPrimaryCohortIncluded,
     staleMembershipsRemoved,
     staleClustersArchived,
     staleClusterCountersUpdated,
