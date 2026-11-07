@@ -14,57 +14,80 @@ export type NewsroomDraft = {
   faq: Array<{ q: string; a: string }>;
 };
 
-// Keep provider-side structure guidance deliberately lean. Cloudflare documents that
-// complex JSON schemas can fail JSON Mode; semantic/detail validation remains local.
+// November 7 production evidence: the provider returned a one-word title,
+// four sections with ONE paragraph each, and 351/800 words even after repair.
+// A single permissive schema allowed that defective structure. Cloudflare's
+// live schema-capable 70B endpoint was tested with this two-branch pattern:
+// it can return a TRUE article shape OR an honest, completely empty abstention.
+// Do not force fabricated facts when an evidence packet is too thin.
+//
+// Keep these branches disjoint. Ordinary local validation still rejects all
+// nonconforming/fabricated/repeated/underlength drafts before publication.
+// NOTE: do not combine root properties with anyOf; a live Cloudflare test
+// returned an empty object for that ambiguous mixed-schema pattern.
 export const NEWSROOM_DRAFT_JSON_SCHEMA: Record<string, unknown> = {
-  type: "object",
-  properties: {
-    brief: {
+  anyOf: [
+    {
       type: "object",
       properties: {
-        hasClearNewsEvent: { type: "boolean" },
+        brief: {
+          type: "object",
+          properties: { hasClearNewsEvent: { const: false } },
+          required: ["hasClearNewsEvent"],
+        },
+        title: { type: "string", maxLength: 0 },
+        dek: { type: "string", maxLength: 0 },
+        summary: { type: "string", maxLength: 0 },
+        relevance: { type: "string", maxLength: 0 },
+        sections: { type: "array", minItems: 0, maxItems: 0 },
+        keyTakeaways: { type: "array", maxItems: 0 },
+        faq: { type: "array", maxItems: 0 },
       },
-      required: ["hasClearNewsEvent"],
+      required: ["brief", "title", "dek", "summary", "relevance", "sections", "keyTakeaways", "faq"],
     },
-    title: { type: "string" },
-    dek: { type: "string" },
-    // The model must be able to decline a thin packet with empty strings.
-    // Full publishable-draft requirements are enforced by the local validator.
-    summary: { type: "string", maxLength: 600 },
-    relevance: { type: "string" },
-    sections: {
-      type: "array",
-      minItems: 0,
-      maxItems: 6,
-      items: {
-        type: "object",
-        properties: {
-          heading: { type: "string" },
-          paragraphs: {
-            type: "array",
-            // Empty paragraphs array is a truthful brief=false abstention.
-            // For a model that DOES write paragraphs, preserve the proven
-            // 380-character provider guidance. Removing this accidentally
-            // yielded 12 x 28–59-word paragraphs (587/800) in live drafting.
-            minItems: 0,
-            maxItems: 3,
-            items: { type: "string", minLength: 380 },
+    {
+      type: "object",
+      properties: {
+        brief: {
+          type: "object",
+          properties: { hasClearNewsEvent: { const: true } },
+          required: ["hasClearNewsEvent"],
+        },
+        title: { type: "string", minLength: 35, maxLength: 110 },
+        dek: { type: "string", minLength: 90, maxLength: 190 },
+        summary: { type: "string", minLength: 290, maxLength: 600 },
+        relevance: { type: "string", minLength: 90 },
+        sections: {
+          type: "array",
+          minItems: 4,
+          maxItems: 6,
+          items: {
+            type: "object",
+            properties: {
+              heading: { type: "string", minLength: 8 },
+              paragraphs: {
+                type: "array",
+                minItems: 2,
+                maxItems: 3,
+                items: { type: "string", minLength: 550, maxLength: 950 },
+              },
+            },
+            required: ["heading", "paragraphs"],
           },
         },
-        required: ["heading", "paragraphs"],
+        keyTakeaways: { type: "array", minItems: 3, maxItems: 5, items: { type: "string" } },
+        faq: {
+          type: "array",
+          items: {
+            type: "object",
+            properties: { q: { type: "string" }, a: { type: "string" } },
+            required: ["q", "a"],
+          },
+        },
       },
+      required: ["brief", "title", "dek", "summary", "relevance", "sections", "keyTakeaways", "faq"],
     },
-    keyTakeaways: { type: "array", items: { type: "string" } },
-    faq: {
-      type: "array",
-      items: {
-        type: "object",
-        properties: { q: { type: "string" }, a: { type: "string" } },
-        required: ["q", "a"],
-      },
-    },
-  },
-  required: ["brief", "title", "dek", "summary", "relevance", "sections", "keyTakeaways", "faq"],
+  ],
 };
 
 export type DraftValidation = {
@@ -169,7 +192,8 @@ NON-NEGOTIABLE RULES:
 - Keep every paragraph at or below 130 words and no more than 4 sentences. These are hard readability targets with margin below the publication validator's 150-word / 5-sentence ceiling; split distinct facts into separate paragraphs instead of producing one long paragraph.
 - Every section paragraph should be at least about 380 characters of source-supported prose unless the packet cannot factually support that depth.
 - Each section paragraph must contain source-supported detail rather than generic commentary, predictions, public reaction, or moral framing.
-- Before drafting, identify distinct source-backed factual roles for each proposed paragraph. Reduce section/paragraph count rather than assigning the same event fact to multiple sections. Assign each paragraph a different documented event detail, record, statement, chronology point, procedure, conflicting account, or confirmed consequence.
+- Before drafting, identify distinct source-backed factual roles for each proposed paragraph. Reduce section/paragraph count rather than assigning the same event fact to multiple sections. A publishable draft still needs 4–6 genuinely distinct sections and 2–3 source-grounded paragraphs in each. If there are not enough separate facts even for that minimum, return an honest abstention with brief.hasClearNewsEvent=false and empty fields; never deliver a short one-paragraph-per-section draft.
+- Multiple website links carrying the SAME syndicated reporting count as one original reporting account. Do not inflate distinct factual roles, section count, attribution or claims because the report was republished on another website. Assign each paragraph a different documented event detail, record, statement, chronology point, procedure, conflicting account, or confirmed consequence.
 - Before returning JSON, compare all section paragraphs with one another after trimming, lowercasing and normalizing whitespace. No substantive paragraph may appear more than once, even under another heading.
 - Keep paragraphs readable and fact-dense; do not repeat material to reach length.
 - Before returning JSON, verify that summary + relevance + section paragraphs together total at least ${targetMainWords} words of original, non-repeated, source-supported main-story prose.
