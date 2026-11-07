@@ -313,6 +313,34 @@ function headlineMatchesBody(article: ArticleShape, brief?: StoryBrief): boolean
 
 export type ValidationResult = { ok: boolean; reasons: string[] };
 
+// Reject model output that leaked JSON/Python object syntax or drafting commentary
+// into visible newsroom prose. Word count and readability alone cannot catch this:
+// a prior long-form article passed every check despite exposed paragraph arrays.
+const DRAFT_ARTIFACT_PATTERNS = [
+  /['"’]\s*,\s*['"‘][A-Z]/,
+  /\}\s*\]\s*,\s*\{|\]\s*\}\s*,\s*\{/,
+  /['"](?:heading|paragraphs)['"]\s*:\s*(?:['"]|\[)/i,
+  /\bparagraphs?\s+(?:are|were)\s+merged\b/i,
+  /\badditional\s+sections?\s+(?:are|were)\s+added\b/i,
+  /\b(?:as\s+per\s+instructions|to\s+meet\s+the\s+requirements?\s+of\s+\d+\s*[-–]\s*\d+\s+sections?)\b/i,
+];
+
+function validateDraftArtifacts(article: ArticleShape): string[] {
+  const fields: { label: string; value: string | undefined }[] = [
+    { label: "summary", value: article.summary },
+    { label: "analysis", value: article.analysis },
+    { label: "relevance", value: article.relevance },
+    ...(article.sections ?? []).flatMap((section, i) => [
+      { label: "section_" + (i + 1) + "_heading", value: section?.heading },
+      ...(section?.paragraphs ?? []).map((paragraph, j) => ({
+        label: "section_" + (i + 1) + "_paragraph_" + (j + 1), value: paragraph,
+      })),
+    ]),
+  ];
+  return fields.filter(({ value }) => value && DRAFT_ARTIFACT_PATTERNS.some((pattern) => pattern.test(value)))
+    .map(({ label }) => "generated_draft_artifact:" + label);
+}
+
 export function validateArticle(article: ArticleShape, brief?: StoryBrief, sourceText?: string): ValidationResult {
   const reasons: string[] = [];
   const prose = articleProse(article);
@@ -337,6 +365,7 @@ export function validateArticle(article: ArticleShape, brief?: StoryBrief, sourc
   if (mainWords < tierMinimum) reasons.push(`tiered_main_word_count:${mainWords}/${tierMinimum}`);
 
   reasons.push(...validateArticleReadability(article));
+  reasons.push(...validateDraftArtifacts(article));
 
   if (article.title && prose && !headlineMatchesBody(article, brief)) {
     reasons.push("headline_does_not_match_body");
