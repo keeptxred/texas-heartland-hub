@@ -5,16 +5,16 @@ const builder = readFileSync("src/routes/api/public/hooks/build-newsroom-researc
 const generator = readFileSync("src/routes/api/public/hooks/generate-newsroom.ts", "utf8");
 
 describe("72-hour publication evidence packet coverage", () => {
-  it("refreshes the same 500 ranked 72h pending candidates the publisher scans", () => {
+  it("refreshes the same 1,000 ranked 72h pending candidates the publisher scans", () => {
     expect(builder).toContain("const LOOKBACK_HOURS = 72");
-    expect(builder).toContain("const CANDIDATE_LIMIT = 500");
+    expect(builder).toContain("const CANDIDATE_LIMIT = 1000");
     expect(builder).toContain('.eq("status", "PENDING")');
     expect(builder).toContain('.in("recommended_format", ["SINGLE", "MERGE", "SYNTHESIS"])');
     expect(builder).toContain('.gte("created_at", since)');
     expect(builder).toContain('.order("editorial_score", { ascending: false })');
     expect(builder).toContain('.order("created_at", { ascending: false })');
     expect(builder).toContain('.order("id", { ascending: true })');
-    expect(generator).toContain("const NEWSROOM_PUBLISH_SCAN_LIMIT = 500");
+    expect(generator).toContain("const NEWSROOM_PUBLISH_SCAN_LIMIT = 1000");
     expect(generator).toContain("newsroomNewStoryCutoff()");
   });
 
