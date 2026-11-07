@@ -25,7 +25,7 @@ const packet: ResearchPacket = {
 
 type SchemaProperties = {
   summary: { minLength?: number; maxLength: number };
-  sections: { minItems: number; items: { properties: { paragraphs: { minItems: number; items: { minLength?: number } } } } };
+  sections: { minItems: number; maxItems?: number; items: { properties: { paragraphs: { minItems: number; items: { minLength?: number } } } } };
 };
 
 describe("Phase 13 draft generation targets", () => {
