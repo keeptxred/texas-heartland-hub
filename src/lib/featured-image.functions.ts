@@ -1,5 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
+import { scoreQuality } from "@/lib/content-quality";
 import { extractEntities } from "@/lib/nlp";
 import {
   buildImagePrompt,
@@ -537,7 +538,21 @@ async function generateAndStore(row: ArticleRow, opts: { overwrite?: boolean; be
     const url = `/api/public/article-image/${filename}`;
     const imageValidationNote = `${grounding ? `multisource-${grounding.mode}; ` : ""}cloudflare-vision ok: ${verdict.reason}`;
     if (!opts.beforePublish) {
+      // This image has just passed the strict Cloudflare story-match verdict.
+      // Recompute the real article quality from the persisted content, so
+      // backlog and manual image recovery cannot leave obsolete pre-image
+      // scores. Publishing drafts before the article exists is untouched.
+      const { data: storedArticle, error: articleReadError } = await supabase
+        .from("daily_articles")
+        .select("slug,title,dek,body,body_json,author,published_at,kind")
+        .eq("slug", row.slug)
+        .maybeSingle();
+      if (articleReadError || !storedArticle) {
+        throw new Error(articleReadError?.message || "Cannot rescore missing article after approved image generation");
+      }
+      const quality = scoreQuality({ ...storedArticle, image_url: url });
       const { error: imageWriteError } = await supabase.from("daily_articles").update({
+        content_quality_score: quality.score,
         featured_image_url: url,
         image_url: url,
         image_alt_text: alt,
