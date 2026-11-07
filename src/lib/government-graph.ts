@@ -7,6 +7,7 @@ import { isAgencyAuthorityIndexable } from "@/lib/agency-authority-indexability"
 import { isDataDetailIndexable } from "@/lib/data-detail-indexability";
 import { isLawTopicIndexable } from "@/lib/law-topic-indexability";
 import { isPolicyTrackerIndexable } from "@/lib/policy-tracker-indexability";
+import { isRetiredElectionCentralPath } from "@/lib/retired-election-central";
 
 export type GovernmentGraphNode = {
   id: string;
@@ -99,7 +100,10 @@ function scoreNode(text: string, node: GovernmentGraphNode): number {
 export function getGovernmentGraphLinks(text: string, limit = 6, excludeHrefs: string[] = []): GovernmentGraphNode[] {
   const excluded = new Set(excludeHrefs);
   const ranked = GOVERNMENT_GRAPH_NODES
-    .filter((node) => !excluded.has(node.href))
+    // Feature-toggle-safe: the legacy 2026 Election Central routes are HTTP
+    // 410 while public Election Central is retired. Preserve the graph node
+    // for a future election cycle, but never inject a dead article link.
+    .filter((node) => !excluded.has(node.href) && !isRetiredElectionCentralPath(node.href))
     .map((node) => ({ node, score: scoreNode(text, node) }))
     .filter(({ score }) => score > 0)
     .sort((a, b) => b.score - a.score || a.node.label.localeCompare(b.node.label))
