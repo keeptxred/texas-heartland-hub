@@ -29,9 +29,11 @@ import {
 const SITE = "keeptxred";
 const STANDARD_MIN_SOURCE_EVIDENCE_CHARS = 5_000;
 const LONG_FORM_MIN_SOURCE_EVIDENCE_CHARS = 9_000;
-// Match the 500-candidate packet-building pool without constructing oversized
-// PostgREST .in() filters or fetching all research packets at once.
-const NEWSROOM_PUBLISH_SCAN_LIMIT = 500;
+// Include lower-ranked but source-rich stories previously stranded at ranks
+// 664–963 in the real November 7 candidate pool. This matches the packet
+// builder's fixed 1,000-item zero-AI cohort; database joins stay bounded to
+// 100 UUIDs per round, with no changes to editorial/source/AI-budget gates.
+const NEWSROOM_PUBLISH_SCAN_LIMIT = 1000;
 const NEWSROOM_CANDIDATE_BATCH_SIZE = 100;
 const OIDC_AUDIENCE = "keeptxred-newsroom";
 const REPOSITORY = "keeptxred/texas-heartland-hub";
