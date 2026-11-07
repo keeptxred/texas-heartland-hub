@@ -1,5 +1,5 @@
 import {
-  getSourceAuthorityProfile,
+  getSourceAuthorityProfileForPublisher,
   isPrimaryOrOfficialSource,
   sourceAuthorityLabel,
   sourceUrlSupportsPrimaryRecord,
@@ -110,12 +110,12 @@ export function applyGeneratedNewsAuthority(input: AuthorityInput): AuthorityEnr
     const originalLabel = source.label || input.sourceName || "Published source";
     const wasExplicitPrimary = EXPLICIT_PRIMARY_SOURCE_RE.test(originalLabel);
     const sourceName = normalizeSourceName(originalLabel);
-    const valueForClassification = `${sourceName} ${source.url || ""}`;
+
     return {
       label: sourceAuthorityLabel({
         source: sourceName,
         url: source.url,
-        isPrimarySource: (wasExplicitPrimary || isPrimaryOrOfficialSource(valueForClassification))
+        isPrimarySource: (wasExplicitPrimary || isPrimaryOrOfficialSource(sourceName))
           && sourceUrlSupportsPrimaryRecord(source.url, sourceName),
       }),
       url: source.url,
@@ -147,7 +147,7 @@ export function applyGeneratedNewsAuthority(input: AuthorityInput): AuthorityEnr
 
   const sourceProfileLinks = sources
     .map((source) => {
-      const profile = getSourceAuthorityProfile(`${source.label || ""} ${source.url || ""}`);
+      const profile = getSourceAuthorityProfileForPublisher(source.label, source.url);
       return profile ? `[About ${profile.name} as a Keep TX Red source](/sources/${profile.slug})` : null;
     })
     .filter((value): value is string => Boolean(value));
