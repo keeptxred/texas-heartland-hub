@@ -2,6 +2,7 @@ import {
   getSourceAuthorityProfile,
   isPrimaryOrOfficialSource,
   sourceAuthorityLabel,
+  sourceUrlSupportsPrimaryRecord,
 } from "@/data/source-authority";
 import { pickExactArticleAuthorityLinks } from "@/lib/article-authority-entity-links";
 
@@ -114,15 +115,16 @@ export function applyGeneratedNewsAuthority(input: AuthorityInput): AuthorityEnr
       label: sourceAuthorityLabel({
         source: sourceName,
         url: source.url,
-        isPrimarySource: wasExplicitPrimary || isPrimaryOrOfficialSource(valueForClassification),
+        isPrimarySource: (wasExplicitPrimary || isPrimaryOrOfficialSource(valueForClassification))
+          && sourceUrlSupportsPrimaryRecord(source.url, sourceName),
       }),
       url: source.url,
     };
   });
 
+  // Recalculate source roles from verified official URLs, not inherited labels.
   const primarySourceCount = sources.filter((source) =>
-    isPrimaryOrOfficialSource(`${source.label || ""} ${source.url || ""}`)
-    || EXPLICIT_PRIMARY_SOURCE_RE.test(source.label || ""),
+    sourceUrlSupportsPrimaryRecord(source.url, source.label),
   ).length;
   const sourceCount = sources.length;
   const flags: string[] = [];
