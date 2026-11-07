@@ -33,6 +33,7 @@ import {
   updateCanonicalLivingStory,
 } from "@/lib/living-story-update";
 import { assessStoryNovelty, type StoryNovelty } from "@/lib/story-novelty";
+import { assessLegacyNewsroomEvidenceDepth } from "@/lib/newsroom-legacy-evidence-depth";
 import { assessPublicationReadiness } from "@/lib/publication-quality-gate";
 import { publishSingleFeedItem as publishLegacySingleFeedItem } from "@/lib/ingest-feeds-legacy";
 
@@ -487,6 +488,18 @@ export async function publishSingleFeedItem(feedItemId: number): Promise<Publish
       };
     }
 
+    // This legacy path previously sent 150-character RSS blurbs wrapped in
+    // synthetic fact-ledger headers to paid AI. Only ORIGINAL source text
+    // counts for the existing newsroom's evidence floor.
+    const originalEvidence = assessLegacyNewsroomEvidenceDepth(cluster);
+    if (!originalEvidence.eligible) {
+      return {
+        ok: false,
+        error: `Publication held before AI: insufficient original publisher evidence (${originalEvidence.evidenceChars}/${originalEvidence.requiredChars} characters). Enrich the source or obtain an independent primary record.`,
+        clusteredSources: cluster.sourceCount,
+      };
+    }
+
     const lifecycle = await preparePublicationLifecycle(db, feedItemId, eventClusterId, cluster, factVerification);
     if (!lifecycle.proceed) return lifecycle.result!;
 
@@ -553,6 +566,17 @@ export async function publishSingleFeedItem(feedItemId: number): Promise<Publish
     : null;
   let lifecycleClaimToken: string | undefined;
   if (!materialExistingSlug) {
+    // Do not let synthetic packet scaffolding inflate a few thin RSS blurbs
+    // into an apparently long, "rewriteable" article. Hold before the
+    // publication claim and the paid legacy AI reservation.
+    const originalEvidence = assessLegacyNewsroomEvidenceDepth(cluster);
+    if (!originalEvidence.eligible) {
+      return {
+        ok: false,
+        error: `Publication held before AI: insufficient original publisher evidence (${originalEvidence.evidenceChars}/${originalEvidence.requiredChars} characters). Enrich original reports before rewriting.`,
+        clusteredSources: cluster.sourceCount,
+      };
+    }
     const lifecycle = await preparePublicationLifecycle(db, feedItemId, eventClusterId, cluster, factVerification);
     if (!lifecycle.proceed) return lifecycle.result!;
     lifecycleClaimToken = lifecycle.claimToken;
