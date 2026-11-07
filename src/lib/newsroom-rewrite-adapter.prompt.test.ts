@@ -60,17 +60,20 @@ describe("Phase 13 draft generation targets", () => {
   });
 
   it("allows an honest empty-model abstention while final publication still enforces word and shape gates", () => {
-    const properties = NEWSROOM_DRAFT_JSON_SCHEMA.properties as SchemaProperties;
-    expect(properties.summary.maxLength).toBe(600);
-    // The provider JSON schema must permit empty arrays/strings when
-    // brief.hasClearNewsEvent=false, or it pushes the model to invent text.
-    expect(properties.summary.minLength).toBeUndefined();
-    expect(properties.sections.minItems).toBe(0);
-    expect(properties.sections.items.properties.paragraphs.minItems).toBe(0);
-    // Empty arrays allow a truthful brief=false. A nonempty factual
-    // paragraph still needs enough provider-side length guidance to avoid
-    // a 12-paragraph draft totaling just ~587/800 words.
-    expect(properties.sections.items.properties.paragraphs.items.minLength).toBe(380);
+    const alternatives = NEWSROOM_DRAFT_JSON_SCHEMA.anyOf as Array<{ properties: SchemaProperties }>;
+    expect(alternatives).toHaveLength(2);
+    const abstain = alternatives[0].properties;
+    const publish = alternatives[1].properties;
+    expect(abstain.summary.maxLength).toBe(0);
+    expect(abstain.summary.minLength).toBeUndefined();
+    expect(abstain.sections.minItems).toBe(0);
+    expect(abstain.sections.maxItems).toBe(0);
+    // A truthful brief=false has no fabricated article sections; an
+    // affirmative brief must use the source-grounded, article-shaped branch.
+    expect(publish.summary.maxLength).toBe(600);
+    expect(publish.sections.minItems).toBe(4);
+    expect(publish.sections.items.properties.paragraphs.minItems).toBe(2);
+    expect(publish.sections.items.properties.paragraphs.items.minLength).toBe(550);
     const adapter = readFileSync("src/lib/newsroom-rewrite-adapter.ts", "utf8");
     expect(adapter).toContain("sections.length < 4 || typedDraft.sections.length > 6");
     expect(adapter).toContain("section.paragraphs.length < 2 || section.paragraphs.length > 6");
