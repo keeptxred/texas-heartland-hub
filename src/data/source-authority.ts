@@ -215,6 +215,35 @@ export function getSourceAuthorityProfile(value: string | null | undefined): Sou
   );
 }
 
+/**
+ * Source labels describe the actual publisher, never a coincidental keyword
+ * inside an article URL (such as communityimpact.com/.../texas-legislature/).
+ */
+export function getSourceAuthorityProfileForPublisher(
+  sourceName: string | null | undefined,
+  url: string | null | undefined,
+): SourceAuthorityProfile | undefined {
+  let hostname = "";
+  try { hostname = url ? new URL(url).hostname.toLowerCase() : ""; } catch { /* no host */ }
+  const byName = getSourceAuthorityProfile(sourceName);
+  const byHost = hostname ? getSourceAuthorityProfile(hostname) : undefined;
+  if (byName?.kind === "government" || byName?.kind === "official") {
+    // An official-sounding feed label is not proof that a news-site link
+    // contains the agency's authentic primary record.
+    return hostname && sourceUrlMatchesProfileHost(hostname, byName) ? byName
+      : byHost?.kind === "government" || byHost?.kind === "official" ? byHost : undefined;
+  }
+  return byName ?? byHost;
+}
+
+function sourceUrlMatchesProfileHost(host: string, profile: SourceAuthorityProfile): boolean {
+  try {
+    const official = new URL(profile.homepage).hostname.toLowerCase().replace(/^www\./, "");
+    const actual = host.replace(/^www\./, "");
+    return actual === official || actual.endsWith(`.${official}`);
+  } catch { return false; }
+}
+
 export function isPrimaryOrOfficialSource(value: string | null | undefined): boolean {
   const profile = getSourceAuthorityProfile(value);
   return profile?.kind === "government" || profile?.kind === "official";
@@ -244,14 +273,9 @@ export function sourceUrlSupportsPrimaryRecord(
     return false;
   }
   if (host.endsWith(".gov") || host.endsWith(".mil")) return true;
-  const profile = getSourceAuthorityProfile(sourceName ?? "") ?? getSourceAuthorityProfile(url);
+  const profile = getSourceAuthorityProfileForPublisher(sourceName, url);
   if (profile?.kind !== "government" && profile?.kind !== "official") return false;
-  try {
-    const profileHost = new URL(profile.homepage).hostname.toLowerCase().replace(/^www\./, "");
-    return host === profileHost || host.endsWith(`.${profileHost}`);
-  } catch {
-    return false;
-  }
+  return sourceUrlMatchesProfileHost(host, profile);
 }
 
 export function sourceAuthorityLabel(input: {
@@ -263,7 +287,7 @@ export function sourceAuthorityLabel(input: {
     const source = input.source.replace(/\s+[—–-]\s+newspaper clipping index \(secondary discovery\)$/i, "").trim();
     return `${source} — newspaper clipping index (secondary discovery)`;
   }
-  const profile = getSourceAuthorityProfile(`${input.source} ${input.url ?? ""}`);
+  const profile = getSourceAuthorityProfileForPublisher(input.source, input.url);
   if (input.isPrimarySource && sourceUrlSupportsPrimaryRecord(input.url, input.source)) {
     return `${input.source} — primary / official source`;
   }
