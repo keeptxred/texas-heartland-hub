@@ -17,9 +17,11 @@ const PUBLISHED_REFRESH_HOURS = 48;
 const PUBLISHED_REFRESH_LIMIT = 80;
 const CLUSTER_READ_BATCH_SIZE = 100;
 const CLUSTER_READ_CONCURRENCY = 2;
-// Match the 500-candidate publication window. Previously the packet builder
-// stopped after 48h, leaving 72h-old publishable candidates with stale packets.
-const CANDIDATE_LIMIT = 500;
+// Research the exact 1,000-candidate publishing window. Nov 7 production
+// data found actual multi-source reports ranked 664–963, beyond the former
+// 500-row cutoff. Keep PostgREST reads at 100 UUIDs per bounded batch and
+// existing 40 URL fetch, cooldown and zero-AI budgets unchanged.
+const CANDIDATE_LIMIT = 1000;
 // Source-page fetching is zero-AI but network-bound. Keep it bounded and aim
 // the work at the highest-scored candidate sources first.
 const SOURCE_PAGE_FETCH_LIMIT = 40;
