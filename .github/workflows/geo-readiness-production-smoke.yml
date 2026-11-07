@@ -27,6 +27,7 @@ jobs:
 
     steps:
       - name: Inspect raw live election and schema signals
+        id: election_probe
         shell: bash
         run: |
           set -euo pipefail
@@ -63,6 +64,7 @@ jobs:
             echo "Election Central returned unexpected HTTP $election_status." >&2
             exit 1
           fi
+          echo "election_status=$election_status" >> "$GITHUB_OUTPUT"
 
           python3 - "$election_body" "$home_body" "$election_headers" "$election_status" <<'PY'
           import pathlib
@@ -95,6 +97,8 @@ jobs:
           PY
 
       - name: Verify XML sitemap index
+        env:
+          ELECTION_STATUS: ${{ steps.election_probe.outputs.election_status }}
         shell: bash
         run: |
           set -euo pipefail
@@ -109,6 +113,7 @@ jobs:
             -D "$headers" -o "$body" "${FETCH_ORIGIN%/}/sitemap.xml"
 
           python3 - "$headers" "$body" <<'PY'
+          import os
           import pathlib
           import sys
           import xml.etree.ElementTree as ET
@@ -128,11 +133,18 @@ jobs:
               "https://keeptxred.com/sitemap-pages.xml",
               "https://keeptxred.com/sitemap-news.xml",
               "https://keeptxred.com/sitemap-evergreen.xml",
-              "https://keeptxred.com/sitemap-elections.xml",
           }
           missing = sorted(required.difference(locations))
           if missing:
               raise SystemExit(f"Production sitemap index is missing required child sitemaps: {', '.join(missing)}")
+          # During the existing off-season 404 contract the election child
+          # feed must disappear; restore it only when Election Central is live.
+          election_sitemap = "https://keeptxred.com/sitemap-elections.xml"
+          active = os.environ.get("ELECTION_STATUS") == "200"
+          if active and election_sitemap not in locations:
+              raise SystemExit("Active Election Central is missing its election child sitemap")
+          if not active and election_sitemap in locations:
+              raise SystemExit("Retired Election Central must not be advertised in the sitemap index")
           if len(locations) < 4:
               raise SystemExit("Production sitemap index contains too few child sitemaps")
 
