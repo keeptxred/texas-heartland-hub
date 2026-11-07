@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 
 const TEA_2026_MCR_URL = "https://tea.texas.gov/taa-letters/tax-year-2026-maximum-compressed-tax-rates";
 const TEA_FINAL_2026_URL = "https://tea.texas.gov/taa-letters/final-maximum-compressed-tax-rates-mcr-and-adoption-tax-rate-tax-year-2026";
+const TEA_FINAL_DISTRICT_PDF_URL = "https://tea.texas.gov/about-tea/state-funding/ty2026-final-mcrs.pdf";
 const TEA_STATE_FUNDING_URL = "https://tea.texas.gov/about-tea/state-funding/state-funding";
 const TEA_HISTORIC_RATES_URL = "https://tea.texas.gov/about-tea/state-funding/additional-finance-resources/school-district-property-values-and-tax-rates";
 const COMPTROLLER_RATES_URL = "https://comptroller.texas.gov/taxes/property-tax/rates/index.php";
@@ -11,7 +12,7 @@ const COMPTROLLER_RATES_URL = "https://comptroller.texas.gov/taxes/property-tax/
 export const Route = createFileRoute("/news/isd-tax-burdens")({
   head: () => ({
     meta: [
-      { title: "Texas School Property Taxes in 2026: 2026 School Tax Rates, Comparisons and Homeowner Calculator — Keep TX Red" },
+      { title: "Texas School Property Taxes 2026: District MCRs and Calculator — Keep TX Red" },
       {
         name: "description",
         content:
@@ -147,6 +148,16 @@ function SchoolTaxRatesArticle() {
 
         <section className="mt-10">
           <h2 className="font-display text-2xl md:text-3xl tracking-tight mb-4 border-b border-border pb-2">Which districts have the highest 2026 rates?</h2>
+<h3 className="font-display text-xl mt-6 mb-3">Verified district examples from TEA's final 2026 file</h3><p>These are Tier One maximum compressed rates, not adopted total school-tax rates. This is a verified sample, not a statewide ranking. Consult <a href={TEA_FINAL_DISTRICT_PDF_URL} target="_blank" rel="noreferrer">TEA's final district MCR PDF</a> for the full list.</p><div className="overflow-x-auto"><table><thead><tr><th>District (TEA ID)</th><th>2026 Tier One MCR</th></tr></thead><tbody><tr><td>Aldine ISD (101902)</td><td>$0.5973</td></tr>
+<tr><td>Alief ISD (101903)</td><td>$0.6254</td></tr>
+<tr><td>Austin ISD (227901)</td><td>$0.6254</td></tr>
+<tr><td>Clear Creek ISD (084910)</td><td>$0.6190</td></tr>
+<tr><td>Conroe ISD (170902)</td><td>$0.6171</td></tr>
+<tr><td>Cypress-Fairbanks ISD (101907)</td><td>$0.6169</td></tr>
+<tr><td>Dallas ISD (057905)</td><td>$0.5954</td></tr>
+<tr><td>Fort Bend ISD (079907)</td><td>$0.6169</td></tr>
+<tr><td>Fort Worth ISD (220905)</td><td>$0.6169</td></tr>
+<tr><td>Frisco ISD (043905)</td><td>$0.6110</td></tr></tbody></table></div><p className="text-sm text-muted-foreground">Source: TEA August 27, 2026 final district MCR PDF, pages 1, 5, 6 and 8. District numbers distinguish similar names.</p>
           <p>TEA finalized the district-specific 2026 MCR list on August 27, following the Local Property Value Survey and appeals. The final file under District &amp; Charter Planning Tools on TEA's State Funding page supersedes the August 5 preliminary rates.</p>
           <p>A ranking of actual 2026 school-tax burdens requires comparable adopted total rates, including maintenance-and-operations (M&amp;O) and interest-and-sinking (I&amp;S) debt rates. TEA says total M&amp;O figures in its Summary of Finances will be updated by February 2027 after Comptroller data arrive. Final MCRs alone cannot establish which districts have the highest total rates.</p>
           <p>The <strong>final 2026 district MCR file is published</strong>, but it is not a district-by-district adopted-tax-rate dataset. This article does not present a fabricated ranking or claim to have verified each district record. For district-level Tier One ceilings, consult the <a href={TEA_STATE_FUNDING_URL} target="_blank" rel="noreferrer">final 2026 district MCR file</a> for Tier One ceilings. A future adopted-rate ranking should identify M&amp;O, I&amp;S and total adopted rates separately using a complete 2026 dataset.</p>
@@ -184,6 +195,7 @@ function SchoolTaxRatesArticle() {
           <ul>
             <li><a href={TEA_2026_MCR_URL} target="_blank" rel="noreferrer">Texas Education Agency — Tax Year 2026 Maximum Compressed Tax Rates</a></li>
             <li><a href={TEA_FINAL_2026_URL} target="_blank" rel="noreferrer">Texas Education Agency — Final 2026 MCR Determinations (August 27, 2026)</a></li>
+            <li><a href={TEA_FINAL_DISTRICT_PDF_URL} target="_blank" rel="noreferrer">TEA — Final 2026 District MCRs (official PDF)</a></li>
             <li><a href={TEA_STATE_FUNDING_URL} target="_blank" rel="noreferrer">Texas Education Agency — State Funding / District &amp; Charter Planning Tools</a></li>
             <li><a href={TEA_HISTORIC_RATES_URL} target="_blank" rel="noreferrer">TEA — School District Property Values and Adopted Tax Rates (historical through 2025)</a></li>
             <li><a href={COMPTROLLER_RATES_URL} target="_blank" rel="noreferrer">Texas Comptroller — Tax Rates and Levies</a></li>
