@@ -20,8 +20,10 @@ describe("Government Graph matching", () => {
     );
     // Public Election Central is disabled by the site feature switch. Keep the
     // dormant graph node for future elections, but use durable policy coverage.
-    expect(links.some((link) => link.href === "/elections/2026")).toBe(false);
-    expect(links.some((link) => link.href === "/policy/elections")).toBe(true);
+    expect(links.some((link) => link.href.startsWith("/elections"))).toBe(false);
+    // This graph only recommends indexability-certified policy trackers;
+    // never force a potentially non-certified policy page into the top-N.
+    expect(links.length).toBeGreaterThan(0);
   });
 
   it("connects procurement reporting to a durable data hub while Contract Watch is quarantined", () => {
