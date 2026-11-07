@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   isRoutineGovernmentAppointment,
   isConcurrentPublicationDeferral,
+  isOriginalEvidencePreAiDeferral,
   publicationInterestScore,
   rankPublicationCandidates,
   releaseSeriesKey,
@@ -46,6 +47,13 @@ describe("news publish candidate selection", () => {
     expect(isConcurrentPublicationDeferral("AI rewrite failed — editorial validation rejected the draft: tiered_main_word_count:410/800")).toBe(false);
     expect(isConcurrentPublicationDeferral("newsroom_image_publication_hold: failed story-match")).toBe(false);
     expect(isConcurrentPublicationDeferral("Publication deferred: new topic not verified")).toBe(false);
+  });
+
+  it("distinguishes original-evidence holds before AI from paid editorial failures", () => {
+    expect(isOriginalEvidencePreAiDeferral("Publication held before AI: insufficient original publisher evidence (184/5000 characters). Enrich the source.")).toBe(true);
+    expect(isOriginalEvidencePreAiDeferral("Publication held: insufficient independent original sources")).toBe(false);
+    expect(isOriginalEvidencePreAiDeferral("AI rewrite failed — editorial validation rejected the draft: tiered_main_word_count:410/800")).toBe(false);
+    expect(isOriginalEvidencePreAiDeferral("newsroom_image_publication_hold: failed story-match")).toBe(false);
   });
 
   it("moves on after two recent automated rewrite failures", () => {

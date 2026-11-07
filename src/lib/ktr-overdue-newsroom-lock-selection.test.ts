@@ -17,7 +17,10 @@ describe("overdue newsroom failover advances past unrelated event locks without 
     expect(route).toContain("elapsed_ms: Date.now() - requestStartMs");
     expect(route).toContain("const lockDeferred = !result.ok && isConcurrentPublicationDeferral(result.error)");
     expect(route).toContain("if (lockDeferred) lockDeferrals++");
-    expect(route).toContain("else substantiveAttempts++");
+    expect(route).toContain("const evidenceDeferred = !result.ok && isOriginalEvidencePreAiDeferral(result.error)");
+    expect(route).toContain("if (evidenceDeferred) originalEvidenceDeferrals++");
+    expect(route).toContain("if (!lockDeferred && !evidenceDeferred) substantiveAttempts++");
+    expect(route).toContain("original_evidence_deferrals: originalEvidenceDeferrals");
     expect(route).toContain("if (published >= MAX_PUBLISHED) break");
     expect(route).toContain("const MAX_PUBLISHED = 1");
     expect(route).toContain("substantive_attempts: substantiveAttempts");

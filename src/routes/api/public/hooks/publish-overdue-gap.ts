@@ -4,6 +4,7 @@ import { publishSingleFeedItem } from "@/lib/multi-source-publish";
 import {
   MAX_RECENT_AUTOMATED_FAILURES,
   isConcurrentPublicationDeferral,
+  isOriginalEvidencePreAiDeferral,
   rankPublicationCandidates,
   releaseSeriesKey,
 } from "@/lib/news-publish-selection";
@@ -284,6 +285,7 @@ async function publishOverdueGaps(request: Request) {
   let published = 0;
   let substantiveAttempts = 0;
   let lockDeferrals = 0;
+  let originalEvidenceDeferrals = 0;
 
   let requestDeadlineReached = false;
   for (const gap of ranked.slice(0, MAX_CANDIDATE_SCAN)) {
@@ -298,12 +300,16 @@ async function publishOverdueGaps(request: Request) {
     if (!feed) continue;
     const series = await prepareReleaseSeriesContext(db, feed);
     const result = await publishSingleFeedItem(gap.id);
-    // If another worker holds the story's exact event lock, trying another
-    // eligible candidate is not an unsafe retry of the locked story. Other
-    // failures still consume the existing eight-attempt editorial budget.
+    // Neither a temporary event lock nor an evidence hold that occurred
+    // BEFORE any AI call consumes the bounded substantive editorial budget.
+    // Continue to another distinct source-rich candidate, respecting the
+    // unchanged 48-candidate and 45-second limits. Genuine paid/validation
+    // failures still consume a substantive attempt.
     const lockDeferred = !result.ok && isConcurrentPublicationDeferral(result.error);
+    const evidenceDeferred = !result.ok && isOriginalEvidencePreAiDeferral(result.error);
     if (lockDeferred) lockDeferrals++;
-    else substantiveAttempts++;
+    if (evidenceDeferred) originalEvidenceDeferrals++;
+    if (!lockDeferred && !evidenceDeferred) substantiveAttempts++;
     results.push({
       feed_item_id: gap.id,
       title: gap.title,
@@ -356,6 +362,7 @@ async function publishOverdueGaps(request: Request) {
     attempted: results.length,
     substantive_attempts: substantiveAttempts,
     lock_deferrals: lockDeferrals,
+    original_evidence_deferrals: originalEvidenceDeferrals,
     max_substantive_attempts: MAX_ATTEMPTS,
     elapsed_ms: Date.now() - requestStartMs,
     request_deadline_reached: requestDeadlineReached,
