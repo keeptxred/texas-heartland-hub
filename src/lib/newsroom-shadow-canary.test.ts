@@ -75,7 +75,10 @@ describe("newsroom Phase 13 AI canary and production promotion", () => {
     expect(adapter).toContain("sections.length < 4 || typedDraft.sections.length > 6");
     expect(adapter).toContain("section.paragraphs.length < 2 || section.paragraphs.length > 6");
     expect(adapter).toContain("reflowNewsroomParagraph(stripGenericExpertAttribution(paragraph))");
-    expect(adapter).toContain('summary: { type: "string", maxLength: 600 }');
+    // The publish branch must require a substantive summary, while an explicit
+    // brief=false abstention must remain possible without invented words.
+    expect(adapter).toContain('summary: { type: "string", minLength: 290, maxLength: 600 }');
+    expect(adapter).toContain('summary: { type: "string", maxLength: 0 }');
     expect(adapter).toContain('draft.brief.hasClearNewsEvent === false');
     expect(adapter).toContain('reasons: ["brief_no_clear_news_event"]');
     expect(generator).toContain('!validation.reasons.includes("brief_no_clear_news_event")');
