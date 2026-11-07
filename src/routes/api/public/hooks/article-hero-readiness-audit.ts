@@ -9,6 +9,7 @@ import {
   resolveAuditableHeroUrl,
   type ArticleHeroReadinessRow,
 } from "@/lib/article-hero-readiness";
+import { scoreQuality } from "@/lib/content-quality";
 import { verifyGitHubActionsOidc } from "@/lib/github-actions-oidc";
 import { validateStoredHeroMatchesArticle, type StoredHeroVisualClass } from "@/lib/stored-hero-vision";
 
@@ -311,10 +312,42 @@ async function loadQueue(db: any): Promise<AuditRow[]> {
     });
 }
 
+/**
+ * A hero can become verified long after its text was published. Score the
+ * *actual* stored article with its now-verified image in the very same update
+ * that accepts the hero. Otherwise image-ready articles remain stuck with
+ * obsolete pre-image quality scores, misleading editors and quality monitors.
+ *
+ * This never grants an image score to a rejected/unverified candidate; all
+ * caller paths first pass the existing license/vision/official-graphic gates.
+ */
+async function acceptApprovedHeroUpdate(
+  db: any,
+  row: AuditRow,
+  candidate: string,
+  updates: Record<string, unknown>,
+) {
+  const { data: article, error: readError } = await db
+    .from("daily_articles")
+    .select("slug,title,dek,body,body_json,author,published_at,kind")
+    .eq("slug", row.slug)
+    .maybeSingle();
+  if (readError || !article) {
+    throw new Error(readError?.message || "Cannot rescore missing article during verified image acceptance");
+  }
+  const quality = scoreQuality({ ...article, image_url: candidate });
+  const { error: writeError } = await db.from("daily_articles").update({
+    ...updates,
+    content_quality_score: quality.score,
+  }).eq("slug", row.slug);
+  if (writeError) throw new Error(writeError.message);
+  return quality.score;
+}
+
 async function acceptAuthoritativeGraphic(db: any, row: AuditRow, candidate: string) {
   const note = "authoritative-image-exempt: official NOAA/NHC storm or hurricane outlook graphic recognized by the guarded government-source host/path policy; exact authoritative graphic may bypass photorealism validation.";
   const alt = row.image_candidate_alt_text?.trim() || row.image_alt_text?.trim() || `Official source graphic for ${row.title}`;
-  const { error } = await db.from("daily_articles").update({
+  await acceptApprovedHeroUpdate(db, row, candidate, {
     featured_image_url: candidate,
     image_url: candidate,
     image_alt_text: alt,
@@ -323,15 +356,14 @@ async function acceptAuthoritativeGraphic(db: any, row: AuditRow, candidate: str
     image_candidate_url: null,
     image_candidate_alt_text: null,
     quality_flags: cleanFlags(row.quality_flags),
-  }).eq("slug", row.slug);
-  if (error) throw new Error(error.message);
+  });
   return { accepted: true as const, exempt: true as const, note };
 }
 
 async function acceptGovernedExactEntityGraphic(db: any, row: AuditRow, candidate: string) {
   const note = "exact-entity-graphic-v1 ok: exact named-entity identity graphic matched by both article slug and allowlisted reusable source URL; used only when a truthful event photograph is unavailable and labeled as a graphic rather than documentary photography.";
   const alt = row.image_candidate_alt_text?.trim() || row.image_alt_text?.trim() || `Identity graphic for ${row.title}`;
-  const { error } = await db.from("daily_articles").update({
+  await acceptApprovedHeroUpdate(db, row, candidate, {
     featured_image_url: candidate,
     image_url: candidate,
     image_alt_text: alt,
@@ -340,8 +372,7 @@ async function acceptGovernedExactEntityGraphic(db: any, row: AuditRow, candidat
     image_candidate_url: null,
     image_candidate_alt_text: null,
     quality_flags: cleanFlags(row.quality_flags),
-  }).eq("slug", row.slug);
-  if (error) throw new Error(error.message);
+  });
   return { accepted: true as const, exempt: true as const, exactEntityGraphic: true as const, note };
 }
 
@@ -357,7 +388,7 @@ async function acceptValidatedHero(
   const alt = credit && !caption.toLowerCase().includes(credit.toLowerCase())
     ? `${caption} Credit: ${credit}`.slice(0, 600) : caption.slice(0, 600);
   const note = `stored-cloudflare-vision-${STORED_HERO_POLICY_VERSION} ok: ${visualClass}; ${reason}`.slice(0, 1000);
-  const { error } = await db.from("daily_articles").update({
+  await acceptApprovedHeroUpdate(db, row, candidate, {
     featured_image_url: candidate,
     image_url: candidate,
     image_alt_text: alt,
@@ -366,8 +397,7 @@ async function acceptValidatedHero(
     image_candidate_url: null,
     image_candidate_alt_text: null,
     quality_flags: cleanFlags(row.quality_flags),
-  }).eq("slug", row.slug);
-  if (error) throw new Error(error.message);
+  });
   return { accepted: true as const, exempt: false as const, note };
 }
 
