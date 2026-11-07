@@ -215,9 +215,67 @@ export function getSourceAuthorityProfile(value: string | null | undefined): Sou
   );
 }
 
+/**
+ * Source labels describe the actual publisher, never a coincidental keyword
+ * inside an article URL (such as communityimpact.com/.../texas-legislature/).
+ */
+export function getSourceAuthorityProfileForPublisher(
+  sourceName: string | null | undefined,
+  url: string | null | undefined,
+): SourceAuthorityProfile | undefined {
+  let hostname = "";
+  try { hostname = url ? new URL(url).hostname.toLowerCase() : ""; } catch { /* no host */ }
+  const byName = getSourceAuthorityProfile(sourceName);
+  const byHost = hostname ? getSourceAuthorityProfile(hostname) : undefined;
+  if (byName?.kind === "government" || byName?.kind === "official") {
+    // An official-sounding feed label is not proof that a news-site link
+    // contains the agency's authentic primary record.
+    return hostname && sourceUrlMatchesProfileHost(hostname, byName) ? byName
+      : byHost?.kind === "government" || byHost?.kind === "official" ? byHost : undefined;
+  }
+  return byName ?? byHost;
+}
+
+function sourceUrlMatchesProfileHost(host: string, profile: SourceAuthorityProfile): boolean {
+  try {
+    const official = new URL(profile.homepage).hostname.toLowerCase().replace(/^www\./, "");
+    const actual = host.replace(/^www\./, "");
+    return actual === official || actual.endsWith(`.${official}`);
+  } catch { return false; }
+}
+
 export function isPrimaryOrOfficialSource(value: string | null | undefined): boolean {
   const profile = getSourceAuthorityProfile(value);
   return profile?.kind === "government" || profile?.kind === "official";
+}
+
+/**
+ * A producer may label a feed as a primary source incorrectly (or a stale
+ * body_json can preserve that label). Verify the actual publisher URL before
+ * displaying an official/primary attribution. A news outlet's original
+ * reporting is still secondary evidence about the event it reports.
+ *
+ * Official publishers on a non-.gov domain (for example, ERCOT) must match an
+ * exact registered official-source profile; the publisher name alone never
+ * makes an unrelated news-site URL a primary record.
+ */
+export function sourceUrlSupportsPrimaryRecord(
+  url: string | null | undefined,
+  sourceName?: string | null,
+): boolean {
+  if (!url || isGovernmentNewsClippingUrl(url)) return false;
+  let host: string;
+  try {
+    const parsed = new URL(url);
+    if (!["https:", "http:"].includes(parsed.protocol)) return false;
+    host = parsed.hostname.toLowerCase().replace(/^www\./, "");
+  } catch {
+    return false;
+  }
+  if (host.endsWith(".gov") || host.endsWith(".mil")) return true;
+  const profile = getSourceAuthorityProfileForPublisher(sourceName, url);
+  if (profile?.kind !== "government" && profile?.kind !== "official") return false;
+  return sourceUrlMatchesProfileHost(host, profile);
 }
 
 export function sourceAuthorityLabel(input: {
@@ -229,8 +287,10 @@ export function sourceAuthorityLabel(input: {
     const source = input.source.replace(/\s+[—–-]\s+newspaper clipping index \(secondary discovery\)$/i, "").trim();
     return `${source} — newspaper clipping index (secondary discovery)`;
   }
-  const profile = getSourceAuthorityProfile(`${input.source} ${input.url ?? ""}`);
-  if (input.isPrimarySource) return `${input.source} — primary / official source`;
+  const profile = getSourceAuthorityProfileForPublisher(input.source, input.url);
+  if (input.isPrimarySource && sourceUrlSupportsPrimaryRecord(input.url, input.source)) {
+    return `${input.source} — primary / official source`;
+  }
   if (profile) return `${input.source} — ${profile.label.toLowerCase()}`;
   return `${input.source} — published source`;
 }

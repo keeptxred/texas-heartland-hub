@@ -1,7 +1,8 @@
 import {
-  getSourceAuthorityProfile,
+  getSourceAuthorityProfileForPublisher,
   isPrimaryOrOfficialSource,
   sourceAuthorityLabel,
+  sourceUrlSupportsPrimaryRecord,
 } from "@/data/source-authority";
 import { pickExactArticleAuthorityLinks } from "@/lib/article-authority-entity-links";
 
@@ -109,20 +110,21 @@ export function applyGeneratedNewsAuthority(input: AuthorityInput): AuthorityEnr
     const originalLabel = source.label || input.sourceName || "Published source";
     const wasExplicitPrimary = EXPLICIT_PRIMARY_SOURCE_RE.test(originalLabel);
     const sourceName = normalizeSourceName(originalLabel);
-    const valueForClassification = `${sourceName} ${source.url || ""}`;
+
     return {
       label: sourceAuthorityLabel({
         source: sourceName,
         url: source.url,
-        isPrimarySource: wasExplicitPrimary || isPrimaryOrOfficialSource(valueForClassification),
+        isPrimarySource: (wasExplicitPrimary || isPrimaryOrOfficialSource(sourceName))
+          && sourceUrlSupportsPrimaryRecord(source.url, sourceName),
       }),
       url: source.url,
     };
   });
 
+  // Recalculate source roles from verified official URLs, not inherited labels.
   const primarySourceCount = sources.filter((source) =>
-    isPrimaryOrOfficialSource(`${source.label || ""} ${source.url || ""}`)
-    || EXPLICIT_PRIMARY_SOURCE_RE.test(source.label || ""),
+    sourceUrlSupportsPrimaryRecord(source.url, source.label),
   ).length;
   const sourceCount = sources.length;
   const flags: string[] = [];
@@ -145,7 +147,7 @@ export function applyGeneratedNewsAuthority(input: AuthorityInput): AuthorityEnr
 
   const sourceProfileLinks = sources
     .map((source) => {
-      const profile = getSourceAuthorityProfile(`${source.label || ""} ${source.url || ""}`);
+      const profile = getSourceAuthorityProfileForPublisher(source.label, source.url);
       return profile ? `[About ${profile.name} as a Keep TX Red source](/sources/${profile.slug})` : null;
     })
     .filter((value): value is string => Boolean(value));

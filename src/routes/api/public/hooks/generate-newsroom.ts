@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { sourceAuthorityLabel } from "@/data/source-authority";
+import { sourceAuthorityLabel, sourceUrlSupportsPrimaryRecord } from "@/data/source-authority";
 import { enrichArticleRow } from "@/lib/content-quality";
 import { runCloudflareJson } from "@/lib/cloudflare-json-ai.server";
 import { verifyGitHubActionsOidc } from "@/lib/github-actions-oidc";
@@ -616,7 +616,8 @@ async function handler({ request }: { request: Request }) {
       .sort();
     const firstSourceDate = sourceDates[0] ?? savedGeneratedDraft?.created_at ?? now.toISOString();
     const sourceCount = packetSources.length;
-    const primarySourceCount = packetSources.filter((source) => source.isPrimarySource).length;
+    const primarySourceCount = packetSources.filter((source) =>
+      source.isPrimarySource && sourceUrlSupportsPrimaryRecord(source.url, source.source)).length;
     const nonPrimarySourceCount = Math.max(0, sourceCount - primarySourceCount);
     const shouldNoindex = sourceCount < 2 && primarySourceCount === 0;
     const timeline = coverageTimeline(packetSources);
