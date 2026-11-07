@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { AdSlot } from "@/components/ad-slot";
 
 const TEA_2026_MCR_URL = "https://tea.texas.gov/taa-letters/tax-year-2026-maximum-compressed-tax-rates";
+const TEA_FINAL_2026_URL = "https://tea.texas.gov/taa-letters/final-maximum-compressed-tax-rates-mcr-and-adoption-tax-rate-tax-year-2026";
 const TEA_STATE_FUNDING_URL = "https://tea.texas.gov/about-tea/state-funding/state-funding";
 const COMPTROLLER_RATES_URL = "https://comptroller.texas.gov/taxes/property-tax/rates/index.php";
 
@@ -12,7 +13,7 @@ export const Route = createFileRoute("/news/isd-tax-burdens")({
       {
         name: "description",
         content:
-          "Texas has set the 2026 school-tax compression framework. Track the official 2026 MCR range, maximum M&O rates, and district-level data as TEA releases it.",
+          "Texas has set the 2026 school-tax compression framework. Review official 2026 compression limits and TEA’s final district MCR release, distinct from adopted total school-tax rates.",
       },
       { name: "robots", content: "index,follow" },
     ],
@@ -34,20 +35,20 @@ function SchoolTaxRatesArticle() {
         Texas School Property Taxes in 2026: Current Rates and District Tracker
       </h1>
       <p className="mt-4 text-lg md:text-xl text-muted-foreground leading-snug font-serif italic">
-        Texas has set the 2026 school-tax compression framework. District-specific 2026 maximum compressed rates are being finalized in August, so this page tracks the official 2026 numbers without mixing them with prior-year adopted rates.
+        Texas has set the 2026 school-tax compression framework. TEA published final district-specific 2026 maximum compressed rates on August 27. These Tier One limits are not adopted total school-tax rates.
       </p>
 
       <div className="mt-5 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-muted-foreground border-y border-border py-3">
         <span className="font-semibold text-foreground">By Keep TX Red Data Desk</span>
         <span>•</span>
-        <span>Updated August 7, 2026</span>
+        <span>Updated November 7, 2026</span>
         <span>•</span>
         <span>Tax &amp; Spending</span>
       </div>
 
       <p className="mt-5 text-sm bg-accent/10 border-l-4 border-accent px-4 py-3 italic text-foreground/80">
         <strong className="not-italic font-semibold text-accent uppercase tracking-wider text-[10px] block mb-1">2026 status</strong>
-        TEA has published the statewide 2026 compression formula and rate limits. Its public State Funding page had not yet posted a statewide district-by-district 2026 MCR list as of this update. We will not substitute 2025 district rates and label them 2026.
+        TEA released final district-by-district 2026 maximum compressed tax rates on August 27, superseding the August 5 preliminary list. These Tier One limits are not adopted total M&O-plus-debt tax rates.
       </p>
 
       <div className="prose prose-neutral max-w-none mt-8">
@@ -97,15 +98,9 @@ function SchoolTaxRatesArticle() {
 
         <section className="mt-10">
           <h2 className="font-display text-2xl md:text-3xl tracking-tight mb-4 border-b border-border pb-2">Which districts have the highest 2026 rates?</h2>
-          <p>
-            That ranking is not final yet. TEA's June 18 guidance says districts submitted 2026 local property-value data during the July 18–August 1 Local Property Value Survey window. TEA then uses those submissions to calculate each district's 2026 maximum compressed Tier One rate and makes approved MCRs available in August.
-          </p>
-          <p>
-            As of August 7, TEA's public State Funding page still listed the 2025 final district MCR file, not a statewide 2026 district list. Until the 2026 list is posted, any statewide “top 10 districts” ranking would either be incomplete or would quietly reuse 2025 figures. We are not doing that.
-          </p>
-          <p>
-            When TEA publishes the statewide 2026 district file, this page should rank districts using a clearly labeled metric—preferably <strong>adopted total school tax rate</strong> once adopted-rate data are complete, with separate columns for M&amp;O and I&amp;S. Until then, the official statewide 2026 rate framework above is the current authoritative comparison.
-          </p>
+          <p>TEA finalized the district-specific 2026 MCR list on August 27, following the Local Property Value Survey and appeals. The final file under District &amp; Charter Planning Tools on TEA's State Funding page supersedes the August 5 preliminary rates.</p>
+          <p>A ranking of actual 2026 school-tax burdens requires comparable adopted total rates, including maintenance-and-operations (M&amp;O) and interest-and-sinking (I&amp;S) debt rates. TEA says total M&amp;O figures in its Summary of Finances will be updated by February 2027 after Comptroller data arrive. Final MCRs alone cannot establish which districts have the highest total rates.</p>
+          <p>Consult the <a href={TEA_STATE_FUNDING_URL} target="_blank" rel="noreferrer">final 2026 district MCR file</a> for Tier One ceilings. A future adopted-rate ranking should identify M&amp;O, I&amp;S and total adopted rates separately using a complete 2026 dataset.</p>
         </section>
 
         <section className="mt-10">
@@ -133,6 +128,7 @@ function SchoolTaxRatesArticle() {
           <h2 className="font-display text-2xl md:text-3xl tracking-tight mb-4 border-b border-border pb-2">Official sources</h2>
           <ul>
             <li><a href={TEA_2026_MCR_URL} target="_blank" rel="noreferrer">Texas Education Agency — Tax Year 2026 Maximum Compressed Tax Rates</a></li>
+            <li><a href={TEA_FINAL_2026_URL} target="_blank" rel="noreferrer">Texas Education Agency — Final 2026 MCR Determinations (August 27, 2026)</a></li>
             <li><a href={TEA_STATE_FUNDING_URL} target="_blank" rel="noreferrer">Texas Education Agency — State Funding / District &amp; Charter Planning Tools</a></li>
             <li><a href={COMPTROLLER_RATES_URL} target="_blank" rel="noreferrer">Texas Comptroller — Tax Rates and Levies</a></li>
           </ul>
