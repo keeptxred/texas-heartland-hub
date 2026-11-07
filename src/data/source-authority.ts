@@ -220,6 +220,40 @@ export function isPrimaryOrOfficialSource(value: string | null | undefined): boo
   return profile?.kind === "government" || profile?.kind === "official";
 }
 
+/**
+ * A producer may label a feed as a primary source incorrectly (or a stale
+ * body_json can preserve that label). Verify the actual publisher URL before
+ * displaying an official/primary attribution. A news outlet's original
+ * reporting is still secondary evidence about the event it reports.
+ *
+ * Official publishers on a non-.gov domain (for example, ERCOT) must match an
+ * exact registered official-source profile; the publisher name alone never
+ * makes an unrelated news-site URL a primary record.
+ */
+export function sourceUrlSupportsPrimaryRecord(
+  url: string | null | undefined,
+  sourceName?: string | null,
+): boolean {
+  if (!url || isGovernmentNewsClippingUrl(url)) return false;
+  let host: string;
+  try {
+    const parsed = new URL(url);
+    if (!["https:", "http:"].includes(parsed.protocol)) return false;
+    host = parsed.hostname.toLowerCase().replace(/^www\./, "");
+  } catch {
+    return false;
+  }
+  if (host.endsWith(".gov") || host.endsWith(".mil")) return true;
+  const profile = getSourceAuthorityProfile(sourceName ?? "") ?? getSourceAuthorityProfile(url);
+  if (profile?.kind !== "government" && profile?.kind !== "official") return false;
+  try {
+    const profileHost = new URL(profile.homepage).hostname.toLowerCase().replace(/^www\./, "");
+    return host === profileHost || host.endsWith(`.${profileHost}`);
+  } catch {
+    return false;
+  }
+}
+
 export function sourceAuthorityLabel(input: {
   source: string;
   url?: string | null;
@@ -230,7 +264,9 @@ export function sourceAuthorityLabel(input: {
     return `${source} — newspaper clipping index (secondary discovery)`;
   }
   const profile = getSourceAuthorityProfile(`${input.source} ${input.url ?? ""}`);
-  if (input.isPrimarySource) return `${input.source} — primary / official source`;
+  if (input.isPrimarySource && sourceUrlSupportsPrimaryRecord(input.url, input.source)) {
+    return `${input.source} — primary / official source`;
+  }
   if (profile) return `${input.source} — ${profile.label.toLowerCase()}`;
   return `${input.source} — published source`;
 }
