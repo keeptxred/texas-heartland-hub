@@ -64,11 +64,19 @@ describe("newsroom rewrite adapter", () => {
   });
 
   it("accepts a schema-valid empty abstention but rejects it before an invented repair", () => {
-    const schema = NEWSROOM_DRAFT_JSON_SCHEMA.properties as Record<string, unknown>;
-    const sections = schema.sections as { minItems: number };
-    const summary = schema.summary as { minLength?: number };
-    expect(sections.minItems).toBe(0);
-    expect(summary.minLength).toBeUndefined();
+    const alternatives = NEWSROOM_DRAFT_JSON_SCHEMA.anyOf as Array<{ properties: Record<string, unknown> }>;
+    expect(alternatives).toHaveLength(2);
+    const abstain = alternatives[0].properties;
+    const publish = alternatives[1].properties;
+    expect((abstain.brief as {properties: {hasClearNewsEvent: {const: boolean}}}).properties.hasClearNewsEvent.const).toBe(false);
+    expect((publish.brief as {properties: {hasClearNewsEvent: {const: boolean}}}).properties.hasClearNewsEvent.const).toBe(true);
+    expect((abstain.sections as {maxItems: number}).maxItems).toBe(0);
+    expect((abstain.summary as {maxLength: number}).maxLength).toBe(0);
+    expect((publish.title as {minLength: number}).minLength).toBeGreaterThanOrEqual(35);
+    const sections = publish.sections as {minItems: number;items:{properties:{paragraphs:{minItems:number;items:{minLength:number}}}}};
+    expect(sections.minItems).toBe(4);
+    expect(sections.items.properties.paragraphs.minItems).toBe(2);
+    expect(sections.items.properties.paragraphs.items.minLength).toBe(550);
     const abstention = {
       brief: { hasClearNewsEvent: false },
       title: "", dek: "", summary: "", relevance: "",
