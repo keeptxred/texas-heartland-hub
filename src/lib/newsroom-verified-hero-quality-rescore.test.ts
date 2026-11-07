@@ -3,6 +3,7 @@ import { describe, expect, it } from "vitest";
 import { scoreQuality } from "./content-quality";
 
 const readiness = readFileSync("src/routes/api/public/hooks/article-hero-readiness-audit.ts", "utf8");
+const imageGenerator = readFileSync("src/lib/featured-image.functions.ts", "utf8");
 
 describe("regrade news article only after verified image acceptance", () => {
   it("updates the actual content score for all three licensed/verified hero acceptance paths", () => {
@@ -14,6 +15,17 @@ describe("regrade news article only after verified image acceptance", () => {
     expect(readiness).toContain('if (verdict.matches && (verdict.visualClass === "exact_subject" || verdict.visualClass === "representative_scene"))');
     expect(readiness).toContain('if (isAuthoritativeOfficialGraphic(candidate))');
     expect(readiness).toContain('if (isGovernedExactEntityGraphic(row.slug, candidate))');
+  });
+
+  it("also rescores verified AI-generated images, including the ordinary image backlog", () => {
+    expect(imageGenerator).toContain('import { scoreQuality } from "@/lib/content-quality"');
+    const protectedWrite = imageGenerator.indexOf('const quality = scoreQuality({ ...storedArticle, image_url: url });');
+    const imageReady = imageGenerator.indexOf('image_generation_status: "ready",', protectedWrite);
+    const validation = imageGenerator.indexOf('cloudflare-vision ok:');
+    expect(protectedWrite).toBeGreaterThan(validation);
+    expect(imageReady).toBeGreaterThan(protectedWrite);
+    expect(imageGenerator).toContain('content_quality_score: quality.score');
+    expect(imageGenerator).toContain('if (!opts.beforePublish)');
   });
 
   it("adds image score only for accepted image, never a failed candidate", () => {
