@@ -62,7 +62,7 @@ jobs:
         shell: bash
         run: |
           node --input-type=module <<'NODE'
-          import { readFile, writeFile } from "node:fs/promises";
+          import { readFile, writeFile, appendFile } from "node:fs/promises";
           const polls = JSON.parse(await readFile("src/data/elections/2026/polls.json", "utf8"));
           const active = polls.filter(p => p.publicationStatus === "published" && p.verificationStatus === "verified");
           const newestField = active.map(p => p.fieldEndDate).filter(Boolean).sort().at(-1);
@@ -92,32 +92,51 @@ jobs:
             const html = await response.text();
             const text = toText(html);
             observations.push(`${path}: HTTP ${response.status}; HTML ${html.length} bytes; final URL ${response.url}`);
-            if (!response.ok) errors.push(`${path}: HTTP ${response.status}`);
-            return { html, text };
+            return { html, text, status: response.status, robots: response.headers.get("x-robots-tag") ?? "" };
           }
+          const retiredCopy = "election central is temporarily unavailable between election cycles.";
+          const intentionalRetirement = page =>
+            page.status === 404 && page.text.trim().toLowerCase() === retiredCopy &&
+            /noindex\s*,\s*nofollow/i.test(page.robots);
+          let seasonallyRetired = false;
           try {
             const overview = await inspect("/elections/2026");
-            if (!overview.text.includes("Election poll archive")) {
-              errors.push("/elections/2026: missing server-visible polling archive section");
-            }
-            if (!overview.text.includes(`${active.length} verified poll records are published`)) {
-              errors.push(`/elections/2026: published poll total differs from current repository (${active.length})`);
+            if (intentionalRetirement(overview)) {
+              seasonallyRetired = true;
+              observations.push("Off-season /elections/2026 retirement verified: HTTP 404 and noindex,nofollow.");
+            } else {
+              if (overview.status !== 200) errors.push(`/elections/2026: HTTP ${overview.status}`);
+              if (!overview.text.includes("Election poll archive")) {
+                errors.push("/elections/2026: missing server-visible polling archive section");
+              }
+              if (!overview.text.includes(`${active.length} verified poll records are published`)) {
+                errors.push(`/elections/2026: published poll total differs from current repository (${active.length})`);
+              }
             }
           } catch (error) {
             errors.push(`/elections/2026 request failed: ${error.message}`);
           }
           try {
             const directory = await inspect("/elections/polls");
-            if (!directory.text.includes("Texas polling source network")) {
-              errors.push("/elections/polls: missing expected directory source section");
+            if (seasonallyRetired) {
+              if (!intentionalRetirement(directory)) {
+                errors.push("/elections/polls: off-season directory does not match the same HTTP 404/noindex,nofollow retirement contract");
+              } else {
+                observations.push("Off-season /elections/polls retirement verified: HTTP 404 and noindex,nofollow.");
+              }
+            } else {
+              if (directory.status !== 200) errors.push(`/elections/polls: HTTP ${directory.status}`);
+              if (!directory.text.includes("Texas polling source network")) {
+                errors.push("/elections/polls: missing expected directory source section");
+              }
+              if (expectedVerified &&
+                  !directory.text.includes(`Latest published record verification/update in this directory: ${expectedVerified}`)) {
+                errors.push(`/elections/polls: current repository verification date ${expectedVerified} absent from HTML; check stale response or SSR`);
+              }
+              // A client-side list may require hydration. Record this as a diagnostic
+              // rather than erroneously certifying Google-visible poll cards.
+              observations.push("Directory source HTML contains poll filters: " + directory.text.includes("Refine polling"));
             }
-            if (expectedVerified &&
-                !directory.text.includes(`Latest published record verification/update in this directory: ${expectedVerified}`)) {
-              errors.push(`/elections/polls: current repository verification date ${expectedVerified} absent from HTML; check stale response or SSR`);
-            }
-            // A client-side list may require hydration. Record this as a diagnostic
-            // rather than erroneously certifying Google-visible poll cards.
-            observations.push("Directory source HTML contains poll filters: " + directory.text.includes("Refine polling"));
           } catch (error) {
             errors.push(`/elections/polls request failed: ${error.message}`);
           }
@@ -135,6 +154,7 @@ jobs:
             "These are raw HTTP/SSR checks, not a browser hydration or canonical audit. No source records are changed.",
           ].join("\n") + "\n";
           await writeFile("election-polls-production-report.md", report);
+          if (process.env.GITHUB_OUTPUT) await appendFile(process.env.GITHUB_OUTPUT, `retired=${seasonallyRetired}\n`);
           console.log(report);
           if (errors.length) process.exitCode = 1;
           NODE
@@ -144,6 +164,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           STATUS: ${{ steps.check.outcome }}
+          RETIRED: ${{ steps.check.outputs.retired }}
         shell: bash
         run: |
           set -euo pipefail
@@ -158,9 +179,17 @@ jobs:
             exit 1
           fi
           if [[ -n "$existing" ]]; then
-            gh issue close "$existing" --comment 'Direct GitHub runner production-response verification is passing again; see the latest workflow run for details.'
+            if [[ "$RETIRED" == "true" ]]; then
+              gh issue close "$existing" --comment 'The off-season HTTP 404 with noindex,nofollow was verified for both public election pages. This is the intended retired feature state, not a production SSR failure.'
+            else
+              gh issue close "$existing" --comment 'Direct GitHub runner production-response verification is passing again; see the latest workflow run for details.'
+            fi
           fi
-          echo "Election Central production-response verification passed."
+          if [[ "$RETIRED" == "true" ]]; then
+            echo "Election Central off-season retired-page contract verified. Browser-only polling and forecast checks are not applicable."
+          else
+            echo "Election Central active production-response verification passed."
+          fi
 
       # Reuse the existing deployed-polls verification boundary; do not create
       # another production workflow or check a skipped/stale Worker deployment.
@@ -168,7 +197,8 @@ jobs:
         if: >-
           (github.event_name == 'workflow_dispatch' ||
            steps.deployed.outputs.performed == 'true') &&
-          steps.check.outcome == 'success'
+          steps.check.outcome == 'success' &&
+          steps.check.outputs.retired != 'true'
         with:
           bun-version: 1.3.14
 
@@ -176,7 +206,8 @@ jobs:
         if: >-
           (github.event_name == 'workflow_dispatch' ||
            steps.deployed.outputs.performed == 'true') &&
-          steps.check.outcome == 'success'
+          steps.check.outcome == 'success' &&
+          steps.check.outputs.retired != 'true'
         run: |
           bun install --frozen-lockfile
           bun x playwright install --with-deps chromium
@@ -186,7 +217,8 @@ jobs:
         if: >-
           (github.event_name == 'workflow_dispatch' ||
            steps.deployed.outputs.performed == 'true') &&
-          steps.check.outcome == 'success'
+          steps.check.outcome == 'success' &&
+          steps.check.outputs.retired != 'true'
         continue-on-error: true
         run: node scripts/elections/verify-live-forecast.mjs
 
@@ -195,7 +227,8 @@ jobs:
           always() &&
           (github.event_name == 'workflow_dispatch' ||
            steps.deployed.outputs.performed == 'true') &&
-          steps.check.outcome == 'success'
+          steps.check.outcome == 'success' &&
+          steps.check.outputs.retired != 'true'
         env:
           GH_TOKEN: ${{ github.token }}
           STATUS: ${{ steps.forecast.outcome }}
