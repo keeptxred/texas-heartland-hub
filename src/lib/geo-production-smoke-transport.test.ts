@@ -13,10 +13,14 @@ describe("production GEO smoke transport", () => {
   });
 
   it("continues to require canonical public sitemap URLs", () => {
-    for (const path of ["sitemap-pages.xml", "sitemap-news.xml", "sitemap-evergreen.xml", "sitemap-elections.xml"]) {
+    for (const path of ["sitemap-pages.xml", "sitemap-news.xml", "sitemap-evergreen.xml"]) {
       expect(workflow).toContain(`https://keeptxred.com/${path}`);
     }
     expect(workflow).toContain('Sitemap: https://keeptxred.com/sitemap.xml');
+    expect(workflow).toContain("ELECTION_STATUS:");
+    expect(workflow).toContain('election_sitemap = "https://keeptxred.com/sitemap-elections.xml"');
+    expect(workflow).toContain("if active and election_sitemap not in locations:");
+    expect(workflow).toContain("if not active and election_sitemap in locations:");
   });
 
   it("does not downgrade unreachable HTML into a skipped GEO assertion", () => {
