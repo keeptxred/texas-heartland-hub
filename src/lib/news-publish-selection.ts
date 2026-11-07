@@ -17,6 +17,14 @@ export function isConcurrentPublicationDeferral(error: string | null | undefined
   return /^Publication deferred: another worker is already publishing this event or it is cooling down/i.test(error ?? "");
 }
 
+// A source packet held BEFORE the rewrite/AI call consumes no editorial
+// generation attempt. Scan another distinct candidate, within the same 48-row
+// and 45-second bounds. Never classify post-AI length/factuality/image
+// rejections as cheap deferrals.
+export function isOriginalEvidencePreAiDeferral(error: string | null | undefined): boolean {
+  return /^Publication held before AI: insufficient original publisher evidence \(/.test(error ?? "");
+}
+
 
 const ROUTINE_APPOINTMENT_RE = /\b(appoints?|appointed|appointment|reappoints?|reappointed|reappointment|names?)\b.*\b(board|commission|committee|council|authority|panel|task force|director|member|members|judge|justice)\b/i;
 const APPOINTMENT_STAKES_RE = /\b(lawsuit|challenge|scrutiny|backlash|fight|dispute|probe|investigation|indict|arrest|resign|scandal|blocked|overturned|ruling|ethics|fraud|criminal|election|vacancy crisis)\b/i;
