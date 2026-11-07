@@ -7,8 +7,8 @@ const route = fs.readFileSync(
 );
 
 describe("newsroom research packet capacity", () => {
-  it("matches the 500-candidate scoring and decision pipeline", () => {
-    expect(route).toContain("const CANDIDATE_LIMIT = 500");
+  it("matches the bounded 1,000-candidate publishing and packet cohort", () => {
+    expect(route).toContain("const CANDIDATE_LIMIT = 1000");
     expect(route).toContain(".limit(CANDIDATE_LIMIT)");
   });
 

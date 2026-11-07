@@ -5,9 +5,9 @@ const generator = readFileSync("src/routes/api/public/hooks/generate-newsroom.ts
 const builder = readFileSync("src/routes/api/public/hooks/build-newsroom-research-packets.ts", "utf8");
 
 describe("newsroom evidence-first candidate depth", () => {
-  it("can reach the 500 candidates already researched by the packet pipeline", () => {
-    expect(builder).toContain("const CANDIDATE_LIMIT = 500");
-    expect(generator).toContain("const NEWSROOM_PUBLISH_SCAN_LIMIT = 500");
+  it("can reach 1,000 ranked candidates including independently reported lower-score stories", () => {
+    expect(builder).toContain("const CANDIDATE_LIMIT = 1000");
+    expect(generator).toContain("const NEWSROOM_PUBLISH_SCAN_LIMIT = 1000");
     expect(generator).toContain('requestedMode === "publish" ? NEWSROOM_PUBLISH_SCAN_LIMIT : NEWSROOM_CANDIDATE_BATCH_SIZE');
     expect(generator).toContain("for (let batchStart = 0; batchStart < candidates.length; batchStart += NEWSROOM_CANDIDATE_BATCH_SIZE)");
     expect(generator).toContain("const batch = candidates.slice(batchStart, batchStart + NEWSROOM_CANDIDATE_BATCH_SIZE)");
@@ -53,9 +53,9 @@ describe("newsroom evidence-first candidate depth", () => {
     expect(generator).toContain('.order("editorial_score", { ascending: false })');
     expect(generator).toContain('.order("created_at", { ascending: false })');
     expect(generator).toContain('.order("id", { ascending: true })');
-    const rows = Array.from({ length: 500 }, (_, i) => ({ id: String(i), score: 100 - Math.floor(i / 10) }));
+    const rows = Array.from({ length: 1000 }, (_, i) => ({ id: String(i), score: 100 - Math.floor(i / 10) }));
     const batches = Array.from({ length: Math.ceil(rows.length / 100) }, (_, i) => rows.slice(i * 100, (i + 1) * 100));
-    expect(batches).toHaveLength(5);
+    expect(batches).toHaveLength(10);
     expect(batches[1][5].id).toBe("105");
     expect(batches.flat()).toEqual(rows);
   });
