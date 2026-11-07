@@ -134,6 +134,9 @@ jobs:
           fi
 
           clustered_ready=1
+          # Preserve real transport/provider failures through source-safe fallbacks.
+          # Quality-driven 200/no_items is NOT a transport failure.
+          newsroom_transport_failed=0
 
           run_zero_ai_stage() {
             local name="$1"
@@ -150,6 +153,7 @@ jobs:
             if [[ "$status" != "200" ]] || ! jq -e '.ok == true and (.aiCalls // 0) == 0' "$output" >/dev/null 2>&1; then
               echo "CLUSTERED_NEWSROOM_${name^^}_FAILED; unsafe legacy fallback is disabled."
               clustered_ready=0
+              newsroom_transport_failed=1
               return 0
             fi
           }
@@ -323,7 +327,8 @@ jobs:
             elif [[ "$newsroom_status" == "200" ]] && jq -e '.ok == true and .generated == true and .published != true' /tmp/newsroom-publish.json >/dev/null 2>&1; then
               echo 'Clustered newsroom draft did not pass final validation. Overdue fallback remains subject to its own evidence and editorial gates.'
             else
-              echo "Clustered newsroom publish attempt was unavailable (HTTP ${newsroom_status}). Overdue fallback remains subject to its own evidence and editorial gates."
+              echo "Clustered newsroom publish attempt was unavailable (HTTP ${newsroom_status}). Overdue fallback remains subject to its own evidence and editorial gates." >&2
+              newsroom_transport_failed=1
             fi
           else
             echo 'Clustered newsroom preprocessing failed. Overdue fallback remains subject to its own evidence and editorial gates.'
@@ -399,5 +404,13 @@ jobs:
           # regular-publisher stall even if a fresh reserve masked the total gap.
           if jq -e '.automation_stalled == true' /tmp/safety-net.json >/dev/null 2>&1; then
             echo 'DAILY_NEWS_NORMAL_PUBLISHING_STALLED no_verified_normal_article_within_24h=true' >&2
+            exit 1
+          fi
+
+          # A green workflow must not hide a real 500/timeout from a previous
+          # production stage merely because the quality-gated reserve returned
+          # HTTP 200 without publishing. No extra AI requests or bypasses.
+          if [[ "$newsroom_transport_failed" -eq 1 || "$overdue_failed" -eq 1 ]]; then
+            echo "DAILY_NEWS_TECHNICAL_FAILURE newsroom_transport_failed=${newsroom_transport_failed} overdue_failed=${overdue_failed}; no normal publication recovered by fallback" >&2
             exit 1
           fi
