@@ -13,13 +13,15 @@ describe("Government Graph matching", () => {
     expect(hrefs).not.toContain("/data/property-tax");
   });
 
-  it("connects election reporting to Election Central", () => {
+  it("never injects retired 410 Election Central into generated article context", () => {
     const links = getGovernmentGraphLinks(
       "Candidates are campaigning ahead of the Texas primary election as voters review the ballot and new polling.",
-      6,
+      8,
     );
-
-    expect(links.some((link) => link.href === "/elections/2026")).toBe(true);
+    // Public Election Central is disabled by the site feature switch. Keep the
+    // dormant graph node for future elections, but use durable policy coverage.
+    expect(links.some((link) => link.href === "/elections/2026")).toBe(false);
+    expect(links.some((link) => link.href === "/policy/elections")).toBe(true);
   });
 
   it("connects procurement reporting to a durable data hub while Contract Watch is quarantined", () => {
