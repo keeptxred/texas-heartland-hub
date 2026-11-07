@@ -30,9 +30,13 @@ jobs:
         id: election_window
         shell: bash
         run: |
-          if [[ "$GITHUB_EVENT_NAME" == "schedule" && "$(date -u +%Y)" != "2026" ]]; then
+          # This is the specific Nov 3, 2026 election-NIGHT monitor, not
+          # evergreen public Election Central. Stop probing retired HTML
+          # after the original election-night UTC window, on ALL triggers.
+          utc_hour="$(date -u +%Y-%m-%dT%H)"
+          if [[ "$utc_hour" < "2026-11-03T23" || "$utc_hour" > "2026-11-04T07" ]]; then
             echo "check=false" >> "$GITHUB_OUTPUT"
-            echo "Scheduled 2026 election-night monitoring has expired; no network calls."
+            echo "2026 election-night monitor outside its original UTC window; no off-season requests."
           else
             echo "check=true" >> "$GITHUB_OUTPUT"
           fi
