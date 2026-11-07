@@ -352,7 +352,7 @@ jobs:
               'https://keeptxred.com/sitemap-pages.xml',
               'https://keeptxred.com/sitemap-news.xml',
               'https://keeptxred.com/sitemap-evergreen.xml',
-              'https://keeptxred.com/sitemap-elections.xml',
+              # Election Central's off-season child sitemap is intentionally unlisted.
           }
           missing = sorted(required.difference(locations))
           if missing:
