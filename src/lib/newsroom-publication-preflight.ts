@@ -1,5 +1,6 @@
 import type { ResearchPacketSource } from "./newsroom-research-packet";
 import { isGovernmentNewsClippingUrl } from "./newsroom-discovery-sources";
+import { sourceUrlSupportsPrimaryRecord } from "@/data/source-authority";
 
 /**
  * Mirrors public.newsroom_source_family_from_url() so publication candidates
@@ -98,7 +99,7 @@ export function newsroomLikelySameOriginalReport(left: string, right: string): b
 /** Stricter than the database guard: discovery links never count as an independent publisher. */
 export function newsroomHasPublisherDiversity(sources: ResearchPacketSource[]): boolean {
   const unique = uniquePacketSources(sources);
-  if (unique.some((source) => source.isPrimarySource)) return true;
+  if (unique.some((source) => source.isPrimarySource && sourceUrlSupportsPrimaryRecord(source.url, source.source))) return true;
   const families = new Set<string>();
   const originalReports: string[] = [];
   for (const source of unique) {
