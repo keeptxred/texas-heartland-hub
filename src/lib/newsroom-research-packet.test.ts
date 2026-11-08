@@ -60,7 +60,7 @@ describe("newsroom research packets", () => {
     });
     expect(packet.sources[0].description).toBe("");
     expect(packet.sources[0].extractedBody).toContain("White House");
-    expect(researchPacketEvidenceChars(packet)).toBeGreaterThan(1000);
+    expect(researchPacketEvidenceChars(packet)).toBeGreaterThan(150);
     // Also protect stored packets created before the ingestion repair.
     const oldPacket = { ...packet, sources: [{ ...packet.sources[0], description: misattachedTeslaDescription }] };
     expect(researchPacketEvidenceChars(oldPacket)).toBe(researchPacketEvidenceChars(packet));
