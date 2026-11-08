@@ -19,6 +19,8 @@ MARKERS = {
     "calculator result": "Estimated annual school tax",
     "2025 vs 2026 comparison": "What changed in the statewide framework?",
     "district sample heading": "Verified district examples from TEA",
+    "statewide finder": "Find your school district",
+    "statewide district count": "1,013",
     "Aldine district record": "Aldine ISD (101902)",
     "Frisco district record": "Frisco ISD (043905)",
     "TEA official source": "ty2026-final-mcrs.pdf",

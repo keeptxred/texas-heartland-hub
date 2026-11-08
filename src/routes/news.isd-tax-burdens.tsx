@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { AdSlot } from "@/components/ad-slot";
 import { useMemo, useState } from "react";
+import teaMcr2026 from "@/data/tea-2026-final-mcr.json";
 
 const TEA_2026_MCR_URL = "https://tea.texas.gov/taa-letters/tax-year-2026-maximum-compressed-tax-rates";
 const TEA_FINAL_2026_URL = "https://tea.texas.gov/taa-letters/final-maximum-compressed-tax-rates-mcr-and-adoption-tax-rate-tax-year-2026";
@@ -25,6 +26,11 @@ export const Route = createFileRoute("/news/isd-tax-burdens")({
 });
 
 function SchoolTaxRatesArticle() {
+  const [districtQuery, setDistrictQuery] = useState("");
+  const matchingDistricts = useMemo(() => {
+    const query = districtQuery.trim().toLowerCase();
+    return teaMcr2026.districts.filter((district) => !query || district.name.toLowerCase().includes(query) || district.id.includes(query));
+  }, [districtQuery]);
   const [homeValue, setHomeValue] = useState("350000");
   const [exemption, setExemption] = useState("140000");
   const [maintenanceRate, setMaintenanceRate] = useState("0.7254");
@@ -158,9 +164,22 @@ function SchoolTaxRatesArticle() {
 <tr><td>Fort Bend ISD (079907)</td><td>$0.6169</td></tr>
 <tr><td>Fort Worth ISD (220905)</td><td>$0.6169</td></tr>
 <tr><td>Frisco ISD (043905)</td><td>$0.6110</td></tr></tbody></table></div><p className="text-sm text-muted-foreground">Source: TEA August 27, 2026 final district MCR PDF, pages 1, 5, 6 and 8. District numbers distinguish similar names.</p>
+          <div className="mt-8 rounded border border-border p-4" aria-labelledby="district-mcr-finder">
+            <h3 id="district-mcr-finder" className="font-display text-xl mb-2">Find your school district's 2026 Tier One MCR</h3>
+            <p className="text-sm mb-3">Search all {teaMcr2026.districtCount.toLocaleString("en-US")} districts in TEA's final August 27, 2026 list by district name or six-digit TEA ID. These are <strong>maximum compressed Tier One rates only</strong>, not adopted total school property-tax rates or household bills.</p>
+            <label htmlFor="school-mcr-search" className="block text-sm font-semibold mb-1">District name or TEA ID</label>
+            <input id="school-mcr-search" type="search" value={districtQuery} onChange={(event) => setDistrictQuery(event.target.value)} placeholder="Example: Frisco or 043905" className="w-full rounded border border-border bg-background px-3 py-2 text-foreground" />
+            <p aria-live="polite" className="text-sm text-muted-foreground my-3">{matchingDistricts.length.toLocaleString("en-US")} matching districts. Showing the first {Math.min(30, matchingDistricts.length)}; narrow your search to see more.</p>
+            <div className="max-h-96 overflow-auto">
+              <table><thead><tr><th scope="col">District</th><th scope="col">TEA ID</th><th scope="col">Tier One MCR per $100</th></tr></thead>
+                <tbody>{matchingDistricts.slice(0, 30).map((district) => <tr key={district.id}><td>{district.name}</td><td>{district.id}</td><td>${Number(district.mcr).toFixed(4)}</td></tr>)}</tbody>
+              </table>
+            </div>
+            <p className="text-xs text-muted-foreground mt-3">Source: <a href={TEA_FINAL_DISTRICT_PDF_URL} target="_blank" rel="noreferrer">Texas Education Agency, final 2026 MCRs</a>. Rates are not adopted M&amp;O or I&amp;S rates. District IDs distinguish identically named districts.</p>
+          </div>
           <p>TEA finalized the district-specific 2026 MCR list on August 27, following the Local Property Value Survey and appeals. The final file under District &amp; Charter Planning Tools on TEA's State Funding page supersedes the August 5 preliminary rates.</p>
           <p>A ranking of actual 2026 school-tax burdens requires comparable adopted total rates, including maintenance-and-operations (M&amp;O) and interest-and-sinking (I&amp;S) debt rates. TEA says total M&amp;O figures in its Summary of Finances will be updated by February 2027 after Comptroller data arrive. Final MCRs alone cannot establish which districts have the highest total rates.</p>
-          <p>The <strong>final 2026 district MCR file is published</strong>, but it is not a district-by-district adopted-tax-rate dataset. This article does not present a fabricated ranking or claim to have verified each district record. For district-level Tier One ceilings, consult the <a href={TEA_STATE_FUNDING_URL} target="_blank" rel="noreferrer">final 2026 district MCR file</a> for Tier One ceilings. A future adopted-rate ranking should identify M&amp;O, I&amp;S and total adopted rates separately using a complete 2026 dataset.</p>
+          <p>The <strong>final 2026 district MCR file is published</strong>, but it is not a district-by-district adopted-tax-rate dataset. The searchable directory above reproduces the full final TEA MCR list after automated source validation; it is not a ranking of adopted total school-tax rates. For district-level Tier One ceilings, consult the <a href={TEA_STATE_FUNDING_URL} target="_blank" rel="noreferrer">final 2026 district MCR file</a> for Tier One ceilings. A future adopted-rate ranking should identify M&amp;O, I&amp;S and total adopted rates separately using a complete 2026 dataset.</p>
         </section>
 
         <section className="mt-10">
