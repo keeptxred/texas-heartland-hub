@@ -12,6 +12,14 @@ const FEEDS = new Set([
   "google-texas-campus-longtail",
   "google-texas-community-longtail",
   "google-texas-sports-longtail",
+  // Bounded two-site discovery extensions; never accept arbitrary upstream URLs.
+  "google-local-giving",
+  "google-local-utility",
+  "google-local-business-change",
+  "google-local-investigations",
+  "google-space-launches",
+  "google-attraction-changes",
+  "google-community-art",
 ]);
 
 const RELAY_BASE = "https://ftkznprjljkhymknvhye.supabase.co/functions/v1/ktr-rss-relay";
