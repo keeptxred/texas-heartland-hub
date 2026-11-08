@@ -78,7 +78,22 @@ jobs:
           if [[ "$verify_success" != 'true' ]]; then
             echo "deploy=false" >> "$GITHUB_OUTPUT"
             echo "verified=false" >> "$GITHUB_OUTPUT"
-            echo "Current main $main_sha has no successful exact-SHA Repository test and build health run; production will not be changed."
+            if [[ "$verify_active" == 'false' ]]; then
+              # Connector-authored squash merges can miss the push workflow event.
+              # Restore the existing exact-main verification; NEVER bypass it.
+              # A successful workflow_dispatch verification then triggers the
+              # existing protected workflow_run production deployment.
+              echo "No active exact-main verification; dispatching the existing protected test workflow for $main_sha."
+              current_main="$(gh api "repos/$REPOSITORY/commits/main" --jq '.sha')"
+              if [[ "$current_main" == "$main_sha" ]]; then
+                gh workflow run shared-vitest.yml --repo "$REPOSITORY" --ref main
+              else
+                echo "Main changed during verification dispatch; defer to next reconciliation."
+              fi
+            else
+              echo "Exact-main verification already active; not dispatching duplicate."
+            fi
+            echo "Current main $main_sha is not yet verified; production will not change until tests pass."
             exit 0
           fi
 
