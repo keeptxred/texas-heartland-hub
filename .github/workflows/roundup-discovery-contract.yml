@@ -5,12 +5,18 @@ on:
     paths:
       - "supabase/migrations/**"
       - "scripts/news/validate-roundup-discovery-contract.mjs"
+      - "scripts/news/validate-nov8-flyover-benchmark.mjs"
+      - "supabase/functions/ktr-rss-relay/index.ts"
+      - "supabase/functions/ktr-rss-relay-priority/index.ts"
       - ".github/workflows/roundup-discovery-contract.yml"
   push:
     branches: [main]
     paths:
       - "supabase/migrations/**"
       - "scripts/news/validate-roundup-discovery-contract.mjs"
+      - "scripts/news/validate-nov8-flyover-benchmark.mjs"
+      - "supabase/functions/ktr-rss-relay/index.ts"
+      - "supabase/functions/ktr-rss-relay-priority/index.ts"
       - ".github/workflows/roundup-discovery-contract.yml"
   workflow_dispatch:
 
@@ -27,4 +33,6 @@ jobs:
         with:
           node-version: 20
       - name: Validate roundup discovery coverage
-        run: node scripts/news/validate-roundup-discovery-contract.mjs
+        run: |
+          node scripts/news/validate-roundup-discovery-contract.mjs
+          node scripts/news/validate-nov8-flyover-benchmark.mjs
