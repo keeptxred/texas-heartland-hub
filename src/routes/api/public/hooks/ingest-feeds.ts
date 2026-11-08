@@ -82,6 +82,10 @@ const DIRECT_SOURCES: Source[] = [
     texasOnly: true,
   },
   { name: "NewsChannel 10 Amarillo", url: "https://www.newschannel10.com/news/", mode: "html-links", include: "^/20\\d{2}/" },
+  // First-party local outlets: live homepages contain dated, canonical article
+  // permalinks. Do not rely on Google News RSS (currently anti-bot 503).
+  { name: "KTRE Lufkin — Direct Local Headlines", url: "https://www.ktre.com/", category: "Local", mode: "html-links", include: "^/20\\d{2}/\\d{2}/\\d{2}/[a-z0-9-]+/?$" },
+  { name: "KCBD Lubbock — Direct Local Headlines", url: "https://www.kcbd.com/", category: "Local", mode: "html-links", include: "^/20\\d{2}/\\d{2}/\\d{2}/[a-z0-9-]+/?$" },
   { name: "Dallas Cowboys", url: "https://www.dallascowboys.com/rss/news", category: "Sports", mode: "rss" },
   { name: "Houston Texans", url: "https://www.houstontexans.com/rss/news", category: "Sports", mode: "rss" },
   { name: "Dallas Stars", url: "https://www.nhl.com/stars/news/", category: "Sports", mode: "html-links", include: "^/stars/news/" },
@@ -228,6 +232,18 @@ function parseHtmlLinks(html: string, source: Source): Item[] {
       const dated = datedDpsReleaseFromIndexTail(html, (match.index ?? 0) + match[0].length);
       if (!dated) continue;
       publishDate = dated;
+    }
+    if (source.name === "KTRE Lufkin — Direct Local Headlines" || source.name === "KCBD Lubbock — Direct Local Headlines") {
+      // Gray local outlets use canonical /YYYY/MM/DD/slug dates. Never invent
+      // publication dates from the crawl or load stale archive links as fresh.
+      const dated = parsed.pathname.match(/^\/(20\d{2})\/(\d{2})\/(\d{2})\/[^/]+\/?$/i);
+      if (!dated) continue;
+      const ymd = `${dated[1]}-${dated[2]}-${dated[3]}`;
+      const articleDate = new Date(`${ymd}T12:00:00Z`);
+      if (Number.isNaN(articleDate.getTime()) || articleDate.toISOString().slice(0, 10) !== ymd) continue;
+      const ageMs = Date.now() - articleDate.getTime();
+      if (ageMs > 14 * 86_400_000 || ageMs < -2 * 86_400_000) continue;
+      publishDate = articleDate.toISOString();
     }
     if (source.name === "Texas Comptroller of Public Accounts") {
       // The index lists years of releases; only ingest fresh stories, and use
@@ -457,7 +473,7 @@ async function fetchSource(source: Source): Promise<FetchResult> {
     && /too many redirects/i.test(fetched.error ?? "")
       ? await fetchText(dpsRelayUrl, accept, 1, 12000)
       : null;
-  const finalResult = dpsRelay
+  let finalResult = dpsRelay
     ? {
         ...dpsRelay,
         attempts: resolved.attempts + dpsRelay.attempts,
@@ -466,18 +482,34 @@ async function fetchSource(source: Source): Promise<FetchResult> {
           : { error: `${resolved.error ?? resolved.status}; dps-relay=${dpsRelay.error ?? dpsRelay.status}` }),
       }
     : resolved;
+  // Use the same fixed-allowlist Supabase relay only if Cloudflare cannot
+  // fetch these first-party HTML homepages. No arbitrary URL/user-supplied host.
+  const localPublisherRelayKey =
+    source.name === "KTRE Lufkin — Direct Local Headlines" ? "official-ktre-home"
+    : source.name === "KCBD Lubbock — Direct Local Headlines" ? "official-kcbd-home"
+    : null;
+  let localPublisherRelayUsed = false;
+  if (!finalResult.text && canFailoverTrustedRssStatus(finalResult.status) && localPublisherRelayKey && source.mode === "html-links") {
+    const relayUrl = `https://ftkznprjljkhymknvhye.supabase.co/functions/v1/ktr-rss-relay?feed=${localPublisherRelayKey}`;
+    const localFallback = await fetchText(relayUrl, "text/html,application/xhtml+xml,*/*", 1, 16000);
+    if (localFallback.text) {
+      finalResult = { ...localFallback, attempts: finalResult.attempts + localFallback.attempts };
+      localPublisherRelayUsed = true;
+    }
+  }
   const relayUsed = Boolean(relayed?.text || dpsRelay?.text);
+  const sourceRelayUsed = relayUsed || localPublisherRelayUsed;
   if (!finalResult.text && source.name === "Texas Standard" && source.mode === "rss") {
     const fallback = await fetchText("https://texasstandard.org/", "text/html,application/xhtml+xml,*/*", 1, 12000);
     return { source: source.name, url: "https://texasstandard.org/", status: fallback.status, attempts: fetched.attempts + fallback.attempts, mode: "texas-standard-html", items: fallback.text ? parseTexasStandardHtml(fallback.text) : [], error: fallback.text ? undefined : fallback.error };
   }
-  if (!finalResult.text) return { source: source.name, url: source.url, status: finalResult.status, attempts: finalResult.attempts, mode: source.mode, items: [], relayUsed, error: finalResult.error };
+  if (!finalResult.text) return { source: source.name, url: source.url, status: finalResult.status, attempts: finalResult.attempts, mode: source.mode, items: [], relayUsed: sourceRelayUsed, error: finalResult.error };
   const items = source.name === "Texas Attorney General — Direct News Releases" && source.mode === "html-links"
     ? parseTexasAgPressReleaseIndex(finalResult.text)
     : source.mode === "tpwd-html" ? parseTpwdHtml(finalResult.text)
     : source.mode === "html-links" ? parseHtmlLinks(finalResult.text, source)
     : parseFeed(finalResult.text, source.name);
-  return { source: source.name, url: source.url, status: finalResult.status, attempts: finalResult.attempts, mode: source.mode, items: items.slice(0, 30), relayUsed };
+  return { source: source.name, url: source.url, status: finalResult.status, attempts: finalResult.attempts, mode: source.mode, items: items.slice(0, 30), relayUsed: sourceRelayUsed };
 }
 
 async function upsertFeedRowsAdaptive(
