@@ -43,12 +43,49 @@ function normalizeEvidenceSegment(value: string): string {
     .trim();
 }
 
+// A live source record contained a full Cybertruck article in the description
+// of an unrelated White House arrest report. Reject only obvious long,
+ // cross-story metadata when the extracted article itself supports the headline.
+ // Never use this to suppress a source or bypass a publisher-diversity gate.
+const OFF_TOPIC_DESCRIPTION_STOP_WORDS = new Set([
+  "about", "after", "before", "could", "first", "from", "have", "into",
+  "more", "near", "news", "over", "reported", "says", "said", "some",
+  "state", "texas", "that", "their", "them", "there", "these", "this",
+  "those", "today", "under", "were", "what", "when", "where", "which",
+  "while", "with", "would", "years", "official", "officials",
+]);
+
+function topicalTerms(text: string): Set<string> {
+  return new Set(
+    normalizeEvidenceSegment(text).toLowerCase()
+      .match(/[a-z0-9]{4,}/g)?.filter((word) => !OFF_TOPIC_DESCRIPTION_STOP_WORDS.has(word)) ?? [],
+  );
+}
+
+function isDemonstrablyUnrelatedLongDescription(source: ResearchPacketSource): boolean {
+  // Short RSS summaries may legitimately use different phrasing from a title.
+  // A substantial independently extracted article is required as positive
+  // evidence before removing any mismatched, long metadata description.
+  if (source.description.length < 500 || source.extractedBody.length < 900) return false;
+  const headlineTerms = topicalTerms(source.title);
+  if (headlineTerms.size < 5) return false;
+  const articleTerms = topicalTerms(source.extractedBody);
+  const descriptionTerms = topicalTerms(source.description);
+  let articleMatches = 0;
+  let descriptionMatches = 0;
+  for (const term of headlineTerms) {
+    if (articleTerms.has(term)) articleMatches++;
+    if (descriptionTerms.has(term)) descriptionMatches++;
+  }
+  return articleMatches >= 4 && descriptionMatches === 0;
+}
+
 function sourceEvidenceSegments(source: ResearchPacketSource): string[] {
   const safeExtractedBody = trimTdemPressReleaseArchive(
     source.url,
     isSyntheticNewsroomEvidence(source.extractedBody) ? "" : source.extractedBody,
   );
-  const safeDescription = isSyntheticNewsroomEvidence(source.description) ? "" : source.description;
+  const safeDescription = isSyntheticNewsroomEvidence(source.description) || isDemonstrablyUnrelatedLongDescription(source) ? "" : source.description;
   const combined = `${safeDescription ?? ""}\n${safeExtractedBody ?? ""}`;
   return combined
     .split(/\n+|(?<=[.!?])\s+/)
@@ -148,7 +185,7 @@ export function buildResearchPacket(input: {
     .map((source) => ({
       ...source,
       title: source.title.slice(0, 500),
-      description: (isSyntheticNewsroomEvidence(source.description) ? "" : source.description).slice(0, 3000),
+      description: (isSyntheticNewsroomEvidence(source.description) || isDemonstrablyUnrelatedLongDescription(source) ? "" : source.description).slice(0, 3000),
       extractedBody: (isSyntheticNewsroomEvidence(source.extractedBody) ? "" : source.extractedBody).slice(0, 8000),
     }));
 
