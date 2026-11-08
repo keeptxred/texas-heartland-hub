@@ -594,6 +594,15 @@ jobs:
           PY
 
 
+      - name: Verify deployed school tax authority article
+        if: steps.revision.outputs.deploy == 'true'
+        env:
+          SITE_URL: ${{ env.PREVIEW_URL }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 scripts/authority/verify-school-tax-production.py
+
       # The ensure-current workflow reads this exact-SHA status and verifies the
       # live Fifteenth Court contract before deciding another deploy is needed.
       # Record it only AFTER every blocking legacy deployment/authority gate.

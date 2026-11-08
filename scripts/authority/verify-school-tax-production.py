@@ -1,0 +1,54 @@
+#!/usr/bin/env python3
+"""Bounded, fail-closed SSR acceptance check for the deployed school tax guide.
+
+Called inside the existing protected production deployment workflow, before
+the exact-main-SHA production-current status is published.
+"""
+import os
+import sys
+import time
+from urllib.error import HTTPError, URLError
+from urllib.request import Request, urlopen
+
+BASE = os.environ.get("SITE_URL", "https://keeptxred-site.freddy-coppola.workers.dev").rstrip("/")
+URL = BASE + "/news/isd-tax-burdens"
+MARKERS = {
+    "article heading": "Texas School Property Taxes in 2026",
+    "calculator heading": "Estimate your school property-tax bill",
+    "calculator field": "Applicable school exemptions",
+    "calculator result": "Estimated annual school tax",
+    "2025 vs 2026 comparison": "What changed in the statewide framework?",
+    "district sample heading": "Verified district examples from TEA",
+    "Aldine district record": "Aldine ISD (101902)",
+    "Frisco district record": "Frisco ISD (043905)",
+    "TEA official source": "ty2026-final-mcrs.pdf",
+    "MCR limitation": "not adopted total school-tax rates",
+}
+
+for attempt in range(1, 5):
+    try:
+        req = Request(URL, headers={
+            "User-Agent": "KeepTXRed-Production-Acceptance/1.0",
+            "Accept": "text/html",
+            "x-keeptxred-deployment-smoke": "canonical",
+        })
+        with urlopen(req, timeout=25) as response:
+            status = response.status
+            content_type = response.headers.get("Content-Type", "")
+            html = response.read(2_000_001).decode("utf-8", errors="replace")
+        if status != 200:
+            raise RuntimeError(f"HTTP {status}")
+        if "text/html" not in content_type:
+            raise RuntimeError(f"unexpected Content-Type: {content_type}")
+        if len(html) > 2_000_000:
+            raise RuntimeError("HTML exceeds bounded response size")
+        missing = [name for name, marker in MARKERS.items() if marker not in html]
+        if missing:
+            raise RuntimeError(f"SSR HTML missing: {', '.join(missing)}")
+        print(f"PASS school-tax production SSR acceptance: HTTP {status}, {len(MARKERS)} markers, {URL}")
+        sys.exit(0)
+    except (HTTPError, URLError, TimeoutError, RuntimeError) as error:
+        print(f"Attempt {attempt}/4 failed: {error}", file=sys.stderr)
+        if attempt < 4:
+            time.sleep(3 * attempt)
+raise SystemExit("FAIL: deployed school-tax article did not pass production acceptance")
