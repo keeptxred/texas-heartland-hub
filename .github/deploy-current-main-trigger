@@ -1,5 +1,4 @@
-Deploy current main to Cloudflare production.
-Trigger production deployment convergence for keeptxred.com.
-Target main: 95efb28a9b35713789c4a2fa0319080b51d74928
-Production-current verification requested: 2026-09-25T19:27-05:00
-Reason: deploy merged primary-source clustering fix and current Flyover image-recovery marker before exact-feed retries.
+Request exact-main protected verification and production convergence.
+Target main at request: 857b6e8ab8dbfbe4d7a10c1c2e5a8fb1fba912b4
+Reason: deploy merged 1,013-district TEA 2026 school-tax finder and verify live acceptance.
+Do not bypass protected tests or create a second publisher.
