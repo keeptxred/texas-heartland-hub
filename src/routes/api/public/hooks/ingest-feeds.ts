@@ -497,18 +497,19 @@ async function fetchSource(source: Source): Promise<FetchResult> {
       localPublisherRelayUsed = true;
     }
   }
-  const relayUsed = Boolean(relayed?.text || dpsRelay?.text || localPublisherRelayUsed);
+  const relayUsed = Boolean(relayed?.text || dpsRelay?.text);
+  const sourceRelayUsed = relayUsed || localPublisherRelayUsed;
   if (!finalResult.text && source.name === "Texas Standard" && source.mode === "rss") {
     const fallback = await fetchText("https://texasstandard.org/", "text/html,application/xhtml+xml,*/*", 1, 12000);
     return { source: source.name, url: "https://texasstandard.org/", status: fallback.status, attempts: fetched.attempts + fallback.attempts, mode: "texas-standard-html", items: fallback.text ? parseTexasStandardHtml(fallback.text) : [], error: fallback.text ? undefined : fallback.error };
   }
-  if (!finalResult.text) return { source: source.name, url: source.url, status: finalResult.status, attempts: finalResult.attempts, mode: source.mode, items: [], relayUsed, error: finalResult.error };
+  if (!finalResult.text) return { source: source.name, url: source.url, status: finalResult.status, attempts: finalResult.attempts, mode: source.mode, items: [], relayUsed: sourceRelayUsed, error: finalResult.error };
   const items = source.name === "Texas Attorney General — Direct News Releases" && source.mode === "html-links"
     ? parseTexasAgPressReleaseIndex(finalResult.text)
     : source.mode === "tpwd-html" ? parseTpwdHtml(finalResult.text)
     : source.mode === "html-links" ? parseHtmlLinks(finalResult.text, source)
     : parseFeed(finalResult.text, source.name);
-  return { source: source.name, url: source.url, status: finalResult.status, attempts: finalResult.attempts, mode: source.mode, items: items.slice(0, 30), relayUsed };
+  return { source: source.name, url: source.url, status: finalResult.status, attempts: finalResult.attempts, mode: source.mode, items: items.slice(0, 30), relayUsed: sourceRelayUsed };
 }
 
 async function upsertFeedRowsAdaptive(
