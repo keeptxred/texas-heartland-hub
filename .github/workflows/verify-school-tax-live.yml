@@ -27,3 +27,24 @@ jobs:
         env:
           SITE_URL: https://keeptxred-site.freddy-coppola.workers.dev
         run: python3 scripts/authority/verify-school-tax-production.py
+
+      - name: Diagnose public custom-domain article response
+        shell: bash
+        run: |
+          set -euo pipefail
+          for agent in 'Mozilla/5.0 (compatible; KeepTXRed-QA/1.0)' 'Googlebot'; do
+            echo "Checking public article as $agent"
+            status="$(curl --connect-timeout 10 --max-time 25 --silent --show-error \
+              -H 'cache-control: no-cache' \
+              -H 'x-keeptxred-deployment-smoke: canonical' \
+              -A "$agent" \
+              -o /tmp/school-tax-public.html -w '%{http_code}' \
+              'https://keeptxred.com/news/isd-tax-burdens')"
+            echo "Public article HTTP $status as $agent"
+            if [[ "$status" != '200' ]]; then
+              head -c 500 /tmp/school-tax-public.html || true
+              echo
+              echo "::error title=Public school-tax route unavailable::Custom-domain response $status as $agent"
+              exit 1
+            fi
+          done
