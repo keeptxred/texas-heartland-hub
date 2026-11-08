@@ -29,16 +29,17 @@ jobs:
         run: sudo apt-get update -qq && sudo apt-get install -y --no-install-recommends poppler-utils
       - name: Import and validate all district rates
         run: python3 scripts/authority/refresh-tea-2026-mcr.py
-      - name: Commit verified source snapshot only when changed
-        shell: bash
-        run: |
-          set -euo pipefail
-          git add src/data/tea-2026-final-mcr.json
-          if git diff --cached --quiet; then
-            echo "Official TEA snapshot unchanged."
-            exit 0
-          fi
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git commit -m "data: refresh verified TEA 2026 district MCRs"
-          git push origin HEAD:main
+      - name: Open or update reviewable dataset PR
+        uses: peter-evans/create-pull-request@v7
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "data: refresh verified TEA 2026 district MCRs"
+          branch: automation/tea-2026-district-mcr
+          delete-branch: true
+          title: "data: refresh verified official 2026 TEA district MCRs"
+          body: |
+            Automatically regenerated from TEA's final August 27, 2026 PDF.
+            Parser rejects duplicate IDs, incomplete statewide rows, out-of-range
+            rates and official reference mismatches. This is Tier One MCR only,
+            not an adopted school property tax rate.
+          add-paths: src/data/tea-2026-final-mcr.json
