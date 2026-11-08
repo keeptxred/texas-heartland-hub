@@ -1,3 +1,3 @@
-Reconcile protected production after exact-main verification.
-Target main: 4c9d00a42f1cee402500ae310a5b4d714cf2d8f6
-Reason: finish TEA statewide school tax finder live deployment acceptance.
+Request exact-main verification and production deployment of school-tax 404 repair.
+Merged repair: 131619e263e496d1386b451248f854c4c0987c33
+Checkpoint: #3597
