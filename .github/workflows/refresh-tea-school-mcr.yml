@@ -6,9 +6,6 @@ on:
     paths:
       - scripts/authority/refresh-tea-2026-mcr.py
       - .github/workflows/refresh-tea-school-mcr.yml
-  pull_request:
-    paths:
-      - .github/workflows/refresh-tea-school-mcr.yml
   schedule:
     - cron: '17 13 * * 2'
   workflow_dispatch:
