@@ -42,6 +42,12 @@ describe("retired static news hard removal", () => {
     expect(isExplicitlyRetiredStaticNewsPath(`/news/${slug}`)).toBe(false);
   });
 
+  it("keeps the legacy school-tax static fixture retired while serving its rebuilt authority route", () => {
+    expect(isExplicitlyRetiredStaticSlug("isd-tax-burdens")).toBe(true);
+    expect(isExplicitlyRetiredStaticNewsPath("/news/isd-tax-burdens")).toBe(false);
+    expect(isExplicitlyRetiredStaticNewsPath("/news/voter-id-surge")).toBe(true);
+  });
+
   it("retires explicit pre-quality-gate fixture news", () => {
     expect(isExplicitlyRetiredStaticNewsPath("/news/voter-id-surge")).toBe(true);
     expect(isExplicitlyRetiredStaticNewsPath("/news/operation-lone-star")).toBe(true);
