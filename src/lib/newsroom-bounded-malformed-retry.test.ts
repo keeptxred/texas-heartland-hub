@@ -6,10 +6,13 @@ const generator = readFileSync(
   "utf8",
 );
 
-describe("bounded newsroom malformed-JSON recovery", () => {
-  it("caps initial schema parsing retries and honors existing editorial source gates", () => {
-    expect(generator).toContain("maxAttempts: 2,");
-    expect(generator).toContain("requestTimeoutMs: 45_000,");
+describe("bounded low-latency newsroom provider recovery", () => {
+  it("uses the fast schema model with at most one repair and unchanged editorial source gates", () => {
+    expect(generator).toContain("modelOverride: \"@cf/google/gemma-4-26b-a4b-it\"");
+    expect(generator).toContain("disableThinking: true,");
+    expect(generator).not.toContain("maxAttempts: 2,");
+    expect(generator).toContain("requestTimeoutMs: 55_000,");
+    expect(generator).toContain("maxTokens: 6500,");
     expect(generator).toContain("ai.attempts === 1 && !validation.ok");
     expect(generator).toContain("let aiCalls = recoverSavedDraft ? 0 : ai.attempts;");
     expect(generator).toContain("let providerAttempts = ai.attempts;");

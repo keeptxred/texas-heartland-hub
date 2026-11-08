@@ -1,6 +1,7 @@
 type CloudflareEnvelope = {
   success?: boolean;
-  result?: { response?: unknown };
+  result?: { response?: unknown; choices?: Array<{ message?: { content?: unknown }; finish_reason?: string }> };
+  choices?: Array<{ message?: { content?: unknown }; finish_reason?: string }>;
   errors?: Array<{ message?: string }>;
 };
 
@@ -53,13 +54,15 @@ export async function runCloudflareJson<T>(input: {
   maxAttempts?: number;
   requestTimeoutMs?: number;
   jsonSchema?: Record<string, unknown>;
+  modelOverride?: string;
+  disableThinking?: boolean;
 }): Promise<CloudflareJsonResult<T>> {
   const cf = credentials();
   if (!cf) throw new Error("Cloudflare Workers AI credentials are not configured");
 
-  const model = input.jsonSchema
+  const model = input.modelOverride || (input.jsonSchema
     ? (process.env.AI_REWRITE_SCHEMA_MODEL_CF?.trim() || DEFAULT_CLOUDFLARE_SCHEMA_MODEL)
-    : (process.env.AI_REWRITE_MODEL_CF?.trim() || DEFAULT_CLOUDFLARE_JSON_MODEL);
+    : (process.env.AI_REWRITE_MODEL_CF?.trim() || DEFAULT_CLOUDFLARE_JSON_MODEL));
   const endpoint = `https://api.cloudflare.com/client/v4/accounts/${encodeURIComponent(cf.accountId)}/ai/run/${model}`;
   const maxAttempts = Math.min(Math.max(input.maxAttempts ?? 1, 1), 3);
   const requestTimeoutMs = Math.min(Math.max(input.requestTimeoutMs ?? 90_000, 10_000), 120_000);
@@ -88,6 +91,7 @@ export async function runCloudflareJson<T>(input: {
             : { type: "json_object" },
           max_tokens: Math.min(Math.max(input.maxTokens ?? 9000, 512), 12000),
           temperature: attempt === 1 ? 0.2 : 0.1,
+          ...(input.disableThinking ? { chat_template_kwargs: { enable_thinking: false } } : {}),
         }),
       });
     } catch (error) {
@@ -119,7 +123,16 @@ export async function runCloudflareJson<T>(input: {
       continue;
     }
 
-    const parsed = parseObject<T>(envelope.result?.response);
+    // Legacy Llama /ai/run responds with result.response. Modern OpenAI-
+    // compatible /ai/run models, including Gemma 4, return chat choices.
+    // Never infer success from an unparsed text completion, or from a model
+    // response terminated by output-length exhaustion.
+    const choice = envelope.result?.choices?.[0] ?? envelope.choices?.[0];
+    if (choice?.finish_reason === "length") {
+      lastFailure = "Cloudflare Workers AI truncated the JSON completion at the output token limit";
+      continue;
+    }
+    const parsed = parseObject<T>(choice?.message?.content ?? envelope.result?.response);
     if (parsed) return { value: parsed, provider: "cloudflare-workers-ai", model, attempts: attempt };
     lastFailure = `Cloudflare Workers AI returned malformed JSON on attempt ${attempt}`;
   }

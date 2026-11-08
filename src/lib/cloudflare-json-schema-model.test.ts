@@ -81,6 +81,62 @@ describe("Cloudflare structured newsroom model compatibility", () => {
     expect(retried.response_format.type).toBe("json_schema");
   });
 
+  it("parses the modern chat-completions envelope from Gemma 4 with thinking disabled", async () => {
+    vi.stubEnv("CLOUDFLARE_ACCOUNT_ID", "test-account");
+    vi.stubEnv("CLOUDFLARE_API_TOKEN", "test-token");
+    const requests: Array<{ url: string; options: RequestInit }> = [];
+    vi.stubGlobal("fetch", async (url: string, options: RequestInit) => {
+      requests.push({ url, options });
+      return new Response(JSON.stringify({
+        success: true,
+        result: {
+          choices: [{
+            index: 0,
+            message: { role: "assistant", content: '{"title":"Verified news"}' },
+            finish_reason: "stop",
+          }],
+        },
+      }), { status: 200 });
+    });
+    const schema = { type: "object", properties: { title: { type: "string" } }, required: ["title"] };
+    const result = await runCloudflareJson<{ title: string }>({
+      system: "Return one verified JSON object",
+      user: "source-backed story",
+      modelOverride: "@cf/google/gemma-4-26b-a4b-it",
+      disableThinking: true,
+      jsonSchema: schema,
+      maxTokens: 6500,
+      maxAttempts: 1,
+      requestTimeoutMs: 55_000,
+    });
+    expect(result.model).toBe("@cf/google/gemma-4-26b-a4b-it");
+    expect(result.value.title).toBe("Verified news");
+    expect(requests).toHaveLength(1);
+    expect(requests[0].url).toContain("/ai/run/@cf/google/gemma-4-26b-a4b-it");
+    const payload = JSON.parse(String(requests[0].options.body));
+    expect(payload.chat_template_kwargs).toEqual({ enable_thinking: false });
+    expect(payload.response_format).toEqual({ type: "json_schema", json_schema: schema });
+    expect(payload.max_tokens).toBe(6500);
+  });
+
+  it("rejects output-length-exhausted chat content, even if it looks like valid JSON", async () => {
+    vi.stubEnv("CLOUDFLARE_ACCOUNT_ID", "test-account");
+    vi.stubEnv("CLOUDFLARE_API_TOKEN", "test-token");
+    vi.stubGlobal("fetch", async () => new Response(JSON.stringify({
+      success: true,
+      result: { choices: [{
+        message: { content: '{"title":"Incomplete"}' },
+        finish_reason: "length",
+      }] },
+    }), { status: 200 }));
+    await expect(runCloudflareJson<{ title: string }>({
+      system: "Verified JSON", user: "source-backed report",
+      modelOverride: "@cf/google/gemma-4-26b-a4b-it",
+      jsonSchema: { type: "object", properties: { title: { type: "string" } } },
+      maxAttempts: 1,
+    })).rejects.toThrow("truncated the JSON completion");
+  });
+
   it("keeps lower-cost JSON-object requests on the existing 8B model", async () => {
     vi.stubEnv("CLOUDFLARE_ACCOUNT_ID", "test-account");
     vi.stubEnv("CLOUDFLARE_API_TOKEN", "test-token");
