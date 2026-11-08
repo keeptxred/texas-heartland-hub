@@ -5,6 +5,9 @@ const read = (path) => fs.readFileSync(path, 'utf8');
 const relay = read('supabase/functions/ktr-rss-relay/index.ts');
 const priority = read('supabase/functions/ktr-rss-relay-priority/index.ts');
 const migration = read('supabase/migrations/20261108145500_expand_nov8_flyover_independent_discovery.sql');
+const directIngest = read('src/routes/api/public/hooks/ingest-feeds.ts');
+const degraded = read('supabase/migrations/20261108160000_disable_blocked_google_benchmark_feeds.sql');
+
 
 const sources = [
   ['google-local-giving', 'Texas Community Giving and Food Drives — Google News', 'turkey drive'],
@@ -40,6 +43,23 @@ assert.match(backfill, /f\.target_site IS DISTINCT FROM desired\.site/);
 assert.match(backfill, /f\.internal_slug IS NULL/);
 assert.match(backfill, /f\.texasdefined_slug IS NULL/);
 assert.match(backfill, /routing_lock/);
+for (const [name, feed] of [
+  ['KTRE Lufkin — Direct Local Headlines', 'official-ktre-home'],
+  ['KCBD Lubbock — Direct Local Headlines', 'official-kcbd-home'],
+]) {
+  assert.ok(directIngest.includes(`name: "${name}"`), `Missing first-party source: ${name}`);
+  assert.ok(relay.includes(`"${feed}":`), `Missing fixed Gray relay allowlist: ${feed}`);
+  assert.ok(directIngest.includes(`"${feed}"`), `Missing bounded Gray fallback: ${feed}`);
+}
+assert.ok(directIngest.includes('mode: "html-links"'), 'Gray should use dated first-party HTML parsing');
+assert.ok(directIngest.includes('ageMs > 14 * 86_400_000'), 'Gray must refuse archive as fresh');
+assert.ok(directIngest.includes('articleDate.toISOString()'), 'Gray must derive date from URL, not crawl time');
+assert.ok(degraded.includes('SET enabled = false'), 'Blocked Google News feeds must be disabled');
+for (const [key, name] of sources.map(([key, name]) => [key, name])) {
+  assert.ok(degraded.includes(name), `Blocked Google source not disabled: ${key}`);
+}
+assert.ok(degraded.includes('HTTP 503'), 'Proven blocker must be documented');
+assert.ok(!degraded.includes('DELETE FROM public.content_sources'), 'Preserve source catalog history');
 assert.doesNotMatch(backfill, /SET title = title/i);
 assert.doesNotMatch(backfill, /SET ready_for_rewrite/i);
 for (const term of ['lufkin','midlothian','mckinney','buda','holly hop','kilgore','schlitterbahn','meteorite','starship','baylor']) {
