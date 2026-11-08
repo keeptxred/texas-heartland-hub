@@ -398,6 +398,12 @@ jobs:
           fi
           echo "Promoted Worker health passed and production edge route is reachable."
 
+      - name: Verify deployed school-tax authority and complete district finder
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.activate_custom_domain == true }}
+        env:
+          SITE_URL: ${{ steps.deploy.outputs.preview_url }}
+        run: python3 scripts/authority/verify-school-tax-production.py
+
       - name: Verify deployed law route ownership, H1s, and canonicals
         if: ${{ github.event_name == 'workflow_dispatch' && inputs.activate_custom_domain == true }}
         env:
