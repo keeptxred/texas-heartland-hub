@@ -1,0 +1,44 @@
+name: Refresh official 2026 TEA school district MCRs
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - scripts/authority/refresh-tea-2026-mcr.py
+      - .github/workflows/refresh-tea-school-mcr.yml
+  schedule:
+    - cron: '17 13 * * 2'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: refresh-tea-2026-school-mcr
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: main
+      - name: Install PDF text extractor
+        run: sudo apt-get update -qq && sudo apt-get install -y --no-install-recommends poppler-utils
+      - name: Import and validate all district rates
+        run: python3 scripts/authority/refresh-tea-2026-mcr.py
+      - name: Commit verified source snapshot only when changed
+        shell: bash
+        run: |
+          set -euo pipefail
+          git add src/data/tea-2026-final-mcr.json
+          if git diff --cached --quiet; then
+            echo "Official TEA snapshot unchanged."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "data: refresh verified TEA 2026 district MCRs"
+          git push origin HEAD:main
