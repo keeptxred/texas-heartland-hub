@@ -508,18 +508,28 @@ async function handler({ request }: { request: Request }) {
           system: newsroomRewriteSystemPrompt(packet),
           user: newsroomRewriteUserPrompt(packet),
           maxTokens: 12000,
-          maxAttempts: 1,
+          // A schema-mode response occasionally arrives as malformed/truncated
+          // JSON. Allow exactly one lower-temperature provider retry *within*
+          // the existing two-call initial-or-repair budget. Cap each network
+          // attempt at 45s to avoid the 90s Worker edge reset.
+          maxAttempts: 2,
+          requestTimeoutMs: 45_000,
           jsonSchema: NEWSROOM_DRAFT_JSON_SCHEMA,
         });
     generated = !recoverSavedDraft;
     let draft = normalizeNewsroomDraft(ai.value) as NewsroomDraft;
     let validation = validateNewsroomDraft(draft, packet);
     const firstValidationReasons = [...validation.reasons];
-    let aiCalls = recoverSavedDraft ? 0 : 1;
+    // Count real provider attempts, including one malformed-JSON recovery,
+    // rather than reporting a two-request recovery as one AI call.
+    let aiCalls = recoverSavedDraft ? 0 : ai.attempts;
     let providerAttempts = ai.attempts;
     let repairAttempted = false;
 
-    if (!recoverSavedDraft && !validation.ok && !validation.reasons.includes("brief_no_clear_news_event")) {
+    // A successful first response has one remaining editorial repair call.
+    // If malformed JSON already consumed the second call, hold any invalid
+    // result instead of making a third paid request or weakening validation.
+    if (!recoverSavedDraft && ai.attempts === 1 && !validation.ok && !validation.reasons.includes("brief_no_clear_news_event")) {
       repairAttempted = true;
       const repaired = await runCloudflareJson<NewsroomDraft>({
         system: `${newsroomRewriteSystemPrompt(packet)}\n\nREPAIR MODE: The previous draft failed local validation. Correct only the listed failures while preserving supported facts, a 4–6-section source-proportional structure, 2–3 factual paragraphs per section, and all existing source and anti-repetition quality requirements. Every repaired paragraph must stay at or below 130 words and 4 sentences; never merge multiple factual roles into one oversized paragraph. Do not invent detail or pad with generic commentary.${validation.reasons.includes("repeated_newsroom_paragraphs") ? " The supplied previousDraft deliberately excludes repeated paragraphs. Rebuild the full sections using independent original facts from the packet; never restore the deleted duplicates, never pad to length, and prefer four well-supported sections over six repetitive ones." : ""}`,

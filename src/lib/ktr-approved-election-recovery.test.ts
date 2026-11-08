@@ -21,7 +21,7 @@ describe("editorially approved October 11-25 election newsroom recovery", () => 
     expect(generator).toContain('.is("rejection_reason", null)');
     expect(generator).toContain('.eq("mode", "publish").eq("status", "GENERATED")');
     expect(generator).toContain('if (!recoverSavedDraft) {\n    const { data: reservation, error: reserveError }');
-    expect(generator).toContain('aiCalls = recoverSavedDraft ? 0 : 1');
+    expect(generator).toContain('aiCalls = recoverSavedDraft ? 0 : ai.attempts');
     expect(generator).toContain('savedGeneratedDraft!.id');
     expect(generator).toContain('const selectedQuery = db.from("news_publish_candidates").update(');
     expect(generator).toContain('.eq("status", "HELD").select("id")');

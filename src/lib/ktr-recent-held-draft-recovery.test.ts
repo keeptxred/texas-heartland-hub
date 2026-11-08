@@ -25,7 +25,7 @@ describe("bounded automatic recovery of recently GENERATED but HELD newsroom dra
   });
   it("does not consume new paid rewrite budget or publish rejected images to social", () => {
     expect(generator).toContain('if (!recoverSavedDraft) {\n    const { data: reservation, error: reserveError }');
-    expect(generator).toContain("let aiCalls = recoverSavedDraft ? 0 : 1");
+    expect(generator).toContain("let aiCalls = recoverSavedDraft ? 0 : ai.attempts");
     expect(generator).toContain("const imageReady = Boolean(preparedImage.ok");
     expect(generator).toContain("webOnly: !imageReady");
     expect(workflow).toContain("generate-newsroom?mode=publish&recover_held=1");

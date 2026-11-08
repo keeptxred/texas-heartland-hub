@@ -46,6 +46,41 @@ describe("Cloudflare structured newsroom model compatibility", () => {
     expect(payload.max_tokens).toBe(12000);
   });
 
+  it("recovers one malformed schema response with a bounded lower-temperature second call", async () => {
+    vi.stubEnv("CLOUDFLARE_ACCOUNT_ID", "test-account");
+    vi.stubEnv("CLOUDFLARE_API_TOKEN", "test-token");
+    vi.stubEnv("AI_REWRITE_SCHEMA_MODEL_CF", "");
+    const requests: Array<{ url: string; options: RequestInit }> = [];
+    vi.stubGlobal("fetch", async (url: string, options: RequestInit) => {
+      requests.push({ url, options });
+      return new Response(JSON.stringify({
+        success: true,
+        result: {
+          response: requests.length === 1
+            ? '{"title":"incomplete"'
+            : { title: "Original reporting passed source validation" },
+        },
+      }), { status: 200 });
+    });
+    const result = await runCloudflareJson<{ title: string }>({
+      system: "Produce source-grounded verified newsroom JSON",
+      user: "Real publisher packet",
+      jsonSchema: { type: "object", properties: { title: { type: "string" } }, required: ["title"] },
+      maxTokens: 12000,
+      maxAttempts: 2,
+      requestTimeoutMs: 45_000,
+    });
+    expect(result.attempts).toBe(2);
+    expect(result.value.title).toBe("Original reporting passed source validation");
+    expect(requests).toHaveLength(2);
+    const initial = JSON.parse(String(requests[0].options.body));
+    const retried = JSON.parse(String(requests[1].options.body));
+    expect(initial.temperature).toBe(0.2);
+    expect(retried.temperature).toBe(0.1);
+    expect(retried.messages[0].content).toContain("previous response was malformed or truncated");
+    expect(retried.response_format.type).toBe("json_schema");
+  });
+
   it("keeps lower-cost JSON-object requests on the existing 8B model", async () => {
     vi.stubEnv("CLOUDFLARE_ACCOUNT_ID", "test-account");
     vi.stubEnv("CLOUDFLARE_API_TOKEN", "test-token");
