@@ -1,0 +1,26 @@
+name: Verify live school-tax authority page
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - .github/workflows/deploy-cloudflare-production.yml
+      - .github/workflows/verify-school-tax-live.yml
+      - scripts/authority/verify-school-tax-production.py
+      - src/routes/news.isd-tax-burdens.tsx
+      - src/data/tea-2026-final-mcr.json
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  live-school-tax:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@v5
+      - name: Verify production Worker renders complete TEA district directory
+        env:
+          SITE_URL: https://keeptxred-site.freddy-coppola.workers.dev
+        run: python3 scripts/authority/verify-school-tax-production.py
