@@ -84,8 +84,8 @@ const DIRECT_SOURCES: Source[] = [
   { name: "NewsChannel 10 Amarillo", url: "https://www.newschannel10.com/news/", mode: "html-links", include: "^/20\\d{2}/" },
   // First-party local outlets: live homepages contain dated, canonical article
   // permalinks. Do not rely on Google News RSS (currently anti-bot 503).
-  { name: "KTRE Lufkin — Direct Local Headlines", url: "https://www.ktre.com/", category: "Local", mode: "html-links", include: "^/20\\\\d{2}/\\\\d{2}/\\\\d{2}/[a-z0-9-]+/?$" },
-  { name: "KCBD Lubbock — Direct Local Headlines", url: "https://www.kcbd.com/", category: "Local", mode: "html-links", include: "^/20\\\\d{2}/\\\\d{2}/\\\\d{2}/[a-z0-9-]+/?$" },
+  { name: "KTRE Lufkin — Direct Local Headlines", url: "https://www.ktre.com/", category: "Local", mode: "html-links", include: "^/20\\d{2}/\\d{2}/\\d{2}/[a-z0-9-]+/?$" },
+  { name: "KCBD Lubbock — Direct Local Headlines", url: "https://www.kcbd.com/", category: "Local", mode: "html-links", include: "^/20\\d{2}/\\d{2}/\\d{2}/[a-z0-9-]+/?$" },
   { name: "Dallas Cowboys", url: "https://www.dallascowboys.com/rss/news", category: "Sports", mode: "rss" },
   { name: "Houston Texans", url: "https://www.houstontexans.com/rss/news", category: "Sports", mode: "rss" },
   { name: "Dallas Stars", url: "https://www.nhl.com/stars/news/", category: "Sports", mode: "html-links", include: "^/stars/news/" },
@@ -236,7 +236,7 @@ function parseHtmlLinks(html: string, source: Source): Item[] {
     if (source.name === "KTRE Lufkin — Direct Local Headlines" || source.name === "KCBD Lubbock — Direct Local Headlines") {
       // Gray local outlets use canonical /YYYY/MM/DD/slug dates. Never invent
       // publication dates from the crawl or load stale archive links as fresh.
-      const dated = parsed.pathname.match(/^\\/(20\\d{2})\\/(\\d{2})\\/(\\d{2})\\/[^/]+\\/?$/i);
+      const dated = parsed.pathname.match(/^\/(20\d{2})\/(\d{2})\/(\d{2})\/[^/]+\/?$/i);
       if (!dated) continue;
       const ymd = `${dated[1]}-${dated[2]}-${dated[3]}`;
       const articleDate = new Date(`${ymd}T12:00:00Z`);
