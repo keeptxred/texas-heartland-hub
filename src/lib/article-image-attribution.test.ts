@@ -10,6 +10,19 @@ const AM_IMAGE =
   "https://commons.wikimedia.org/wiki/Special:Redirect/file/Lone_Star_Showdown_2006_McGee_on_goal-line.jpg";
 
 describe("article image attribution", () => {
+  it("credits the public-domain, correctly dated archival Hinojosa photograph", () => {
+    const photo = "https://commons.wikimedia.org/wiki/Special:Redirect/file/Gina_Hinojosa_at_the_AFL-CIO_COPE_convention_in_2024.jpg";
+    expect(getArticleImageAttribution(photo)).toMatchObject({
+      credit: "RRC1701",
+      sourceUrl: "https://commons.wikimedia.org/wiki/File:Gina_Hinojosa_at_the_AFL-CIO_COPE_convention_in_2024.jpg",
+      licenseName: "CC0 1.0 (public domain dedication)",
+      licenseUrl: "https://creativecommons.org/publicdomain/zero/1.0/",
+    });
+    expect(getArticleImageAttribution(photo)?.caption).toContain("not an election-night photograph");
+    expect(hasRequiredArticleImageAttribution(photo)).toBe(true);
+    expect(getGeneratedArticleImageDisclosure(photo)).toBeNull();
+  });
+
   it("credits the exact Flock Safety ALPR archive photograph", () => {
     expect(
       getArticleImageAttribution(
