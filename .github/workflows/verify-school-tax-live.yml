@@ -1,14 +1,13 @@
 name: Verify live school-tax authority page
 
 on:
-  pull_request:
+  workflow_run:
+    workflows:
+      - Deploy verified KeepTXRed to Cloudflare
+      - Ensure Cloudflare Production Matches Main
+      - Deploy KeepTXRed to Cloudflare
+    types: [completed]
     branches: [main]
-    paths:
-      - .github/workflows/deploy-cloudflare-production.yml
-      - .github/workflows/verify-school-tax-live.yml
-      - scripts/authority/verify-school-tax-production.py
-      - src/routes/news.isd-tax-burdens.tsx
-      - src/data/tea-2026-final-mcr.json
   workflow_dispatch:
 
 permissions:
@@ -16,6 +15,7 @@ permissions:
 
 jobs:
   live-school-tax:
+    if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
     timeout-minutes: 6
     steps:
