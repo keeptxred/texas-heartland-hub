@@ -94,6 +94,35 @@ describe("Texas statewide coverage scoring", () => {
     expect(classifySourceReputation("Lampasas ISD").score).toBeGreaterThanOrEqual(55);
   });
 
+  it("preserves first-party East Texas local utility notices even when the headline omits the town", () => {
+    const result = scoreFeedItem({
+      title: "Water line break shuts off water to hotel district, truck stop",
+      source: "KTRE Lufkin — Direct Local Headlines",
+      description: "KTRE Lufkin — Direct Local Headlines: Water line break shuts off water to hotel district, truck stop",
+      link: "https://www.ktre.com/2026/11/07/water-line-break-shuts-off-water-hotel-district-truck-stop/",
+      pub_date: fresh(),
+    });
+    expect(result.texasRelevanceScore).toBeGreaterThanOrEqual(40);
+    expect(result.sourceReputationScore).toBeGreaterThanOrEqual(65);
+  });
+
+  it("recognizes small-town Texas locations instead of limiting discovery to major cities", () => {
+    for (const [town, source] of [
+      ["Kilgore", "East Texas Local News"],
+      ["Midlothian", "North Texas Local News"],
+      ["Buda", "Central Texas Local News"],
+      ["Nacogdoches", "KTRE Lufkin — Direct Local Headlines"],
+    ]) {
+      const result = scoreFeedItem({
+        title: `${town} community prepares for annual volunteer food giveaway`,
+        source,
+        description: `Local residents in ${town}, Texas organize the food event.`,
+        pub_date: fresh(),
+      });
+      expect(result.texasRelevanceScore).toBeGreaterThanOrEqual(40);
+    }
+  });
+
   it("does not promote an unrelated national hospital story", () => {
     const result = scoreFeedItem({
       title: "Regional hospital receives national quality award",
