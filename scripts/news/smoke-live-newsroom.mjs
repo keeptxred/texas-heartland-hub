@@ -239,6 +239,61 @@ async function checkRecoveredHistoricalNewsUrls() {
 /** Phase 2A: exercise rendered production robots, structured data and sitemap contracts.
  * These deliberately use stored historical URLs and never generate a new article.
  */
+// The two recovered November 7 stories were corrected in Supabase after
+// publication. Exercise the deployed Worker HTML, not merely database rows or
+// a green GitHub workflow, to catch stale SSR/fallback content or missing
+// canonical, visual and attribution updates. Four bounded GETs are avoided:
+// just these two exact historical stories, one GET each.
+async function checkNov7NewsEditorialRestoration() {
+  const cases = [
+    {
+      slug: "2026-11-07-thompson-claims-votes-to-become-texas-house-speaker",
+      markers: [
+        "Impact on Texans: what the speaker decision actually changes",
+        "house.texas.gov/speaker",
+        "Senfronia_Thompson_2757_",
+      ],
+    },
+    {
+      slug: "2026-11-07-tx-dems-sweep-statewide-races-for-first-time-in-generation",
+      markers: [
+        "Independent check: state-reported vote totals (unofficial)",
+        "Impact on Texans: what changes after the election",
+        "Gina_Hinojosa_at_the_AFL-CIO_COPE_convention_in_2024.jpg",
+        "Texas Secretary of State",
+      ],
+      forbidden: ["ending 24 years", "0 primary or official records"],
+    },
+  ];
+  for (const item of cases) {
+    const path = `/news/${item.slug}`;
+    const response = await fetchWithTimeout(`${baseUrl}${path}`, {
+      redirect: "manual",
+      headers: {
+        Accept: "text/html",
+        "Cache-Control": "no-cache",
+        "User-Agent": "KeepTXRed-Nov07-Editorial-Restoration-Smoke/1.0",
+      },
+    });
+    const html = await response.text();
+    if (response.status !== 200) throw new Error(`restored November 7 article ${path} HTTP ${response.status}`);
+    const canonical = extractCanonical(html);
+    if (canonical !== `https://keeptxred.com${path}`) {
+      throw new Error(`restored November 7 article canonical mismatch: ${path}: ${canonical || "missing"}`);
+    }
+    // Ignore serialized framework state and script declarations: the text
+    // and image must actually appear in rendered, crawlable article HTML.
+    const visible = html.replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, " ");
+    for (const marker of item.markers) {
+      if (!visible.includes(marker)) throw new Error(`restored November 7 article missing live marker ${JSON.stringify(marker)}: ${path}`);
+    }
+    for (const marker of item.forbidden ?? []) {
+      if (visible.includes(marker)) throw new Error(`restored November 7 article still renders outdated assertion ${JSON.stringify(marker)}: ${path}`);
+    }
+    console.log(`OK restored November 7 article ${item.slug} canonical and verified editorial/image markers`);
+  }
+}
+
 async function checkNewsArchiveIndexability() {
   const checked = [
     { slug: "how-a-bill-becomes-texas-law", indexable: true },
@@ -395,6 +450,7 @@ for (const [label, check] of [
   ["deployment fingerprint", () => retry("deployment fingerprint", checkDeploymentFingerprint)],
   ["newsroom-health endpoint", () => retry("newsroom-health endpoint", checkNewsroomHealth)],
   ["verified historical news URL recovery", checkRecoveredHistoricalNewsUrls],
+  ["restored November 7 editorial accuracy and approved imagery", checkNov7NewsEditorialRestoration],
   ["Phase 2A production article/sitemap indexability", () => retry("Phase 2A production article/sitemap indexability", checkNewsArchiveIndexability, 3, 5000)],
   ["feed ingestion", checkIngestion],
   ["TexasDefined routed publication", () => retry("TexasDefined routed publication", checkTexasDefinedLive, 10, 30000)],
