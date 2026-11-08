@@ -64,6 +64,14 @@ const FEEDS: Record<string, string> = {
   "google-region-gulf-coast": "https://news.google.com/rss/search?q=%28Corpus+Christi+OR+Victoria+OR+Port+Lavaca+OR+Rockport+OR+Galveston+OR+Freeport+OR+Baytown+OR+Beaumont+OR+Port+Arthur%29+Texas+when%3A2d&hl=en-US&gl=US&ceid=US%3Aen",
   "google-region-south-texas": "https://news.google.com/rss/search?q=%28Laredo+OR+McAllen+OR+Brownsville+OR+Harlingen+OR+Edinburg+OR+Mission+OR+Kingsville+OR+Alice+OR+Eagle+Pass+OR+Del+Rio%29+Texas+when%3A2d&hl=en-US&gl=US&ceid=US%3Aen",
   "google-region-hill-country": "https://news.google.com/rss/search?q=%28San+Antonio+OR+New+Braunfels+OR+Boerne+OR+Kerrville+OR+Fredericksburg+OR+Seguin+OR+Universal+City+OR+Schertz%29+Texas+when%3A2d&hl=en-US&gl=US&ceid=US%3Aen",
+  // November 8 Texas roundup benchmark: new archetypes are discovery pointers only.
+  "google-local-giving": "https://news.google.com/rss/search?q=(Texas%20OR%20Kilgore)%20(%22turkey%20drive%22%20OR%20%22ham%20giveaway%22%20OR%20%22holiday%20food%20giveaway%22%20OR%20%22community%20food%20drive%22)%20when%3A5d&hl=en-US&gl=US&ceid=US%3Aen",
+  "google-local-utility": "https://news.google.com/rss/search?q=(Texas%20OR%20Lufkin)%20(%22water%20main%20break%22%20OR%20%22water%20line%20break%22%20OR%20%22boil%20water%20notice%22%20OR%20%22water%20service%20interruption%22)%20when%3A3d&hl=en-US&gl=US&ceid=US%3Aen",
+  "google-local-business-change": "https://news.google.com/rss/search?q=(Texas%20OR%20Lubbock)%20(%22closing%20after%22%20OR%20%22final%20day%20of%20business%22%20OR%20%22shop%20closing%22%20OR%20%22local%20business%20closes%22)%20when%3A4d&hl=en-US&gl=US&ceid=US%3Aen",
+  "google-local-investigations": "https://news.google.com/rss/search?q=(Texas%20OR%20Midlothian)%20(%22FBI%20search%22%20OR%20%22federal%20agents%20searched%22%20OR%20%22federal%20investigation%22%20OR%20%22investor%20fraud%22)%20when%3A3d&hl=en-US&gl=US&ceid=US%3Aen",
+  "google-space-launches": "https://news.google.com/rss/search?q=(Starbase%20OR%20Texas)%20(%22Starship%20flight%22%20OR%20%22Starship%20Flight%2015%22%20OR%20%22SpaceX%20launch%20target%22%20OR%20%22Starship%20booster%20catch%22)%20when%3A5d&hl=en-US&gl=US&ceid=US%3Aen",
+  "google-attraction-changes": "https://news.google.com/rss/search?q=(Texas%20OR%20Galveston%20OR%20Houston)%20(%22museum%20exhibit%20opens%22%20OR%20%22waterpark%20rebrand%22%20OR%20%22theme%20park%20renamed%22%20OR%20%22water%20park%20trademark%22%20OR%20%22meteorite%20exhibit%22)%20when%3A5d&hl=en-US&gl=US&ceid=US%3Aen",
+  "google-community-art": "https://news.google.com/rss/search?q=(Texas%20OR%20Buda)%20(%22sculpture%20naming%22%20OR%20%22statue%20naming%22%20OR%20%22public%20art%20vote%22%20OR%20%22wiener%20dog%20statue%22)%20when%3A5d&hl=en-US&gl=US&ceid=US%3Aen",
 };
 
 const UPSTREAM_HEADERS = {
