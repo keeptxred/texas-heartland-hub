@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { meetsArticleMainWordCount } from "@/lib/article-length";
 import { hasHeroVisualReadinessProvenance } from "@/lib/article-hero-readiness";
+import { eligibleImageBackfillAge } from "@/lib/image-backlog-age-policy";
 import { isLegacyGeneratedNewsAsset } from "@/lib/facebook-image-readiness";
 import {
   generateFeaturedImageForSlugDirect,
@@ -56,7 +57,10 @@ function isMissingImage(row: BacklogRow): boolean {
 }
 
 function isEligible(row: BacklogRow): boolean {
-  if (!row.published_at) return false;
+  // Defer old event reports instead of repeatedly paying AI to invent
+  // historical scenes that must fail the exact-subject vision review.
+  // Evergreen guides can be refreshed regardless of original publish date.
+  if (!eligibleImageBackfillAge(row.kind, row.published_at)) return false;
   // Any staged image has its own real-pixel editorial review. A rejected
   // archive candidate must remain quarantined too: regenerating a synthetic
   // image here wastes Workers AI usage and cannot approve the staged asset.
