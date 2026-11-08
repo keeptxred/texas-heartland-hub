@@ -244,7 +244,7 @@ async function checkRecoveredHistoricalNewsUrls() {
 // a green GitHub workflow, to catch stale SSR/fallback content or missing
 // canonical, visual and attribution updates. Four bounded GETs are avoided:
 // just these two exact historical stories, one GET each.
-async function checkNov7NewsEditorialRestoration() {
+async function checkRecentNewsEditorialRestoration() {
   const cases = [
     {
       slug: "2026-11-07-thompson-claims-votes-to-become-texas-house-speaker",
@@ -264,6 +264,21 @@ async function checkNov7NewsEditorialRestoration() {
       ],
       forbidden: ["ending 24 years", "0 primary or official records"],
     },
+    {
+      slug: "2026-11-08-hinojosa-names-transition-team-featuring-anti-voucher-republican-and-labor-allie",
+      markers: [
+        "Bipartisan transition team leadership announced",
+        "Ernest Bailes",
+        "Ryan Pollock",
+        "Gina_Hinojosa_at_the_AFL-CIO_COPE_convention_in_2024.jpg",
+        "not a photograph of her November 2026 transition-team announcement",
+      ],
+      forbidden: [
+        "/elections/candidates/",
+        "generic government building",
+        "image generation failed",
+      ],
+    },
   ];
   for (const item of cases) {
     const path = `/news/${item.slug}`;
@@ -272,25 +287,25 @@ async function checkNov7NewsEditorialRestoration() {
       headers: {
         Accept: "text/html",
         "Cache-Control": "no-cache",
-        "User-Agent": "KeepTXRed-Nov07-Editorial-Restoration-Smoke/1.0",
+        "User-Agent": "KeepTXRed-RecentNews-Editorial-Smoke/1.0",
       },
     });
     const html = await response.text();
-    if (response.status !== 200) throw new Error(`restored November 7 article ${path} HTTP ${response.status}`);
+    if (response.status !== 200) throw new Error(`verified recent article ${path} HTTP ${response.status}`);
     const canonical = extractCanonical(html);
     if (canonical !== `https://keeptxred.com${path}`) {
-      throw new Error(`restored November 7 article canonical mismatch: ${path}: ${canonical || "missing"}`);
+      throw new Error(`verified recent article canonical mismatch: ${path}: ${canonical || "missing"}`);
     }
     // Ignore serialized framework state and script declarations: the text
     // and image must actually appear in rendered, crawlable article HTML.
     const visible = html.replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, " ");
     for (const marker of item.markers) {
-      if (!visible.includes(marker)) throw new Error(`restored November 7 article missing live marker ${JSON.stringify(marker)}: ${path}`);
+      if (!visible.includes(marker)) throw new Error(`verified recent article missing live marker ${JSON.stringify(marker)}: ${path}`);
     }
     for (const marker of item.forbidden ?? []) {
-      if (visible.includes(marker)) throw new Error(`restored November 7 article still renders outdated assertion ${JSON.stringify(marker)}: ${path}`);
+      if (visible.includes(marker)) throw new Error(`verified recent article still renders outdated assertion ${JSON.stringify(marker)}: ${path}`);
     }
-    console.log(`OK restored November 7 article ${item.slug} canonical and verified editorial/image markers`);
+    console.log(`OK verified recent article ${item.slug} canonical and verified editorial/image markers`);
   }
 }
 
@@ -450,7 +465,7 @@ for (const [label, check] of [
   ["deployment fingerprint", () => retry("deployment fingerprint", checkDeploymentFingerprint)],
   ["newsroom-health endpoint", () => retry("newsroom-health endpoint", checkNewsroomHealth)],
   ["verified historical news URL recovery", checkRecoveredHistoricalNewsUrls],
-  ["restored November 7 editorial accuracy and approved imagery", checkNov7NewsEditorialRestoration],
+  ["recent news editorial accuracy, verified images and retired-route links", checkRecentNewsEditorialRestoration],
   ["Phase 2A production article/sitemap indexability", () => retry("Phase 2A production article/sitemap indexability", checkNewsArchiveIndexability, 3, 5000)],
   ["feed ingestion", checkIngestion],
   ["TexasDefined routed publication", () => retry("TexasDefined routed publication", checkTexasDefinedLive, 10, 30000)],
