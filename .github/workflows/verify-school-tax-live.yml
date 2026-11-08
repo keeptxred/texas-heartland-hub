@@ -48,3 +48,27 @@ jobs:
               exit 1
             fi
           done
+
+      - name: Inspect live SEO canonical and robots metadata
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import re
+          from urllib.request import Request, urlopen
+          url = "https://keeptxred.com/news/isd-tax-burdens"
+          with urlopen(Request(url, headers={"User-Agent": "Googlebot", "x-keeptxred-deployment-smoke": "canonical"}), timeout=25) as response:
+              html = response.read().decode("utf-8", errors="replace")
+              robots_header = response.headers.get("X-Robots-Tag", "")
+          canonical = re.findall(r'<link[^>]+rel=["\\\']canonical["\\\'][^>]*>', html, flags=re.I)
+          robots = re.findall(r'<meta[^>]+name=["\\\']robots["\\\'][^>]*>', html, flags=re.I)
+          print("Canonical links:", canonical)
+          print("Robots meta:", robots)
+          print("X-Robots-Tag:", robots_header)
+          if len(canonical) != 1 or url not in canonical[0]:
+              raise SystemExit("Missing or non-unique correct canonical")
+          if not robots or "index,follow" not in "".join(robots).replace(" ", "").lower():
+              raise SystemExit("Missing index,follow robots metadata")
+          if "noindex" in robots_header.lower():
+              raise SystemExit("Unexpected X-Robots-Tag noindex")
+          print("PASS public canonical and robots indexability metadata")
+          PY
