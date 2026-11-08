@@ -33,6 +33,15 @@ assert.match(migration, /NOT EXISTS\s*\(/i);
 assert.match(migration, /new\.internal_slug IS NOT NULL OR new\.texasdefined_slug IS NOT NULL OR locked/i);
 assert.doesNotMatch(migration, /new\.(ready_for_rewrite|internal_slug|texasdefined_slug|source_reputation_score|texas_relevance_score)\s*:=/i);
 assert.match(migration, /zzx_route_nov8_texas_story_archetypes/);
+const backfill = read('supabase/migrations/20261108152500_materialize_nov8_story_ownership_backfill.sql');
+assert.match(backfill, /UPDATE public\.texas_news_feed f/);
+assert.match(backfill, /SET target_site = desired\.site/);
+assert.match(backfill, /f\.target_site IS DISTINCT FROM desired\.site/);
+assert.match(backfill, /f\.internal_slug IS NULL/);
+assert.match(backfill, /f\.texasdefined_slug IS NULL/);
+assert.match(backfill, /routing_lock/);
+assert.doesNotMatch(backfill, /SET title = title/i);
+assert.doesNotMatch(backfill, /SET ready_for_rewrite/i);
 for (const term of ['lufkin','midlothian','mckinney','buda','holly hop','kilgore','schlitterbahn','meteorite','starship','baylor']) {
   assert.ok(migration.toLowerCase().includes(term), `Missing benchmark routing case: ${term}`);
 }
