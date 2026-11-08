@@ -12,6 +12,7 @@ const COMPTROLLER_RATES_URL = "https://comptroller.texas.gov/taxes/property-tax/
 
 export const Route = createFileRoute("/news/isd-tax-burdens")({
   head: () => ({
+    links: [{ rel: "canonical", href: "https://keeptxred.com/news/isd-tax-burdens" }],
     meta: [
       { title: "Texas School Property Taxes 2026: District MCRs and Calculator — Keep TX Red" },
       {
