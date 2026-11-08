@@ -15,6 +15,15 @@ const COMMONS = "https://commons.wikimedia.org/wiki/File:";
 
 const ATTRIBUTIONS: AttributionEntry[] = [
   {
+    imageUrl: "https://commons.wikimedia.org/wiki/Special:Redirect/file/Gina_Hinojosa_at_the_AFL-CIO_COPE_convention_in_2024.jpg",
+    credit: "RRC1701",
+    sourceUrl: `${COMMONS}Gina_Hinojosa_at_the_AFL-CIO_COPE_convention_in_2024.jpg`,
+    licenseName: "CC0 1.0 (public domain dedication)",
+    licenseUrl: "https://creativecommons.org/publicdomain/zero/1.0/",
+    caption: "Archive photograph of Texas governor-elect Gina Hinojosa speaking at the AFL-CIO COPE convention on January 28, 2024. She was one of the November 2026 Democratic statewide winners; this is not an election-night photograph.",
+    usageNote: "Original, unmodified photograph; page layout may crop responsively. Source: Wikimedia Commons.",
+  },
+  {
     imageUrl: "https://commons.wikimedia.org/wiki/Special:Redirect/file/Henry_Cuellar,_official_portrait.jpg",
     credit: "Eric Connolly / U.S. House Office of Photography",
     sourceUrl: `${COMMONS}Henry_Cuellar,_official_portrait.jpg`,
