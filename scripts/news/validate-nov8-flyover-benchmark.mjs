@@ -23,7 +23,7 @@ for (const [key, name, term] of sources) {
   const url = new URL(JSON.parse(encoded));
   assert.equal(url.hostname, 'news.google.com', `Unexpected upstream for ${key}`);
   assert.equal(url.pathname, '/rss/search', `Unexpected endpoint for ${key}`);
-  assert.match(url.searchParams.get('q') ?? '', /when:\\d+d/, `No date bound for ${key}`);
+  assert.match(url.searchParams.get('q') ?? '', /when:\d+d/, `No date bound for ${key}`);
   assert.ok((url.searchParams.get('q') ?? '').toLowerCase().includes(term.toLowerCase()), `Missing query focus: ${term}`);
   assert.ok(priority.includes(`"${key}",`), `Priority relay does not allow ${key}`);
   assert.ok(migration.includes(name), `Database source catalog missing ${name}`);
