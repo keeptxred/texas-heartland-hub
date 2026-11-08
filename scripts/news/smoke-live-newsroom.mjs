@@ -283,7 +283,7 @@ async function checkNov7NewsEditorialRestoration() {
     }
     // Ignore serialized framework state and script declarations: the text
     // and image must actually appear in rendered, crawlable article HTML.
-    const visible = html.replace(/<script\\b[^>]*>[\\s\\S]*?<\\/script>/gi, " ");
+    const visible = html.replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, " ");
     for (const marker of item.markers) {
       if (!visible.includes(marker)) throw new Error(`restored November 7 article missing live marker ${JSON.stringify(marker)}: ${path}`);
     }
