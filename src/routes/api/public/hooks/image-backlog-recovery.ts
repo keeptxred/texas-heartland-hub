@@ -57,6 +57,7 @@ function isMissingImage(row: BacklogRow): boolean {
 }
 
 function isEligible(row: BacklogRow): boolean {
+  if (!row.published_at) return false;
   // Defer old event reports instead of repeatedly paying AI to invent
   // historical scenes that must fail the exact-subject vision review.
   // Evergreen guides can be refreshed regardless of original publish date.
