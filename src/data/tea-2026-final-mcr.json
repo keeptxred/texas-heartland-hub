@@ -1,0 +1,5074 @@
+{
+  "taxYear": 2026,
+  "source": "https://tea.texas.gov/about-tea/state-funding/ty2026-final-mcrs.pdf",
+  "sourcePublished": "2026-08-27",
+  "rateType": "Tier One maximum compressed rate, not adopted M&O or I&S tax rate",
+  "districtCount": 1013,
+  "districts": [
+    {
+      "id": "109901",
+      "name": "ABBOTT ISD",
+      "mcr": "0.5628"
+    },
+    {
+      "id": "095901",
+      "name": "ABERNATHY ISD",
+      "mcr": "0.6254"
+    },
+    {
+      "id": "221901",
+      "name": "ABILENE ISD",
+      "mcr": "0.5628"
+    },
+    {
+      "id": "014901",
+      "name": "ACADEMY ISD",
+      "mcr": "0.5826"
+    },
+    {
+      "id": "180903",
+      "name": "ADRIAN ISD",
+      "mcr": "0.6254"
+    },
+    {
+      "id": "178901",
+      "name": "AGUA DULCE ISD",
+      "mcr": "0.6054"
+    },
+    {
+      "id": "015901",
+      "name": "ALAMO HEIGHTS ISD",
+      "mcr": "0.6254"
+    },
+    {
+      "id": "250906",
+      "name": "ALBA-GOLDEN ISD",
+      "mcr": "0.5955"
+    },
+    {
+      "id": "209901",
+      "name": "ALBANY ISD",
+      "mcr": "0.5861"
+    },
+    {
+      "id": "101902",
+      "name": "ALDINE ISD",
+      "mcr": "0.5973"
+    },
+    {
+      "id": "184907",
+      "name": "ALEDO ISD",
+      "mcr": "0.5892"
+    },
+    {
+      "id": "125901",
+      "name": "ALICE ISD",
+      "mcr": "0.6022"
+    },
+    {
+      "id": "101903",
+      "name": "ALIEF ISD",
+      "mcr": "0.6254"
+    },
+    {
+      "id": "043901",
+      "name": "ALLEN ISD",
+      "mcr": "0.5948"
+    },
+    {
+      "id": "022901",
+      "name": "ALPINE ISD",
+      "mcr": "0.6002"
+    },
+    {
+      "id": "037901",
+      "name": "ALTO ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "126901",
+      "name": "ALVARADO ISD",
+      "mcr": "0.5963"
+    },
+    {
+      "id": "020901",
+      "name": "ALVIN ISD",
+      "mcr": "0.5918"
+    },
+    {
+      "id": "249901",
+      "name": "ALVORD ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "188901",
+      "name": "AMARILLO ISD",
+      "mcr": "0.6254"
+    },
+    {
+      "id": "140901",
+      "name": "AMHERST ISD",
+      "mcr": "0.6254"
+    },
+    {
+      "id": "036901",
+      "name": "ANAHUAC ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "093901",
+      "name": "ANDERSON-SHIRO CISD",
+      "mcr": "0.6006"
+    },
+    {
+      "id": "002901",
+      "name": "ANDREWS ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "020902",
+      "name": "ANGLETON ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "043902",
+      "name": "ANNA ISD",
+      "mcr": "0.5775"
+    },
+    {
+      "id": "127901",
+      "name": "ANSON ISD",
+      "mcr": "0.5628"
+    },
+    {
+      "id": "071906",
+      "name": "ANTHONY ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "110901",
+      "name": "ANTON ISD",
+      "mcr": "0.6192"
+    },
+    {
+      "id": "228905",
+      "name": "APPLE SPRINGS ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "109912",
+      "name": "AQUILLA ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "205901",
+      "name": "ARANSAS PASS ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "005901",
+      "name": "ARCHER CITY ISD",
+      "mcr": "0.6254"
+    },
+    {
+      "id": "061910",
+      "name": "ARGYLE ISD",
+      "mcr": "0.5628"
+    },
+    {
+      "id": "220901",
+      "name": "ARLINGTON ISD",
+      "mcr": "0.6254"
+    },
+    {
+      "id": "212901",
+      "name": "ARP ISD",
+      "mcr": "0.6070"
+    },
+    {
+      "id": "217901",
+      "name": "ASPERMONT ISD",
+      "mcr": "0.6254"
+    },
+    {
+      "id": "107901",
+      "name": "ATHENS ISD",
+      "mcr": "0.5913"
+    },
+    {
+      "id": "034901",
+      "name": "ATLANTA ISD",
+      "mcr": "0.5867"
+    },
+    {
+      "id": "061907",
+      "name": "AUBREY ISD",
+      "mcr": "0.5628"
+    },
+    {
+      "id": "227901",
+      "name": "AUSTIN ISD",
+      "mcr": "0.6254"
+    },
+    {
+      "id": "196901",
+      "name": "AUSTWELL-TIVOLI ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "070901",
+      "name": "AVALON ISD",
+      "mcr": "0.6192"
+    },
+    {
+      "id": "194902",
+      "name": "AVERY ISD",
+      "mcr": "0.5694"
+    },
+    {
+      "id": "034902",
+      "name": "AVINGER ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "161918",
+      "name": "AXTELL ISD",
+      "mcr": "0.6009"
+    },
+    {
+      "id": "220915",
+      "name": "AZLE ISD",
+      "mcr": "0.6063"
+    },
+    {
+      "id": "030903",
+      "name": "BAIRD ISD",
+      "mcr": "0.5689"
+    },
+    {
+      "id": "200901",
+      "name": "BALLINGER ISD",
+      "mcr": "0.6254"
+    },
+    {
+      "id": "195902",
+      "name": "BALMORHEA ISD",
+      "mcr": "0.6254"
+    },
+    {
+      "id": "010902",
+      "name": "BANDERA ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "025901",
+      "name": "BANGS ISD",
+      "mcr": "0.6153"
+    },
+    {
+      "id": "178913",
+      "name": "BANQUETE ISD",
+      "mcr": "0.6150"
+    },
+    {
+      "id": "036902",
+      "name": "BARBERS HILL ISD",
+      "mcr": "0.5891"
+    },
+    {
+      "id": "014902",
+      "name": "BARTLETT ISD",
+      "mcr": "0.6104"
+    },
+    {
+      "id": "011901",
+      "name": "BASTROP ISD",
+      "mcr": "0.5999"
+    },
+    {
+      "id": "158901",
+      "name": "BAY CITY ISD",
+      "mcr": "0.5689"
+    },
+    {
+      "id": "123910",
+      "name": "BEAUMONT ISD",
+      "mcr": "0.6254"
+    },
+    {
+      "id": "183901",
+      "name": "BECKVILLE ISD",
+      "mcr": "0.5628"
+    },
+    {
+      "id": "013901",
+      "name": "BEEVILLE ISD",
+      "mcr": "0.6192"
+    },
+    {
+      "id": "039904",
+      "name": "BELLEVUE ISD",
+      "mcr": "0.6084"
+    },
+    {
+      "id": "091901",
+      "name": "BELLS ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "008901",
+      "name": "BELLVILLE ISD",
+      "mcr": "0.5694"
+    },
+    {
+      "id": "014903",
+      "name": "BELTON ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "125902",
+      "name": "BEN BOLT-PALITO BLANCO ISD",
+      "mcr": "0.5640"
+    },
+    {
+      "id": "066901",
+      "name": "BENAVIDES ISD",
+      "mcr": "0.6254"
+    },
+    {
+      "id": "138904",
+      "name": "BENJAMIN ISD",
+      "mcr": "0.6254"
+    },
+    {
+      "id": "187901",
+      "name": "BIG SANDY ISD",
+      "mcr": "0.6127"
+    },
+    {
+      "id": "230901",
+      "name": "BIG SANDY ISD",
+      "mcr": "0.5911"
+    },
+    {
+      "id": "114901",
+      "name": "BIG SPRING ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "220902",
+      "name": "BIRDVILLE ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "178902",
+      "name": "BISHOP CISD",
+      "mcr": "0.6254"
+    },
+    {
+      "id": "177903",
+      "name": "BLACKWELL CISD",
+      "mcr": "0.6254"
+    },
+    {
+      "id": "016902",
+      "name": "BLANCO ISD",
+      "mcr": "0.6125"
+    },
+    {
+      "id": "116915",
+      "name": "BLAND ISD",
+      "mcr": "0.6019"
+    },
+    {
+      "id": "025904",
+      "name": "BLANKET ISD",
+      "mcr": "0.6254"
+    },
+    {
+      "id": "034909",
+      "name": "BLOOMBURG ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "175902",
+      "name": "BLOOMING GROVE ISD",
+      "mcr": "0.6118"
+    },
+    {
+      "id": "235901",
+      "name": "BLOOMINGTON ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "043917",
+      "name": "BLUE RIDGE ISD",
+      "mcr": "0.5779"
+    },
+    {
+      "id": "072904",
+      "name": "BLUFF DALE ISD",
+      "mcr": "0.5628"
+    },
+    {
+      "id": "109913",
+      "name": "BLUM ISD",
+      "mcr": "0.5840"
+    },
+    {
+      "id": "130901",
+      "name": "BOERNE ISD",
+      "mcr": "0.6125"
+    },
+    {
+      "id": "116916",
+      "name": "BOLES ISD",
+      "mcr": "0.5628"
+    },
+    {
+      "id": "241901",
+      "name": "BOLING ISD",
+      "mcr": "0.6096"
+    },
+    {
+      "id": "074903",
+      "name": "BONHAM ISD",
+      "mcr": "0.6107"
+    },
+    {
+      "id": "148901",
+      "name": "BOOKER ISD",
+      "mcr": "0.6254"
+    },
+    {
+      "id": "017901",
+      "name": "BORDEN COUNTY ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "117901",
+      "name": "BORGER ISD",
+      "mcr": "0.6192"
+    },
+    {
+      "id": "161923",
+      "name": "BOSQUEVILLE ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "185901",
+      "name": "BOVINA ISD",
+      "mcr": "0.6192"
+    },
+    {
+      "id": "169901",
+      "name": "BOWIE ISD",
+      "mcr": "0.6008"
+    },
+    {
+      "id": "249902",
+      "name": "BOYD ISD",
+      "mcr": "0.6106"
+    },
+    {
+      "id": "136901",
+      "name": "BRACKETT ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "160901",
+      "name": "BRADY ISD",
+      "mcr": "0.6254"
+    },
+    {
+      "id": "008903",
+      "name": "BRAZOS ISD",
+      "mcr": "0.5728"
+    },
+    {
+      "id": "020905",
+      "name": "BRAZOSPORT ISD",
+      "mcr": "0.6254"
+    },
+    {
+      "id": "215901",
+      "name": "BRECKENRIDGE ISD",
+      "mcr": "0.5628"
+    },
+    {
+      "id": "198901",
+      "name": "BREMOND ISD",
+      "mcr": "0.5628"
+    },
+    {
+      "id": "239901",
+      "name": "BRENHAM ISD",
+      "mcr": "0.5890"
+    },
+    {
+      "id": "181901",
+      "name": "BRIDGE CITY ISD",
+      "mcr": "0.5628"
+    },
+    {
+      "id": "249903",
+      "name": "BRIDGEPORT ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "203902",
+      "name": "BROADDUS ISD",
+      "mcr": "0.5689"
+    },
+    {
+      "id": "184909",
+      "name": "BROCK ISD",
+      "mcr": "0.5756"
+    },
+    {
+      "id": "041901",
+      "name": "BRONTE ISD",
+      "mcr": "0.5689"
+    },
+    {
+      "id": "121902",
+      "name": "BROOKELAND ISD",
+      "mcr": "0.6174"
+    },
+    {
+      "id": "025908",
+      "name": "BROOKESMITH ISD",
+      "mcr": "0.5628"
+    },
+    {
+      "id": "024901",
+      "name": "BROOKS COUNTY ISD",
+      "mcr": "0.6254"
+    },
+    {
+      "id": "223901",
+      "name": "BROWNFIELD ISD",
+      "mcr": "0.6254"
+    },
+    {
+      "id": "107902",
+      "name": "BROWNSBORO ISD",
+      "mcr": "0.6020"
+    },
+    {
+      "id": "031901",
+      "name": "BROWNSVILLE ISD",
+      "mcr": "0.6016"
+    },
+    {
+      "id": "025902",
+      "name": "BROWNWOOD ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "161919",
+      "name": "BRUCEVILLE-EDDY ISD",
+      "mcr": "0.5628"
+    },
+    {
+      "id": "021902",
+      "name": "BRYAN ISD",
+      "mcr": "0.6168"
+    },
+    {
+      "id": "119901",
+      "name": "BRYSON ISD",
+      "mcr": "0.5689"
+    },
+    {
+      "id": "166907",
+      "name": "BUCKHOLTS ISD",
+      "mcr": "0.5628"
+    },
+    {
+      "id": "186901",
+      "name": "BUENA VISTA ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "145901",
+      "name": "BUFFALO ISD",
+      "mcr": "0.5852"
+    },
+    {
+      "id": "212902",
+      "name": "BULLARD ISD",
+      "mcr": "0.6013"
+    },
+    {
+      "id": "121903",
+      "name": "BUNA ISD",
+      "mcr": "0.6009"
+    },
+    {
+      "id": "243901",
+      "name": "BURKBURNETT ISD",
+      "mcr": "0.6254"
+    },
+    {
+      "id": "176901",
+      "name": "BURKEVILLE ISD",
+      "mcr": "0.6192"
+    },
+    {
+      "id": "126902",
+      "name": "BURLESON ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "027903",
+      "name": "BURNET CISD",
+      "mcr": "0.6123"
+    },
+    {
+      "id": "239903",
+      "name": "BURTON ISD",
+      "mcr": "0.5628"
+    },
+    {
+      "id": "188904",
+      "name": "BUSHLAND ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "109902",
+      "name": "BYNUM ISD",
+      "mcr": "0.5628"
+    },
+    {
+      "id": "116901",
+      "name": "CADDO MILLS ISD",
+      "mcr": "0.6139"
+    },
+    {
+      "id": "178903",
+      "name": "CALALLEN ISD",
+      "mcr": "0.6254"
+    },
+    {
+      "id": "026901",
+      "name": "CALDWELL ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "029901",
+      "name": "CALHOUN COUNTY ISD",
+      "mcr": "0.6254"
+    },
+    {
+      "id": "049905",
+      "name": "CALLISBURG ISD",
+      "mcr": "0.6063"
+    },
+    {
+      "id": "198902",
+      "name": "CALVERT ISD",
+      "mcr": "0.6098"
+    },
+    {
+      "id": "166901",
+      "name": "CAMERON ISD",
+      "mcr": "0.5689"
+    },
+    {
+      "id": "116910",
+      "name": "CAMPBELL ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "106901",
+      "name": "CANADIAN ISD",
+      "mcr": "0.6254"
+    },
+    {
+      "id": "234902",
+      "name": "CANTON ISD",
+      "mcr": "0.5827"
+    },
+    {
+      "id": "071907",
+      "name": "CANUTILLO ISD",
+      "mcr": "0.6085"
+    },
+    {
+      "id": "191901",
+      "name": "CANYON ISD",
+      "mcr": "0.6051"
+    },
+    {
+      "id": "201913",
+      "name": "CARLISLE ISD",
+      "mcr": "0.6192"
+    },
+    {
+      "id": "064903",
+      "name": "CARRIZO SPRINGS CISD",
+      "mcr": "0.6254"
+    },
+    {
+      "id": "220919",
+      "name": "CARROLL ISD",
+      "mcr": "0.6053"
+    },
+    {
+      "id": "057903",
+      "name": "CARROLLTON-FARMERS BRANCH ISD",
+      "mcr": "0.6098"
+    },
+    {
+      "id": "183902",
+      "name": "CARTHAGE ISD",
+      "mcr": "0.6045"
+    },
+    {
+      "id": "220917",
+      "name": "CASTLEBERRY ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "001902",
+      "name": "CAYUGA ISD",
+      "mcr": "0.5628"
+    },
+    {
+      "id": "057904",
+      "name": "CEDAR HILL ISD",
+      "mcr": "0.6085"
+    },
+    {
+      "id": "116902",
+      "name": "CELESTE ISD",
+      "mcr": "0.6049"
+    },
+    {
+      "id": "043903",
+      "name": "CELINA ISD",
+      "mcr": "0.5628"
+    },
+    {
+      "id": "210901",
+      "name": "CENTER ISD",
+      "mcr": "0.5817"
+    },
+    {
+      "id": "133901",
+      "name": "CENTER POINT ISD",
+      "mcr": "0.5983"
+    },
+    {
+      "id": "145902",
+      "name": "CENTERVILLE ISD",
+      "mcr": "0.6033"
+    },
+    {
+      "id": "228904",
+      "name": "CENTERVILLE ISD",
+      "mcr": "0.6097"
+    },
+    {
+      "id": "174908",
+      "name": "CENTRAL HEIGHTS ISD",
+      "mcr": "0.5926"
+    },
+    {
+      "id": "003907",
+      "name": "CENTRAL ISD",
+      "mcr": "0.6108"
+    },
+    {
+      "id": "101905",
+      "name": "CHANNELVIEW ISD",
+      "mcr": "0.5968"
+    },
+    {
+      "id": "103901",
+      "name": "CHANNING ISD",
+      "mcr": "0.6126"
+    },
+    {
+      "id": "212909",
+      "name": "CHAPEL HILL ISD",
+      "mcr": "0.5870"
+    },
+    {
+      "id": "225906",
+      "name": "CHAPEL HILL ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "007901",
+      "name": "CHARLOTTE ISD",
+      "mcr": "0.6186"
+    },
+    {
+      "id": "206903",
+      "name": "CHEROKEE ISD",
+      "mcr": "0.5709"
+    },
+    {
+      "id": "229906",
+      "name": "CHESTER ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "249904",
+      "name": "CHICO ISD",
+      "mcr": "0.6192"
+    },
+    {
+      "id": "038901",
+      "name": "CHILDRESS ISD",
+      "mcr": "0.5628"
+    },
+    {
+      "id": "099902",
+      "name": "CHILLICOTHE ISD",
+      "mcr": "0.6192"
+    },
+    {
+      "id": "073901",
+      "name": "CHILTON ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "161920",
+      "name": "CHINA SPRING ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "174901",
+      "name": "CHIRENO ISD",
+      "mcr": "0.5689"
+    },
+    {
+      "id": "139905",
+      "name": "CHISUM ISD",
+      "mcr": "0.6095"
+    },
+    {
+      "id": "226901",
+      "name": "CHRISTOVAL ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "067902",
+      "name": "CISCO ISD",
+      "mcr": "0.5628"
+    },
+    {
+      "id": "243906",
+      "name": "CITY VIEW ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "065901",
+      "name": "CLARENDON ISD",
+      "mcr": "0.6254"
+    },
+    {
+      "id": "194904",
+      "name": "CLARKSVILLE ISD",
+      "mcr": "0.5873"
+    },
+    {
+      "id": "006902",
+      "name": "CLAUDE ISD",
+      "mcr": "0.5628"
+    },
+    {
+      "id": "084910",
+      "name": "CLEAR CREEK ISD",
+      "mcr": "0.6190"
+    },
+    {
+      "id": "126903",
+      "name": "CLEBURNE ISD",
+      "mcr": "0.5741"
+    },
+    {
+      "id": "146901",
+      "name": "CLEVELAND ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "018901",
+      "name": "CLIFTON ISD",
+      "mcr": "0.5628"
+    },
+    {
+      "id": "071901",
+      "name": "CLINT ISD",
+      "mcr": "0.5821"
+    },
+    {
+      "id": "030902",
+      "name": "CLYDE CISD",
+      "mcr": "0.5628"
+    },
+    {
+      "id": "114902",
+      "name": "COAHOMA ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "204901",
+      "name": "COLDSPRING-OAKHURST CISD",
+      "mcr": "0.5628"
+    },
+    {
+      "id": "042901",
+      "name": "COLEMAN ISD",
+      "mcr": "0.5628"
+    },
+    {
+      "id": "021901",
+      "name": "COLLEGE STATION ISD",
+      "mcr": "0.6112"
+    },
+    {
+      "id": "091902",
+      "name": "COLLINSVILLE ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "229901",
+      "name": "COLMESNEIL ISD",
+      "mcr": "0.6254"
+    },
+    {
+      "id": "168901",
+      "name": "COLORADO ISD",
+      "mcr": "0.5676"
+    },
+    {
+      "id": "020907",
+      "name": "COLUMBIA-BRAZORIA ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "045902",
+      "name": "COLUMBUS ISD",
+      "mcr": "0.5729"
+    },
+    {
+      "id": "046902",
+      "name": "COMAL ISD",
+      "mcr": "0.6048"
+    },
+    {
+      "id": "047901",
+      "name": "COMANCHE ISD",
+      "mcr": "0.5986"
+    },
+    {
+      "id": "130902",
+      "name": "COMFORT ISD",
+      "mcr": "0.5894"
+    },
+    {
+      "id": "116903",
+      "name": "COMMERCE ISD",
+      "mcr": "0.5992"
+    },
+    {
+      "id": "043918",
+      "name": "COMMUNITY ISD",
+      "mcr": "0.5628"
+    },
+    {
+      "id": "112908",
+      "name": "COMO-PICKTON CISD",
+      "mcr": "0.5628"
+    },
+    {
+      "id": "233903",
+      "name": "COMSTOCK ISD",
+      "mcr": "0.6192"
+    },
+    {
+      "id": "161921",
+      "name": "CONNALLY ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "170902",
+      "name": "CONROE ISD",
+      "mcr": "0.6171"
+    },
+    {
+      "id": "147901",
+      "name": "COOLIDGE ISD",
+      "mcr": "0.6149"
+    },
+    {
+      "id": "060902",
+      "name": "COOPER ISD",
+      "mcr": "0.5628"
+    },
+    {
+      "id": "057922",
+      "name": "COPPELL ISD",
+      "mcr": "0.6095"
+    },
+    {
+      "id": "050910",
+      "name": "COPPERAS COVE ISD",
+      "mcr": "0.6192"
+    },
+    {
+      "id": "178904",
+      "name": "CORPUS CHRISTI ISD",
+      "mcr": "0.6183"
+    },
+    {
+      "id": "187904",
+      "name": "CORRIGAN-CAMDEN ISD",
+      "mcr": "0.5843"
+    },
+    {
+      "id": "175903",
+      "name": "CORSICANA ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "095902",
+      "name": "COTTON CENTER ISD",
+      "mcr": "0.6254"
+    },
+    {
+      "id": "142901",
+      "name": "COTULLA ISD",
+      "mcr": "0.6185"
+    },
+    {
+      "id": "246914",
+      "name": "COUPLAND ISD",
+      "mcr": "0.6122"
+    },
+    {
+      "id": "109903",
+      "name": "COVINGTON ISD",
+      "mcr": "0.5777"
+    },
+    {
+      "id": "129901",
+      "name": "CRANDALL ISD",
+      "mcr": "0.6164"
+    },
+    {
+      "id": "052901",
+      "name": "CRANE ISD",
+      "mcr": "0.6033"
+    },
+    {
+      "id": "018908",
+      "name": "CRANFILLS GAP ISD",
+      "mcr": "0.6101"
+    },
+    {
+      "id": "161901",
+      "name": "CRAWFORD ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "053001",
+      "name": "CROCKETT COUNTY CONSOLIDATED CSD",
+      "mcr": "0.6254"
+    },
+    {
+      "id": "113901",
+      "name": "CROCKETT ISD",
+      "mcr": "0.5854"
+    },
+    {
+      "id": "101906",
+      "name": "CROSBY ISD",
+      "mcr": "0.5628"
+    },
+    {
+      "id": "054901",
+      "name": "CROSBYTON CISD",
+      "mcr": "0.6254"
+    },
+    {
+      "id": "030901",
+      "name": "CROSS PLAINS ISD",
+      "mcr": "0.6192"
+    },
+    {
+      "id": "107904",
+      "name": "CROSS ROADS ISD",
+      "mcr": "0.6192"
+    },
+    {
+      "id": "078901",
+      "name": "CROWELL ISD",
+      "mcr": "0.6254"
+    },
+    {
+      "id": "220912",
+      "name": "CROWLEY ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "254901",
+      "name": "CRYSTAL CITY ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "062901",
+      "name": "CUERO ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "055901",
+      "name": "CULBERSON COUNTY-ALLAMOORE ISD",
+      "mcr": "0.6254"
+    },
+    {
+      "id": "112905",
+      "name": "CUMBY COLLEGIATE ISD",
+      "mcr": "0.5628"
+    },
+    {
+      "id": "174902",
+      "name": "CUSHING ISD",
+      "mcr": "0.6201"
+    },
+    {
+      "id": "101907",
+      "name": "CYPRESS-FAIRBANKS ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "163902",
+      "name": "D'HANIS ISD",
+      "mcr": "0.6159"
+    },
+    {
+      "id": "172902",
+      "name": "DAINGERFIELD-LONE STAR ISD",
+      "mcr": "0.6254"
+    },
+    {
+      "id": "056901",
+      "name": "DALHART ISD",
+      "mcr": "0.6085"
+    },
+    {
+      "id": "057905",
+      "name": "DALLAS ISD",
+      "mcr": "0.5954"
+    },
+    {
+      "id": "020910",
+      "name": "DAMON ISD",
+      "mcr": "0.5628"
+    },
+    {
+      "id": "020904",
+      "name": "DANBURY ISD",
+      "mcr": "0.6079"
+    },
+    {
+      "id": "148905",
+      "name": "DARROUZETT ISD",
+      "mcr": "0.5799"
+    },
+    {
+      "id": "058902",
+      "name": "DAWSON ISD",
+      "mcr": "0.6254"
+    },
+    {
+      "id": "175904",
+      "name": "DAWSON ISD",
+      "mcr": "0.5689"
+    },
+    {
+      "id": "146902",
+      "name": "DAYTON ISD",
+      "mcr": "0.5836"
+    },
+    {
+      "id": "047902",
+      "name": "DE LEON ISD",
+      "mcr": "0.6099"
+    },
+    {
+      "id": "249905",
+      "name": "DECATUR ISD",
+      "mcr": "0.6131"
+    },
+    {
+      "id": "101908",
+      "name": "DEER PARK ISD",
+      "mcr": "0.6229"
+    },
+    {
+      "id": "019901",
+      "name": "DEKALB ISD",
+      "mcr": "0.5988"
+    },
+    {
+      "id": "227910",
+      "name": "DEL VALLE ISD",
+      "mcr": "0.5628"
+    },
+    {
+      "id": "115903",
+      "name": "DELL CITY ISD",
+      "mcr": "0.5981"
+    },
+    {
+      "id": "091903",
+      "name": "DENISON ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "061901",
+      "name": "DENTON ISD",
+      "mcr": "0.5628"
+    },
+    {
+      "id": "251901",
+      "name": "DENVER CITY ISD",
+      "mcr": "0.5628"
+    },
+    {
+      "id": "057906",
+      "name": "DESOTO ISD",
+      "mcr": "0.6087"
+    },
+    {
+      "id": "194905",
+      "name": "DETROIT ISD",
+      "mcr": "0.5628"
+    },
+    {
+      "id": "146903",
+      "name": "DEVERS ISD",
+      "mcr": "0.6254"
+    },
+    {
+      "id": "163901",
+      "name": "DEVINE ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "081906",
+      "name": "DEW ISD",
+      "mcr": "0.6191"
+    },
+    {
+      "id": "176903",
+      "name": "DEWEYVILLE ISD",
+      "mcr": "0.6254"
+    },
+    {
+      "id": "003905",
+      "name": "DIBOLL ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "084901",
+      "name": "DICKINSON ISD",
+      "mcr": "0.6205"
+    },
+    {
+      "id": "082902",
+      "name": "DILLEY ISD",
+      "mcr": "0.6254"
+    },
+    {
+      "id": "144903",
+      "name": "DIME BOX ISD",
+      "mcr": "0.5628"
+    },
+    {
+      "id": "035901",
+      "name": "DIMMITT ISD",
+      "mcr": "0.5747"
+    },
+    {
+      "id": "133905",
+      "name": "DIVIDE ISD",
+      "mcr": "0.5628"
+    },
+    {
+      "id": "074904",
+      "name": "DODD CITY ISD",
+      "mcr": "0.5689"
+    },
+    {
+      "id": "108902",
+      "name": "DONNA ISD",
+      "mcr": "0.5628"
+    },
+    {
+      "id": "086024",
+      "name": "DOSS CONSOLIDATED CSD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "174911",
+      "name": "DOUGLASS ISD",
+      "mcr": "0.5732"
+    },
+    {
+      "id": "105904",
+      "name": "DRIPPING SPRINGS ISD",
+      "mcr": "0.6102"
+    },
+    {
+      "id": "178905",
+      "name": "DRISCOLL ISD",
+      "mcr": "0.6048"
+    },
+    {
+      "id": "072902",
+      "name": "DUBLIN ISD",
+      "mcr": "0.5682"
+    },
+    {
+      "id": "171901",
+      "name": "DUMAS ISD",
+      "mcr": "0.6254"
+    },
+    {
+      "id": "057907",
+      "name": "DUNCANVILLE ISD",
+      "mcr": "0.6015"
+    },
+    {
+      "id": "220918",
+      "name": "EAGLE MT-SAGINAW ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "159901",
+      "name": "EAGLE PASS ISD",
+      "mcr": "0.6098"
+    },
+    {
+      "id": "227909",
+      "name": "EANES ISD",
+      "mcr": "0.6254"
+    },
+    {
+      "id": "025909",
+      "name": "EARLY ISD",
+      "mcr": "0.5969"
+    },
+    {
+      "id": "241902",
+      "name": "EAST BERNARD ISD",
+      "mcr": "0.6254"
+    },
+    {
+      "id": "015911",
+      "name": "EAST CENTRAL ISD",
+      "mcr": "0.5941"
+    },
+    {
+      "id": "036903",
+      "name": "EAST CHAMBERS ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "067903",
+      "name": "EASTLAND ISD",
+      "mcr": "0.5826"
+    },
+    {
+      "id": "068901",
+      "name": "ECTOR COUNTY ISD",
+      "mcr": "0.6012"
+    },
+    {
+      "id": "074905",
+      "name": "ECTOR ISD",
+      "mcr": "0.6089"
+    },
+    {
+      "id": "108903",
+      "name": "EDCOUCH-ELSA ISD",
+      "mcr": "0.6192"
+    },
+    {
+      "id": "048901",
+      "name": "EDEN CISD",
+      "mcr": "0.5689"
+    },
+    {
+      "id": "015905",
+      "name": "EDGEWOOD ISD",
+      "mcr": "0.6254"
+    },
+    {
+      "id": "234903",
+      "name": "EDGEWOOD ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "108904",
+      "name": "EDINBURG CISD",
+      "mcr": "0.6006"
+    },
+    {
+      "id": "120901",
+      "name": "EDNA ISD",
+      "mcr": "0.6192"
+    },
+    {
+      "id": "241903",
+      "name": "EL CAMPO ISD",
+      "mcr": "0.6104"
+    },
+    {
+      "id": "071902",
+      "name": "EL PASO ISD",
+      "mcr": "0.6254"
+    },
+    {
+      "id": "243902",
+      "name": "ELECTRA ISD",
+      "mcr": "0.6254"
+    },
+    {
+      "id": "011902",
+      "name": "ELGIN ISD",
+      "mcr": "0.6074"
+    },
+    {
+      "id": "001903",
+      "name": "ELKHART ISD",
+      "mcr": "0.5941"
+    },
+    {
+      "id": "102906",
+      "name": "ELYSIAN FIELDS ISD",
+      "mcr": "0.5717"
+    },
+    {
+      "id": "070903",
+      "name": "ENNIS ISD",
+      "mcr": "0.6192"
+    },
+    {
+      "id": "049906",
+      "name": "ERA ISD",
+      "mcr": "0.5634"
+    },
+    {
+      "id": "030906",
+      "name": "EULA ISD",
+      "mcr": "0.5819"
+    },
+    {
+      "id": "107905",
+      "name": "EUSTACE ISD",
+      "mcr": "0.6015"
+    },
+    {
+      "id": "121906",
+      "name": "EVADALE ISD",
+      "mcr": "0.6202"
+    },
+    {
+      "id": "050901",
+      "name": "EVANT ISD",
+      "mcr": "0.6108"
+    },
+    {
+      "id": "220904",
+      "name": "EVERMAN ISD",
+      "mcr": "0.5672"
+    },
+    {
+      "id": "210906",
+      "name": "EXCELSIOR ISD",
+      "mcr": "0.5969"
+    },
+    {
+      "id": "143906",
+      "name": "EZZELL ISD",
+      "mcr": "0.6210"
+    },
+    {
+      "id": "071903",
+      "name": "FABENS ISD",
+      "mcr": "0.6254"
+    },
+    {
+      "id": "081902",
+      "name": "FAIRFIELD ISD",
+      "mcr": "0.5628"
+    },
+    {
+      "id": "128904",
+      "name": "FALLS CITY ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "060914",
+      "name": "FANNINDEL ISD",
+      "mcr": "0.5769"
+    },
+    {
+      "id": "043904",
+      "name": "FARMERSVILLE ISD",
+      "mcr": "0.5753"
+    },
+    {
+      "id": "185902",
+      "name": "FARWELL ISD",
+      "mcr": "0.6091"
+    },
+    {
+      "id": "075906",
+      "name": "FAYETTEVILLE ISD",
+      "mcr": "0.5750"
+    },
+    {
+      "id": "070905",
+      "name": "FERRIS ISD",
+      "mcr": "0.5628"
+    },
+    {
+      "id": "075901",
+      "name": "FLATONIA ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "246902",
+      "name": "FLORENCE ISD",
+      "mcr": "0.5628"
+    },
+    {
+      "id": "247901",
+      "name": "FLORESVILLE ISD",
+      "mcr": "0.5816"
+    },
+    {
+      "id": "178914",
+      "name": "FLOUR BLUFF ISD",
+      "mcr": "0.6161"
+    },
+    {
+      "id": "077901",
+      "name": "FLOYDADA COLLEGIATE ISD",
+      "mcr": "0.6254"
+    },
+    {
+      "id": "148902",
+      "name": "FOLLETT ISD",
+      "mcr": "0.6128"
+    },
+    {
+      "id": "169910",
+      "name": "FORESTBURG ISD",
+      "mcr": "0.6237"
+    },
+    {
+      "id": "129902",
+      "name": "FORNEY ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "114904",
+      "name": "FORSAN ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "079907",
+      "name": "FORT BEND ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "242906",
+      "name": "FORT ELLIOTT CISD",
+      "mcr": "0.6254"
+    },
+    {
+      "id": "186902",
+      "name": "FORT STOCKTON ISD",
+      "mcr": "0.6207"
+    },
+    {
+      "id": "220905",
+      "name": "FORT WORTH ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "198903",
+      "name": "FRANKLIN ISD",
+      "mcr": "0.6254"
+    },
+    {
+      "id": "001904",
+      "name": "FRANKSTON ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "086901",
+      "name": "FREDERICKSBURG ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "066903",
+      "name": "FREER ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "152907",
+      "name": "FRENSHIP ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "084911",
+      "name": "FRIENDSWOOD ISD",
+      "mcr": "0.6118"
+    },
+    {
+      "id": "185903",
+      "name": "FRIONA ISD",
+      "mcr": "0.6161"
+    },
+    {
+      "id": "043905",
+      "name": "FRISCO ISD",
+      "mcr": "0.6110"
+    },
+    {
+      "id": "175905",
+      "name": "FROST ISD",
+      "mcr": "0.5679"
+    },
+    {
+      "id": "234909",
+      "name": "FRUITVALE ISD",
+      "mcr": "0.5881"
+    },
+    {
+      "id": "122901",
+      "name": "FT DAVIS ISD",
+      "mcr": "0.6066"
+    },
+    {
+      "id": "115901",
+      "name": "FT HANCOCK ISD",
+      "mcr": "0.6185"
+    },
+    {
+      "id": "049901",
+      "name": "GAINESVILLE ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "101910",
+      "name": "GALENA PARK ISD",
+      "mcr": "0.6254"
+    },
+    {
+      "id": "084902",
+      "name": "GALVESTON ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "120902",
+      "name": "GANADO ISD",
+      "mcr": "0.5979"
+    },
+    {
+      "id": "057909",
+      "name": "GARLAND ISD",
+      "mcr": "0.5853"
+    },
+    {
+      "id": "184911",
+      "name": "GARNER ISD",
+      "mcr": "0.6158"
+    },
+    {
+      "id": "174903",
+      "name": "GARRISON ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "183904",
+      "name": "GARY ISD",
+      "mcr": "0.6192"
+    },
+    {
+      "id": "050902",
+      "name": "GATESVILLE ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "166902",
+      "name": "GAUSE ISD",
+      "mcr": "0.6254"
+    },
+    {
+      "id": "149901",
+      "name": "GEORGE WEST ISD",
+      "mcr": "0.5902"
+    },
+    {
+      "id": "246904",
+      "name": "GEORGETOWN ISD",
+      "mcr": "0.6131"
+    },
+    {
+      "id": "161925",
+      "name": "GHOLSON ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "144901",
+      "name": "GIDDINGS ISD",
+      "mcr": "0.5689"
+    },
+    {
+      "id": "230902",
+      "name": "GILMER ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "092901",
+      "name": "GLADEWATER ISD",
+      "mcr": "0.6112"
+    },
+    {
+      "id": "087901",
+      "name": "GLASSCOCK COUNTY ISD",
+      "mcr": "0.6192"
+    },
+    {
+      "id": "213901",
+      "name": "GLEN ROSE ISD",
+      "mcr": "0.5673"
+    },
+    {
+      "id": "126911",
+      "name": "GODLEY ISD",
+      "mcr": "0.6150"
+    },
+    {
+      "id": "169906",
+      "name": "GOLD BURG ISD",
+      "mcr": "0.6254"
+    },
+    {
+      "id": "167901",
+      "name": "GOLDTHWAITE ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "088902",
+      "name": "GOLIAD ISD",
+      "mcr": "0.6254"
+    },
+    {
+      "id": "089901",
+      "name": "GONZALES ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "187903",
+      "name": "GOODRICH ISD",
+      "mcr": "0.5972"
+    },
+    {
+      "id": "101911",
+      "name": "GOOSE CREEK CISD",
+      "mcr": "0.6167"
+    },
+    {
+      "id": "182901",
+      "name": "GORDON ISD",
+      "mcr": "0.5628"
+    },
+    {
+      "id": "067904",
+      "name": "GORMAN ISD",
+      "mcr": "0.5987"
+    },
+    {
+      "id": "156905",
+      "name": "GRADY ISD",
+      "mcr": "0.5689"
+    },
+    {
+      "id": "182902",
+      "name": "GRAFORD ISD",
+      "mcr": "0.5628"
+    },
+    {
+      "id": "252901",
+      "name": "GRAHAM ISD",
+      "mcr": "0.6017"
+    },
+    {
+      "id": "111901",
+      "name": "GRANBURY ISD",
+      "mcr": "0.6081"
+    },
+    {
+      "id": "057910",
+      "name": "GRAND PRAIRIE ISD",
+      "mcr": "0.5629"
+    },
+    {
+      "id": "234904",
+      "name": "GRAND SALINE ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "238904",
+      "name": "GRANDFALLS-ROYALTY ISD",
+      "mcr": "0.6138"
+    },
+    {
+      "id": "126904",
+      "name": "GRANDVIEW ISD",
+      "mcr": "0.5981"
+    },
+    {
+      "id": "090905",
+      "name": "GRANDVIEW-HOPKINS ISD",
+      "mcr": "0.5712"
+    },
+    {
+      "id": "246905",
+      "name": "GRANGER ISD",
+      "mcr": "0.6131"
+    },
+    {
+      "id": "226907",
+      "name": "GRAPE CREEK ISD",
+      "mcr": "0.5661"
+    },
+    {
+      "id": "113902",
+      "name": "GRAPELAND ISD",
+      "mcr": "0.5992"
+    },
+    {
+      "id": "220906",
+      "name": "GRAPEVINE-COLLEYVILLE ISD",
+      "mcr": "0.6254"
+    },
+    {
+      "id": "116905",
+      "name": "GREENVILLE ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "165902",
+      "name": "GREENWOOD ISD",
+      "mcr": "0.5722"
+    },
+    {
+      "id": "205902",
+      "name": "GREGORY-PORTLAND ISD",
+      "mcr": "0.6254"
+    },
+    {
+      "id": "147902",
+      "name": "GROESBECK ISD",
+      "mcr": "0.6254"
+    },
+    {
+      "id": "033901",
+      "name": "GROOM ISD",
+      "mcr": "0.6254"
+    },
+    {
+      "id": "228901",
+      "name": "GROVETON ISD",
+      "mcr": "0.6119"
+    },
+    {
+      "id": "098901",
+      "name": "GRUVER ISD",
+      "mcr": "0.6254"
+    },
+    {
+      "id": "091917",
+      "name": "GUNTER ISD",
+      "mcr": "0.5628"
+    },
+    {
+      "id": "047903",
+      "name": "GUSTINE ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "135001",
+      "name": "GUTHRIE CSD",
+      "mcr": "0.6254"
+    },
+    {
+      "id": "095903",
+      "name": "HALE CENTER ISD",
+      "mcr": "0.6254"
+    },
+    {
+      "id": "143901",
+      "name": "HALLETTSVILLE ISD",
+      "mcr": "0.6058"
+    },
+    {
+      "id": "161924",
+      "name": "HALLSBURG ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "102904",
+      "name": "HALLSVILLE ISD",
+      "mcr": "0.6254"
+    },
+    {
+      "id": "097902",
+      "name": "HAMILTON ISD",
+      "mcr": "0.6035"
+    },
+    {
+      "id": "127903",
+      "name": "HAMLIN COLLEGIATE ISD",
+      "mcr": "0.5715"
+    },
+    {
+      "id": "123914",
+      "name": "HAMSHIRE-FANNETT ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "219901",
+      "name": "HAPPY ISD",
+      "mcr": "0.6107"
+    },
+    {
+      "id": "146904",
+      "name": "HARDIN ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "100905",
+      "name": "HARDIN-JEFFERSON ISD",
+      "mcr": "0.5951"
+    },
+    {
+      "id": "015904",
+      "name": "HARLANDALE ISD",
+      "mcr": "0.6192"
+    },
+    {
+      "id": "102905",
+      "name": "HARLETON ISD",
+      "mcr": "0.6192"
+    },
+    {
+      "id": "031903",
+      "name": "HARLINGEN CISD",
+      "mcr": "0.6097"
+    },
+    {
+      "id": "230905",
+      "name": "HARMONY ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "086902",
+      "name": "HARPER ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "244901",
+      "name": "HARROLD ISD",
+      "mcr": "0.6192"
+    },
+    {
+      "id": "035902",
+      "name": "HART ISD",
+      "mcr": "0.5628"
+    },
+    {
+      "id": "103902",
+      "name": "HARTLEY ISD",
+      "mcr": "0.5628"
+    },
+    {
+      "id": "225907",
+      "name": "HARTS BLUFF ISD",
+      "mcr": "0.6126"
+    },
+    {
+      "id": "104901",
+      "name": "HASKELL CISD",
+      "mcr": "0.5628"
+    },
+    {
+      "id": "250902",
+      "name": "HAWKINS ISD",
+      "mcr": "0.6192"
+    },
+    {
+      "id": "127904",
+      "name": "HAWLEY ISD",
+      "mcr": "0.5636"
+    },
+    {
+      "id": "105906",
+      "name": "HAYS CISD",
+      "mcr": "0.6023"
+    },
+    {
+      "id": "198905",
+      "name": "HEARNE ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "065902",
+      "name": "HEDLEY ISD",
+      "mcr": "0.6061"
+    },
+    {
+      "id": "202903",
+      "name": "HEMPHILL ISD",
+      "mcr": "0.5767"
+    },
+    {
+      "id": "237902",
+      "name": "HEMPSTEAD ISD",
+      "mcr": "0.5628"
+    },
+    {
+      "id": "201902",
+      "name": "HENDERSON ISD",
+      "mcr": "0.5628"
+    },
+    {
+      "id": "039902",
+      "name": "HENRIETTA ISD",
+      "mcr": "0.6192"
+    },
+    {
+      "id": "059901",
+      "name": "HEREFORD ISD",
+      "mcr": "0.6254"
+    },
+    {
+      "id": "208901",
+      "name": "HERMLEIGH ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "097903",
+      "name": "HICO ISD",
+      "mcr": "0.5971"
+    },
+    {
+      "id": "108905",
+      "name": "HIDALGO ISD",
+      "mcr": "0.5949"
+    },
+    {
+      "id": "084903",
+      "name": "HIGH ISLAND ISD",
+      "mcr": "0.5689"
+    },
+    {
+      "id": "177905",
+      "name": "HIGHLAND ISD",
+      "mcr": "0.5628"
+    },
+    {
+      "id": "057911",
+      "name": "HIGHLAND PARK ISD",
+      "mcr": "0.5628"
+    },
+    {
+      "id": "188903",
+      "name": "HIGHLAND PARK ISD",
+      "mcr": "0.5831"
+    },
+    {
+      "id": "109904",
+      "name": "HILLSBORO ISD",
+      "mcr": "0.6055"
+    },
+    {
+      "id": "084908",
+      "name": "HITCHCOCK ISD",
+      "mcr": "0.6134"
+    },
+    {
+      "id": "014905",
+      "name": "HOLLAND ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "005902",
+      "name": "HOLLIDAY ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "163904",
+      "name": "HONDO ISD",
+      "mcr": "0.6060"
+    },
+    {
+      "id": "074907",
+      "name": "HONEY GROVE ISD",
+      "mcr": "0.5905"
+    },
+    {
+      "id": "019902",
+      "name": "HOOKS ISD",
+      "mcr": "0.5628"
+    },
+    {
+      "id": "101912",
+      "name": "HOUSTON ISD",
+      "mcr": "0.6254"
+    },
+    {
+      "id": "091905",
+      "name": "HOWE ISD",
+      "mcr": "0.5628"
+    },
+    {
+      "id": "019913",
+      "name": "HUBBARD ISD",
+      "mcr": "0.5978"
+    },
+    {
+      "id": "109905",
+      "name": "HUBBARD ISD",
+      "mcr": "0.5687"
+    },
+    {
+      "id": "072908",
+      "name": "HUCKABAY ISD",
+      "mcr": "0.5628"
+    },
+    {
+      "id": "003902",
+      "name": "HUDSON ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "101925",
+      "name": "HUFFMAN ISD",
+      "mcr": "0.5966"
+    },
+    {
+      "id": "034903",
+      "name": "HUGHES SPRINGS ISD",
+      "mcr": "0.5689"
+    },
+    {
+      "id": "146905",
+      "name": "HULL-DAISETTA ISD",
+      "mcr": "0.6206"
+    },
+    {
+      "id": "101913",
+      "name": "HUMBLE ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "133902",
+      "name": "HUNT ISD",
+      "mcr": "0.6116"
+    },
+    {
+      "id": "003904",
+      "name": "HUNTINGTON ISD",
+      "mcr": "0.6192"
+    },
+    {
+      "id": "236902",
+      "name": "HUNTSVILLE ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "220916",
+      "name": "HURST-EULESS-BEDFORD ISD",
+      "mcr": "0.6226"
+    },
+    {
+      "id": "246906",
+      "name": "HUTTO ISD",
+      "mcr": "0.5991"
+    },
+    {
+      "id": "152910",
+      "name": "IDALOU ISD",
+      "mcr": "0.6254"
+    },
+    {
+      "id": "120905",
+      "name": "INDUSTRIAL ISD",
+      "mcr": "0.6254"
+    },
+    {
+      "id": "205903",
+      "name": "INGLESIDE ISD",
+      "mcr": "0.5897"
+    },
+    {
+      "id": "133904",
+      "name": "INGRAM ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "093903",
+      "name": "IOLA ISD",
+      "mcr": "0.5841"
+    },
+    {
+      "id": "243903",
+      "name": "IOWA PARK CISD",
+      "mcr": "0.6124"
+    },
+    {
+      "id": "208903",
+      "name": "IRA ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "186903",
+      "name": "IRAAN-SHEFFIELD COLLEGIATE ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "018906",
+      "name": "IREDELL ISD",
+      "mcr": "0.5938"
+    },
+    {
+      "id": "118902",
+      "name": "IRION COUNTY ISD",
+      "mcr": "0.5850"
+    },
+    {
+      "id": "057912",
+      "name": "IRVING ISD",
+      "mcr": "0.5975"
+    },
+    {
+      "id": "070907",
+      "name": "ITALY ISD",
+      "mcr": "0.5628"
+    },
+    {
+      "id": "109907",
+      "name": "ITASCA ISD",
+      "mcr": "0.5628"
+    },
+    {
+      "id": "119902",
+      "name": "JACKSBORO ISD",
+      "mcr": "0.6107"
+    },
+    {
+      "id": "037904",
+      "name": "JACKSONVILLE ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "246907",
+      "name": "JARRELL ISD",
+      "mcr": "0.6168"
+    },
+    {
+      "id": "121904",
+      "name": "JASPER ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "132902",
+      "name": "JAYTON-GIRARD ISD",
+      "mcr": "0.6192"
+    },
+    {
+      "id": "155901",
+      "name": "JEFFERSON ISD",
+      "mcr": "0.6254"
+    },
+    {
+      "id": "124901",
+      "name": "JIM HOGG COUNTY ISD",
+      "mcr": "0.6254"
+    },
+    {
+      "id": "221911",
+      "name": "JIM NED CISD",
+      "mcr": "0.6152"
+    },
+    {
+      "id": "210902",
+      "name": "JOAQUIN ISD",
+      "mcr": "0.5628"
+    },
+    {
+      "id": "016901",
+      "name": "JOHNSON CITY ISD",
+      "mcr": "0.5998"
+    },
+    {
+      "id": "050909",
+      "name": "JONESBORO ISD",
+      "mcr": "0.6046"
+    },
+    {
+      "id": "126905",
+      "name": "JOSHUA ISD",
+      "mcr": "0.6192"
+    },
+    {
+      "id": "007902",
+      "name": "JOURDANTON ISD",
+      "mcr": "0.6254"
+    },
+    {
+      "id": "015916",
+      "name": "JUDSON ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "134901",
+      "name": "JUNCTION ISD",
+      "mcr": "0.6118"
+    },
+    {
+      "id": "102901",
+      "name": "KARNACK ISD",
+      "mcr": "0.5689"
+    },
+    {
+      "id": "128901",
+      "name": "KARNES CITY ISD",
+      "mcr": "0.6192"
+    },
+    {
+      "id": "101914",
+      "name": "KATY ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "129903",
+      "name": "KAUFMAN ISD",
+      "mcr": "0.5673"
+    },
+    {
+      "id": "126906",
+      "name": "KEENE ISD",
+      "mcr": "0.5864"
+    },
+    {
+      "id": "220907",
+      "name": "KELLER ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "242905",
+      "name": "KELTON ISD",
+      "mcr": "0.6254"
+    },
+    {
+      "id": "129904",
+      "name": "KEMP ISD",
+      "mcr": "0.5707"
+    },
+    {
+      "id": "131001",
+      "name": "KENEDY COUNTY WIDE CSD",
+      "mcr": "0.6254"
+    },
+    {
+      "id": "128902",
+      "name": "KENEDY ISD",
+      "mcr": "0.5689"
+    },
+    {
+      "id": "113906",
+      "name": "KENNARD ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "220914",
+      "name": "KENNEDALE ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "175907",
+      "name": "KERENS ISD",
+      "mcr": "0.5628"
+    },
+    {
+      "id": "248901",
+      "name": "KERMIT ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "133903",
+      "name": "KERRVILLE ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "092902",
+      "name": "KILGORE ISD",
+      "mcr": "0.6108"
+    },
+    {
+      "id": "014906",
+      "name": "KILLEEN ISD",
+      "mcr": "0.6182"
+    },
+    {
+      "id": "137901",
+      "name": "KINGSVILLE ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "121905",
+      "name": "KIRBYVILLE CISD",
+      "mcr": "0.6254"
+    },
+    {
+      "id": "101915",
+      "name": "KLEIN ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "058905",
+      "name": "KLONDIKE ISD",
+      "mcr": "0.5857"
+    },
+    {
+      "id": "232901",
+      "name": "KNIPPA ISD",
+      "mcr": "0.6050"
+    },
+    {
+      "id": "138902",
+      "name": "KNOX CITY-O'BRIEN CISD",
+      "mcr": "0.6254"
+    },
+    {
+      "id": "018907",
+      "name": "KOPPERL ISD",
+      "mcr": "0.6076"
+    },
+    {
+      "id": "100903",
+      "name": "KOUNTZE ISD",
+      "mcr": "0.5628"
+    },
+    {
+      "id": "219905",
+      "name": "KRESS ISD",
+      "mcr": "0.6118"
+    },
+    {
+      "id": "061905",
+      "name": "KRUM ISD",
+      "mcr": "0.5823"
+    },
+    {
+      "id": "031905",
+      "name": "LA FERIA ISD",
+      "mcr": "0.6112"
+    },
+    {
+      "id": "125906",
+      "name": "LA GLORIA ISD",
+      "mcr": "0.5890"
+    },
+    {
+      "id": "075902",
+      "name": "LA GRANGE ISD",
+      "mcr": "0.6061"
+    },
+    {
+      "id": "108912",
+      "name": "LA JOYA ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "101916",
+      "name": "LA PORTE ISD",
+      "mcr": "0.6254"
+    },
+    {
+      "id": "254902",
+      "name": "LA PRYOR ISD",
+      "mcr": "0.5628"
+    },
+    {
+      "id": "161906",
+      "name": "LA VEGA ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "247903",
+      "name": "LA VERNIA ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "108914",
+      "name": "LA VILLA ISD",
+      "mcr": "0.6205"
+    },
+    {
+      "id": "227912",
+      "name": "LAGO VISTA ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "061912",
+      "name": "LAKE DALLAS ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "227913",
+      "name": "LAKE TRAVIS ISD",
+      "mcr": "0.6254"
+    },
+    {
+      "id": "220910",
+      "name": "LAKE WORTH ISD",
+      "mcr": "0.5882"
+    },
+    {
+      "id": "079901",
+      "name": "LAMAR CISD",
+      "mcr": "0.5890"
+    },
+    {
+      "id": "058906",
+      "name": "LAMESA ISD",
+      "mcr": "0.5779"
+    },
+    {
+      "id": "141901",
+      "name": "LAMPASAS ISD",
+      "mcr": "0.5779"
+    },
+    {
+      "id": "057913",
+      "name": "LANCASTER ISD",
+      "mcr": "0.5716"
+    },
+    {
+      "id": "201903",
+      "name": "LANEVILLE ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "107910",
+      "name": "LAPOYNOR ISD",
+      "mcr": "0.5802"
+    },
+    {
+      "id": "240901",
+      "name": "LAREDO ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "245901",
+      "name": "LASARA ISD",
+      "mcr": "0.6254"
+    },
+    {
+      "id": "113905",
+      "name": "LATEXO ISD",
+      "mcr": "0.6041"
+    },
+    {
+      "id": "185904",
+      "name": "LAZBUDDIE ISD",
+      "mcr": "0.5628"
+    },
+    {
+      "id": "193902",
+      "name": "LEAKEY ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "246913",
+      "name": "LEANDER ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "019914",
+      "name": "LEARY ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "090902",
+      "name": "LEFORS ISD",
+      "mcr": "0.6254"
+    },
+    {
+      "id": "187906",
+      "name": "LEGGETT ISD",
+      "mcr": "0.6057"
+    },
+    {
+      "id": "145911",
+      "name": "LEON ISD",
+      "mcr": "0.5667"
+    },
+    {
+      "id": "074909",
+      "name": "LEONARD ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "110902",
+      "name": "LEVELLAND ISD",
+      "mcr": "0.6254"
+    },
+    {
+      "id": "201904",
+      "name": "LEVERETTS CHAPEL ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "061902",
+      "name": "LEWISVILLE ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "144902",
+      "name": "LEXINGTON ISD",
+      "mcr": "0.5628"
+    },
+    {
+      "id": "246908",
+      "name": "LIBERTY HILL ISD",
+      "mcr": "0.5809"
+    },
+    {
+      "id": "146906",
+      "name": "LIBERTY ISD",
+      "mcr": "0.6254"
+    },
+    {
+      "id": "019908",
+      "name": "LIBERTY-EYLAU ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "212903",
+      "name": "LINDALE ISD",
+      "mcr": "0.5841"
+    },
+    {
+      "id": "034905",
+      "name": "LINDEN-KILDARE CISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "049907",
+      "name": "LINDSAY ISD",
+      "mcr": "0.6211"
+    },
+    {
+      "id": "072909",
+      "name": "LINGLEVILLE ISD",
+      "mcr": "0.5628"
+    },
+    {
+      "id": "111902",
+      "name": "LIPAN ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "181908",
+      "name": "LITTLE CYPRESS-MAURICEVILLE CISD",
+      "mcr": "0.6254"
+    },
+    {
+      "id": "061914",
+      "name": "LITTLE ELM ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "140904",
+      "name": "LITTLEFIELD ISD",
+      "mcr": "0.5628"
+    },
+    {
+      "id": "187907",
+      "name": "LIVINGSTON ISD",
+      "mcr": "0.6029"
+    },
+    {
+      "id": "150901",
+      "name": "LLANO ISD",
+      "mcr": "0.6019"
+    },
+    {
+      "id": "028902",
+      "name": "LOCKHART ISD",
+      "mcr": "0.5955"
+    },
+    {
+      "id": "077902",
+      "name": "LOCKNEY ISD",
+      "mcr": "0.5689"
+    },
+    {
+      "id": "160905",
+      "name": "LOHN ISD",
+      "mcr": "0.5689"
+    },
+    {
+      "id": "141902",
+      "name": "LOMETA ISD",
+      "mcr": "0.5635"
+    },
+    {
+      "id": "178906",
+      "name": "LONDON ISD",
+      "mcr": "0.5889"
+    },
+    {
+      "id": "116906",
+      "name": "LONE OAK ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "092903",
+      "name": "LONGVIEW ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "083902",
+      "name": "LOOP ISD",
+      "mcr": "0.6254"
+    },
+    {
+      "id": "168902",
+      "name": "LORAINE ISD",
+      "mcr": "0.6254"
+    },
+    {
+      "id": "161907",
+      "name": "LORENA ISD",
+      "mcr": "0.6128"
+    },
+    {
+      "id": "054902",
+      "name": "LORENZO ISD",
+      "mcr": "0.6254"
+    },
+    {
+      "id": "031906",
+      "name": "LOS FRESNOS CISD",
+      "mcr": "0.5732"
+    },
+    {
+      "id": "241906",
+      "name": "LOUISE ISD",
+      "mcr": "0.6254"
+    },
+    {
+      "id": "043919",
+      "name": "LOVEJOY ISD",
+      "mcr": "0.5990"
+    },
+    {
+      "id": "113903",
+      "name": "LOVELADY ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "152901",
+      "name": "LUBBOCK ISD",
+      "mcr": "0.6254"
+    },
+    {
+      "id": "152906",
+      "name": "LUBBOCK-COOPER ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "127905",
+      "name": "LUEDERS-AVOCA ISD",
+      "mcr": "0.5628"
+    },
+    {
+      "id": "003903",
+      "name": "LUFKIN ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "028903",
+      "name": "LULING ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "100907",
+      "name": "LUMBERTON ISD",
+      "mcr": "0.6192"
+    },
+    {
+      "id": "245902",
+      "name": "LYFORD CISD",
+      "mcr": "0.6192"
+    },
+    {
+      "id": "007904",
+      "name": "LYTLE ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "129905",
+      "name": "MABANK ISD",
+      "mcr": "0.6051"
+    },
+    {
+      "id": "154901",
+      "name": "MADISONVILLE CISD",
+      "mcr": "0.6024"
+    },
+    {
+      "id": "170906",
+      "name": "MAGNOLIA ISD",
+      "mcr": "0.5899"
+    },
+    {
+      "id": "107906",
+      "name": "MALAKOFF ISD",
+      "mcr": "0.6166"
+    },
+    {
+      "id": "109908",
+      "name": "MALONE ISD",
+      "mcr": "0.5628"
+    },
+    {
+      "id": "019910",
+      "name": "MALTA ISD",
+      "mcr": "0.5923"
+    },
+    {
+      "id": "227907",
+      "name": "MANOR ISD",
+      "mcr": "0.6254"
+    },
+    {
+      "id": "220908",
+      "name": "MANSFIELD ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "022902",
+      "name": "MARATHON ISD",
+      "mcr": "0.5819"
+    },
+    {
+      "id": "027904",
+      "name": "MARBLE FALLS ISD",
+      "mcr": "0.6119"
+    },
+    {
+      "id": "189901",
+      "name": "MARFA ISD",
+      "mcr": "0.6166"
+    },
+    {
+      "id": "094904",
+      "name": "MARION ISD",
+      "mcr": "0.6029"
+    },
+    {
+      "id": "073903",
+      "name": "MARLIN ISD",
+      "mcr": "0.6117"
+    },
+    {
+      "id": "102902",
+      "name": "MARSHALL ISD",
+      "mcr": "0.6123"
+    },
+    {
+      "id": "161908",
+      "name": "MART ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "234905",
+      "name": "MARTINS MILL ISD",
+      "mcr": "0.5691"
+    },
+    {
+      "id": "174909",
+      "name": "MARTINSVILLE ISD",
+      "mcr": "0.5689"
+    },
+    {
+      "id": "157901",
+      "name": "MASON ISD",
+      "mcr": "0.6254"
+    },
+    {
+      "id": "158904",
+      "name": "MATAGORDA ISD",
+      "mcr": "0.5701"
+    },
+    {
+      "id": "205904",
+      "name": "MATHIS ISD",
+      "mcr": "0.5776"
+    },
+    {
+      "id": "019903",
+      "name": "MAUD ISD",
+      "mcr": "0.5689"
+    },
+    {
+      "id": "025905",
+      "name": "MAY ISD",
+      "mcr": "0.5794"
+    },
+    {
+      "id": "070915",
+      "name": "MAYPEARL ISD",
+      "mcr": "0.5900"
+    },
+    {
+      "id": "108906",
+      "name": "MCALLEN ISD",
+      "mcr": "0.6254"
+    },
+    {
+      "id": "231901",
+      "name": "MCCAMEY ISD",
+      "mcr": "0.6254"
+    },
+    {
+      "id": "011905",
+      "name": "MCDADE ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "161909",
+      "name": "MCGREGOR ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "043907",
+      "name": "MCKINNEY ISD",
+      "mcr": "0.5764"
+    },
+    {
+      "id": "090903",
+      "name": "MCLEAN ISD",
+      "mcr": "0.5883"
+    },
+    {
+      "id": "034906",
+      "name": "MCLEOD ISD",
+      "mcr": "0.6192"
+    },
+    {
+      "id": "162904",
+      "name": "MCMULLEN COUNTY ISD",
+      "mcr": "0.6002"
+    },
+    {
+      "id": "223902",
+      "name": "MEADOW ISD",
+      "mcr": "0.6254"
+    },
+    {
+      "id": "010901",
+      "name": "MEDINA ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "163908",
+      "name": "MEDINA VALLEY ISD",
+      "mcr": "0.5766"
+    },
+    {
+      "id": "043908",
+      "name": "MELISSA ISD",
+      "mcr": "0.5628"
+    },
+    {
+      "id": "096904",
+      "name": "MEMPHIS ISD",
+      "mcr": "0.6254"
+    },
+    {
+      "id": "164901",
+      "name": "MENARD ISD",
+      "mcr": "0.6126"
+    },
+    {
+      "id": "108907",
+      "name": "MERCEDES ISD",
+      "mcr": "0.5871"
+    },
+    {
+      "id": "018902",
+      "name": "MERIDIAN ISD",
+      "mcr": "0.5827"
+    },
+    {
+      "id": "221904",
+      "name": "MERKEL ISD",
+      "mcr": "0.5785"
+    },
+    {
+      "id": "057914",
+      "name": "MESQUITE ISD",
+      "mcr": "0.5962"
+    },
+    {
+      "id": "147903",
+      "name": "MEXIA ISD",
+      "mcr": "0.5779"
+    },
+    {
+      "id": "062906",
+      "name": "MEYERSVILLE ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "197902",
+      "name": "MIAMI ISD",
+      "mcr": "0.6192"
+    },
+    {
+      "id": "165901",
+      "name": "MIDLAND ISD",
+      "mcr": "0.5814"
+    },
+    {
+      "id": "070908",
+      "name": "MIDLOTHIAN ISD",
+      "mcr": "0.5669"
+    },
+    {
+      "id": "039905",
+      "name": "MIDWAY ISD",
+      "mcr": "0.6254"
+    },
+    {
+      "id": "161903",
+      "name": "MIDWAY ISD",
+      "mcr": "0.5889"
+    },
+    {
+      "id": "166903",
+      "name": "MILANO ISD",
+      "mcr": "0.5876"
+    },
+    {
+      "id": "175910",
+      "name": "MILDRED ISD",
+      "mcr": "0.5838"
+    },
+    {
+      "id": "200902",
+      "name": "MILES ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "070909",
+      "name": "MILFORD ISD",
+      "mcr": "0.5757"
+    },
+    {
+      "id": "112907",
+      "name": "MILLER GROVE ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "184904",
+      "name": "MILLSAP ISD",
+      "mcr": "0.6091"
+    },
+    {
+      "id": "250903",
+      "name": "MINEOLA ISD",
+      "mcr": "0.6101"
+    },
+    {
+      "id": "182903",
+      "name": "MINERAL WELLS ISD",
+      "mcr": "0.6133"
+    },
+    {
+      "id": "108908",
+      "name": "MISSION CISD",
+      "mcr": "0.6140"
+    },
+    {
+      "id": "238902",
+      "name": "MONAHANS-WICKETT-PYOTE ISD",
+      "mcr": "0.6192"
+    },
+    {
+      "id": "169908",
+      "name": "MONTAGUE ISD",
+      "mcr": "0.6084"
+    },
+    {
+      "id": "108915",
+      "name": "MONTE ALTO ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "170903",
+      "name": "MONTGOMERY ISD",
+      "mcr": "0.5977"
+    },
+    {
+      "id": "161910",
+      "name": "MOODY ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "209902",
+      "name": "MORAN ISD",
+      "mcr": "0.6116"
+    },
+    {
+      "id": "018903",
+      "name": "MORGAN ISD",
+      "mcr": "0.5988"
+    },
+    {
+      "id": "072910",
+      "name": "MORGAN MILL ISD",
+      "mcr": "0.5628"
+    },
+    {
+      "id": "040901",
+      "name": "MORTON ISD",
+      "mcr": "0.5701"
+    },
+    {
+      "id": "173901",
+      "name": "MOTLEY COUNTY ISD",
+      "mcr": "0.5689"
+    },
+    {
+      "id": "143902",
+      "name": "MOULTON ISD",
+      "mcr": "0.6074"
+    },
+    {
+      "id": "109910",
+      "name": "MOUNT CALM ISD",
+      "mcr": "0.5628"
+    },
+    {
+      "id": "201907",
+      "name": "MOUNT ENTERPRISE ISD",
+      "mcr": "0.5628"
+    },
+    {
+      "id": "225902",
+      "name": "MOUNT PLEASANT ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "080901",
+      "name": "MOUNT VERNON ISD",
+      "mcr": "0.5628"
+    },
+    {
+      "id": "049902",
+      "name": "MUENSTER ISD",
+      "mcr": "0.6254"
+    },
+    {
+      "id": "009901",
+      "name": "MULESHOE ISD",
+      "mcr": "0.6139"
+    },
+    {
+      "id": "167902",
+      "name": "MULLIN ISD",
+      "mcr": "0.5860"
+    },
+    {
+      "id": "198906",
+      "name": "MUMFORD ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "138903",
+      "name": "MUNDAY CISD",
+      "mcr": "0.6254"
+    },
+    {
+      "id": "107908",
+      "name": "MURCHISON ISD",
+      "mcr": "0.6117"
+    },
+    {
+      "id": "174904",
+      "name": "NACOGDOCHES ISD",
+      "mcr": "0.5963"
+    },
+    {
+      "id": "163903",
+      "name": "NATALIA ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "094903",
+      "name": "NAVARRO ISD",
+      "mcr": "0.5628"
+    },
+    {
+      "id": "093904",
+      "name": "NAVASOTA ISD",
+      "mcr": "0.5844"
+    },
+    {
+      "id": "035903",
+      "name": "NAZARETH ISD",
+      "mcr": "0.6254"
+    },
+    {
+      "id": "001906",
+      "name": "NECHES ISD",
+      "mcr": "0.5946"
+    },
+    {
+      "id": "123905",
+      "name": "NEDERLAND ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "079906",
+      "name": "NEEDVILLE ISD",
+      "mcr": "0.5628"
+    },
+    {
+      "id": "019905",
+      "name": "NEW BOSTON ISD",
+      "mcr": "0.6228"
+    },
+    {
+      "id": "046901",
+      "name": "NEW BRAUNFELS ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "170908",
+      "name": "NEW CANEY ISD",
+      "mcr": "0.6010"
+    },
+    {
+      "id": "152902",
+      "name": "NEW DEAL ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "230906",
+      "name": "NEW DIANA ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "153905",
+      "name": "NEW HOME ISD",
+      "mcr": "0.5773"
+    },
+    {
+      "id": "037908",
+      "name": "NEW SUMMERFIELD ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "236901",
+      "name": "NEW WAVERLY ISD",
+      "mcr": "0.5678"
+    },
+    {
+      "id": "252902",
+      "name": "NEWCASTLE ISD",
+      "mcr": "0.6087"
+    },
+    {
+      "id": "176902",
+      "name": "NEWTON ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "089903",
+      "name": "NIXON-SMILEY CISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "169902",
+      "name": "NOCONA ISD",
+      "mcr": "0.6165"
+    },
+    {
+      "id": "062902",
+      "name": "NORDHEIM ISD",
+      "mcr": "0.6137"
+    },
+    {
+      "id": "145906",
+      "name": "NORMANGEE ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "015910",
+      "name": "NORTH EAST ISD",
+      "mcr": "0.6254"
+    },
+    {
+      "id": "112906",
+      "name": "NORTH HOPKINS ISD",
+      "mcr": "0.5792"
+    },
+    {
+      "id": "139911",
+      "name": "NORTH LAMAR ISD",
+      "mcr": "0.6101"
+    },
+    {
+      "id": "154903",
+      "name": "NORTH ZULCH ISD",
+      "mcr": "0.6254"
+    },
+    {
+      "id": "015915",
+      "name": "NORTHSIDE ISD",
+      "mcr": "0.6194"
+    },
+    {
+      "id": "244905",
+      "name": "NORTHSIDE ISD",
+      "mcr": "0.5628"
+    },
+    {
+      "id": "061911",
+      "name": "NORTHWEST ISD",
+      "mcr": "0.5628"
+    },
+    {
+      "id": "069902",
+      "name": "NUECES CANYON CISD",
+      "mcr": "0.5826"
+    },
+    {
+      "id": "235904",
+      "name": "NURSERY ISD",
+      "mcr": "0.6213"
+    },
+    {
+      "id": "153903",
+      "name": "O'DONNELL ISD",
+      "mcr": "0.6254"
+    },
+    {
+      "id": "145907",
+      "name": "OAKWOOD ISD",
+      "mcr": "0.6011"
+    },
+    {
+      "id": "205905",
+      "name": "ODEM-EDROY ISD",
+      "mcr": "0.5797"
+    },
+    {
+      "id": "050904",
+      "name": "OGLESBY ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "200906",
+      "name": "OLFEN ISD",
+      "mcr": "0.6192"
+    },
+    {
+      "id": "252903",
+      "name": "OLNEY ISD",
+      "mcr": "0.6171"
+    },
+    {
+      "id": "140905",
+      "name": "OLTON ISD",
+      "mcr": "0.6254"
+    },
+    {
+      "id": "187910",
+      "name": "ONALASKA ISD",
+      "mcr": "0.6078"
+    },
+    {
+      "id": "125903",
+      "name": "ORANGE GROVE ISD",
+      "mcr": "0.5689"
+    },
+    {
+      "id": "181905",
+      "name": "ORANGEFIELD ISD",
+      "mcr": "0.5685"
+    },
+    {
+      "id": "230903",
+      "name": "ORE CITY ISD",
+      "mcr": "0.6254"
+    },
+    {
+      "id": "201908",
+      "name": "OVERTON ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "051901",
+      "name": "PADUCAH ISD",
+      "mcr": "0.6254"
+    },
+    {
+      "id": "104907",
+      "name": "PAINT CREEK ISD",
+      "mcr": "0.5628"
+    },
+    {
+      "id": "048903",
+      "name": "PAINT ROCK ISD",
+      "mcr": "0.5689"
+    },
+    {
+      "id": "158905",
+      "name": "PALACIOS ISD",
+      "mcr": "0.5628"
+    },
+    {
+      "id": "001907",
+      "name": "PALESTINE ISD",
+      "mcr": "0.6085"
+    },
+    {
+      "id": "070910",
+      "name": "PALMER ISD",
+      "mcr": "0.5730"
+    },
+    {
+      "id": "182906",
+      "name": "PALO PINTO ISD",
+      "mcr": "0.5688"
+    },
+    {
+      "id": "090904",
+      "name": "PAMPA ISD",
+      "mcr": "0.6254"
+    },
+    {
+      "id": "033902",
+      "name": "PANHANDLE ISD",
+      "mcr": "0.6254"
+    },
+    {
+      "id": "042905",
+      "name": "PANTHER CREEK CISD",
+      "mcr": "0.5628"
+    },
+    {
+      "id": "249906",
+      "name": "PARADISE ISD",
+      "mcr": "0.6192"
+    },
+    {
+      "id": "139909",
+      "name": "PARIS ISD",
+      "mcr": "0.6064"
+    },
+    {
+      "id": "101917",
+      "name": "PASADENA ISD",
+      "mcr": "0.6254"
+    },
+    {
+      "id": "063906",
+      "name": "PATTON SPRINGS ISD",
+      "mcr": "0.5628"
+    },
+    {
+      "id": "013902",
+      "name": "PAWNEE ISD",
+      "mcr": "0.5689"
+    },
+    {
+      "id": "020908",
+      "name": "PEARLAND ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "082903",
+      "name": "PEARSALL ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "184908",
+      "name": "PEASTER ISD",
+      "mcr": "0.6020"
+    },
+    {
+      "id": "195901",
+      "name": "PECOS-BARSTOW-TOYAH ISD",
+      "mcr": "0.6212"
+    },
+    {
+      "id": "109914",
+      "name": "PENELOPE ISD",
+      "mcr": "0.5689"
+    },
+    {
+      "id": "119903",
+      "name": "PERRIN-WHITT CISD",
+      "mcr": "0.5879"
+    },
+    {
+      "id": "179901",
+      "name": "PERRYTON ISD",
+      "mcr": "0.6254"
+    },
+    {
+      "id": "095904",
+      "name": "PETERSBURG ISD",
+      "mcr": "0.6254"
+    },
+    {
+      "id": "039903",
+      "name": "PETROLIA CISD",
+      "mcr": "0.6132"
+    },
+    {
+      "id": "013903",
+      "name": "PETTUS ISD",
+      "mcr": "0.6254"
+    },
+    {
+      "id": "172905",
+      "name": "PEWITT CISD",
+      "mcr": "0.6254"
+    },
+    {
+      "id": "227904",
+      "name": "PFLUGERVILLE ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "108909",
+      "name": "PHARR-SAN JUAN-ALAMO ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "061903",
+      "name": "PILOT POINT ISD",
+      "mcr": "0.5796"
+    },
+    {
+      "id": "092904",
+      "name": "PINE TREE ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "032902",
+      "name": "PITTSBURG ISD",
+      "mcr": "0.6040"
+    },
+    {
+      "id": "251902",
+      "name": "PLAINS ISD",
+      "mcr": "0.6192"
+    },
+    {
+      "id": "095905",
+      "name": "PLAINVIEW ISD",
+      "mcr": "0.6254"
+    },
+    {
+      "id": "043910",
+      "name": "PLANO ISD",
+      "mcr": "0.6254"
+    },
+    {
+      "id": "019912",
+      "name": "PLEASANT GROVE ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "007905",
+      "name": "PLEASANTON ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "117904",
+      "name": "PLEMONS-STINNETT-PHILLIPS CISD",
+      "mcr": "0.6254"
+    },
+    {
+      "id": "031909",
+      "name": "POINT ISABEL ISD",
+      "mcr": "0.5628"
+    },
+    {
+      "id": "061906",
+      "name": "PONDER ISD",
+      "mcr": "0.5628"
+    },
+    {
+      "id": "184901",
+      "name": "POOLVILLE ISD",
+      "mcr": "0.6031"
+    },
+    {
+      "id": "178908",
+      "name": "PORT ARANSAS ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "123907",
+      "name": "PORT ARTHUR ISD",
+      "mcr": "0.6069"
+    },
+    {
+      "id": "123908",
+      "name": "PORT NECHES-GROVES ISD",
+      "mcr": "0.6254"
+    },
+    {
+      "id": "085902",
+      "name": "POST ISD",
+      "mcr": "0.6254"
+    },
+    {
+      "id": "007906",
+      "name": "POTEET ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "247904",
+      "name": "POTH ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "091913",
+      "name": "POTTSBORO ISD",
+      "mcr": "0.5628"
+    },
+    {
+      "id": "028906",
+      "name": "PRAIRIE LEA ISD",
+      "mcr": "0.6192"
+    },
+    {
+      "id": "169909",
+      "name": "PRAIRIE VALLEY ISD",
+      "mcr": "0.6254"
+    },
+    {
+      "id": "139912",
+      "name": "PRAIRILAND ISD",
+      "mcr": "0.5852"
+    },
+    {
+      "id": "125905",
+      "name": "PREMONT ISD",
+      "mcr": "0.5958"
+    },
+    {
+      "id": "189902",
+      "name": "PRESIDIO ISD",
+      "mcr": "0.6254"
+    },
+    {
+      "id": "167904",
+      "name": "PRIDDY ISD",
+      "mcr": "0.6095"
+    },
+    {
+      "id": "043911",
+      "name": "PRINCETON ISD",
+      "mcr": "0.5628"
+    },
+    {
+      "id": "098903",
+      "name": "PRINGLE-MORSE CISD",
+      "mcr": "0.6254"
+    },
+    {
+      "id": "108910",
+      "name": "PROGRESO ISD",
+      "mcr": "0.5984"
+    },
+    {
+      "id": "043912",
+      "name": "PROSPER ISD",
+      "mcr": "0.5628"
+    },
+    {
+      "id": "099903",
+      "name": "QUANAH ISD",
+      "mcr": "0.6254"
+    },
+    {
+      "id": "034907",
+      "name": "QUEEN CITY ISD",
+      "mcr": "0.6254"
+    },
+    {
+      "id": "116908",
+      "name": "QUINLAN ISD",
+      "mcr": "0.5941"
+    },
+    {
+      "id": "250904",
+      "name": "QUITMAN ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "190903",
+      "name": "RAINS ISD",
+      "mcr": "0.5628"
+    },
+    {
+      "id": "054903",
+      "name": "RALLS ISD",
+      "mcr": "0.6254"
+    },
+    {
+      "id": "066005",
+      "name": "RAMIREZ CSD",
+      "mcr": "0.6254"
+    },
+    {
+      "id": "067907",
+      "name": "RANGER ISD",
+      "mcr": "0.5628"
+    },
+    {
+      "id": "231902",
+      "name": "RANKIN ISD",
+      "mcr": "0.6192"
+    },
+    {
+      "id": "245903",
+      "name": "RAYMONDVILLE ISD",
+      "mcr": "0.6254"
+    },
+    {
+      "id": "192901",
+      "name": "REAGAN COUNTY ISD",
+      "mcr": "0.6232"
+    },
+    {
+      "id": "019911",
+      "name": "RED LICK ISD",
+      "mcr": "0.6021"
+    },
+    {
+      "id": "070911",
+      "name": "RED OAK ISD",
+      "mcr": "0.5628"
+    },
+    {
+      "id": "019906",
+      "name": "REDWATER ISD",
+      "mcr": "0.6038"
+    },
+    {
+      "id": "196903",
+      "name": "REFUGIO ISD",
+      "mcr": "0.6022"
+    },
+    {
+      "id": "137902",
+      "name": "RICARDO ISD",
+      "mcr": "0.5761"
+    },
+    {
+      "id": "045903",
+      "name": "RICE CISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "175911",
+      "name": "RICE ISD",
+      "mcr": "0.6192"
+    },
+    {
+      "id": "093905",
+      "name": "RICHARDS ISD",
+      "mcr": "0.5980"
+    },
+    {
+      "id": "057916",
+      "name": "RICHARDSON ISD",
+      "mcr": "0.6036"
+    },
+    {
+      "id": "206902",
+      "name": "RICHLAND SPRINGS ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "161912",
+      "name": "RIESEL ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "214901",
+      "name": "RIO GRANDE CITY GRULLA ISD",
+      "mcr": "0.6107"
+    },
+    {
+      "id": "031911",
+      "name": "RIO HONDO ISD",
+      "mcr": "0.5960"
+    },
+    {
+      "id": "126907",
+      "name": "RIO VISTA ISD",
+      "mcr": "0.6062"
+    },
+    {
+      "id": "067908",
+      "name": "RISING STAR ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "188902",
+      "name": "RIVER ROAD ISD",
+      "mcr": "0.5733"
+    },
+    {
+      "id": "194903",
+      "name": "RIVERCREST ISD",
+      "mcr": "0.5689"
+    },
+    {
+      "id": "137903",
+      "name": "RIVIERA ISD",
+      "mcr": "0.5628"
+    },
+    {
+      "id": "041902",
+      "name": "ROBERT LEE ISD",
+      "mcr": "0.6166"
+    },
+    {
+      "id": "161922",
+      "name": "ROBINSON ISD",
+      "mcr": "0.5872"
+    },
+    {
+      "id": "178909",
+      "name": "ROBSTOWN ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "076903",
+      "name": "ROBY CISD",
+      "mcr": "0.6192"
+    },
+    {
+      "id": "160904",
+      "name": "ROCHELLE ISD",
+      "mcr": "0.5689"
+    },
+    {
+      "id": "166904",
+      "name": "ROCKDALE ISD",
+      "mcr": "0.5689"
+    },
+    {
+      "id": "004901",
+      "name": "ROCKPORT-FULTON ISD",
+      "mcr": "0.6159"
+    },
+    {
+      "id": "069901",
+      "name": "ROCKSPRINGS ISD",
+      "mcr": "0.6156"
+    },
+    {
+      "id": "199901",
+      "name": "ROCKWALL ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "014907",
+      "name": "ROGERS ISD",
+      "mcr": "0.5628"
+    },
+    {
+      "id": "214903",
+      "name": "ROMA ISD",
+      "mcr": "0.5689"
+    },
+    {
+      "id": "152908",
+      "name": "ROOSEVELT ISD",
+      "mcr": "0.5952"
+    },
+    {
+      "id": "110905",
+      "name": "ROPES ISD",
+      "mcr": "0.5628"
+    },
+    {
+      "id": "177901",
+      "name": "ROSCOE COLLEGIATE ISD",
+      "mcr": "0.6254"
+    },
+    {
+      "id": "073905",
+      "name": "ROSEBUD-LOTT ISD",
+      "mcr": "0.5628"
+    },
+    {
+      "id": "076904",
+      "name": "ROTAN ISD",
+      "mcr": "0.6192"
+    },
+    {
+      "id": "246909",
+      "name": "ROUND ROCK ISD",
+      "mcr": "0.6254"
+    },
+    {
+      "id": "075908",
+      "name": "ROUND TOP-CARMINE ISD",
+      "mcr": "0.5628"
+    },
+    {
+      "id": "237905",
+      "name": "ROYAL ISD",
+      "mcr": "0.5628"
+    },
+    {
+      "id": "199902",
+      "name": "ROYSE CITY ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "104903",
+      "name": "RULE ISD",
+      "mcr": "0.6254"
+    },
+    {
+      "id": "128903",
+      "name": "RUNGE ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "037907",
+      "name": "RUSK ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "091914",
+      "name": "S AND S CISD",
+      "mcr": "0.5815"
+    },
+    {
+      "id": "232902",
+      "name": "SABINAL ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "092906",
+      "name": "SABINE ISD",
+      "mcr": "0.5884"
+    },
+    {
+      "id": "123913",
+      "name": "SABINE PASS ISD",
+      "mcr": "0.5628"
+    },
+    {
+      "id": "169911",
+      "name": "SAINT JO ISD",
+      "mcr": "0.6084"
+    },
+    {
+      "id": "014908",
+      "name": "SALADO ISD",
+      "mcr": "0.5971"
+    },
+    {
+      "id": "112909",
+      "name": "SALTILLO ISD",
+      "mcr": "0.5689"
+    },
+    {
+      "id": "074917",
+      "name": "SAM RAYBURN ISD",
+      "mcr": "0.6098"
+    },
+    {
+      "id": "226903",
+      "name": "SAN ANGELO ISD",
+      "mcr": "0.6254"
+    },
+    {
+      "id": "015907",
+      "name": "SAN ANTONIO ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "203901",
+      "name": "SAN AUGUSTINE ISD",
+      "mcr": "0.5628"
+    },
+    {
+      "id": "031912",
+      "name": "SAN BENITO CISD",
+      "mcr": "0.6015"
+    },
+    {
+      "id": "066902",
+      "name": "SAN DIEGO ISD",
+      "mcr": "0.5689"
+    },
+    {
+      "id": "071904",
+      "name": "SAN ELIZARIO ISD",
+      "mcr": "0.5808"
+    },
+    {
+      "id": "233901",
+      "name": "SAN FELIPE-DEL RIO CISD",
+      "mcr": "0.6135"
+    },
+    {
+      "id": "214902",
+      "name": "SAN ISIDRO ISD",
+      "mcr": "0.6254"
+    },
+    {
+      "id": "105902",
+      "name": "SAN MARCOS CISD",
+      "mcr": "0.5628"
+    },
+    {
+      "id": "245904",
+      "name": "SAN PERLITA ISD",
+      "mcr": "0.6254"
+    },
+    {
+      "id": "206901",
+      "name": "SAN SABA ISD",
+      "mcr": "0.5628"
+    },
+    {
+      "id": "022903",
+      "name": "SAN VICENTE ISD",
+      "mcr": "0.6254"
+    },
+    {
+      "id": "058909",
+      "name": "SANDS CISD",
+      "mcr": "0.6196"
+    },
+    {
+      "id": "117903",
+      "name": "SANFORD-FRITCH ISD",
+      "mcr": "0.6187"
+    },
+    {
+      "id": "061908",
+      "name": "SANGER ISD",
+      "mcr": "0.5991"
+    },
+    {
+      "id": "042903",
+      "name": "SANTA ANNA ISD",
+      "mcr": "0.5628"
+    },
+    {
+      "id": "084909",
+      "name": "SANTA FE ISD",
+      "mcr": "0.6131"
+    },
+    {
+      "id": "137904",
+      "name": "SANTA GERTRUDIS ISD",
+      "mcr": "0.5784"
+    },
+    {
+      "id": "031913",
+      "name": "SANTA MARIA ISD",
+      "mcr": "0.6254"
+    },
+    {
+      "id": "031914",
+      "name": "SANTA ROSA ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "182904",
+      "name": "SANTO ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "074911",
+      "name": "SAVOY ISD",
+      "mcr": "0.5628"
+    },
+    {
+      "id": "094902",
+      "name": "SCHERTZ-CIBOLO-U CITY ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "207901",
+      "name": "SCHLEICHER ISD",
+      "mcr": "0.6184"
+    },
+    {
+      "id": "075903",
+      "name": "SCHULENBURG ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "129910",
+      "name": "SCURRY-ROSSER ISD",
+      "mcr": "0.6138"
+    },
+    {
+      "id": "083901",
+      "name": "SEAGRAVES ISD",
+      "mcr": "0.6001"
+    },
+    {
+      "id": "008902",
+      "name": "SEALY ISD",
+      "mcr": "0.5628"
+    },
+    {
+      "id": "094901",
+      "name": "SEGUIN ISD",
+      "mcr": "0.6178"
+    },
+    {
+      "id": "083903",
+      "name": "SEMINOLE ISD",
+      "mcr": "0.6192"
+    },
+    {
+      "id": "012901",
+      "name": "SEYMOUR ISD",
+      "mcr": "0.5989"
+    },
+    {
+      "id": "152909",
+      "name": "SHALLOWATER ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "242902",
+      "name": "SHAMROCK ISD",
+      "mcr": "0.6254"
+    },
+    {
+      "id": "108911",
+      "name": "SHARYLAND ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "210903",
+      "name": "SHELBYVILLE ISD",
+      "mcr": "0.5628"
+    },
+    {
+      "id": "101924",
+      "name": "SHELDON ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "204904",
+      "name": "SHEPHERD ISD",
+      "mcr": "0.5679"
+    },
+    {
+      "id": "091906",
+      "name": "SHERMAN ISD",
+      "mcr": "0.6049"
+    },
+    {
+      "id": "143903",
+      "name": "SHINER ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "047905",
+      "name": "SIDNEY ISD",
+      "mcr": "0.5842"
+    },
+    {
+      "id": "115902",
+      "name": "SIERRA BLANCA ISD",
+      "mcr": "0.6233"
+    },
+    {
+      "id": "100904",
+      "name": "SILSBEE ISD",
+      "mcr": "0.6103"
+    },
+    {
+      "id": "023902",
+      "name": "SILVERTON ISD",
+      "mcr": "0.5628"
+    },
+    {
+      "id": "019909",
+      "name": "SIMMS ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "205906",
+      "name": "SINTON ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "049909",
+      "name": "SIVELLS BEND ISD",
+      "mcr": "0.5890"
+    },
+    {
+      "id": "013905",
+      "name": "SKIDMORE-TYNAN ISD",
+      "mcr": "0.5756"
+    },
+    {
+      "id": "152903",
+      "name": "SLATON ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "249908",
+      "name": "SLIDELL ISD",
+      "mcr": "0.6126"
+    },
+    {
+      "id": "001909",
+      "name": "SLOCUM ISD",
+      "mcr": "0.5733"
+    },
+    {
+      "id": "011904",
+      "name": "SMITHVILLE ISD",
+      "mcr": "0.6003"
+    },
+    {
+      "id": "110906",
+      "name": "SMYER ISD",
+      "mcr": "0.6007"
+    },
+    {
+      "id": "026903",
+      "name": "SNOOK ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "208902",
+      "name": "SNYDER ISD",
+      "mcr": "0.6254"
+    },
+    {
+      "id": "071909",
+      "name": "SOCORRO ISD",
+      "mcr": "0.6105"
+    },
+    {
+      "id": "015909",
+      "name": "SOMERSET ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "026902",
+      "name": "SOMERVILLE ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "218901",
+      "name": "SONORA ISD",
+      "mcr": "0.6254"
+    },
+    {
+      "id": "015908",
+      "name": "SOUTH SAN ANTONIO ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "085903",
+      "name": "SOUTHLAND ISD",
+      "mcr": "0.5755"
+    },
+    {
+      "id": "015917",
+      "name": "SOUTHSIDE ISD",
+      "mcr": "0.6177"
+    },
+    {
+      "id": "015912",
+      "name": "SOUTHWEST ISD",
+      "mcr": "0.6097"
+    },
+    {
+      "id": "098904",
+      "name": "SPEARMAN ISD",
+      "mcr": "0.6254"
+    },
+    {
+      "id": "170907",
+      "name": "SPLENDORA ISD",
+      "mcr": "0.5692"
+    },
+    {
+      "id": "101920",
+      "name": "SPRING BRANCH ISD",
+      "mcr": "0.6254"
+    },
+    {
+      "id": "092907",
+      "name": "SPRING HILL ISD",
+      "mcr": "0.5922"
+    },
+    {
+      "id": "101919",
+      "name": "SPRING ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "140907",
+      "name": "SPRINGLAKE-EARTH ISD",
+      "mcr": "0.6254"
+    },
+    {
+      "id": "184902",
+      "name": "SPRINGTOWN ISD",
+      "mcr": "0.6058"
+    },
+    {
+      "id": "063903",
+      "name": "SPUR ISD",
+      "mcr": "0.6254"
+    },
+    {
+      "id": "229905",
+      "name": "SPURGER ISD",
+      "mcr": "0.6210"
+    },
+    {
+      "id": "079910",
+      "name": "STAFFORD MSD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "127906",
+      "name": "STAMFORD ISD",
+      "mcr": "0.6254"
+    },
+    {
+      "id": "156902",
+      "name": "STANTON ISD",
+      "mcr": "0.5689"
+    },
+    {
+      "id": "072903",
+      "name": "STEPHENVILLE ISD",
+      "mcr": "0.5943"
+    },
+    {
+      "id": "216901",
+      "name": "STERLING CITY ISD",
+      "mcr": "0.6254"
+    },
+    {
+      "id": "247906",
+      "name": "STOCKDALE ISD",
+      "mcr": "0.5689"
+    },
+    {
+      "id": "211902",
+      "name": "STRATFORD ISD",
+      "mcr": "0.5639"
+    },
+    {
+      "id": "182905",
+      "name": "STRAWN ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "140908",
+      "name": "SUDAN ISD",
+      "mcr": "0.6254"
+    },
+    {
+      "id": "112910",
+      "name": "SULPHUR BLUFF ISD",
+      "mcr": "0.6097"
+    },
+    {
+      "id": "112901",
+      "name": "SULPHUR SPRINGS ISD",
+      "mcr": "0.5628"
+    },
+    {
+      "id": "110907",
+      "name": "SUNDOWN ISD",
+      "mcr": "0.6254"
+    },
+    {
+      "id": "057919",
+      "name": "SUNNYVALE ISD",
+      "mcr": "0.5940"
+    },
+    {
+      "id": "171902",
+      "name": "SUNRAY COLLEGIATE ISD",
+      "mcr": "0.6192"
+    },
+    {
+      "id": "020906",
+      "name": "SWEENY ISD",
+      "mcr": "0.6254"
+    },
+    {
+      "id": "143905",
+      "name": "SWEET HOME ISD",
+      "mcr": "0.6005"
+    },
+    {
+      "id": "177902",
+      "name": "SWEETWATER ISD",
+      "mcr": "0.6036"
+    },
+    {
+      "id": "205907",
+      "name": "TAFT ISD",
+      "mcr": "0.5792"
+    },
+    {
+      "id": "153904",
+      "name": "TAHOKA ISD",
+      "mcr": "0.6254"
+    },
+    {
+      "id": "146907",
+      "name": "TARKINGTON ISD",
+      "mcr": "0.5938"
+    },
+    {
+      "id": "201910",
+      "name": "TATUM ISD",
+      "mcr": "0.6008"
+    },
+    {
+      "id": "246911",
+      "name": "TAYLOR ISD",
+      "mcr": "0.5689"
+    },
+    {
+      "id": "081904",
+      "name": "TEAGUE ISD",
+      "mcr": "0.6192"
+    },
+    {
+      "id": "014909",
+      "name": "TEMPLE ISD",
+      "mcr": "0.5809"
+    },
+    {
+      "id": "210904",
+      "name": "TENAHA ISD",
+      "mcr": "0.6148"
+    },
+    {
+      "id": "022004",
+      "name": "TERLINGUA CSD",
+      "mcr": "0.5628"
+    },
+    {
+      "id": "222901",
+      "name": "TERRELL COUNTY ISD",
+      "mcr": "0.6254"
+    },
+    {
+      "id": "129906",
+      "name": "TERRELL ISD",
+      "mcr": "0.5905"
+    },
+    {
+      "id": "019907",
+      "name": "TEXARKANA ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "084906",
+      "name": "TEXAS CITY ISD",
+      "mcr": "0.6236"
+    },
+    {
+      "id": "211901",
+      "name": "TEXHOMA ISD",
+      "mcr": "0.6192"
+    },
+    {
+      "id": "056902",
+      "name": "TEXLINE ISD",
+      "mcr": "0.6254"
+    },
+    {
+      "id": "166905",
+      "name": "THORNDALE ISD",
+      "mcr": "0.5689"
+    },
+    {
+      "id": "246912",
+      "name": "THRALL ISD",
+      "mcr": "0.5666"
+    },
+    {
+      "id": "149902",
+      "name": "THREE RIVERS ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "072901",
+      "name": "THREE WAY ISD",
+      "mcr": "0.5996"
+    },
+    {
+      "id": "224901",
+      "name": "THROCKMORTON COLLEGIATE ISD",
+      "mcr": "0.6254"
+    },
+    {
+      "id": "158902",
+      "name": "TIDEHAVEN ISD",
+      "mcr": "0.5634"
+    },
+    {
+      "id": "210905",
+      "name": "TIMPSON ISD",
+      "mcr": "0.5628"
+    },
+    {
+      "id": "091907",
+      "name": "TIOGA ISD",
+      "mcr": "0.6106"
+    },
+    {
+      "id": "111903",
+      "name": "TOLAR ISD",
+      "mcr": "0.5628"
+    },
+    {
+      "id": "091918",
+      "name": "TOM BEAN ISD",
+      "mcr": "0.6164"
+    },
+    {
+      "id": "101921",
+      "name": "TOMBALL ISD",
+      "mcr": "0.6098"
+    },
+    {
+      "id": "071908",
+      "name": "TORNILLO ISD",
+      "mcr": "0.5628"
+    },
+    {
+      "id": "221905",
+      "name": "TRENT ISD",
+      "mcr": "0.5689"
+    },
+    {
+      "id": "074912",
+      "name": "TRENTON ISD",
+      "mcr": "0.5979"
+    },
+    {
+      "id": "107907",
+      "name": "TRINIDAD ISD",
+      "mcr": "0.6100"
+    },
+    {
+      "id": "228903",
+      "name": "TRINITY ISD",
+      "mcr": "0.6254"
+    },
+    {
+      "id": "212904",
+      "name": "TROUP ISD",
+      "mcr": "0.6039"
+    },
+    {
+      "id": "014910",
+      "name": "TROY ISD",
+      "mcr": "0.5689"
+    },
+    {
+      "id": "219903",
+      "name": "TULIA ISD",
+      "mcr": "0.5866"
+    },
+    {
+      "id": "178912",
+      "name": "TULOSO-MIDWAY ISD",
+      "mcr": "0.5970"
+    },
+    {
+      "id": "096905",
+      "name": "TURKEY-QUITAQUE ISD",
+      "mcr": "0.6254"
+    },
+    {
+      "id": "212905",
+      "name": "TYLER ISD",
+      "mcr": "0.5903"
+    },
+    {
+      "id": "230908",
+      "name": "UNION GROVE ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "230904",
+      "name": "UNION HILL ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "240903",
+      "name": "UNITED ISD",
+      "mcr": "0.5628"
+    },
+    {
+      "id": "232904",
+      "name": "UTOPIA ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "232903",
+      "name": "UVALDE CISD",
+      "mcr": "0.5628"
+    },
+    {
+      "id": "122902",
+      "name": "VALENTINE ISD",
+      "mcr": "0.6254"
+    },
+    {
+      "id": "018904",
+      "name": "VALLEY MILLS ISD",
+      "mcr": "0.6018"
+    },
+    {
+      "id": "049903",
+      "name": "VALLEY VIEW ISD",
+      "mcr": "0.5789"
+    },
+    {
+      "id": "108916",
+      "name": "VALLEY VIEW ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "091908",
+      "name": "VAN ALSTYNE ISD",
+      "mcr": "0.5628"
+    },
+    {
+      "id": "234906",
+      "name": "VAN ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "158906",
+      "name": "VAN VLECK ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "180902",
+      "name": "VEGA ISD",
+      "mcr": "0.6254"
+    },
+    {
+      "id": "126908",
+      "name": "VENUS ISD",
+      "mcr": "0.6056"
+    },
+    {
+      "id": "226908",
+      "name": "VERIBEST ISD",
+      "mcr": "0.5983"
+    },
+    {
+      "id": "244903",
+      "name": "VERNON ISD",
+      "mcr": "0.6254"
+    },
+    {
+      "id": "235902",
+      "name": "VICTORIA ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "181907",
+      "name": "VIDOR ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "143904",
+      "name": "VYSEHRAD ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "161914",
+      "name": "WACO ISD",
+      "mcr": "0.6254"
+    },
+    {
+      "id": "089905",
+      "name": "WAELDER ISD",
+      "mcr": "0.5931"
+    },
+    {
+      "id": "059902",
+      "name": "WALCOTT ISD",
+      "mcr": "0.6254"
+    },
+    {
+      "id": "226906",
+      "name": "WALL ISD",
+      "mcr": "0.6185"
+    },
+    {
+      "id": "237904",
+      "name": "WALLER ISD",
+      "mcr": "0.5628"
+    },
+    {
+      "id": "049908",
+      "name": "WALNUT BEND ISD",
+      "mcr": "0.6205"
+    },
+    {
+      "id": "018905",
+      "name": "WALNUT SPRINGS ISD",
+      "mcr": "0.5821"
+    },
+    {
+      "id": "229904",
+      "name": "WARREN ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "102903",
+      "name": "WASKOM ISD",
+      "mcr": "0.5628"
+    },
+    {
+      "id": "226905",
+      "name": "WATER VALLEY ISD",
+      "mcr": "0.6157"
+    },
+    {
+      "id": "070912",
+      "name": "WAXAHACHIE ISD",
+      "mcr": "0.6033"
+    },
+    {
+      "id": "184903",
+      "name": "WEATHERFORD ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "240904",
+      "name": "WEBB CISD",
+      "mcr": "0.5930"
+    },
+    {
+      "id": "045905",
+      "name": "WEIMAR ISD",
+      "mcr": "0.5689"
+    },
+    {
+      "id": "044902",
+      "name": "WELLINGTON ISD",
+      "mcr": "0.6242"
+    },
+    {
+      "id": "223904",
+      "name": "WELLMAN-UNION CISD",
+      "mcr": "0.6252"
+    },
+    {
+      "id": "037909",
+      "name": "WELLS ISD",
+      "mcr": "0.6192"
+    },
+    {
+      "id": "108913",
+      "name": "WESLACO ISD",
+      "mcr": "0.5933"
+    },
+    {
+      "id": "100908",
+      "name": "WEST HARDIN COUNTY CISD",
+      "mcr": "0.5628"
+    },
+    {
+      "id": "161916",
+      "name": "WEST ISD",
+      "mcr": "0.6164"
+    },
+    {
+      "id": "181906",
+      "name": "WEST ORANGE-COVE CISD",
+      "mcr": "0.6254"
+    },
+    {
+      "id": "178915",
+      "name": "WEST OSO ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "201914",
+      "name": "WEST RUSK COUNTY CONSOLIDATED ISD",
+      "mcr": "0.6192"
+    },
+    {
+      "id": "202905",
+      "name": "WEST SABINE ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "168903",
+      "name": "WESTBROOK ISD",
+      "mcr": "0.5628"
+    },
+    {
+      "id": "062905",
+      "name": "WESTHOFF ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "073904",
+      "name": "WESTPHALIA ISD",
+      "mcr": "0.5994"
+    },
+    {
+      "id": "001908",
+      "name": "WESTWOOD ISD",
+      "mcr": "0.5873"
+    },
+    {
+      "id": "241904",
+      "name": "WHARTON ISD",
+      "mcr": "0.5780"
+    },
+    {
+      "id": "242903",
+      "name": "WHEELER ISD",
+      "mcr": "0.6254"
+    },
+    {
+      "id": "033904",
+      "name": "WHITE DEER ISD",
+      "mcr": "0.6254"
+    },
+    {
+      "id": "092908",
+      "name": "WHITE OAK ISD",
+      "mcr": "0.6183"
+    },
+    {
+      "id": "220920",
+      "name": "WHITE SETTLEMENT ISD",
+      "mcr": "0.5628"
+    },
+    {
+      "id": "040902",
+      "name": "WHITEFACE CISD",
+      "mcr": "0.6254"
+    },
+    {
+      "id": "212906",
+      "name": "WHITEHOUSE ISD",
+      "mcr": "0.6145"
+    },
+    {
+      "id": "091909",
+      "name": "WHITESBORO ISD",
+      "mcr": "0.6116"
+    },
+    {
+      "id": "091910",
+      "name": "WHITEWRIGHT ISD",
+      "mcr": "0.5885"
+    },
+    {
+      "id": "110908",
+      "name": "WHITHARRAL ISD",
+      "mcr": "0.6254"
+    },
+    {
+      "id": "109911",
+      "name": "WHITNEY ISD",
+      "mcr": "0.6064"
+    },
+    {
+      "id": "243905",
+      "name": "WICHITA FALLS ISD",
+      "mcr": "0.6254"
+    },
+    {
+      "id": "180904",
+      "name": "WILDORADO ISD",
+      "mcr": "0.5628"
+    },
+    {
+      "id": "170904",
+      "name": "WILLIS ISD",
+      "mcr": "0.5818"
+    },
+    {
+      "id": "234907",
+      "name": "WILLS POINT ISD",
+      "mcr": "0.6033"
+    },
+    {
+      "id": "153907",
+      "name": "WILSON ISD",
+      "mcr": "0.6067"
+    },
+    {
+      "id": "105905",
+      "name": "WIMBERLEY ISD",
+      "mcr": "0.6200"
+    },
+    {
+      "id": "005904",
+      "name": "WINDTHORST ISD",
+      "mcr": "0.6078"
+    },
+    {
+      "id": "248902",
+      "name": "WINK-LOVING ISD",
+      "mcr": "0.5889"
+    },
+    {
+      "id": "250907",
+      "name": "WINNSBORO ISD",
+      "mcr": "0.6118"
+    },
+    {
+      "id": "212910",
+      "name": "WINONA ISD",
+      "mcr": "0.5721"
+    },
+    {
+      "id": "200904",
+      "name": "WINTERS ISD",
+      "mcr": "0.6254"
+    },
+    {
+      "id": "174906",
+      "name": "WODEN ISD",
+      "mcr": "0.5628"
+    },
+    {
+      "id": "116909",
+      "name": "WOLFE CITY ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "196902",
+      "name": "WOODSBORO ISD",
+      "mcr": "0.6254"
+    },
+    {
+      "id": "224902",
+      "name": "WOODSON ISD",
+      "mcr": "0.6254"
+    },
+    {
+      "id": "229903",
+      "name": "WOODVILLE ISD",
+      "mcr": "0.6192"
+    },
+    {
+      "id": "081905",
+      "name": "WORTHAM ISD",
+      "mcr": "0.5628"
+    },
+    {
+      "id": "043914",
+      "name": "WYLIE ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "221912",
+      "name": "WYLIE ISD",
+      "mcr": "0.5945"
+    },
+    {
+      "id": "250905",
+      "name": "YANTIS ISD",
+      "mcr": "0.5908"
+    },
+    {
+      "id": "062903",
+      "name": "YOAKUM ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "062904",
+      "name": "YORKTOWN ISD",
+      "mcr": "0.6169"
+    },
+    {
+      "id": "071905",
+      "name": "YSLETA ISD",
+      "mcr": "0.6254"
+    },
+    {
+      "id": "253901",
+      "name": "ZAPATA COUNTY ISD",
+      "mcr": "0.6171"
+    },
+    {
+      "id": "003906",
+      "name": "ZAVALLA ISD",
+      "mcr": "0.6068"
+    },
+    {
+      "id": "025906",
+      "name": "ZEPHYR ISD",
+      "mcr": "0.5991"
+    }
+  ]
+}
