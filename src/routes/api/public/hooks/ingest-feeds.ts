@@ -489,7 +489,7 @@ async function fetchSource(source: Source): Promise<FetchResult> {
     : source.name === "KCBD Lubbock — Direct Local Headlines" ? "official-kcbd-home"
     : null;
   let localPublisherRelayUsed = false;
-  if (!finalResult.text && localPublisherRelayKey && source.mode === "html-links") {
+  if (!finalResult.text && canFailoverTrustedRssStatus(finalResult.status) && localPublisherRelayKey && source.mode === "html-links") {
     const relayUrl = `https://ftkznprjljkhymknvhye.supabase.co/functions/v1/ktr-rss-relay?feed=${localPublisherRelayKey}`;
     const localFallback = await fetchText(relayUrl, "text/html,application/xhtml+xml,*/*", 1, 16000);
     if (localFallback.text) {
