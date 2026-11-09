@@ -39,7 +39,7 @@ describe("first-party local publisher index discovery", () => {
 
   it("rejects stale, dateless, future and external cards instead of inventing publication dates", () => {
     expect(parseFox4DatedLocalHtml(fox.replace("2026-11-06T20:33", "2026-04-06T20:33"), "FOX 4", now)).toHaveLength(0);
-    expect(parseFox4DatedLocalHtml(fox.replace(/<time[^>]+><\/time>/, ""), "FOX 4", now)).toHaveLength(0);
+    expect(parseFox4DatedLocalHtml(fox.replace(/<time\b[^>]*>[\s\S]*?<\/time>/, ""), "FOX 4", now)).toHaveLength(0);
     expect(parseFox4DatedLocalHtml(fox.replace("/news/midlothian-raid-targets-four-locations-multi-agency-investigation", "https://other.example/news/fake"), "FOX 4", now)).toHaveLength(0);
     expect(parseKrgvDatedLocalHtml(krgv.replace("2026-11-07", "2026-01-07"), "KRGV", now)).toHaveLength(0);
     expect(parseKrgvDatedLocalHtml(krgv.replace("2026-11-07", "2026-12-07"), "KRGV", now)).toHaveLength(0);
