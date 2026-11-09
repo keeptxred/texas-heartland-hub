@@ -23,7 +23,7 @@ const mandatory = [
   'new.internal_slug IS NOT NULL',
   'new.texasdefined_slug IS NOT NULL',
   "'routing_lock'",
-  "f.created_at >= timestamptz '2026-11-04T00:00:00Z'",
+  "f.created_at >= timestamptz '2026-11-01T00:00:00Z'",
   'f.internal_slug IS NULL',
   'f.texasdefined_slug IS NULL',
   'f.target_site IS DISTINCT FROM proposed.destination[1]',
