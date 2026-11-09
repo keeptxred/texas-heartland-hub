@@ -91,4 +91,15 @@ for (const term of ['lufkin','midlothian','mckinney','buda','holly hop','kilgore
 for (const destination of ["new.target_site := 'keeptxred';", "new.target_site := 'texasdefined';"]) {
   assert.ok(migration.includes(destination), `Missing ownership destination: ${destination}`);
 }
+
+const scoringSource = read('src/routes/api/public/hooks/score-viral.ts');
+const sensitivitySource = read('src/lib/newsroom-sensitive-story-review.ts');
+assert.match(scoringSource, /requiresSensitiveNewsroomReview\(\{/);
+assert.match(scoringSource, /postRewriteReviewRequired =[\s\S]*sensitiveReviewRequired;/);
+assert.match(scoringSource, /result\.editorialLane === "AUTO_PUBLISH" &&\s*!postRewriteReviewRequired/);
+assert.match(scoringSource, /post_rewrite_review_required: postRewriteReviewRequired/);
+assert.match(sensitivitySource, /fbi\|federal/);
+assert.match(sensitivitySource, /fraud/);
+assert.match(sensitivitySource, /lawsuits\?/);
+
 console.log(`Nov. 8 discovery benchmark contract passed: ${sources.length} fixed feeds, strict allowlist, safe routing and quality holds.`);
