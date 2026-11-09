@@ -9,6 +9,11 @@ on:
       - "scripts/news/validate-nov9-flyover-benchmark.mjs"
       - "supabase/functions/ktr-rss-relay/index.ts"
       - "supabase/functions/ktr-rss-relay-priority/index.ts"
+      - "src/routes/api/public/hooks/ingest-feeds.ts"
+      - "src/lib/newsroom-local-direct-html.ts"
+      - "src/lib/newsroom-local-direct-html.test.ts"
+      - "src/lib/viral-score.ts"
+      - "src/lib/viral-score.test.ts"
       - ".github/workflows/roundup-discovery-contract.yml"
   push:
     branches: [main]
@@ -19,6 +24,11 @@ on:
       - "scripts/news/validate-nov9-flyover-benchmark.mjs"
       - "supabase/functions/ktr-rss-relay/index.ts"
       - "supabase/functions/ktr-rss-relay-priority/index.ts"
+      - "src/routes/api/public/hooks/ingest-feeds.ts"
+      - "src/lib/newsroom-local-direct-html.ts"
+      - "src/lib/newsroom-local-direct-html.test.ts"
+      - "src/lib/viral-score.ts"
+      - "src/lib/viral-score.test.ts"
       - ".github/workflows/roundup-discovery-contract.yml"
   workflow_dispatch:
 

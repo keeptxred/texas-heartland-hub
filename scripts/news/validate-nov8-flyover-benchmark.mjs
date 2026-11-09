@@ -54,6 +54,29 @@ for (const [name, feed] of [
 assert.ok(directIngest.includes('mode: "html-links"'), 'Gray should use dated first-party HTML parsing');
 assert.ok(directIngest.includes('ageMs > 14 * 86_400_000'), 'Gray must refuse archive as fresh');
 assert.ok(directIngest.includes('articleDate.toISOString()'), 'Gray must derive date from URL, not crawl time');
+
+const extendedDirect = read('src/lib/newsroom-local-direct-html.ts');
+const starshipRouting = read('supabase/migrations/20261109164000_route_15th_starship_flight_to_texasdefined.sql');
+for (const [name, key] of [
+  ['KLTV Tyler — Direct Local Headlines', 'official-kltv-home'],
+  ['FOX 4 Midlothian — Direct Local Headlines', 'official-fox4-midlothian'],
+  ['KRGV Rio Grande Valley — Direct Local Headlines', 'official-krgv-news'],
+]) {
+  assert.ok(directIngest.includes('name: "' + name + '"'), 'Missing first-party source: ' + name);
+  assert.ok(relay.includes('"' + key + '":'), 'Missing original publisher allowlist: ' + key);
+  assert.ok(directIngest.includes('"' + key + '"'), 'Missing fixed original-host fallback: ' + key);
+}
+assert.ok(directIngest.includes('parseFox4DatedLocalHtml(finalResult.text, source.name)'), 'FOX 4 must parse publisher dates');
+assert.ok(directIngest.includes('parseKrgvDatedLocalHtml(finalResult.text, source.name)'), 'KRGV must parse publisher dates');
+assert.ok(directIngest.includes('KLTV Tyler — Direct Local Headlines"'), 'KLTV must use dated Gray original permalinks');
+assert.ok(extendedDirect.includes('age > 14 * DAY_MS'), 'First-party listing parser must refuse stale archive cards');
+assert.ok(extendedDirect.includes('dt.toISOString().slice(0, 10) !== ymd'), 'First-party dates must be validated');
+assert.ok(extendedDirect.includes('new URL(relativePath, origin)'), 'Never treat original source URLs as proxy article URLs');
+assert.ok(starshipRouting.includes('15th starship'), 'Starship headline word-order coverage missing');
+assert.ok(starshipRouting.includes('routing_lock'), 'Routing must respect manually locked articles');
+assert.ok(starshipRouting.includes('internal_slug IS NULL'), 'Routing must leave published articles unchanged');
+assert.doesNotMatch(starshipRouting, /SET ready_for_rewrite|SET internal_slug|SET texasdefined_slug/i, 'Do not bypass editorial publication gates');
+
 assert.ok(degraded.includes('SET enabled = false'), 'Blocked Google News feeds must be disabled');
 for (const [key, name] of sources.map(([key, name]) => [key, name])) {
   assert.ok(degraded.includes(name), `Blocked Google source not disabled: ${key}`);

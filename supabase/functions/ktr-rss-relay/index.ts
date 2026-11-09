@@ -14,6 +14,9 @@ const FEEDS: Record<string, string> = {
   // First-party Gray Local Media HTML indexes, never third-party Google proxies.
   "official-ktre-home": "https://www.ktre.com/",
   "official-kcbd-home": "https://www.kcbd.com/",
+  "official-kltv-home": "https://www.kltv.com/",
+  "official-fox4-midlothian": "https://www.fox4news.com/tag/us/tx/ellis-county/midlothian",
+  "official-krgv-news": "https://www.krgv.com/news/",
   "official-comptroller-rss": "https://public.govdelivery.com/topics/TXCOMPT_1/feed.rss",
   "khou-local": "https://www.khou.com/feeds/syndication/rss/news/local",
   "khou-sports": "https://www.khou.com/feeds/syndication/rss/sports/",

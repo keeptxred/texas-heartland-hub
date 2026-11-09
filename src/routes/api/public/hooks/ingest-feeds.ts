@@ -10,6 +10,7 @@ import { partitionFeedLinkLookups } from "@/lib/ingest-link-lookup";
 import { extractFirstPartyRssArticleBody } from "@/lib/newsroom-firstparty-rss-body";
 import { canFailoverTrustedRssStatus, trustedNewsroomRssRelayUrl } from "@/lib/official-rss-egress";
 import { isGoogleNewsDiscoveryTransport } from "@/lib/ingest-discovery-source";
+import { parseFox4DatedLocalHtml, parseKrgvDatedLocalHtml } from "@/lib/newsroom-local-direct-html";
 export { publishSingleFeedItem } from "@/lib/multi-source-publish";
 export { isPuzzleTitle } from "@/lib/ingest-feeds-legacy";
 
@@ -23,7 +24,7 @@ type Item = {
 };
 type IngestRow = Item & { trend_source: string };
 
-type SourceMode = "rss" | "tpwd-html" | "texas-standard-html" | "html-links";
+type SourceMode = "rss" | "tpwd-html" | "texas-standard-html" | "html-links" | "fox4-html" | "krgv-html";
 type Source = {
   name: string;
   url: string;
@@ -86,6 +87,9 @@ const DIRECT_SOURCES: Source[] = [
   // permalinks. Do not rely on Google News RSS (currently anti-bot 503).
   { name: "KTRE Lufkin — Direct Local Headlines", url: "https://www.ktre.com/", category: "Local", mode: "html-links", include: "^/20\\d{2}/\\d{2}/\\d{2}/[a-z0-9-]+/?$" },
   { name: "KCBD Lubbock — Direct Local Headlines", url: "https://www.kcbd.com/", category: "Local", mode: "html-links", include: "^/20\\d{2}/\\d{2}/\\d{2}/[a-z0-9-]+/?$" },
+  { name: "KLTV Tyler — Direct Local Headlines", url: "https://www.kltv.com/", category: "Local", mode: "html-links", include: "^/20\\d{2}/\\d{2}/\\d{2}/[a-z0-9-]+/?$" },
+  { name: "FOX 4 Midlothian — Direct Local Headlines", url: "https://www.fox4news.com/tag/us/tx/ellis-county/midlothian", category: "Local", mode: "fox4-html" },
+  { name: "KRGV Rio Grande Valley — Direct Local Headlines", url: "https://www.krgv.com/news/", category: "Local", mode: "krgv-html" },
   { name: "Dallas Cowboys", url: "https://www.dallascowboys.com/rss/news", category: "Sports", mode: "rss" },
   { name: "Houston Texans", url: "https://www.houstontexans.com/rss/news", category: "Sports", mode: "rss" },
   { name: "Dallas Stars", url: "https://www.nhl.com/stars/news/", category: "Sports", mode: "html-links", include: "^/stars/news/" },
@@ -233,7 +237,7 @@ function parseHtmlLinks(html: string, source: Source): Item[] {
       if (!dated) continue;
       publishDate = dated;
     }
-    if (source.name === "KTRE Lufkin — Direct Local Headlines" || source.name === "KCBD Lubbock — Direct Local Headlines") {
+    if (source.name === "KTRE Lufkin — Direct Local Headlines" || source.name === "KCBD Lubbock — Direct Local Headlines" || source.name === "KLTV Tyler — Direct Local Headlines") {
       // Gray local outlets use canonical /YYYY/MM/DD/slug dates. Never invent
       // publication dates from the crawl or load stale archive links as fresh.
       const dated = parsed.pathname.match(/^\/(20\d{2})\/(\d{2})\/(\d{2})\/[^/]+\/?$/i);
@@ -420,7 +424,7 @@ function rotateGoogleSources(sources: Source[]): Source[] {
 
 async function fetchSource(source: Source): Promise<FetchResult> {
   const isGoogle = isGoogleNewsDiscoveryTransport(source.url);
-  const isHtmlLinks = source.mode === "html-links";
+  const isHtmlLinks = source.mode === "html-links" || source.mode === "fox4-html" || source.mode === "krgv-html";
   const accept = source.mode === "rss" ? "application/rss+xml,application/atom+xml,application/xml,text/xml,*/*" : "text/html,application/xhtml+xml,*/*";
   const fixedRelayUrl = source.mode === "rss" ? trustedNewsroomRssRelayUrl(source.url) : null;
   // A real first-party URL must remain the article source. The fixed relay
@@ -487,9 +491,12 @@ async function fetchSource(source: Source): Promise<FetchResult> {
   const localPublisherRelayKey =
     source.name === "KTRE Lufkin — Direct Local Headlines" ? "official-ktre-home"
     : source.name === "KCBD Lubbock — Direct Local Headlines" ? "official-kcbd-home"
+    : source.name === "KLTV Tyler — Direct Local Headlines" ? "official-kltv-home"
+    : source.name === "FOX 4 Midlothian — Direct Local Headlines" ? "official-fox4-midlothian"
+    : source.name === "KRGV Rio Grande Valley — Direct Local Headlines" ? "official-krgv-news"
     : null;
   let localPublisherRelayUsed = false;
-  if (!finalResult.text && canFailoverTrustedRssStatus(finalResult.status) && localPublisherRelayKey && source.mode === "html-links") {
+  if (!finalResult.text && canFailoverTrustedRssStatus(finalResult.status) && localPublisherRelayKey && isHtmlLinks) {
     const relayUrl = `https://ftkznprjljkhymknvhye.supabase.co/functions/v1/ktr-rss-relay?feed=${localPublisherRelayKey}`;
     const localFallback = await fetchText(relayUrl, "text/html,application/xhtml+xml,*/*", 1, 16000);
     if (localFallback.text) {
@@ -508,6 +515,8 @@ async function fetchSource(source: Source): Promise<FetchResult> {
     ? parseTexasAgPressReleaseIndex(finalResult.text)
     : source.mode === "tpwd-html" ? parseTpwdHtml(finalResult.text)
     : source.mode === "html-links" ? parseHtmlLinks(finalResult.text, source)
+    : source.mode === "fox4-html" ? parseFox4DatedLocalHtml(finalResult.text, source.name)
+    : source.mode === "krgv-html" ? parseKrgvDatedLocalHtml(finalResult.text, source.name)
     : parseFeed(finalResult.text, source.name);
   return { source: source.name, url: source.url, status: finalResult.status, attempts: finalResult.attempts, mode: source.mode, items: items.slice(0, 30), relayUsed: sourceRelayUsed };
 }
