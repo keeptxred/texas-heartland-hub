@@ -123,6 +123,28 @@ describe("Texas statewide coverage scoring", () => {
     }
   });
 
+  it("keeps independently sourced Kilgore and Starbase headlines eligible for review", () => {
+    const cases = [
+      {
+        title: "Credit Union of Texas gives away turkeys and hams in Kilgore",
+        source: "KLTV Tyler — Direct Local Headlines",
+      },
+      {
+        title: "SpaceX sets target date for 15th Starship launch at Starbase",
+        source: "KRGV Rio Grande Valley — Direct Local Headlines",
+      },
+    ];
+    for (const story of cases) {
+      const score = scoreFeedItem({
+        ...story,
+        description: story.source + ": " + story.title,
+        pub_date: fresh(),
+      });
+      expect(score.texasRelevanceScore).toBeGreaterThanOrEqual(40);
+      expect(score.sourceReputationScore).toBeGreaterThanOrEqual(85);
+    }
+  });
+
   it("does not promote an unrelated national hospital story", () => {
     const result = scoreFeedItem({
       title: "Regional hospital receives national quality award",
