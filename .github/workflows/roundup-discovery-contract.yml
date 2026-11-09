@@ -6,6 +6,7 @@ on:
       - "supabase/migrations/**"
       - "scripts/news/validate-roundup-discovery-contract.mjs"
       - "scripts/news/validate-nov8-flyover-benchmark.mjs"
+      - "scripts/news/validate-nov9-flyover-benchmark.mjs"
       - "supabase/functions/ktr-rss-relay/index.ts"
       - "supabase/functions/ktr-rss-relay-priority/index.ts"
       - ".github/workflows/roundup-discovery-contract.yml"
@@ -15,6 +16,7 @@ on:
       - "supabase/migrations/**"
       - "scripts/news/validate-roundup-discovery-contract.mjs"
       - "scripts/news/validate-nov8-flyover-benchmark.mjs"
+      - "scripts/news/validate-nov9-flyover-benchmark.mjs"
       - "supabase/functions/ktr-rss-relay/index.ts"
       - "supabase/functions/ktr-rss-relay-priority/index.ts"
       - ".github/workflows/roundup-discovery-contract.yml"
@@ -36,3 +38,4 @@ jobs:
         run: |
           node scripts/news/validate-roundup-discovery-contract.mjs
           node scripts/news/validate-nov8-flyover-benchmark.mjs
+          node scripts/news/validate-nov9-flyover-benchmark.mjs
