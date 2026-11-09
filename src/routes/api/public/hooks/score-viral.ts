@@ -10,6 +10,7 @@ import {
 } from "@/lib/viral-score";
 import { applyTrustedDiscoveryReviewFloor } from "@/lib/discovery-provenance-reputation";
 import { isLowValueTitle } from "@/lib/low-value-titles";
+import { requiresSensitiveNewsroomReview, SENSITIVE_NEWSROOM_REVIEW_REASON } from "@/lib/newsroom-sensitive-story-review";
 import { shouldAttemptKtrAutoPublish } from "@/lib/ktr-auto-publish-selection";
 import { isFreshForAutoPublication, mergeScoringRows } from "@/lib/viral-score-backfill";
 import { publishSingleFeedItem } from "./ingest-feeds";
@@ -334,7 +335,14 @@ async function scoreRecent(request: Request) {
     const prior = row.viral_score ?? 0;
     const trendVelocity = Number(((result.viralScore - prior) + (sourceCount - 1) * 5).toFixed(2));
 
-    const postRewriteReviewRequired = row.viral_signals?.post_rewrite_review_required === true;
+    // Prevent transient publication of potentially defamatory or unverified
+    // investigations. Previous review holds remain sticky until verified.
+    const sensitiveReviewRequired = requiresSensitiveNewsroomReview({
+      title: row.title,
+      description: row.description,
+    });
+    const postRewriteReviewRequired =
+      row.viral_signals?.post_rewrite_review_required === true || sensitiveReviewRequired;
     const readyForRewrite = qualifiesReadyForRewrite(result);
     const autoPublish =
       qualifiesForAutoRewrite(result) &&
@@ -364,6 +372,7 @@ async function scoreRecent(request: Request) {
       editorial_signals: result.editorialSignals,
       auto_publish_eligible: autoPublish,
       post_rewrite_review_required: postRewriteReviewRequired,
+      ...(sensitiveReviewRequired ? { post_rewrite_review_reason: SENSITIVE_NEWSROOM_REVIEW_REASON } : {}),
     };
     const unchanged =
       Boolean(row.viral_scored_at) &&
