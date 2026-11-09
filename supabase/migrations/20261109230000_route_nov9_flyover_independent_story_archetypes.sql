@@ -19,7 +19,7 @@ BEGIN
     RETURN ARRAY['keeptxred','Politics'];
   ELSIF t ~ '(whitmire|houston|hpd)' AND t ~ '(ice|immigration enforcement)' AND
         t ~ '(police|cooperat|executive order|restrict|calls?|policy)' THEN
-    RETURN ARRAY['keeptxred','Houston'];
+    RETURN ARRAY['keeptxred','Texas News'];
   ELSIF t ~ '(harrison|hinojosa|governor.elect)' AND
         t ~ '(governor.*(power|emergency)|limit.*power|special session|emergency power)' THEN
     RETURN ARRAY['keeptxred','Politics'];
@@ -79,12 +79,9 @@ BEGIN
 END
 $function$;
 
--- Pure classifier is not a public-facing RPC; only trusted newsroom actors
--- need it. Invoker triggers retain every existing row-level quality gate.
-REVOKE ALL ON FUNCTION public.nov9_flyover_story_destination(text,text)
-  FROM PUBLIC, anon, authenticated;
-GRANT EXECUTE ON FUNCTION public.nov9_flyover_story_destination(text,text)
-  TO service_role;
+-- Keep the helper callable by all existing newsroom insert/update roles. It is a
+-- pure classifier: no secret reads or data writes, and existing row-level
+-- routing, permissions and publication gates remain authoritative.
 
 CREATE OR REPLACE FUNCTION public.route_nov9_flyover_story_destination()
 RETURNS trigger
