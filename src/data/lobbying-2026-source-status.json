@@ -1,5 +1,5 @@
 {
-  "checkedAt": "2026-11-02T22:49:26.329Z",
+  "checkedAt": "2026-11-09T23:29:39.364Z",
   "explanation": "Last changed fingerprints of official sources, not the date of the latest GitHub Actions check or the currentness of any individual registration.",
   "sourceChangesSinceLastCheck": [
     "2026-client-pdf",
@@ -8,7 +8,7 @@
     "quarterly-expenditures"
   ],
   "expenditures": {
-    "reportPrintedAt": "November 2, 2026 3:00:33 AM",
+    "reportPrintedAt": "November 9, 2026 3:00:32 AM",
     "year2025": {
       "lobbyistCount": 1900,
       "categories": [
@@ -44,7 +44,7 @@
       "total": 19032037.39
     },
     "year2026": {
-      "lobbyistCount": 1590,
+      "lobbyistCount": 1597,
       "categories": [
         {
           "category": "Transportation",
@@ -52,15 +52,15 @@
         },
         {
           "category": "Food and beverages",
-          "amount": 1109974.18
+          "amount": 1153130.2
         },
         {
           "category": "Entertainment",
-          "amount": 190247.67
+          "amount": 198503.07
         },
         {
           "category": "Gifts",
-          "amount": 41796.74
+          "amount": 42843.3
         },
         {
           "category": "Awards",
@@ -68,14 +68,14 @@
         },
         {
           "category": "Events",
-          "amount": 49800
+          "amount": 50900
         },
         {
           "category": "Media",
-          "amount": 291744.27
+          "amount": 309742.6
         }
       ],
-      "total": 1900833.96
+      "total": 1972390.27
     }
   },
   "registrationChangedSinceEditorialReview": true,
@@ -89,26 +89,26 @@
     {
       "id": "2026-client-pdf",
       "url": "https://www.ethics.state.tx.us/data/search/lobby/2026/2026LobbyGroupByClient.pdf",
-      "sizeBytes": 1575987,
-      "sha256": "916631179400a2c473f799ef1809e8dc82c0c3dc0760420f5b3c0321b4179ea6"
+      "sizeBytes": 1581001,
+      "sha256": "5da8ddf2ed8e81e3b327db03ae3ef13a6df4d3287301c74539e15ee18de2397e"
     },
     {
       "id": "2026-client-excel",
       "url": "https://www.ethics.state.tx.us/data/search/lobby/2026/2026LobbyGroupByClient.xlsx",
-      "sizeBytes": 567067,
-      "sha256": "b744b17f910a905b52901bca8b6cb488fd9b6bb8a3ea05a04c00bcf41dc9c349"
+      "sizeBytes": 568901,
+      "sha256": "1196b81c75e3c87f6c16fc4b601c8096f7a4163fc90d2c8afac800bd3cfccfa4"
     },
     {
       "id": "compensation-2026",
       "url": "https://www.ethics.state.tx.us/search/lobby/",
       "sizeBytes": 57696,
-      "sha256": "912990e29e3e42230a14766a0ea23d194203d7f2bf4dac72a0544219850ad4df"
+      "sha256": "e805d1fb8e3f1ed5957aeede43def3275d52c97448bedaa03af8156788c0f378"
     },
     {
       "id": "quarterly-expenditures",
       "url": "https://www.ethics.state.tx.us/data/search/lobby/LobbyExpendituresByCategory.pdf",
-      "sizeBytes": 6515,
-      "sha256": "f879a28fd4acb796e58cb18fd00f6dba666091718ef13b94c74210b8f6cedb51"
+      "sizeBytes": 6518,
+      "sha256": "69731a5d41a2c6f9611bbf6da472981ff8b5455acfab6c75ef1d1e502b972159"
     },
     {
       "id": "adopted-rules",
