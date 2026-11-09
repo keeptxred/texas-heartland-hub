@@ -119,7 +119,7 @@ EXECUTE FUNCTION public.route_nov9_flyover_story_destination();
 WITH proposed AS MATERIALIZED (
  SELECT f.id, public.nov9_flyover_story_destination(f.title,f.description) as destination
  FROM public.texas_news_feed f
- WHERE f.created_at >= timestamptz '2026-11-04T00:00:00Z'
+ WHERE f.created_at >= timestamptz '2026-11-01T00:00:00Z'
  AND f.internal_slug IS NULL AND f.texasdefined_slug IS NULL
  AND coalesce((f.viral_signals->>'routing_lock')::boolean,false) = false
  AND lower(coalesce(f.title,'')) ~
