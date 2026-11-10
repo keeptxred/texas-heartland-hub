@@ -48,6 +48,23 @@ jobs:
             not an adopted school property tax rate.
           add-paths: src/data/tea-2026-final-mcr.json
 
+      - name: Fail if changed TEA data did not produce a reviewable PR
+        id: pr_guard
+        if: steps.import.outcome == 'success' && steps.pr.outcome == 'success'
+        shell: bash
+        env:
+          PR_NUMBER: ${{ steps.pr.outputs.pull-request-number }}
+          PR_OPERATION: ${{ steps.pr.outputs.pull-request-operation }}
+        run: |
+          set -euo pipefail
+          # create-pull-request normally resets the worktree after creating its branch.
+          # Its operation output is authoritative: none means no dataset change.
+          if [[ "${PR_OPERATION:-}" != "none" && -z "${PR_NUMBER:-}" ]]; then
+            echo "::error title=TEA refresh PR missing::Dataset changed (operation=$PR_OPERATION) but no reviewable pull request was created."
+            exit 1
+          fi
+          echo "TEA PR result: operation=${PR_OPERATION:-none}; number=${PR_NUMBER:-none}"
+
       - name: Report TEA refresh and PR creation evidence
         if: always()
         shell: bash
@@ -79,6 +96,7 @@ jobs:
           RUN_ID: ${{ github.run_id }}
           IMPORT_OUTCOME: ${{ steps.import.outcome }}
           PR_OUTCOME: ${{ steps.pr.outcome }}
+          PR_GUARD_OUTCOME: ${{ steps.pr_guard.outcome }}
           PR_OPERATION: ${{ steps.pr.outputs.pull-request-operation }}
           PR_URL: ${{ steps.pr.outputs.pull-request-url }}
         run: |
@@ -91,7 +109,7 @@ jobs:
           fi
           state=failure
           description="TEA refresh failed; inspect parser or PR creation logs"
-          if [[ "$IMPORT_OUTCOME" == "success" && "$PR_OUTCOME" == "success" ]]; then
+          if [[ "$IMPORT_OUTCOME" == "success" && "$PR_OUTCOME" == "success" && "$PR_GUARD_OUTCOME" == "success" ]]; then
             state=success
             description="Official TEA validation and change-only PR step passed"
           fi
