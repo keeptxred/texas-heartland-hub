@@ -144,8 +144,16 @@ jobs:
             local timeout="$3"
             local output="/tmp/newsroom-${name}.json"
             local status
+            # Packet builder can *read* evidence anonymously, but one-time
+            # failed-story requeue is authorized by this signed main-branch
+            # GitHub Actions OIDC token only. No shared static secret.
+            local extra_headers=()
+            if [[ "$name" == "packets" ]]; then
+              extra_headers=(-H "Authorization: Bearer ${oidc_token}")
+            fi
             status=$(curl -sS -X POST -o "$output" -w '%{http_code}' \
               --max-time "$timeout" -H 'accept: application/json' \
+              "${extra_headers[@]}" \
               "${AUTOMATION_ORIGIN%/}/api/public/hooks/${endpoint}" || echo 000)
             echo "newsroom-${name} HTTP ${status}"
             cat "$output" 2>/dev/null || true
@@ -163,6 +171,7 @@ jobs:
           run_zero_ai_stage cluster cluster-newsroom-stories 90
           run_zero_ai_stage score score-newsroom-stories 90
           run_zero_ai_stage decide decide-newsroom-packages 90
+          refresh_newsroom_oidc
           run_zero_ai_stage packets build-newsroom-research-packets 180
 
           if [[ "$clustered_ready" -eq 1 ]]; then
