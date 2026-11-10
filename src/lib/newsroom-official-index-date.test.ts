@@ -40,6 +40,7 @@ describe("first-party official newsroom research", () => {
 
   it("never makes archived, invalid, or future research news appear newly published", () => {
     expect(verifiedOfficialArticlePublishedAt('<meta name="datePublished" content="2026-09-01">', NOW)).toBeNull();
+    expect(verifiedOfficialArticlePublishedAt('<meta name="datePublished" content="2026-09-01"><p>Published on November 9, 2026</p>', NOW)).toBeNull();
     expect(verifiedOfficialArticlePublishedAt('<time datetime="2026-12-20">Future</time>', NOW)).toBeNull();
     expect(verifiedOfficialArticlePublishedAt('<meta itemprop="datePublished" content="invalid">', NOW)).toBeNull();
   });
