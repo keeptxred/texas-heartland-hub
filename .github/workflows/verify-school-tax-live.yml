@@ -163,10 +163,24 @@ jobs:
           fi
           # Scheduled/manual fallback must not certify a SHA without verified deployment.
           # The status endpoint returns the authoritative protected production-current context.
-          production_status="$(gh api "repos/$REPOSITORY/commits/$checked_sha/status" --jq '[.statuses[] | select(.context == "keeptxred-production-current")] | first | .state // "missing"')"
+          production_status=missing
+          # A completed deployment event may arrive before its final status becomes visible.
+          # Wait briefly rather than silently discarding an otherwise passing live check.
+          for attempt in {1..12}; do
+            production_status="$(gh api "repos/$REPOSITORY/commits/$checked_sha/status" --jq '[.statuses[] | select(.context == "keeptxred-production-current")] | first | .state // "missing"')"
+            if [[ "$production_status" == "success" ]]; then
+              break
+            fi
+            if [[ "$production_status" == "failure" || "$production_status" == "error" ]]; then
+              echo "::error title=Production deployment failed::Exact-SHA production-current is $production_status"
+              exit 1
+            fi
+            echo "Waiting for exact-SHA production-current (attempt $attempt/12; status=$production_status)"
+            sleep 10
+          done
           if [[ "$production_status" != "success" ]]; then
-            echo "Not publishing live acceptance: production-current for $checked_sha is $production_status"
-            exit 0
+            echo "::error title=Production status unavailable::No successful exact-SHA deployment after 120 seconds; live acceptance not certified"
+            exit 1
           fi
           state=failure
           description="Public browser/Googlebot school-tax acceptance failed; inspect workflow logs"
