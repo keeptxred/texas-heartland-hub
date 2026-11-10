@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { buildResearchPacket } from "@/lib/newsroom-research-packet";
+import { evaluateResearchRescue, isRecoverableResearchFailure, type RecoverableResearchCandidate } from "@/lib/newsroom-research-rescue";
 import { trimTdemPressReleaseArchive } from "@/lib/tdem-press-release-body";
 import { categoryForPillar } from "@/lib/newsroom-rewrite-adapter";
 import { newsroomIndependentPublisherFamilyFromUrl, newsroomLikelySameOriginalReport, newsroomOriginalReportKey } from "@/lib/newsroom-publication-preflight";
@@ -15,6 +16,9 @@ import {
 const LOOKBACK_HOURS = 72;
 const PUBLISHED_REFRESH_HOURS = 48;
 const PUBLISHED_REFRESH_LIMIT = 80;
+// Keep a small cohort of previously HELD/REJECTED items in the *zero-AI*
+// evidence refresh, never the normal paid publication pool.
+const FAILED_RESEARCH_LIMIT = 80;
 const CLUSTER_READ_BATCH_SIZE = 100;
 const CLUSTER_READ_CONCURRENCY = 2;
 // Research the exact 1,000-candidate publishing window. Nov 7 production
@@ -45,6 +49,9 @@ type CandidateRow = {
   recommended_format: string;
   status: string;
   created_at: string;
+  updated_at: string;
+  rejection_reason: string | null;
+  score_breakdown: Record<string, unknown> | null;
 };
 type ClusterRow = { id: string; canonical_subject: string; pillar_slug: string | null };
 type MembershipRow = { cluster_id: string; feed_item_id: number; is_primary_source: boolean };
@@ -125,6 +132,7 @@ async function handler() {
   const [
     { data: pendingData, error: pendingError },
     { data: publishedData, error: publishedError },
+    { data: heldData, error: heldError },
   ] = await Promise.all([
     newsroomDb.from("news_publish_candidates")
       .select("id,cluster_id,editorial_score,recommended_format,status,created_at")
@@ -141,13 +149,25 @@ async function handler() {
       .gte("published_at", new Date(Date.now() - PUBLISHED_REFRESH_HOURS * 60 * 60 * 1000).toISOString())
       .order("published_at", { ascending: false })
       .limit(PUBLISHED_REFRESH_LIMIT),
+    newsroomDb.from("news_publish_candidates")
+      .select("id,cluster_id,editorial_score,recommended_format,status,created_at,updated_at,rejection_reason,score_breakdown")
+      .in("status", ["HELD", "REJECTED"])
+      .in("recommended_format", ["SINGLE", "MERGE", "SYNTHESIS"])
+      .gte("created_at", since)
+      .order("created_at", { ascending: false })
+      .limit(FAILED_RESEARCH_LIMIT),
   ]);
   if (pendingError) return Response.json({ ok: false, error: pendingError.message }, { status: 500 });
   if (publishedError) return Response.json({ ok: false, error: publishedError.message }, { status: 500 });
+  // An unavailable recovery read must be visible; do not quietly skip retry
+  // observability or upgrade candidates with unknown status.
+  if (heldError) return Response.json({ ok: false, error: heldError.message }, { status: 500 });
   const pending = (pendingData ?? []) as CandidateRow[];
   const published = (publishedData ?? []) as CandidateRow[];
+  const recoverable = ((heldData ?? []) as CandidateRow[])
+    .filter(isRecoverableResearchFailure);
   const candidates = [...new Map<string, CandidateRow>(
-    [...pending, ...published].map((candidate): [string, CandidateRow] => [candidate.cluster_id, candidate]),
+    [...pending, ...recoverable, ...published].map((candidate): [string, CandidateRow] => [candidate.cluster_id, candidate]),
   ).values()];
   if (!candidates.length) return Response.json({ ok: true, built: 0, written: 0, unchanged: 0, sourceItems: 0, sourcePagesFetched: 0, sourcePagesUpdated: 0, sourcePagesCoolingDown: 0, aiCalls: 0 });
 
@@ -292,7 +312,7 @@ async function handler() {
     const requiredEvidenceChars = category === "sports" || category === "education" || category === "non-political"
       ? 9_000 : 5_000;
     const priority = newsroomHydrationPriority({
-      pending: candidate.status === "PENDING",
+      pending: candidate.status === "PENDING" || recoverable.some((item) => item.id === candidate.id),
       independentlySourced: hasPrimary || families.size >= 2,
       evidenceChars: approximateEvidenceChars,
       requiredEvidenceChars,
@@ -473,8 +493,54 @@ async function handler() {
     }
   }
 
+
+  // Research failures are *not* dead ends. Revalidate a small recent cohort
+  // only after fresh source hydration. No AI, no draft fabrication and no
+  // requeue for final editorial/safety/duplicate/expired failures.
+  const packetByCluster = new Map(packets.map((packet) => [packet.cluster_id, packet]));
+  const researchRequeues: Array<{ id: string; reason: string }> = [];
+  let researchHeld = 0;
+  for (const failed of recoverable) {
+    const packet = packetByCluster.get(failed.cluster_id);
+    const decision = evaluateResearchRescue({
+      candidate: failed as RecoverableResearchCandidate,
+      packet: packet?.packet_json ?? null,
+      previousPacket: existingPacketByCluster.get(failed.cluster_id)?.packet_json ?? null,
+      nowMs: Date.now(),
+    });
+    if (!decision.retry) { researchHeld++; continue; }
+    const priorScore = failed.score_breakdown && typeof failed.score_breakdown === "object" && !Array.isArray(failed.score_breakdown)
+      ? failed.score_breakdown : {};
+    const { data: changed, error: updateError } = await newsroomDb.from("news_publish_candidates")
+      .update({
+        status: "PENDING",
+        rejection_reason: null,
+        score_breakdown: {
+          ...priorScore,
+          research_rescue: {
+            attempts: 1, reason: decision.reason,
+            previous_evidence_chars: decision.previousEvidenceChars,
+            verified_evidence_chars: decision.evidenceChars,
+            retried_at: new Date().toISOString(),
+          },
+        },
+      })
+      .eq("id", failed.id)
+      .eq("status", failed.status)
+      .eq("updated_at", failed.updated_at)
+      .eq("rejection_reason", failed.rejection_reason)
+      .select("id");
+    if (updateError) return Response.json({ ok: false, error: updateError.message }, { status: 500 });
+    if (changed?.length) researchRequeues.push({ id: failed.id, reason: decision.reason });
+    else researchHeld++;
+  }
+
   return Response.json({
     ok: true,
+    researchRescueScanned: recoverable.length,
+    researchRescueRequeued: researchRequeues.length,
+    researchRescueHeld: researchHeld,
+    researchRequeues,
     built: packets.length,
     written: packetsToWrite.length,
     unchanged: packets.length - packetsToWrite.length,
