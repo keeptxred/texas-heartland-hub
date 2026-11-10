@@ -78,28 +78,46 @@ jobs:
             fi
           done
 
-      - name: Inspect live SEO canonical and robots metadata
+      - name: Inspect exact live SEO canonical and robots for browser and Googlebot
         shell: bash
         run: |
           python3 - <<'PY'
-          import re
+          from html.parser import HTMLParser
           from urllib.request import Request, urlopen
+
           url = "https://keeptxred.com/news/isd-tax-burdens"
-          with urlopen(Request(url, headers={"User-Agent": "Googlebot", "x-keeptxred-deployment-smoke": "canonical"}), timeout=25) as response:
-              html = response.read().decode("utf-8", errors="replace")
-              robots_header = response.headers.get("X-Robots-Tag", "")
-          canonical = re.findall(r'<link[^>]+rel=["\\\']canonical["\\\'][^>]*>', html, flags=re.I)
-          robots = re.findall(r'<meta[^>]+name=["\\\']robots["\\\'][^>]*>', html, flags=re.I)
-          print("Canonical links:", canonical)
-          print("Robots meta:", robots)
-          print("X-Robots-Tag:", robots_header)
-          if len(canonical) != 1 or url not in canonical[0]:
-              raise SystemExit("Missing or non-unique correct canonical")
-          if not robots or "index,follow" not in "".join(robots).replace(" ", "").lower():
-              raise SystemExit("Missing index,follow robots metadata")
-          if "noindex" in robots_header.lower():
-              raise SystemExit("Unexpected X-Robots-Tag noindex")
-          print("PASS public canonical and robots indexability metadata")
+
+          class Metadata(HTMLParser):
+              def __init__(self):
+                  super().__init__()
+                  self.canonicals = []
+                  self.robots = []
+              def handle_starttag(self, tag, attrs):
+                  a = dict(attrs)
+                  if tag == "link" and "canonical" in a.get("rel", "").lower().split():
+                      self.canonicals.append(a.get("href"))
+                  if tag == "meta" and a.get("name", "").lower() == "robots":
+                      self.robots.append(a.get("content", ""))
+
+          for agent in ("Mozilla/5.0 (compatible; KeepTXRed-QA/1.0)", "Googlebot"):
+              with urlopen(Request(url, headers={"User-Agent": agent, "x-keeptxred-deployment-smoke": "canonical"}), timeout=25) as response:
+                  if response.status != 200:
+                      raise SystemExit(f"{agent}: HTTP {response.status}")
+                  html = response.read(2_000_001).decode("utf-8", errors="replace")
+                  robots_header = response.headers.get("X-Robots-Tag", "")
+              metadata = Metadata()
+              metadata.feed(html)
+              print(agent, "canonical:", metadata.canonicals, "robots:", metadata.robots, "header:", robots_header)
+              if metadata.canonicals != [url]:
+                  raise SystemExit(f"{agent}: expected exactly one canonical href equal to {url}")
+              if len(metadata.robots) != 1:
+                  raise SystemExit(f"{agent}: expected exactly one robots meta")
+              directives = {v.strip().lower() for v in metadata.robots[0].split(",")}
+              if not {"index", "follow"} <= directives or {"noindex", "nofollow"} & directives:
+                  raise SystemExit(f"{agent}: missing index/follow or contradictory robots directive")
+              if any(v in robots_header.lower() for v in ("noindex", "nofollow")):
+                  raise SystemExit(f"{agent}: unexpected X-Robots-Tag restriction")
+              print(f"PASS exact canonical and index/follow for {agent}")
           PY
 
       - name: Publish durable acceptance evidence
