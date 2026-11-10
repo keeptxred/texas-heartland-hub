@@ -23,7 +23,7 @@ export type ResearchRescueDecision = {
   previousEvidenceChars: number;
 };
 
-const TRANSIENT_PROVIDER = /^publication_failed:\s*Cloudflare Workers AI (?:request timed out after \d+ms|403:.*(?:doesn't support JSON Schema|does not support JSON Schema))/i;
+const TRANSIENT_PROVIDER = /^publication_failed:\s*Cloudflare Workers AI (?:request timed out after \d+ms|returned malformed JSON on attempt \d+|403:.*(?:doesn't support JSON Schema|does not support JSON Schema))/i;
 const RESEARCH_FAILURE = /(?:tiered_main_word_count|below_news_word_floor|paragraph_count|multisource_unattributed_claim|repeated_newsroom_paragraphs|direct_answer_summary_length|insufficient_(?:source|evidence|independent))/i;
 const NEWS_WINDOW_MS = 72 * 60 * 60 * 1000;
 const MIN_RESEARCH_DELTA = 900;
