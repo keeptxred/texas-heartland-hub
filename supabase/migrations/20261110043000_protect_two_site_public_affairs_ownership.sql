@@ -74,7 +74,15 @@ FOR EACH ROW EXECUTE FUNCTION public.enforce_two_site_public_affairs_ownership()
 -- Only previously misrouted, unpublished/unlocked items in the recent window;
 -- material target-site change ensures the routing trigger fires.
 UPDATE public.texas_news_feed f
-SET target_site = 'keeptxred', target_section = 'Texas News'
+SET target_site = 'keeptxred', target_section = 'Texas News',
+    viral_signals = coalesce(f.viral_signals, '{}'::jsonb) ||
+       jsonb_build_object(
+         'auto_publish_eligible', false,
+         'editorial_lane', 'REVIEW',
+         'post_rewrite_review_required', true,
+         'post_rewrite_review_reason', 'Government, legal or public-funding action requires original-source editorial review',
+         'two_site_owner_guard', 'KTR'
+       )
 WHERE f.created_at >= timestamptz '2026-10-20T00:00:00Z'
   AND f.target_site = 'texasdefined'
   AND f.internal_slug IS NULL AND f.texasdefined_slug IS NULL
