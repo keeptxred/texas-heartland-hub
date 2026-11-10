@@ -14,6 +14,7 @@ permissions:
   contents: write
   pull-requests: write
   statuses: write
+  issues: write
 
 concurrency:
   group: refresh-tea-2026-school-mcr
@@ -133,3 +134,23 @@ jobs:
             -f description="$description"
           echo "TEA refresh $state on $sha; PR operation: ${PR_OPERATION:-none}; PR: ${PR_URL:-none}"
           [[ "$state" == "success" ]]
+
+      - name: Record scheduled TEA execution in release checkpoint
+        if: always() && github.event_name == 'schedule'
+        shell: bash
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPOSITORY: ${{ github.repository }}
+          RUN_ID: ${{ github.run_id }}
+          IMPORT_OUTCOME: ${{ steps.import.outcome }}
+          DIFF_OUTCOME: ${{ steps.dataset_diff.outcome }}
+          PR_OUTCOME: ${{ steps.pr.outcome }}
+          PR_GUARD_OUTCOME: ${{ steps.pr_guard.outcome }}
+          PR_OPERATION: ${{ steps.pr.outputs.pull-request-operation }}
+          PR_URL: ${{ steps.pr.outputs.pull-request-url }}
+        run: |
+          set -euo pipefail
+          sha="$(git rev-parse HEAD)"
+          printf -v body 'Scheduled Tuesday 13:17 UTC TEA refresh executed. Run: https://github.com/%s/actions/runs/%s\\nChecked SHA: %s\\nOfficial PDF import: %s; dataset diff: %s; PR action: %s; changed-data guard: %s.\\nPR operation: %s; PR: %s.\\nThis records execution only; inspect run logs before certifying source data.' \\
+            "$REPOSITORY" "$RUN_ID" "$sha" "$IMPORT_OUTCOME" "$DIFF_OUTCOME" "$PR_OUTCOME" "$PR_GUARD_OUTCOME" "${PR_OPERATION:-none}" "${PR_URL:-none}"
+          gh api --method POST "repos/$REPOSITORY/issues/3597/comments" -f body="$body"
