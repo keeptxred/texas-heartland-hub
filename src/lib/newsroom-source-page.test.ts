@@ -83,7 +83,16 @@ describe("newsroom source-page enrichment", () => {
     expect(builder).toContain("priorityByFeedId.set(feed.id, Math.max(priorityByFeedId.get(feed.id) ?? 0, 25_000))");
     expect(builder).toContain(".slice(0, SOURCE_PAGE_FETCH_LIMIT)");
     expect(builder).toContain("sourcePageCoolingDown(feed.id)");
-    expect(builder).not.toContain('status: "PENDING"');
+    // This legacy TDEM hygiene regression must inspect ONLY the TDEM cleanup
+    // section. The separate verified failed-story rescue deliberately requeues
+    // one recent evidence-ready candidate and must not be mistaken for a
+    // deprecated TDEM-specific automatic publication shortcut.
+    const tdemMaintenance = builder.slice(
+      builder.indexOf("// The direct TDEM release first entered"),
+      builder.indexOf("// Spend the same forty network fetches"),
+    );
+    expect(tdemMaintenance).not.toContain('status: "PENDING"');
+    expect(builder).toContain("evaluateResearchRescue");
   });
 
   it("targets thin publisher bodies and synthetic pollution", () => {
