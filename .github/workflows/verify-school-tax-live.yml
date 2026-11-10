@@ -36,7 +36,8 @@ jobs:
           echo "Trigger: ${{ github.event_name }}"
           echo "Upstream deploy SHA: ${{ github.event.workflow_run.head_sha }}"
           if [[ "${{ github.event_name }}" == "workflow_run" && "${{ github.event.workflow_run.head_sha }}" != "$(git rev-parse HEAD)" ]]; then
-            echo "::warning title=Deployment advanced::This check is against current main, not the triggering deploy SHA; do not certify that older deployment from this run."
+            echo "::error title=Deployment SHA mismatch::Checked-out main does not equal triggering deploy SHA; refusing to certify an unverified deployment."
+            exit 1
           fi
 
       - name: Verify production Worker renders complete TEA district directory
