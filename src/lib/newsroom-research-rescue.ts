@@ -62,10 +62,10 @@ export function evaluateResearchRescue(input: {
 
   const category = categoryForPillar(packet.pillar).toLowerCase();
   const minEvidence = category === "sports" || category === "education" || category === "non-political" ? 9000 : 5000;
-  const hasPrimary = packet.sources.some((source) => source.isPrimarySource);
-  // A primary-record-backed report can be single-source, but a non-primary
-  // story requires genuinely independent publishers, not syndicated mirrors.
-  if (evidenceChars < minEvidence || (!hasPrimary && !newsroomHasPublisherDiversity(packet.sources))) return hold();
+  // Require the exact same primary-record or independent-publisher check as
+  // the protected publisher. An unverified isPrimarySource flag alone is NOT
+  // proof that the source URL is a government or other primary record.
+  if (evidenceChars < minEvidence || !newsroomHasPublisherDiversity(packet.sources)) return hold();
   const transientProvider = TRANSIENT_PROVIDER.test(String(candidate.rejection_reason || ""));
   if (transientProvider) return { retry: true, reason: "transient_provider", evidenceChars, previousEvidenceChars };
   // Local draft failures require materially *new* verified source evidence;
