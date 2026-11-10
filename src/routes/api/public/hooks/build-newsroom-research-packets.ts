@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { buildResearchPacket } from "@/lib/newsroom-research-packet";
+import { buildResearchPacket, type ResearchPacket } from "@/lib/newsroom-research-packet";
 import { evaluateResearchRescue, isRecoverableResearchFailure, type RecoverableResearchCandidate } from "@/lib/newsroom-research-rescue";
 import { trimTdemPressReleaseArchive } from "@/lib/tdem-press-release-body";
 import { categoryForPillar } from "@/lib/newsroom-rewrite-adapter";
@@ -75,7 +75,7 @@ type SourcePageFetchStateRow = {
 type ExistingPacketRow = {
   cluster_id: string;
   packet_version: number;
-  packet_json: unknown;
+  packet_json: ResearchPacket;
   source_count: number;
   primary_source_count: number;
 };
