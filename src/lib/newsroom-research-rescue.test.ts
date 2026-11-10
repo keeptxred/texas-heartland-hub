@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { readFileSync } from "node:fs";
 import { buildResearchPacket, type ResearchPacket } from "./newsroom-research-packet";
 import {
   evaluateResearchRescue,
@@ -87,5 +88,21 @@ describe("zero-AI failed-story research rescue", () => {
     expect(evaluateResearchRescue({
       candidate: candidate(), packet: packet(110, false), previousPacket: packet(110, false), nowMs: NOW,
     }).retry).toBe(false);
+  });
+});
+
+
+describe("protected research rescue execution", () => {
+  it("requires signed GitHub OIDC before requeue and leaves unsigned research reads non-publishing", () => {
+    const builder = readFileSync("src/routes/api/public/hooks/build-newsroom-research-packets.ts", "utf8");
+    const workflow = readFileSync(".github/workflows/run-daily-news-now.yml", "utf8");
+    expect(builder).toContain("verifyGitHubActionsOidc({");
+    expect(builder).toContain('workflowPath: ".github/workflows/run-daily-news-now.yml"');
+    expect(builder).toContain("researchRequeueAuthorized ? recoverable : []");
+    expect(builder).toContain("researchRescueAuthorized: researchRequeueAuthorized");
+    expect(builder).toContain('status: "PENDING"');
+    expect(workflow).toContain("refresh_newsroom_oidc");
+    expect(workflow).toContain('extra_headers=(-H "Authorization: Bearer ${oidc_token}")');
+    expect(workflow).toContain("run_zero_ai_stage packets build-newsroom-research-packets 180");
   });
 });
