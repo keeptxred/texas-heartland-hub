@@ -29,8 +29,10 @@ jobs:
       - name: Install PDF text extractor
         run: sudo apt-get update -qq && sudo apt-get install -y --no-install-recommends poppler-utils
       - name: Import and validate all district rates
+        id: import
         run: python3 scripts/authority/refresh-tea-2026-mcr.py
       - name: Open or update reviewable dataset PR
+        id: pr
         uses: peter-evans/create-pull-request@v7
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
@@ -44,3 +46,25 @@ jobs:
             rates and official reference mismatches. This is Tier One MCR only,
             not an adopted school property tax rate.
           add-paths: src/data/tea-2026-final-mcr.json
+
+      - name: Report TEA refresh and PR creation evidence
+        if: always()
+        shell: bash
+        env:
+          REFRESH_STATUS: ${{ steps.import.outcome }}
+          PR_STATUS: ${{ steps.pr.outcome }}
+          PR_NUMBER: ${{ steps.pr.outputs.pull-request-number }}
+          PR_URL: ${{ steps.pr.outputs.pull-request-url }}
+          PR_OPERATION: ${{ steps.pr.outputs.pull-request-operation }}
+        run: |
+          {
+            echo "## Official TEA 2026 MCR refresh"
+            echo "- Source: https://tea.texas.gov/about-tea/state-funding/ty2026-final-mcrs.pdf"
+            echo "- Import validation: $REFRESH_STATUS"
+            echo "- PR creation/update step: $PR_STATUS"
+            echo "- PR operation: ${PR_OPERATION:-none (no dataset change)}"
+            echo "- PR number: ${PR_NUMBER:-none}"
+            echo "- PR URL: ${PR_URL:-none}"
+            echo "- Dataset changes: see create-pull-request logs and operation above"
+            echo "- If a changed dataset cannot produce a PR, inspect repository Actions setting 'Allow GitHub Actions to create and approve pull requests' and token permissions."
+          } >> "$GITHUB_STEP_SUMMARY"
