@@ -59,7 +59,7 @@ describe("zero-AI failed-story research rescue", () => {
   it("retries a source-dependent draft only after new, substantive, validated source research", () => {
     const c = candidate({ status: "REJECTED", rejection_reason: "tiered_main_word_count:341/800,below_news_word_floor" });
     expect(evaluateResearchRescue({
-      candidate: c, packet: packet(125), previousPacket: packet(60), nowMs: NOW,
+      candidate: c, packet: packet(125), previousPacket: packet(25), nowMs: NOW,
     }).reason).toBe("new_source_evidence");
     expect(evaluateResearchRescue({
       candidate: c, packet: packet(60), previousPacket: packet(60), nowMs: NOW,
