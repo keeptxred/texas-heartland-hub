@@ -141,7 +141,7 @@ jobs:
           } >> "$GITHUB_STEP_SUMMARY"
 
       - name: Publish exact-SHA live acceptance status
-        if: always() && github.event_name == 'workflow_run'
+        if: always() && (github.event_name == 'workflow_run' || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch')
         shell: bash
         env:
           GH_TOKEN: ${{ github.token }}
@@ -153,8 +153,19 @@ jobs:
           set -euo pipefail
           checked_sha="$(git rev-parse HEAD)"
           current_main="$(gh api "repos/$REPOSITORY/commits/main" --jq '.sha')"
-          if [[ "$checked_sha" != "$DEPLOY_SHA" || "$checked_sha" != "$current_main" ]]; then
-            echo "Not publishing status: checked=$checked_sha deploy=$DEPLOY_SHA current_main=$current_main"
+          if [[ "$checked_sha" != "$current_main" ]]; then
+            echo "Not publishing status: checked=$checked_sha current_main=$current_main"
+            exit 0
+          fi
+          if [[ -n "$DEPLOY_SHA" && "$checked_sha" != "$DEPLOY_SHA" ]]; then
+            echo "Not publishing status: checked=$checked_sha triggering_deploy=$DEPLOY_SHA"
+            exit 0
+          fi
+          # Scheduled/manual fallback must not certify a SHA without verified deployment.
+          # The status endpoint returns the authoritative protected production-current context.
+          production_status="$(gh api "repos/$REPOSITORY/commits/$checked_sha/status" --jq '[.statuses[] | select(.context == "keeptxred-production-current")] | first | .state // "missing"')"
+          if [[ "$production_status" != "success" ]]; then
+            echo "Not publishing live acceptance: production-current for $checked_sha is $production_status"
             exit 0
           fi
           state=failure
