@@ -97,6 +97,9 @@ describe("protected research rescue execution", () => {
     const builder = readFileSync("src/routes/api/public/hooks/build-newsroom-research-packets.ts", "utf8");
     const workflow = readFileSync(".github/workflows/run-daily-news-now.yml", "utf8");
     expect(builder).toContain("verifyGitHubActionsOidc({");
+    expect(builder).toContain(String.raw`auth.match(/^Bearer\s+(.+)$/i)`);
+    expect(builder).not.toContain(String.raw`auth.match(/^Bearer\\s+(.+)$/i)`);
+
     expect(builder).toContain('workflowPath: ".github/workflows/run-daily-news-now.yml"');
     expect(builder).toContain("researchRequeueAuthorized ? recoverable : []");
     expect(builder).toContain("researchRescueAuthorized: researchRequeueAuthorized");
