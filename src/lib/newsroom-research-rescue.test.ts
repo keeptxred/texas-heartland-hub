@@ -48,6 +48,14 @@ describe("zero-AI failed-story research rescue", () => {
     expect(d.evidenceChars).toBeGreaterThan(5000);
   });
 
+  it("recognizes the observed malformed JSON provider response as a transient failure, not a fact-check bypass", () => {
+    const held = candidate({ rejection_reason: "publication_failed: Cloudflare Workers AI returned malformed JSON on attempt 1" });
+    expect(isRecoverableResearchFailure(held)).toBe(true);
+    expect(evaluateResearchRescue({ candidate: held, packet: packet(), previousPacket: packet(), nowMs: NOW }).reason).toBe("transient_provider");
+    const exhausted = candidate({ ...held, score_breakdown: { research_rescue: { attempts: 1 } } });
+    expect(evaluateResearchRescue({ candidate: exhausted, packet: packet(), previousPacket: packet(), nowMs: NOW }).retry).toBe(false);
+  });
+
   it("recovers a fresh schema incompatibility but never editorially rejected stories", () => {
     const c = candidate({ rejection_reason: "publication_failed: Cloudflare Workers AI 403: AiError: Ai: This model doesn't support JSON Schema." });
     expect(evaluateResearchRescue({ candidate: c, packet: packet(), previousPacket: packet(), nowMs: NOW }).retry).toBe(true);
