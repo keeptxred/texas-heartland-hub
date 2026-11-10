@@ -10,6 +10,8 @@ import { partitionFeedLinkLookups } from "@/lib/ingest-link-lookup";
 import { extractFirstPartyRssArticleBody } from "@/lib/newsroom-firstparty-rss-body";
 import { canFailoverTrustedRssStatus, trustedNewsroomRssRelayUrl } from "@/lib/official-rss-egress";
 import { isGoogleNewsDiscoveryTransport } from "@/lib/ingest-discovery-source";
+import { verifiedOfficialArticlePublishedAt, verifiedOfficialArticleTitle, verifiedOfficialIndexLinks } from "@/lib/newsroom-official-index-date";
+import { extractReadableNewsroomHtml } from "@/lib/newsroom-source-page.server";
 import { parseFox4DatedLocalHtml, parseKrgvDatedLocalHtml } from "@/lib/newsroom-local-direct-html";
 export { publishSingleFeedItem } from "@/lib/multi-source-publish";
 export { isPuzzleTitle } from "@/lib/ingest-feeds-legacy";
@@ -24,7 +26,7 @@ type Item = {
 };
 type IngestRow = Item & { trend_source: string };
 
-type SourceMode = "rss" | "tpwd-html" | "texas-standard-html" | "html-links" | "fox4-html" | "krgv-html";
+type SourceMode = "rss" | "tpwd-html" | "texas-standard-html" | "html-links" | "official-dated-html" | "fox4-html" | "krgv-html";
 type Source = {
   name: string;
   url: string;
@@ -90,6 +92,12 @@ const DIRECT_SOURCES: Source[] = [
   // Original publishers with dated source permalinks; never invent a date from crawl time.
   { name: "First Alert 7 — Permian Basin Local", url: "https://www.firstalert7.com/news/law/", category: "Local", mode: "html-links", include: "^/20\\d{2}/\\d{2}/\\d{2}/[a-z0-9-]+/?$" },
   { name: "Texas Lutheran Football — Official Athletics", url: "https://tlubulldogs.com/sports/football", category: "Sports", mode: "html-links", include: "^/news/20\\d{2}/\\d{1,2}/\\d{1,2}/football-[a-z0-9-]+\\.aspx$" },
+  // Official research, culture and local-event newsrooms. Their URLs often
+  // omit the day, so fetch each original article and require a publisher-marked
+  // publication date; never use crawl time or an unverified RSS mirror.
+  { name: "UTEP — Official University News", url: "https://www.utep.edu/newsfeed/news.html", category: "Education", mode: "official-dated-html", include: "^/newsfeed/20\\d{2}/[a-z]+/[a-z0-9-]+\\.html$" },
+  { name: "Texas Biomed — Official Research News", url: "https://www.txbiomed.org/news-press/news/", category: "Non-Political", mode: "official-dated-html", include: "^/news-press/news/[a-z0-9-]+/?$" },
+  { name: "City of Arlington — Original News", url: "https://www.arlingtontx.gov/News-Events/All-News", category: "Local", mode: "official-dated-html", include: "^/News-Articles/20\\d{2}/[A-Za-z]+/[a-zA-Z0-9_.-]+/?$" },
   { name: "KLTV Tyler — Direct Local Headlines", url: "https://www.kltv.com/", category: "Local", mode: "html-links", include: "^/20\\d{2}/\\d{2}/\\d{2}/[a-z0-9-]+/?$" },
   { name: "FOX 4 Midlothian — Direct Local Headlines", url: "https://www.fox4news.com/tag/us/tx/ellis-county/midlothian", category: "Local", mode: "fox4-html" },
   { name: "KRGV Rio Grande Valley — Direct Local Headlines", url: "https://www.krgv.com/news/", category: "Local", mode: "krgv-html" },
@@ -429,7 +437,7 @@ function rotateGoogleSources(sources: Source[]): Source[] {
 
 async function fetchSource(source: Source): Promise<FetchResult> {
   const isGoogle = isGoogleNewsDiscoveryTransport(source.url);
-  const isHtmlLinks = source.mode === "html-links" || source.mode === "fox4-html" || source.mode === "krgv-html";
+  const isHtmlLinks = source.mode === "html-links" || source.mode === "official-dated-html" || source.mode === "fox4-html" || source.mode === "krgv-html";
   const accept = source.mode === "rss" ? "application/rss+xml,application/atom+xml,application/xml,text/xml,*/*" : "text/html,application/xhtml+xml,*/*";
   const fixedRelayUrl = source.mode === "rss" ? trustedNewsroomRssRelayUrl(source.url) : null;
   // A real first-party URL must remain the article source. The fixed relay
@@ -516,6 +524,38 @@ async function fetchSource(source: Source): Promise<FetchResult> {
     return { source: source.name, url: "https://texasstandard.org/", status: fallback.status, attempts: fetched.attempts + fallback.attempts, mode: "texas-standard-html", items: fallback.text ? parseTexasStandardHtml(fallback.text) : [], error: fallback.text ? undefined : fallback.error };
   }
   if (!finalResult.text) return { source: source.name, url: source.url, status: finalResult.status, attempts: finalResult.attempts, mode: source.mode, items: [], relayUsed: sourceRelayUsed, error: finalResult.error };
+
+  if (source.mode === "official-dated-html") {
+    // Fixed publishers only: a three-story-per-index budget means a failed
+    // university or municipal site cannot turn into an unbounded crawler.
+    const paths = verifiedOfficialIndexLinks(finalResult.text, source.url, new RegExp(source.include ?? "^$", "i"), 4);
+    const researched = await Promise.all(paths.map(async (link): Promise<Item | null> => {
+      const page = await fetchText(link, "text/html,application/xhtml+xml", 1, 8000);
+      if (!page.text) return null;
+      const title = verifiedOfficialArticleTitle(page.text);
+      const publication = verifiedOfficialArticlePublishedAt(page.text);
+      if (!title || !publication || isLowValueTitle(title)) return null;
+      const articleBody = extractReadableNewsroomHtml(page.text);
+      // A dated article can be discovered even if the site is currently
+      // unextractable, but it cannot gain evidence credit for absent text.
+      return {
+        title,
+        link,
+        pub_date: publication,
+        source: source.name,
+        description: (articleBody || title).slice(0, 1200),
+        ...(articleBody ? { extracted_body: articleBody.slice(0, 8000) } : {}),
+      };
+    }));
+    return {
+      source: source.name, url: source.url, status: finalResult.status,
+      attempts: finalResult.attempts + paths.length,
+      mode: source.mode,
+      items: researched.filter((row): row is Item => Boolean(row)),
+      relayUsed: sourceRelayUsed,
+    };
+  }
+
   const items = source.name === "Texas Attorney General — Direct News Releases" && source.mode === "html-links"
     ? parseTexasAgPressReleaseIndex(finalResult.text)
     : source.mode === "tpwd-html" ? parseTpwdHtml(finalResult.text)
