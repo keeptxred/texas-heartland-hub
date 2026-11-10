@@ -32,6 +32,17 @@ jobs:
       - name: Import and validate all district rates
         id: import
         run: python3 scripts/authority/refresh-tea-2026-mcr.py
+      - name: Record verified dataset changes before PR action
+        id: dataset_diff
+        shell: bash
+        run: |
+          set -euo pipefail
+          if git diff --quiet -- src/data/tea-2026-final-mcr.json; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Open or update reviewable dataset PR
         id: pr
         uses: peter-evans/create-pull-request@v7
@@ -55,11 +66,12 @@ jobs:
         env:
           PR_NUMBER: ${{ steps.pr.outputs.pull-request-number }}
           PR_OPERATION: ${{ steps.pr.outputs.pull-request-operation }}
+          DATASET_CHANGED: ${{ steps.dataset_diff.outputs.changed }}
         run: |
           set -euo pipefail
           # create-pull-request normally resets the worktree after creating its branch.
           # Its operation output is authoritative: empty or none means no dataset change.
-          if [[ -n "${PR_OPERATION:-}" && "${PR_OPERATION}" != "none" && -z "${PR_NUMBER:-}" ]]; then
+          if [[ "${DATASET_CHANGED:-}" == "true" && -z "${PR_NUMBER:-}" ]]; then
             echo "::error title=TEA refresh PR missing::Dataset changed (operation=$PR_OPERATION) but no reviewable pull request was created."
             exit 1
           fi
@@ -97,6 +109,7 @@ jobs:
           IMPORT_OUTCOME: ${{ steps.import.outcome }}
           PR_OUTCOME: ${{ steps.pr.outcome }}
           PR_GUARD_OUTCOME: ${{ steps.pr_guard.outcome }}
+          DIFF_OUTCOME: ${{ steps.dataset_diff.outcome }}
           PR_OPERATION: ${{ steps.pr.outputs.pull-request-operation }}
           PR_URL: ${{ steps.pr.outputs.pull-request-url }}
         run: |
@@ -109,7 +122,7 @@ jobs:
           fi
           state=failure
           description="TEA refresh failed; inspect parser or PR creation logs"
-          if [[ "$IMPORT_OUTCOME" == "success" && "$PR_OUTCOME" == "success" && "$PR_GUARD_OUTCOME" == "success" ]]; then
+          if [[ "$IMPORT_OUTCOME" == "success" && "$PR_OUTCOME" == "success" && "$PR_GUARD_OUTCOME" == "success" && "$DIFF_OUTCOME" == "success" ]]; then
             state=success
             description="Official TEA validation and change-only PR step passed"
           fi
