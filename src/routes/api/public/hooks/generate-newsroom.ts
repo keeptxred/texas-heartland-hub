@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { sourceAuthorityLabel, sourceUrlSupportsPrimaryRecord } from "@/data/source-authority";
 import { enrichArticleRow } from "@/lib/content-quality";
 import { runCloudflareJson } from "@/lib/cloudflare-json-ai.server";
+import { newsroomPacketHasTexasIncidentEvidence } from "@/lib/newsroom-texas-evidence-guard";
 import { verifyGitHubActionsOidc } from "@/lib/github-actions-oidc";
 import { getGovernmentGraphLinks } from "@/lib/government-graph";
 import { prepareFeaturedImageForUnpublishedNewsroomArticle } from "@/lib/featured-image.functions";
@@ -370,6 +371,7 @@ async function handler({ request }: { request: Request }) {
       const packetRow = packetByCluster.get(row.cluster_id);
       const cluster = clusterById.get(row.cluster_id);
       if (!packetRow || !cluster || packetRow.source_count <= 0) return false;
+      if (!newsroomPacketHasTexasIncidentEvidence(packetRow.packet_json)) return false;
       return researchPacketEvidenceChars(packetRow.packet_json) >= evidenceFloorForPillar(cluster.pillar_slug);
     });
     sawEvidenceEligible ||= evidenceEligibleCandidates.length > 0;

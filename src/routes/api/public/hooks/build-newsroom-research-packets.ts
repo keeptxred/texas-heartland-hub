@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { buildResearchPacket, type ResearchPacket } from "@/lib/newsroom-research-packet";
 import { evaluateResearchRescue, isRecoverableResearchFailure, type RecoverableResearchCandidate } from "@/lib/newsroom-research-rescue";
+import { sourceDescriptionMatchesHeadline } from "@/lib/newsroom-texas-evidence-guard";
 import { verifyGitHubActionsOidc } from "@/lib/github-actions-oidc";
 import { trimTdemPressReleaseArchive } from "@/lib/tdem-press-release-body";
 import { categoryForPillar } from "@/lib/newsroom-rewrite-adapter";
@@ -481,7 +482,7 @@ async function handler({ request }: { request: Request }) {
         source: feed.source ?? "",
         url: feed.link ?? "",
         publishedAt: feed.pub_date ?? null,
-        description: feed.description ?? "",
+        description: sourceDescriptionMatchesHeadline(feed.title ?? "", feed.description ?? "") ? (feed.description ?? "") : "",
         extractedBody: feed.extracted_body ?? "",
         isPrimarySource: membership.is_primary_source,
         sourceReputationScore: feed.source_reputation_score ?? null,
