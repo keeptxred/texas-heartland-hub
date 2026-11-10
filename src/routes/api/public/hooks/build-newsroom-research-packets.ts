@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { buildResearchPacket, type ResearchPacket } from "@/lib/newsroom-research-packet";
 import { evaluateResearchRescue, isRecoverableResearchFailure, type RecoverableResearchCandidate } from "@/lib/newsroom-research-rescue";
+import { verifyGitHubActionsOidc } from "@/lib/github-actions-oidc";
 import { trimTdemPressReleaseArchive } from "@/lib/tdem-press-release-body";
 import { categoryForPillar } from "@/lib/newsroom-rewrite-adapter";
 import { newsroomIndependentPublisherFamilyFromUrl, newsroomLikelySameOriginalReport, newsroomOriginalReportKey } from "@/lib/newsroom-publication-preflight";
@@ -118,7 +119,30 @@ function chunkValues<T>(values: readonly T[], size: number): T[][] {
   return chunks;
 }
 
-async function handler() {
+async function verifiedResearchRequeue(request: Request): Promise<boolean> {
+  // Ordinary callers may still build/refresh source packets with zero AI.
+  // Only the signed, current-main protected production scheduler may alter
+  // a failed candidate's publishing status; public GET/POST cannot requeue it.
+  const auth = request.headers.get("authorization") ?? "";
+  const token = auth.match(/^Bearer\\s+(.+)$/i)?.[1];
+  if (!token) return false;
+  await verifyGitHubActionsOidc({
+    token,
+    audience: "keeptxred-newsroom",
+    repository: "keeptxred/texas-heartland-hub",
+    workflowPath: ".github/workflows/run-daily-news-now.yml",
+    allowedEventNames: ["schedule", "workflow_dispatch", "workflow_run"],
+  });
+  return true;
+}
+
+async function handler({ request }: { request: Request }) {
+  let researchRequeueAuthorized = false;
+  try {
+    researchRequeueAuthorized = await verifiedResearchRequeue(request);
+  } catch {
+    return Response.json({ ok: false, error: "Invalid protected newsroom research authorization", aiCalls: 0 }, { status: 401 });
+  }
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
   // New newsroom tables and recent feed columns intentionally lead the generated Database type.
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -500,7 +524,7 @@ async function handler() {
   const packetByCluster = new Map(packets.map((packet) => [packet.cluster_id, packet]));
   const researchRequeues: Array<{ id: string; reason: string }> = [];
   let researchHeld = 0;
-  for (const failed of recoverable) {
+  for (const failed of researchRequeueAuthorized ? recoverable : []) {
     const packet = packetByCluster.get(failed.cluster_id);
     const decision = evaluateResearchRescue({
       candidate: failed as RecoverableResearchCandidate,
@@ -537,6 +561,7 @@ async function handler() {
 
   return Response.json({
     ok: true,
+    researchRescueAuthorized: researchRequeueAuthorized,
     researchRescueScanned: recoverable.length,
     researchRescueRequeued: researchRequeues.length,
     researchRescueHeld: researchHeld,
