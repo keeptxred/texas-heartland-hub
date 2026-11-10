@@ -13,6 +13,7 @@ on:
 permissions:
   contents: write
   pull-requests: write
+  statuses: write
 
 concurrency:
   group: refresh-tea-2026-school-mcr
@@ -68,3 +69,36 @@ jobs:
             echo "- Dataset changes: see create-pull-request logs and operation above"
             echo "- If a changed dataset cannot produce a PR, inspect repository Actions setting 'Allow GitHub Actions to create and approve pull requests' and token permissions."
           } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Publish discoverable TEA refresh status on checked main
+        if: always()
+        shell: bash
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPOSITORY: ${{ github.repository }}
+          RUN_ID: ${{ github.run_id }}
+          IMPORT_OUTCOME: ${{ steps.import.outcome }}
+          PR_OUTCOME: ${{ steps.pr.outcome }}
+          PR_OPERATION: ${{ steps.pr.outputs.pull-request-operation }}
+          PR_URL: ${{ steps.pr.outputs.pull-request-url }}
+        run: |
+          set -euo pipefail
+          sha="$(git rev-parse HEAD)"
+          current_main="$(gh api "repos/$REPOSITORY/git/ref/heads/main" --jq '.object.sha')"
+          if [[ "$sha" != "$current_main" ]]; then
+            echo "::warning title=Stale TEA refresh::main advanced during this run; do not overwrite newer commit's status"
+            exit 0
+          fi
+          state=failure
+          description="TEA refresh failed; inspect parser or PR creation logs"
+          if [[ "$IMPORT_OUTCOME" == "success" && "$PR_OUTCOME" == "success" ]]; then
+            state=success
+            description="Official TEA validation and change-only PR step passed"
+          fi
+          gh api --method POST "repos/$REPOSITORY/statuses/$sha" \
+            -f state="$state" \
+            -f context="keeptxred-tea-mcr-refresh" \
+            -f target_url="https://github.com/$REPOSITORY/actions/runs/$RUN_ID" \
+            -f description="$description"
+          echo "TEA refresh $state on $sha; PR operation: ${PR_OPERATION:-none}; PR: ${PR_URL:-none}"
+          [[ "$state" == "success" ]]
