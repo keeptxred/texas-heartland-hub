@@ -23,7 +23,7 @@ export const STORY_ARCHETYPES = [
   ["Public safety & investigations", /\b(fbi|investigat|arrest|indict|fraud|lawsuit|raid|crime|sheriff|police|charged|suspect)\b/i, "keeptxred"],
   ["Flooding & emergency response", /\b(flood|storm|rescue|tornado|wildfire|hurricane|emergency|heat advisory|swiftwater)\b/i, "keeptxred"],
   ["Local utilities & infrastructure", /\b(water line|water main|water outage|power outage|broken pipe|water service|boil water|road closure|bridge repairs)\b/i, "keeptxred"],
-  ["Community giving & volunteers", /\b(turkey drive|food drive|giveaway|donat|charity|volunteer|food bank|food pantry|community support)\b/i, "texasdefined"],
+  ["Community giving & volunteers", /\b(turkey drive|food drive|giveaway|gives away|turkeys|hams|donat\w*|charity|volunteer\w*|food bank|food pantry|community support)\b/i, "texasdefined"],
   ["Small businesses opening or closing", /\b(opening|opens|closing|closed after|shutting down|new restaurant|ice cream shop|business expansion|storefront)\b/i, "texasdefined"],
   ["Airports & travel access", /\b(airport|airline|flight route|commercial flight|nonstop|terminal opens|new destination)\b/i, "texasdefined"],
   ["Science, space & research", /\b(starship|spacex|starbase|meteorite|researchers|research study|scientists|university study|astronomy)\b/i, "texasdefined"],
@@ -40,7 +40,9 @@ export function isDirectOriginalUrl(url) {
     const parsed = new URL(url);
     if (!["http:", "https:"].includes(parsed.protocol)) return false;
     const host = parsed.hostname.toLowerCase().replace(/^www\./, "");
-    if (["news.google.com", "bing.com", "lrl.state.tx.us", "lrl.texas.gov"].includes(host)) return false;
+    if (["news.google.com", "bing.com"].includes(host)) return false;
+    if (["lrl.state.tx.us", "lrl.texas.gov"].includes(host) &&
+      (parsed.pathname.toLowerCase() === "/cl.cfm" || parsed.pathname.toLowerCase().startsWith("/currentissues/clips/"))) return false;
     if (host.endsWith(".msn.com") || host === "msn.com") return false;
     if (host === "www.keeptxred.com" || host === "keeptxred.com") return false;
     return true;
@@ -114,7 +116,7 @@ async function fetchAllSince(since, through, key) {
     endpoint.searchParams.set("limit", String(PAGE_SIZE));
     endpoint.searchParams.set("offset", String(page * PAGE_SIZE));
     const response = await fetch(endpoint, {
-      headers: { apikey: key, Authorization: "Bearer " + key, Accept: "application/json" },
+      headers: { apikey: key, ...(key.startsWith("sb_secret_") ? {} : { Authorization: "Bearer " + key }), Accept: "application/json" },
       signal: AbortSignal.timeout(30000),
     });
     if (!response.ok) throw new Error("Supabase story radar fetch failed: HTTP " + response.status + " " + (await response.text()).slice(0,300));
