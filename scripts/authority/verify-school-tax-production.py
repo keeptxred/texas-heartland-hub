@@ -4,9 +4,11 @@
 Called inside the existing protected production deployment workflow, before
 the exact-main-SHA production-current status is published.
 """
+import json
 import os
 import sys
 import time
+from pathlib import Path
 from urllib.error import HTTPError, URLError
 from urllib.request import Request, urlopen
 
@@ -28,6 +30,23 @@ MARKERS = {
     "Comptroller official source": "comptroller.texas.gov/taxes/property-tax/rates/index.php",
     "MCR limitation": "not adopted total school-tax rates",
 }
+
+# Verify the complete shipped source dataset separately from the bounded SSR UI.
+# The finder intentionally renders at most 30 rows at a time, but searches
+# the entire imported dataset after hydration. Do not mistake a displayed
+# count in HTML for proof that the underlying 1,013 records are present.
+dataset_path = Path(__file__).resolve().parents[2] / "src/data/tea-2026-final-mcr.json"
+with dataset_path.open(encoding="utf-8") as source_file:
+    dataset = json.load(source_file)
+records = dataset.get("districts")
+if dataset.get("taxYear") != 2026 or dataset.get("districtCount") != 1013 or not isinstance(records, list) or len(records) != 1013:
+    raise SystemExit("FAIL: school-tax dataset year/count does not match 1,013 verified 2026 records")
+ids = [row.get("id") for row in records]
+if any(not isinstance(district_id, str) or len(district_id) != 6 or not district_id.isdigit() for district_id in ids) or len(set(ids)) != len(ids):
+    raise SystemExit("FAIL: school-tax district dataset contains invalid or duplicate TEA IDs")
+if any(not row.get("name") or not row.get("mcr") for row in records):
+    raise SystemExit("FAIL: school-tax district dataset has incomplete records")
+print("PASS school-tax source dataset: 1,013 unique complete 2026 district records (distinct from bounded SSR display)")
 
 for attempt in range(1, 5):
     try:
