@@ -71,7 +71,9 @@ export function verifiedOfficialArticlePublishedAt(html: string, nowMs = Date.no
     if (!/^\d{4}-\d{2}-\d{2}$/.test(eventDate)) continue;
     const age = nowMs - d.getTime();
     // Bounded freshness protects searches from inventing "new" archival news.
-    if (age < -24 * 60 * 60 * 1000 || age > 14 * 86_400_000) continue;
+    // A valid older original date is authoritative: never fall through to
+    // a newer update/listing date and relabel archival news as breaking.
+    if (age < -24 * 60 * 60 * 1000 || age > 14 * 86_400_000) return null;
     return d.toISOString();
   }
   return null;
