@@ -97,7 +97,7 @@ const DIRECT_SOURCES: Source[] = [
   // publication date; never use crawl time or an unverified RSS mirror.
   { name: "UTEP — Official University News", url: "https://www.utep.edu/newsfeed/news.html", category: "Education", mode: "official-dated-html", include: "^/newsfeed/20\\d{2}/[a-z]+/[a-z0-9-]+\\.html$" },
   { name: "Texas Biomed — Official Research News", url: "https://www.txbiomed.org/news-press/news/", category: "Non-Political", mode: "official-dated-html", include: "^/news-press/news/[a-z0-9-]+/?$" },
-  { name: "City of Arlington — Original News", url: "https://www.arlingtontx.gov/News-Events/All-News", category: "Local", mode: "official-dated-html", include: "^/News-Articles/20\\d{2}/[A-Za-z]+/[a-zA-Z0-9_.-]+/?$" },
+  { name: "City of Arlington — Original News", url: "https://www.arlingtontx.gov/", category: "Local", mode: "official-dated-html", include: "^/News-Articles/20\\d{2}/[A-Za-z]+/[a-zA-Z0-9_.-]+/?$" },
   { name: "KLTV Tyler — Direct Local Headlines", url: "https://www.kltv.com/", category: "Local", mode: "html-links", include: "^/20\\d{2}/\\d{2}/\\d{2}/[a-z0-9-]+/?$" },
   { name: "FOX 4 Midlothian — Direct Local Headlines", url: "https://www.fox4news.com/tag/us/tx/ellis-county/midlothian", category: "Local", mode: "fox4-html" },
   { name: "KRGV Rio Grande Valley — Direct Local Headlines", url: "https://www.krgv.com/news/", category: "Local", mode: "krgv-html" },
