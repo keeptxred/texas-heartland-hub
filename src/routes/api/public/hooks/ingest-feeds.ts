@@ -87,6 +87,9 @@ const DIRECT_SOURCES: Source[] = [
   // permalinks. Do not rely on Google News RSS (currently anti-bot 503).
   { name: "KTRE Lufkin — Direct Local Headlines", url: "https://www.ktre.com/", category: "Local", mode: "html-links", include: "^/20\\d{2}/\\d{2}/\\d{2}/[a-z0-9-]+/?$" },
   { name: "KCBD Lubbock — Direct Local Headlines", url: "https://www.kcbd.com/", category: "Local", mode: "html-links", include: "^/20\\d{2}/\\d{2}/\\d{2}/[a-z0-9-]+/?$" },
+  // Original publishers with dated source permalinks; never invent a date from crawl time.
+  { name: "First Alert 7 — Permian Basin Local", url: "https://www.firstalert7.com/news/law/", category: "Local", mode: "html-links", include: "^/20\\d{2}/\\d{2}/\\d{2}/[a-z0-9-]+/?$" },
+  { name: "Texas Lutheran Football — Official Athletics", url: "https://tlubulldogs.com/sports/football", category: "Sports", mode: "html-links", include: "^/news/20\\d{2}/\\d{1,2}/\\d{1,2}/football-[a-z0-9-]+\\.aspx$" },
   { name: "KLTV Tyler — Direct Local Headlines", url: "https://www.kltv.com/", category: "Local", mode: "html-links", include: "^/20\\d{2}/\\d{2}/\\d{2}/[a-z0-9-]+/?$" },
   { name: "FOX 4 Midlothian — Direct Local Headlines", url: "https://www.fox4news.com/tag/us/tx/ellis-county/midlothian", category: "Local", mode: "fox4-html" },
   { name: "KRGV Rio Grande Valley — Direct Local Headlines", url: "https://www.krgv.com/news/", category: "Local", mode: "krgv-html" },
@@ -237,12 +240,14 @@ function parseHtmlLinks(html: string, source: Source): Item[] {
       if (!dated) continue;
       publishDate = dated;
     }
-    if (source.name === "KTRE Lufkin — Direct Local Headlines" || source.name === "KCBD Lubbock — Direct Local Headlines" || source.name === "KLTV Tyler — Direct Local Headlines") {
+    if (source.name === "KTRE Lufkin — Direct Local Headlines" || source.name === "KCBD Lubbock — Direct Local Headlines" || source.name === "KLTV Tyler — Direct Local Headlines" || source.name === "First Alert 7 — Permian Basin Local" || source.name === "Texas Lutheran Football — Official Athletics") {
       // Gray local outlets use canonical /YYYY/MM/DD/slug dates. Never invent
       // publication dates from the crawl or load stale archive links as fresh.
-      const dated = parsed.pathname.match(/^\/(20\d{2})\/(\d{2})\/(\d{2})\/[^/]+\/?$/i);
+      const dated = source.name === "Texas Lutheran Football — Official Athletics"
+        ? parsed.pathname.match(/^\/news\/(20\d{2})\/(\d{1,2})\/(\d{1,2})\/football-[a-z0-9-]+\.aspx$/i)
+        : parsed.pathname.match(/^\/(20\d{2})\/(\d{2})\/(\d{2})\/[^/]+\/?$/i);
       if (!dated) continue;
-      const ymd = `${dated[1]}-${dated[2]}-${dated[3]}`;
+      const ymd = `${dated[1]}-${dated[2].padStart(2, "0")}-${dated[3].padStart(2, "0")}`;
       const articleDate = new Date(`${ymd}T12:00:00Z`);
       if (Number.isNaN(articleDate.getTime()) || articleDate.toISOString().slice(0, 10) !== ymd) continue;
       const ageMs = Date.now() - articleDate.getTime();
