@@ -1,0 +1,36 @@
+name: Cross-site Texas original-story radar
+
+# Read-only original-source topic coverage across BOTH sites; no AI.
+on:
+  schedule:
+    - cron: '12 14 * * *'
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/news/monitor-cross-site-story-archetypes.mjs'
+      - '.github/workflows/cross-site-texas-story-radar.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: cross-site-texas-story-radar-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  pulse:
+    if: github.repository == 'keeptxred/texas-heartland-hub'
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    env:
+      SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY || secrets.KEEP_TX_RED_SUPABASE_SERVICE_ROLE_KEY }}
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+      - name: Validate reusable topic classification without network or AI
+        run: node scripts/news/monitor-cross-site-story-archetypes.mjs --self-test
+      - name: Report recent independently discovered topic categories for both sites
+        run: node scripts/news/monitor-cross-site-story-archetypes.mjs
