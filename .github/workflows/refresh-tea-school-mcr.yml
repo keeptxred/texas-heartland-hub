@@ -151,6 +151,6 @@ jobs:
         run: |
           set -euo pipefail
           sha="$(git rev-parse HEAD)"
-          printf -v body 'Scheduled Tuesday 13:17 UTC TEA refresh executed. Run: https://github.com/%s/actions/runs/%s\\nChecked SHA: %s\\nOfficial PDF import: %s; dataset diff: %s; PR action: %s; changed-data guard: %s.\\nPR operation: %s; PR: %s.\\nThis records execution only; inspect run logs before certifying source data.' \\
+          printf -v body 'Scheduled Tuesday 13:17 UTC TEA refresh executed. Run: https://github.com/%s/actions/runs/%s\nChecked SHA: %s\nOfficial PDF import: %s; dataset diff: %s; PR action: %s; changed-data guard: %s.\nPR operation: %s; PR: %s.\nThis records execution only; inspect run logs before certifying source data.' \
             "$REPOSITORY" "$RUN_ID" "$sha" "$IMPORT_OUTCOME" "$DIFF_OUTCOME" "$PR_OUTCOME" "$PR_GUARD_OUTCOME" "${PR_OPERATION:-none}" "${PR_URL:-none}"
           gh api --method POST "repos/$REPOSITORY/issues/3597/comments" -f body="$body"
