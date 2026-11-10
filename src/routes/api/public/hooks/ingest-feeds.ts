@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { resolvePublishTimestamp } from "@/lib/article-slug-integrity";
 import { isLowValueTitle } from "@/lib/low-value-titles";
 import { scoreFeedItem, TEXAS_RELEVANCE_MIN } from "@/lib/viral-score";
+import { isVerifiedTexasInstitutionalDiscovery } from "@/lib/newsroom-institution-source-relevance";
 import { selectRotatedSourceWindow } from "@/lib/ingest-source-window";
 import { parseTexasAgPressReleaseIndex } from "@/lib/texas-ag-press-releases";
 import { datedTdemReleasePublishedAt } from "@/lib/texas-tdem-press-release-date";
@@ -422,6 +423,10 @@ function isRegionalListingNoise(item: Item, configuredSource: string): boolean {
 
 function isTexasRelevant(item: Item, configuredSource: string): boolean {
   if (OFFICIAL_HYPERLOCAL_SOURCE_RE.test(configuredSource)) return true;
+  // A research lead on the exact verified UTEP/TLU article path is local
+  // institutional reporting even when the title lacks "Texas" or "El Paso".
+  // The prior general location scorer missed these official research stories.
+  if (isVerifiedTexasInstitutionalDiscovery(configuredSource, item.link)) return true;
   const result = scoreFeedItem({ title: item.title, source: item.source, pub_date: item.pub_date, description: item.description });
   return result.texasRelevanceScore >= TEXAS_RELEVANCE_MIN;
 }
