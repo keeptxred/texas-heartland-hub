@@ -125,7 +125,7 @@ async function verifiedResearchRequeue(request: Request): Promise<boolean> {
   // Only the signed, current-main protected production scheduler may alter
   // a failed candidate's publishing status; public GET/POST cannot requeue it.
   const auth = request.headers.get("authorization") ?? "";
-  const token = auth.match(/^Bearer\\s+(.+)$/i)?.[1];
+  const token = auth.match(/^Bearer\s+(.+)$/i)?.[1];
   if (!token) return false;
   await verifyGitHubActionsOidc({
     token,
