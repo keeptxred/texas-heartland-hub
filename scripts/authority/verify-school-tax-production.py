@@ -25,6 +25,7 @@ MARKERS = {
     "Aldine district record": "Aldine ISD (101902)",
     "Frisco district record": "Frisco ISD (043905)",
     "TEA official source": "ty2026-final-mcrs.pdf",
+    "Comptroller official source": "comptroller.texas.gov/taxes/property-tax/rates/index.php",
     "MCR limitation": "not adopted total school-tax rates",
 }
 
