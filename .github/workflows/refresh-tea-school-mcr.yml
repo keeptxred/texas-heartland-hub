@@ -58,8 +58,8 @@ jobs:
         run: |
           set -euo pipefail
           # create-pull-request normally resets the worktree after creating its branch.
-          # Its operation output is authoritative: none means no dataset change.
-          if [[ "${PR_OPERATION:-}" != "none" && -z "${PR_NUMBER:-}" ]]; then
+          # Its operation output is authoritative: empty or none means no dataset change.
+          if [[ -n "${PR_OPERATION:-}" && "${PR_OPERATION}" != "none" && -z "${PR_NUMBER:-}" ]]; then
             echo "::error title=TEA refresh PR missing::Dataset changed (operation=$PR_OPERATION) but no reviewable pull request was created."
             exit 1
           fi
