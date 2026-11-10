@@ -10,6 +10,7 @@ import time
 from urllib.error import HTTPError, URLError
 from urllib.request import Request, urlopen
 
+AGENT = os.environ.get("SCHOOL_TAX_USER_AGENT", "KeepTXRed-Production-Acceptance/1.0")
 BASE = os.environ.get("SITE_URL", "https://keeptxred-site.freddy-coppola.workers.dev").rstrip("/")
 URL = BASE + "/news/isd-tax-burdens"
 MARKERS = {
@@ -30,7 +31,7 @@ MARKERS = {
 for attempt in range(1, 5):
     try:
         req = Request(URL, headers={
-            "User-Agent": "KeepTXRed-Production-Acceptance/1.0",
+            "User-Agent": AGENT,
             "Accept": "text/html",
             "x-keeptxred-deployment-smoke": "canonical",
         })
