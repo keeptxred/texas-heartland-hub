@@ -154,7 +154,7 @@ function SchoolTaxRatesArticle() {
         </section>
 
         <section className="mt-10">
-          <h2 className="font-display text-2xl md:text-3xl tracking-tight mb-4 border-b border-border pb-2">Which districts have the highest 2026 rates?</h2>
+          <h2 className="font-display text-2xl md:text-3xl tracking-tight mb-4 border-b border-border pb-2">What do verified 2026 district compression rates look like?</h2>
 <h3 className="font-display text-xl mt-6 mb-3">Verified district examples from TEA's final 2026 file</h3><p>These are Tier One maximum compressed rates, not adopted total school-tax rates. This is a verified sample, not a statewide ranking. Consult <a href={TEA_FINAL_DISTRICT_PDF_URL} target="_blank" rel="noreferrer">TEA's final district MCR PDF</a> for the full list.</p><div className="overflow-x-auto"><table><thead><tr><th>District (TEA ID)</th><th>2026 Tier One MCR</th></tr></thead><tbody><tr><td>Aldine ISD (101902)</td><td>$0.5973</td></tr>
 <tr><td>Alief ISD (101903)</td><td>$0.6254</td></tr>
 <tr><td>Austin ISD (227901)</td><td>$0.6254</td></tr>
