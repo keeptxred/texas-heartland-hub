@@ -16,6 +16,8 @@ on:
     types: [completed]
     branches: [main]
   workflow_dispatch:
+  schedule:
+    - cron: '31 14 * * *'
 
 permissions:
   contents: read
@@ -30,6 +32,18 @@ jobs:
       - name: Verify production Worker renders complete TEA district directory
         env:
           SITE_URL: https://keeptxred-site.freddy-coppola.workers.dev
+        run: python3 scripts/authority/verify-school-tax-production.py
+
+      - name: Verify public browser SSR authority content
+        env:
+          SITE_URL: https://keeptxred.com
+          SCHOOL_TAX_USER_AGENT: Mozilla/5.0 (compatible; KeepTXRed-QA/1.0)
+        run: python3 scripts/authority/verify-school-tax-production.py
+
+      - name: Verify public Googlebot SSR authority content
+        env:
+          SITE_URL: https://keeptxred.com
+          SCHOOL_TAX_USER_AGENT: Googlebot
         run: python3 scripts/authority/verify-school-tax-production.py
 
       - name: Diagnose public custom-domain article response
