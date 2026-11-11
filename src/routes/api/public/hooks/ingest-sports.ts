@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { SPORTS_SOURCES, type SportsSource } from "@/lib/sports-sources";
 import { classifySportsText } from "@/lib/sports-taxonomy";
+import { originalSportsRssPublishedAt, originalSportsPermalinkPublishedAt } from "@/lib/sports-original-source-date";
 
 const TRANSIENT = new Set([408, 425, 429, 500, 502, 503, 504]);
 const SPORTS_UPSERT_BATCH_SIZE = 50;
@@ -20,12 +21,6 @@ function pick(block: string, tag: string): string {
   return decode(block.match(new RegExp(`<${tag}[^>]*>([\\s\\S]*?)<\\/${tag}>`, "i"))?.[1] ?? "");
 }
 
-function safeIso(value?: string): string {
-  if (!value) return new Date().toISOString();
-  const parsed = new Date(value);
-  return Number.isNaN(parsed.getTime()) ? new Date().toISOString() : parsed.toISOString();
-}
-
 function parseRss(xml: string, source: SportsSource): FeedRow[] {
   const blocks = xml.match(/<(item|entry)[\s\S]*?<\/(item|entry)>/gi) ?? [];
   const out: FeedRow[] = [];
@@ -36,9 +31,11 @@ function parseRss(xml: string, source: SportsSource): FeedRow[] {
     const date = pick(block, "pubDate") || pick(block, "updated") || pick(block, "published");
     const description = pick(block, "description") || pick(block, "summary") || pick(block, "content") || title;
     if (!title || !/^https?:\/\//i.test(link)) continue;
+    const originalDate = originalSportsRssPublishedAt(date);
+    if (!originalDate) continue;
     const classification = classifySportsText(`${title} ${description} ${source.name}`);
     if (!source.team && !source.topic && !classification.isSports) continue;
-    out.push({ title: title.slice(0, 500), link, pub_date: safeIso(date), source: source.name, description: description.slice(0, 1200), trend_source: source.name });
+    out.push({ title: title.slice(0, 500), link, pub_date: originalDate, source: source.name, description: description.slice(0, 1200), trend_source: source.name });
   }
   return out;
 }
@@ -62,10 +59,11 @@ function parseHtml(html: string, source: SportsSource): FeedRow[] {
     if (parsed.hostname !== base.hostname && !parsed.hostname.endsWith(`.${base.hostname}`)) continue;
     if (include && !include.test(parsed.pathname)) continue;
     const canonical = `${parsed.origin}${parsed.pathname}${parsed.search}`;
-    if (seen.has(canonical)) continue;
+    const originalDate = originalSportsPermalinkPublishedAt(canonical);
+    if (!originalDate || seen.has(canonical)) continue;
     seen.add(canonical);
     const description = `${source.name}: ${title}`;
-    out.push({ title: title.slice(0, 500), link: canonical, pub_date: new Date().toISOString(), source: source.name, description: description.slice(0, 1200), trend_source: source.name });
+    out.push({ title: title.slice(0, 500), link: canonical, pub_date: originalDate, source: source.name, description: description.slice(0, 1200), trend_source: source.name });
     if (out.length >= 20) break;
   }
   return out;
@@ -91,7 +89,9 @@ async function fetchSource(source: SportsSource): Promise<SourceResult> {
   const fetched = await fetchText(source.url, accept);
   if (!fetched.text) return { source: source.name, status: fetched.status, items: [], error: fetched.error };
   const items = source.mode === "rss" ? parseRss(fetched.text, source) : parseHtml(fetched.text, source);
-  return { source: source.name, status: fetched.status, items };
+  return { source: source.name, status: fetched.status, items,
+    ...(!items.length ? { error: "no_verified_recent_source_article_dates" } : {}),
+  };
 }
 
 async function mapWithConcurrency<T, R>(values: readonly T[], concurrency: number, fn: (value: T) => Promise<R>): Promise<R[]> {
