@@ -50,5 +50,11 @@ describe("first-party official newsroom research", () => {
       .toBe("UTEP genetic research on North American mallards");
     expect(verifiedOfficialArticleTitle("<h1>News</h1>")).toBeNull();
     expect(verifiedOfficialArticleTitle("<h2>UTEP story</h2>")).toBeNull();
+    expect(verifiedOfficialArticleTitle('<h1><a href="/newsfeed/">Newsfeed</a></h1>' +
+      '<h1>UTEP Researcher Leads First-of-Its-Kind Study on Genetic Changes in Wild Ducks</h1>'))
+      .toBe("UTEP Researcher Leads First-of-Its-Kind Study on Genetic Changes in Wild Ducks");
+    expect(verifiedOfficialArticleTitle("<h1>Newsfeed</h1><h1>404 Not Found</h1><h1>Suggested Stories</h1>"))
+      .toBeNull();
+    expect(verifiedOfficialArticleTitle("<h1>Newsfeed</h1><h1>Latest</h1>")).toBeNull();
   });
 });
