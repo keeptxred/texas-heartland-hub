@@ -3,11 +3,46 @@ import {
   verifiedOfficialArticlePublishedAt,
   verifiedOfficialArticleTitle,
   verifiedOfficialIndexLinks,
+  verifiedOfficialDatedIndexEntries,
 } from "./newsroom-official-index-date";
 
 const NOW = Date.parse("2026-11-09T23:50:00Z");
 
 describe("first-party official newsroom research", () => {
+
+  it("admits original dated Arlington listing cards as discovery-only pointers when individual pages block fetches", () => {
+    const listing = [
+      '<a class="card" href="/News-Articles/2026/November/Donate-Childrens-Coats-Hats-and-Gloves-at-Arlington-Fire-Stations"><h3>Donate Children&#39;s Coats, Hats and Gloves at Arlington Fire Stations</h3><div>Published on November 11, 2026</div><p>Local winter coat drive announced by the city.</p><span>Tagged as: Fire</span></a>',
+      '<a href="https://www.arlingtontx.gov/News-Articles/2026/November/Pyburn-House-Becomes-Arlingtons-Newest-Local-Landmark">Pyburn House Becomes Arlington’s Newest Local Landmark Published on November 10, 2026 Historic landmark.</a>',
+    ].join("");
+    const items = verifiedOfficialDatedIndexEntries(
+      listing, "https://www.arlingtontx.gov/News-Events/All-News",
+      /^\/News-Articles\/20\d{2}\/[A-Za-z]+\/[a-zA-Z0-9_.-]+\/?$/i,
+      Date.parse("2026-11-11T19:00:00Z"), 4,
+    );
+    expect(items).toHaveLength(2);
+    expect(items[0].title).toContain("Coats");
+    expect(items[0].publishedAt).toBe("2026-11-11T12:00:00.000Z");
+    expect(items[0].description).toBe("Local winter coat drive announced by the city.");
+    expect(items[1].publishedAt).toBe("2026-11-10T12:00:00.000Z");
+  });
+
+  it("rejects malformed, archival, off-domain, undated and fabricated future Arlington items", () => {
+    const bad = [
+      '<a href="/News-Articles/2026/November/Undated-Civic-Update">Undated Civic Update</a>',
+      '<a href="/News-Articles/2026/November/Impossible-Date">Impossible date Published on November 31, 2026</a>',
+      '<a href="/News-Articles/2026/September/Old-News">Old library update Published on September 1, 2026</a>',
+      '<a href="/News-Articles/2026/December/Future-Date">Future parks plans Published on December 12, 2026</a>',
+      '<a href="https://attacker.example/News-Articles/2026/November/Outside">Wrong publisher Published on November 10, 2026</a>',
+      '<a href="/News-Events/All-News">Fake index page Published on November 10, 2026</a>',
+    ].join("");
+    expect(verifiedOfficialDatedIndexEntries(
+      bad, "https://www.arlingtontx.gov/News-Events/All-News",
+      /^\/News-Articles\/20\d{2}\/[A-Za-z]+\/[a-zA-Z0-9_.-]+\/?$/i,
+      Date.parse("2026-11-11T19:00:00Z"),
+    )).toEqual([]);
+  });
+
   it("accepts only fixed publisher article paths and rejects other hosts, trackers and duplicates", () => {
     const links = verifiedOfficialIndexLinks(
       '<a href="/newsfeed/2026/november/ducks.html">Ducks</a>' +
