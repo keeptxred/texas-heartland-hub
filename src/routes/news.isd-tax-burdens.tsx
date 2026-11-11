@@ -37,7 +37,11 @@ function SchoolTaxRatesArticle() {
   const [maintenanceRate, setMaintenanceRate] = useState("0.7254");
   const [debtRate, setDebtRate] = useState("0.20");
   const estimate = useMemo(() => {
-    const nums = [homeValue, exemption, maintenanceRate, debtRate].map(Number);
+    const fields = [homeValue, exemption, maintenanceRate, debtRate];
+    // Number("") is zero: a cleared rate or exemption field must not silently
+    // become a valid $0 estimate while the homeowner is editing inputs.
+    if (fields.some((field) => field.trim() === "")) return null;
+    const nums = fields.map(Number);
     if (nums.some((n) => !Number.isFinite(n) || n < 0)) return null;
     const [value, exempt, mo, debt] = nums;
     if (mo > 5 || debt > 5) return null;
