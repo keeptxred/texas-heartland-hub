@@ -85,3 +85,45 @@ export function verifiedOfficialArticlePublishedAt(html: string, nowMs = Date.no
   }
   return null;
 }
+
+
+/**
+ * Arlington's own All News listing publishes a date beside each original
+ * permalink, but some article pages are inaccessible to the Worker. Accept
+ * only the publisher's *explicit* index publication date for DISCOVERY.
+ * This is never extracted article evidence or permission to auto-publish.
+ */
+export function verifiedOfficialDatedIndexEntries(
+  html: string, sourceUrl: string, requiredPath: RegExp, nowMs = Date.now(), max = 4,
+): Array<{ url: string; title: string; publishedAt: string; description: string }> {
+  const base = new URL(sourceUrl);
+  const results: Array<{ url: string; title: string; publishedAt: string; description: string }> = [];
+  const seen = new Set<string>();
+  const months = ["january", "february", "march", "april", "may", "june", "july", "august", "september", "october", "november", "december"];
+  const anchors = /<a\b[^>]*href=["']([^"'#]+)["'][^>]*>([\s\S]*?)<\/a>/gi;
+  for (const match of html.matchAll(anchors)) {
+    let link: URL;
+    try { link = new URL(match[1], sourceUrl); } catch { continue; }
+    if (link.protocol !== "https:" || link.hostname !== base.hostname || !requiredPath.test(link.pathname)) continue;
+    const url = link.origin + link.pathname;
+    if (seen.has(url)) continue;
+    const copy = textOnly(match[2]);
+    const published = copy.match(/\bPublished on\s+(January|February|March|April|May|June|July|August|September|October|November|December)\s+(\d{1,2}),?\s+(20\d{2})\b/i);
+    if (!published) continue;
+    const title = copy.slice(0, published.index).trim();
+    if (title.length < 18 || title.length > 240 || /^(news|all news|home|404|access denied)$/i.test(title)) continue;
+    const month = months.indexOf(published[1].toLowerCase());
+    const day = Number(published[2]);
+    const year = Number(published[3]);
+    const date = new Date(Date.UTC(year, month, day, 12));
+    if (date.getUTCFullYear() !== year || date.getUTCMonth() !== month || date.getUTCDate() !== day) continue;
+    const age = nowMs - date.getTime();
+    if (age > 14 * 86_400_000 || age < -24 * 60 * 60 * 1000) continue;
+    seen.add(url);
+    const description = copy.slice((published.index ?? 0) + published[0].length)
+      .replace(/\bTagged as:\s*[\s\S]*$/i, "").trim().slice(0, 900);
+    results.push({ url, title, publishedAt: date.toISOString(), description });
+    if (results.length >= max) break;
+  }
+  return results;
+}

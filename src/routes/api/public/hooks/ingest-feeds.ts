@@ -11,7 +11,7 @@ import { partitionFeedLinkLookups } from "@/lib/ingest-link-lookup";
 import { extractFirstPartyRssArticleBody } from "@/lib/newsroom-firstparty-rss-body";
 import { canFailoverTrustedRssStatus, trustedNewsroomRssRelayUrl } from "@/lib/official-rss-egress";
 import { isGoogleNewsDiscoveryTransport } from "@/lib/ingest-discovery-source";
-import { verifiedOfficialArticlePublishedAt, verifiedOfficialArticleTitle, verifiedOfficialIndexLinks } from "@/lib/newsroom-official-index-date";
+import { verifiedOfficialArticlePublishedAt, verifiedOfficialArticleTitle, verifiedOfficialIndexLinks, verifiedOfficialDatedIndexEntries } from "@/lib/newsroom-official-index-date";
 import { extractReadableNewsroomHtml } from "@/lib/newsroom-source-page.server";
 import { parseFox4DatedLocalHtml, parseKrgvDatedLocalHtml } from "@/lib/newsroom-local-direct-html";
 export { publishSingleFeedItem } from "@/lib/multi-source-publish";
@@ -532,6 +532,23 @@ async function fetchSource(source: Source): Promise<FetchResult> {
     return { source: source.name, url: "https://texasstandard.org/", status: fallback.status, attempts: fetched.attempts + fallback.attempts, mode: "texas-standard-html", items: fallback.text ? parseTexasStandardHtml(fallback.text) : [], error: fallback.text ? undefined : fallback.error };
   }
   if (!finalResult.text) return { source: source.name, url: source.url, status: finalResult.status, attempts: finalResult.attempts, mode: source.mode, items: [], relayUsed: sourceRelayUsed, error: finalResult.error };
+
+  if (source.name === "City of Arlington — Original News" && source.mode === "official-dated-html") {
+    // The official city index supplies explicit publication dates alongside
+    // original permalinks. Admit source-discovery pointers only; never claim
+    // the unreadable article's body was extracted or publication-ready.
+    const listed = verifiedOfficialDatedIndexEntries(
+      finalResult.text, source.url, new RegExp(source.include ?? "^$", "i"), Date.now(), 4,
+    );
+    return {
+      source: source.name, url: source.url, status: finalResult.status,
+      attempts: finalResult.attempts, mode: source.mode, relayUsed: sourceRelayUsed,
+      items: listed.filter((row) => !isLowValueTitle(row.title)).map((row) => ({
+        title: row.title, link: row.url, pub_date: row.publishedAt, source: source.name,
+        description: row.description || row.title,
+      })),
+    };
+  }
 
   if (source.mode === "official-dated-html") {
     // Fixed publishers only: a three-story-per-index budget means a failed
