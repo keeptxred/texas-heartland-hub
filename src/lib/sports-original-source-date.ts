@@ -63,7 +63,7 @@ export function canonicalSportsOriginalPublisherUrl(raw: string): string {
     const year = Number(match[1]), month = Number(match[2]), day = Number(match[3]);
     const date = new Date(Date.UTC(year, month - 1, day));
     if (date.getUTCFullYear() !== year || date.getUTCMonth() + 1 !== month || date.getUTCDate() !== day) return raw;
-    return \`https://12thman.com/news/\${year}/\${month}/\${day}/\${match[4]}\`;
+    return "https://12thman.com/news/" + year + "/" + month + "/" + day + "/" + match[4];
   } catch {
     return raw;
   }
