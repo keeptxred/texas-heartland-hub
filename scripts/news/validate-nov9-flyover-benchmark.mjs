@@ -64,7 +64,7 @@ for (const required of [
 ]) {
   assert.ok(biomed.includes(required), `Missing original biomedical owner guard: ${required}`);
 }
-assert.doesNotMatch(biomed, /SET\\s+(?:ready_for_rewrite|auto_publish_eligible|classification_confidence|source_reputation_score)\\s*=/i,
+assert.doesNotMatch(biomed, /SET\s+(?:ready_for_rewrite|auto_publish_eligible|classification_confidence|source_reputation_score)\s*=/i,
   'Science routing must never promote an article');
-assert.doesNotMatch(biomed, /\\bSECURITY\\s+DEFINER\\b/i, 'Do not bypass RLS');
+assert.doesNotMatch(biomed, /\bSECURITY\s+DEFINER\b/i, 'Do not bypass RLS');
 console.log('PASS: November 9 Flyover source-independent KTR/TD route contract, original editorial gates and SQL runtime assertions retained.');
