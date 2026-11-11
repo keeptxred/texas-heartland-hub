@@ -46,3 +46,25 @@ export function originalSportsPermalinkPublishedAt(articleUrl: string, nowMs = D
   // time is an original event timestamp.
   return date.toISOString();
 }
+
+
+/**
+ * Texas A&M's official article listing emits equivalent /11/09/ and /11/9/
+ * URLs for the SAME original dated report. Treat these as a single publisher
+ * permalink before the unique-link upsert. Do not canonicalize other schools,
+ * cross-domain URLs, invalid dates, or undated archive/index pages.
+ */
+export function canonicalSportsOriginalPublisherUrl(raw: string): string {
+  try {
+    const parsed = new URL(raw);
+    if (parsed.protocol !== "https:" || !/^(?:www\.)?12thman\.com$/i.test(parsed.hostname)) return raw;
+    const match = parsed.pathname.match(/^\/news\/(20\d{2})\/0?(\d{1,2})\/0?(\d{1,2})\/([a-z0-9-]+)\/?$/i);
+    if (!match) return raw;
+    const year = Number(match[1]), month = Number(match[2]), day = Number(match[3]);
+    const date = new Date(Date.UTC(year, month - 1, day));
+    if (date.getUTCFullYear() !== year || date.getUTCMonth() + 1 !== month || date.getUTCDate() !== day) return raw;
+    return \`https://12thman.com/news/\${year}/\${month}/\${day}/\${match[4]}\`;
+  } catch {
+    return raw;
+  }
+}
