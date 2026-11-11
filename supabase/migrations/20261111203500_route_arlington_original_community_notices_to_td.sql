@@ -9,6 +9,18 @@ CREATE OR REPLACE FUNCTION public.route_arlington_official_lifestyle_post_guard(
 RETURNS trigger LANGUAGE plpgsql SET search_path=public AS $function$
 DECLARE t text := lower(coalesce(new.title,''));
 BEGIN
+  -- All dated Arlington listing cards are DISCOVERY pointers, including
+  -- correctly routed golf/sports records. An original dated link alone never
+  -- justifies a long-form draft, irrespective of its final site/section.
+  IF new.source='City of Arlington — Original News'
+    AND new.link ~ '^https://www\\.arlingtontx\\.gov/News-Articles/20[0-9]{2}/[A-Za-z]+/'
+    AND new.internal_slug IS NULL AND new.texasdefined_slug IS NULL
+    AND coalesce((new.viral_signals->>'routing_lock')::boolean,false)=false
+    AND length(coalesce(new.extracted_body,'')) < 2200
+  THEN
+    new.ready_for_rewrite:=false;
+  END IF;
+
   IF new.source='City of Arlington — Original News'
     AND new.link ~ '^https://www\.arlingtontx\.gov/News-Articles/20[0-9]{2}/[A-Za-z]+/'
     AND t LIKE '%arlington%'
@@ -52,6 +64,17 @@ UPDATE public.texas_news_feed
    AND coalesce((viral_signals->>'routing_lock')::boolean,false)=false
    AND length(coalesce(extracted_body,'')) < 2200;
 
+-- The already-correct city golf note is ALSO an undigested listing card.
+-- Preserve its Sports destination while revoking false draft readiness.
+UPDATE public.texas_news_feed
+   SET ready_for_rewrite=false
+ WHERE id=6940684
+   AND source='City of Arlington — Original News'
+   AND target_site='texasdefined' AND target_section='Sports'
+   AND internal_slug IS NULL AND texasdefined_slug IS NULL
+   AND coalesce((viral_signals->>'routing_lock')::boolean,false)=false
+   AND length(coalesce(extracted_body,'')) < 2200;
+
 DO $assert$
 DECLARE correctly_routed integer; golf_unchanged integer; politics_unchanged integer;
 BEGIN
@@ -65,7 +88,8 @@ BEGIN
     RAISE EXCEPTION 'Arlington first-party community routing wrong: %/3', correctly_routed;
   END IF;
   SELECT count(*) INTO golf_unchanged FROM public.texas_news_feed WHERE id=6940684
-    AND target_site='texasdefined' AND target_section='Sports';
+    AND target_site='texasdefined' AND target_section='Sports'
+    AND ready_for_rewrite=false;
   IF golf_unchanged<>1 THEN
     RAISE EXCEPTION 'Arlington original sports article route changed unexpectedly';
   END IF;
