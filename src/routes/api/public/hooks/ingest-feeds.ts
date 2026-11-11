@@ -93,12 +93,15 @@ const DIRECT_SOURCES: Source[] = [
   // Original publishers with dated source permalinks; never invent a date from crawl time.
   { name: "First Alert 7 — Permian Basin Local", url: "https://www.firstalert7.com/news/law/", category: "Local", mode: "html-links", include: "^/20\\d{2}/\\d{2}/\\d{2}/[a-z0-9-]+/?$" },
   { name: "Texas Lutheran Football — Official Athletics", url: "https://tlubulldogs.com/sports/football", category: "Sports", mode: "html-links", include: "^/news/20\\d{2}/\\d{1,2}/\\d{1,2}/football-[a-z0-9-]+\\.aspx$" },
+  // Use the original publisher's article listing, not its home page or stale
+  // alternate archive: UTEP /newsfeed/ and Arlington /News-Events/All-News
+  // each visibly list current first-party article permalinks.
   // Official research, culture and local-event newsrooms. Their URLs often
   // omit the day, so fetch each original article and require a publisher-marked
   // publication date; never use crawl time or an unverified RSS mirror.
-  { name: "UTEP — Official University News", url: "https://www.utep.edu/newsfeed/news.html", category: "Education", mode: "official-dated-html", include: "^/newsfeed/20\\d{2}/[a-z]+/[a-z0-9-]+\\.html$" },
+  { name: "UTEP — Official University News", url: "https://www.utep.edu/newsfeed/", category: "Education", mode: "official-dated-html", include: "^/newsfeed/20\\d{2}/[a-z]+/[a-z0-9-]+\\.html$" },
   { name: "Texas Biomed — Official Research News", url: "https://www.txbiomed.org/news-press/news/", category: "Non-Political", mode: "official-dated-html", include: "^/news-press/news/[a-z0-9-]+/?$" },
-  { name: "City of Arlington — Original News", url: "https://www.arlingtontx.gov/", category: "Local", mode: "official-dated-html", include: "^/News-Articles/20\\d{2}/[A-Za-z]+/[a-zA-Z0-9_.-]+/?$" },
+  { name: "City of Arlington — Original News", url: "https://www.arlingtontx.gov/News-Events/All-News", category: "Local", mode: "official-dated-html", include: "^/News-Articles/20\\d{2}/[A-Za-z]+/[a-zA-Z0-9_.-]+/?$" },
   { name: "KLTV Tyler — Direct Local Headlines", url: "https://www.kltv.com/", category: "Local", mode: "html-links", include: "^/20\\d{2}/\\d{2}/\\d{2}/[a-z0-9-]+/?$" },
   { name: "FOX 4 Midlothian — Direct Local Headlines", url: "https://www.fox4news.com/tag/us/tx/ellis-county/midlothian", category: "Local", mode: "fox4-html" },
   { name: "KRGV Rio Grande Valley — Direct Local Headlines", url: "https://www.krgv.com/news/", category: "Local", mode: "krgv-html" },
