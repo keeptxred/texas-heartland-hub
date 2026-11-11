@@ -194,13 +194,14 @@ function SchoolTaxRatesArticle() {
         </section>
 
         <section className="mt-10">
-          <h2 className="font-display text-2xl md:text-3xl tracking-tight mb-4 border-b border-border pb-2">What changed from 2025</h2>
-          <p>
-            The statewide maximum compressed Tier One rate fell from $0.6322 in tax year 2025 to $0.6254 in tax year 2026. The local-compression floor fell from $0.5689 to $0.5628. That means the 2026 Tier One framework is lower statewide before district-specific enrichment and debt-service rates are added.
-          </p>
-          <p>
-            TEA also notes that the 2026 maximum M&amp;O rate for most districts is $0.7954, down from $0.8022 in 2025. Districts with stronger local compression can have lower ceilings.
-          </p>
+          <h2 className="font-display text-2xl md:text-3xl tracking-tight mb-4 border-b border-border pb-2">How to check your actual school-tax bill</h2>
+          <ol>
+            <li><strong>Identify the school district on your tax statement.</strong> Do not assume it matches the county or city where your home is located. Use the six-digit TEA ID when district names are similar.</li>
+            <li><strong>Check your property's school-taxable value.</strong> Your appraisal district's certified taxable value may differ from a market-value estimate after applicable exemptions and appraisal limitations.</li>
+            <li><strong>Find the district's adopted rates for the same tax year.</strong> Obtain the adopted M&amp;O and I&amp;S rates from the school district or the taxing authority; add them for the total school rate. The TEA MCR finder above supplies neither adopted component.</li>
+            <li><strong>Calculate and reconcile.</strong> Multiply school-taxable value by the adopted total rate and divide by 100, then compare the result with the school-district portion of your bill. Ask the appraisal district or tax office about any difference before drawing conclusions from a statewide comparison.</li>
+          </ol>
+          <p className="text-sm text-muted-foreground">The 2025–2026 statewide ceiling comparison above cannot establish whether your district's adopted rate or your own bill increased or decreased.</p>
         </section>
 
         <section className="mt-10">
