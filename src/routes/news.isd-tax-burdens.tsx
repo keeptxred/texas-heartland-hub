@@ -155,16 +155,11 @@ function SchoolTaxRatesArticle() {
 
         <section className="mt-10">
           <h2 className="font-display text-2xl md:text-3xl tracking-tight mb-4 border-b border-border pb-2">What do verified 2026 district compression rates look like?</h2>
-<h3 className="font-display text-xl mt-6 mb-3">Verified district examples from TEA's final 2026 file</h3><p>These are Tier One maximum compressed rates, not adopted total school-tax rates. This is a verified sample, not a statewide ranking. Consult <a href={TEA_FINAL_DISTRICT_PDF_URL} target="_blank" rel="noreferrer">TEA's final district MCR PDF</a> for the full list.</p><div className="overflow-x-auto"><table><thead><tr><th>District (TEA ID)</th><th>2026 Tier One MCR</th></tr></thead><tbody><tr><td>Aldine ISD (101902)</td><td>$0.5973</td></tr>
-<tr><td>Alief ISD (101903)</td><td>$0.6254</td></tr>
-<tr><td>Austin ISD (227901)</td><td>$0.6254</td></tr>
-<tr><td>Clear Creek ISD (084910)</td><td>$0.6190</td></tr>
-<tr><td>Conroe ISD (170902)</td><td>$0.6171</td></tr>
-<tr><td>Cypress-Fairbanks ISD (101907)</td><td>$0.6169</td></tr>
-<tr><td>Dallas ISD (057905)</td><td>$0.5954</td></tr>
-<tr><td>Fort Bend ISD (079907)</td><td>$0.6169</td></tr>
-<tr><td>Fort Worth ISD (220905)</td><td>$0.6169</td></tr>
-<tr><td>Frisco ISD (043905)</td><td>$0.6110</td></tr></tbody></table></div><p className="text-sm text-muted-foreground">Source: TEA August 27, 2026 final district MCR PDF, pages 1, 5, 6 and 8. District numbers distinguish similar names.</p>
+<h3 className="font-display text-xl mt-6 mb-3">Verified district examples from TEA's final 2026 file</h3><p>These are Tier One maximum compressed rates, not adopted total school-tax rates. This is a verified sample, not a statewide ranking. Consult <a href={TEA_FINAL_DISTRICT_PDF_URL} target="_blank" rel="noreferrer">TEA's final district MCR PDF</a> for the full list.</p><div className="overflow-x-auto"><table><thead><tr><th>District (TEA ID)</th><th>2026 Tier One MCR</th></tr></thead><tbody>{["101902", "101903", "227901", "084910", "170902", "101907", "057905", "079907", "220905", "043905"].map((id) => {
+            const district = teaMcr2026.districts.find((row) => row.id === id);
+            if (!district) return null;
+            return <tr key={id}><td>{district.name} ({district.id})</td><td>${Number(district.mcr).toFixed(4)}</td></tr>;
+          })}</tbody></table></div><p className="text-sm text-muted-foreground">Source: TEA August 27, 2026 final district MCR PDF, pages 1, 5, 6 and 8. District numbers distinguish similar names.</p>
           <div className="mt-8 rounded border border-border p-4" aria-labelledby="district-mcr-finder">
             <h3 id="district-mcr-finder" className="font-display text-xl mb-2">Find your school district's 2026 Tier One MCR</h3>
             <p className="text-sm mb-3">Search all {teaMcr2026.districtCount.toLocaleString("en-US")} districts in TEA's final August 27, 2026 list by district name or six-digit TEA ID. These are <strong>maximum compressed Tier One rates only</strong>, not adopted total school property-tax rates or household bills.</p>
