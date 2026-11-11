@@ -67,4 +67,19 @@ for (const required of [
 assert.doesNotMatch(biomed, /SET\s+(?:ready_for_rewrite|auto_publish_eligible|classification_confidence|source_reputation_score)\s*=/i,
   'Science routing must never promote an article');
 assert.doesNotMatch(biomed, /\bSECURITY\s+DEFINER\b/i, 'Do not bypass RLS');
+const parade = readFileSync('supabase/migrations/20261111174500_route_veterans_parades_to_texasdefined_events.sql', 'utf8');
+for (const required of [
+  'Houston Veterans Day parade returns',
+  'Annual Veterans Day parade returns to downtown Amarillo',
+  'Honor all who served at Veterans Day parade',
+  'Public-safety event negative control',
+  'Biomed regression',
+  'routing_lock',
+  'f.internal_slug IS NULL',
+  'f.texasdefined_slug IS NULL',
+]) {
+  assert.ok(parade.includes(required), `Missing official parade research owner guard: ${required}`);
+}
+assert.doesNotMatch(parade, /SET\s+(?:ready_for_rewrite|auto_publish_eligible|source_reputation_score|classification_confidence)\s*=/i,
+  'Event owner-only migration cannot promote any story');
 console.log('PASS: November 9 Flyover source-independent KTR/TD route contract, original editorial gates and SQL runtime assertions retained.');
