@@ -163,7 +163,13 @@ async function auditLiveRestoredUrls() {
       if (!(response.headers.get("content-type") || "").toLowerCase().includes("text/html")) return "non-html";
       const html = await response.text();
       const title = new RegExp("<title[^>]*>([^<]*)</title>", "i").exec(html)?.[1] || "";
-      if (/(404|not found|page missing|article not found)/i.test(title)) return "soft-404";
+      // A client-rendered not-found fallback can retain the site's normal
+      // <title> while rendering a visible error heading. Inspect both signals
+      // before declaring an archived article successfully restored.
+      const heading = /<h1\b[^>]*>([\s\S]*?)<\/h1>/i.exec(html)?.[1]
+        ?.replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim() || "";
+      const notFound = /(?:\b404\b|not found|page missing|article not found)/i;
+      if (notFound.test(title) || notFound.test(heading)) return "soft-404";
       if (redirectExpected && !redirected) return "expected-permanent-redirect";
       return null;
     }
