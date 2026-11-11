@@ -4,6 +4,23 @@ import { readFileSync } from "node:fs";
 const NOW = Date.parse("2026-11-11T18:00:00Z");
 
 describe("official sports discovery original timestamps", () => {
+  it("records exact first-party original date against the former crawl-time alias, never deleting both records", () => {
+    const migration = readFileSync("supabase/migrations/20261111204500_correct_nov9_tamu_volleyball_duplicate_source_dates.sql", "utf8");
+    for (const expected of [
+      "f.id IN (6898857,6930924)",
+      "'Volleyball in the Polls: November 9'",
+      "f.source='Texas A&M Athletics'",
+      "f.target_site='texasdefined' AND f.target_section='Sports'",
+      "f.internal_slug IS NULL AND f.texasdefined_slug IS NULL",
+      "length(coalesce(f.extracted_body,''))=0",
+      "ELSE f.pub_date END",
+      "DO $assert$",
+      "exact_rows<>2",
+    ]) expect(migration).toContain(expected);
+    expect(migration).not.toMatch(/\b(?:DELETE|TRUNCATE|DROP\s+TABLE|SECURITY\s+DEFINER)\b/i);
+  });
+
+
   it("deduplicates the verified Texas A&M Nov 9 original despite day padding and www aliases", () => {
     const plain = "https://12thman.com/news/2026/11/9/volleyball-in-the-polls-november-9";
     const padded = "https://12thman.com/news/2026/11/09/volleyball-in-the-polls-november-9";
