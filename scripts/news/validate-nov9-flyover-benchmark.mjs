@@ -83,3 +83,35 @@ for (const required of [
 assert.doesNotMatch(parade, /SET\s+(?:ready_for_rewrite|auto_publish_eligible|source_reputation_score|classification_confidence)\s*=/i,
   'Event owner-only migration cannot promote any story');
 console.log('PASS: November 9 Flyover source-independent KTR/TD route contract, original editorial gates and SQL runtime assertions retained.');
+
+
+const arlingtonCommunity = readFileSync('supabase/migrations/20261111203500_route_arlington_original_community_notices_to_td.sql', 'utf8');
+for (const needle of [
+  'route_arlington_official_lifestyle_post_guard',
+  "'City of Arlington — Original News'",
+  "new.link ~ '^https://www\\.arlingtontx\\.gov/News-Articles/",
+  'board game earns two awards',
+  'digital media friendly texas certification',
+  'donate children.s coats, hats and gloves at arlington fire stations',
+  'new.internal_slug IS NULL',
+  'new.texasdefined_slug IS NULL',
+  "new.viral_signals->>'routing_lock'",
+  "new.target_site:='texasdefined'",
+  "new.target_section:='Texas Life'",
+  "length(coalesce(new.extracted_body,'')) < 2200",
+  'new.ready_for_rewrite:=false',
+  'WHERE id IN (6940681,6940682,6940683)',
+  'AND internal_slug IS NULL AND texasdefined_slug IS NULL',
+  "ready_for_rewrite=false",
+  'Arlington original sports article route changed unexpectedly',
+  'Governor-elect regulatory park-sale news route changed unexpectedly',
+]) {
+  assert.ok(arlingtonCommunity.includes(needle), 'Missing official Arlington first-party source/review guard: ' + needle);
+}
+assert.doesNotMatch(arlingtonCommunity, /\bSECURITY\s+DEFINER\b/i,
+  'Official original-source review trigger may not acquire definer permissions');
+assert.doesNotMatch(arlingtonCommunity, /(?:CREATE|INSERT\s+INTO)\s+(?:public\.)?(?:daily_articles|texasdefined_articles)\b/i,
+  'Source routing does not create or fabricate articles');
+assert.doesNotMatch(arlingtonCommunity, /(?:SET\s+enabled\s*=\s*true|Google News.*enable)/i,
+  'Do not unblock Google discovery relays');
+console.log('PASS: original Arlington local community source routing is TD-only, evidence-limited and publication guarded.');
