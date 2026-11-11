@@ -21,6 +21,7 @@ MARKERS = {
     "calculator field": "Applicable school exemptions",
     "calculator result": "Estimated annual school tax",
     "2025 vs 2026 comparison": "What changed in the statewide framework?",
+    "current homeowner verification guide": "How to check your actual school-tax bill",
     "district sample heading": "Verified district examples from TEA",
     "statewide finder": "Find your school district",
     "statewide district count": "1,013",
@@ -66,6 +67,8 @@ for attempt in range(1, 5):
         missing = [name for name, marker in MARKERS.items() if marker not in html]
         if missing:
             raise RuntimeError(f"SSR HTML missing: {', '.join(missing)}")
+        if "What changed from 2025" in html:
+            raise RuntimeError("SSR HTML still contains retired duplicate 2025 section")
         print(f"PASS school-tax production SSR acceptance: HTTP {status}, {len(MARKERS)} markers, {URL}")
         sys.exit(0)
     except (HTTPError, URLError, TimeoutError, RuntimeError) as error:
