@@ -23,7 +23,9 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     env:
-      # Audit-script pushes must validate production URLs immediately, not wait\n      # for the next daily schedule before discovering a false-restored URL.\n      KTR_VERIFY_LIVE: 'true'
+      # Audit-script pushes must validate production URLs immediately, not wait
+      # for the next daily schedule before discovering a false-restored URL.
+      KTR_VERIFY_LIVE: 'true'
       SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY || secrets.KEEP_TX_RED_SUPABASE_SERVICE_ROLE_KEY }}
     steps:
       - uses: actions/checkout@v5
