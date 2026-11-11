@@ -32,10 +32,17 @@ export function verifiedOfficialIndexLinks(html: string, sourceUrl: string, requ
 }
 
 export function verifiedOfficialArticleTitle(html: string): string | null {
-  const match = html.match(/<h1\b[^>]*>([\s\S]*?)<\/h1>/i);
-  const title = textOnly(match?.[1] || "");
-  if (title.length < 18 || title.length > 240 || /^(news|newsfeed|latest|home|login|access denied|404)/i.test(title)) return null;
-  return title;
+  // A university or city article can include a site-wide "Newsfeed" H1
+  // before its real article H1. Previously we stopped at that navigation H1
+  // and silently discarded every otherwise valid official story.
+  for (const match of html.matchAll(/<h1\b[^>]*>([\s\S]*?)<\/h1>/gi)) {
+    const title = textOnly(match[1] || "");
+    // Never turn an error or blocked page into a story by scanning further.
+    if (/^(404\b|page not found\b|access denied\b|error\b|login\b)/i.test(title)) return null;
+    if (/^(news|newsfeed|latest|home)$/i.test(title)) continue;
+    if (title.length >= 18 && title.length <= 240) return title;
+  }
+  return null;
 }
 
 function publicationCandidates(html: string): string[] {
