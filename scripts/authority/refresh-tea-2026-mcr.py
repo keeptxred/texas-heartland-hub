@@ -38,8 +38,10 @@ def main():
         if not 0.5628 <= rate <= 0.6254:
             raise RuntimeError(f"Out-of-range MCR: {district_id}={rate}")
         records[district_id] = {"id": district_id, "name": name.strip(), "mcr": raw_rate}
-    if not 950 <= len(records) <= 1150:
-        raise RuntimeError(f"Expected complete statewide TEA listing; found only {len(records)} rows")
+    # The published final 2026 snapshot contains exactly 1,013 districts. A broad
+    # range can silently accept a truncated PDF while four spot checks still pass.
+    if len(records) != 1013:
+        raise RuntimeError(f"Expected all 1,013 final 2026 TEA districts; found {len(records)} rows")
     checks = {"101902": "0.5973", "101903": "0.6254", "227901": "0.6254", "043905": "0.6110"}
     for district_id, expected in checks.items():
         if records.get(district_id, {}).get("mcr") != expected:
