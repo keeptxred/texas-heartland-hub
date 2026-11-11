@@ -51,4 +51,20 @@ assert.doesNotMatch(migration, /\bSECURITY\s+DEFINER\b/i,
 assert.doesNotMatch(migration, /\bINSERT\s+INTO\s+(?:public\.)?(?:daily_articles|texasdefined_articles)\b/i,
   'Route migration must not fabricate published articles');
 
+const biomed = readFileSync('supabase/migrations/20261111173000_route_nonpolitical_texas_biomed_research.sql', 'utf8');
+for (const required of [
+  'nov9_flyover_story_destination',
+  'Texas Biomed implements first-ever therapy development strategy',
+  "RETURN ARRAY['texasdefined','Texas Life']",
+  'Hinojosa asks for pause on state park land sale',
+  'routing_lock',
+  'internal_slug IS NULL',
+  'texasdefined_slug IS NULL',
+  'Government/legal negative control',
+]) {
+  assert.ok(biomed.includes(required), `Missing original biomedical owner guard: ${required}`);
+}
+assert.doesNotMatch(biomed, /SET\s+(?:ready_for_rewrite|auto_publish_eligible|classification_confidence|source_reputation_score)\s*=/i,
+  'Science routing must never promote an article');
+assert.doesNotMatch(biomed, /\bSECURITY\s+DEFINER\b/i, 'Do not bypass RLS');
 console.log('PASS: November 9 Flyover source-independent KTR/TD route contract, original editorial gates and SQL runtime assertions retained.');
