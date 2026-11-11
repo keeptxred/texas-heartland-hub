@@ -46,6 +46,8 @@ jobs:
 
       - name: Open or update reviewable dataset PR
         id: pr
+        # Never publish partially written/unvalidated official data after parser failure.
+        if: steps.import.outcome == 'success' && steps.dataset_diff.outcome == 'success'
         uses: peter-evans/create-pull-request@v7
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
