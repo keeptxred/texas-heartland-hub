@@ -9,12 +9,14 @@ const TEA_FINAL_DISTRICT_PDF_URL = "https://tea.texas.gov/about-tea/state-fundin
 const TEA_STATE_FUNDING_URL = "https://tea.texas.gov/about-tea/state-funding/state-funding";
 const TEA_HISTORIC_RATES_URL = "https://tea.texas.gov/about-tea/state-funding/additional-finance-resources/school-district-property-values-and-tax-rates";
 const COMPTROLLER_RATES_URL = "https://comptroller.texas.gov/taxes/property-tax/rates/index.php";
+const COMPTROLLER_EXEMPTIONS_URL = "https://comptroller.texas.gov/taxes/property-tax/exemptions/";
+const COMPTROLLER_LIMITATIONS_URL = "https://comptroller.texas.gov/taxes/property-tax/appraisal-tax-limitations.php";
 
 export const Route = createFileRoute("/news/isd-tax-burdens")({
   head: () => ({
     links: [{ rel: "canonical", href: "https://keeptxred.com/news/isd-tax-burdens" }],
     meta: [
-      { title: "Texas School Property Taxes 2026: District MCRs and Calculator — Keep TX Red" },
+      { title: "Texas School Tax Rates 2026: Official District MCR Lookup and Tax Estimator — Keep TX Red" },
       {
         name: "description",
         content:
@@ -59,7 +61,7 @@ function SchoolTaxRatesArticle() {
 
       <span className="text-[10px] font-bold tracking-[0.3em] uppercase text-primary">★ Tax &amp; Spending</span>
       <h1 className="font-display text-4xl md:text-6xl tracking-tight leading-[1.05] mt-2">
-        Texas School Property Taxes in 2026: Current Rates, Comparisons and Homeowner Calculator
+        Texas School Property Taxes in 2026: Official District Compression Rates and Homeowner Calculator
       </h1>
       <p className="mt-4 text-lg md:text-xl text-muted-foreground leading-snug font-serif italic">
         Texas has set the 2026 school-tax compression framework. TEA published final district-specific 2026 maximum compressed rates on August 27. These Tier One limits are not adopted total school-tax rates.
@@ -68,7 +70,7 @@ function SchoolTaxRatesArticle() {
       <div className="mt-5 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-muted-foreground border-y border-border py-3">
         <span className="font-semibold text-foreground">By Keep TX Red Data Desk</span>
         <span>•</span>
-        <span>Updated November 7, 2026</span>
+        <span>Research expanded November 15, 2026</span>
         <span>•</span>
         <span>Tax &amp; Spending</span>
       </div>
@@ -125,7 +127,7 @@ function SchoolTaxRatesArticle() {
 
         <section className="mt-10" aria-labelledby="homeowner-calculator">
           <h2 id="homeowner-calculator" className="font-display text-2xl md:text-3xl tracking-tight mb-4 border-b border-border pb-2">Estimate your school property-tax bill</h2>
-          <p>This is an illustrative calculator, not a quote or a district tax lookup. Enter your home's appraised value, applicable school exemptions, and your district's <strong>adopted</strong> M&amp;O and I&amp;S rates per $100 of taxable value. The starting example rates are hypothetical, not attributed to any district.</p>
+          <p>This is an illustrative calculator, not a quote or a district tax lookup. Enter your home's appraised value, applicable school exemptions, and your district's <strong>adopted</strong> M&amp;O and I&amp;S rates per $100 of taxable value. The starting example rates are hypothetical, not attributed to any district. The $140,000 starting exemption is the 2026 general school-district residence-homestead exemption for an eligible owner, <a href={COMPTROLLER_EXEMPTIONS_URL} target="_blank" rel="noreferrer">confirmed by the Texas Comptroller</a>; change it if your actual school-taxable value or eligibility differs.</p>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 my-5">
             {([
               ["Home value ($)", homeValue, setHomeValue],
@@ -144,7 +146,7 @@ function SchoolTaxRatesArticle() {
             <p>I&amp;S estimate: <strong>{money(estimate.debtTax)}</strong></p>
             <p className="text-lg">Estimated annual school tax: <strong>{money(estimate.total)}</strong></p>
           </div> : <p role="alert">Enter nonnegative values and plausible rates (no more than $5 per $100).</p>}
-          <p className="text-sm text-muted-foreground mt-3">Formula: max(0, home value − applicable exemptions) × (adopted M&amp;O + adopted I&amp;S rate) ÷ 100. Actual tax bills can differ due to appraisal caps, special exemptions, separate taxable values, and other adjustments. Confirm your taxable value and rates with your appraisal district and school district.</p>
+          <p className="text-sm text-muted-foreground mt-3">Formula: max(0, home value − applicable exemptions) × (adopted M&amp;O + adopted I&amp;S rate) ÷ 100. This simplified formula does not implement the <a href={COMPTROLLER_LIMITATIONS_URL} target="_blank" rel="noreferrer">Texas appraisal cap or age/disability school-tax ceiling</a>; the input must reflect the relevant certified school-taxable value where those rules apply. Actual tax bills can differ due to appraisal caps, special exemptions, separate taxable values, tax ceilings and other adjustments. Confirm your taxable value and rates with your appraisal district and school district.</p>
         </section>
 
         <section className="mt-10" aria-labelledby="rate-comparison">
@@ -204,11 +206,33 @@ function SchoolTaxRatesArticle() {
           <p className="text-sm text-muted-foreground">The 2025–2026 statewide ceiling comparison above cannot establish whether your district's adopted rate or your own bill increased or decreased.</p>
         </section>
 
+        <section className="mt-10" aria-labelledby="district-analysis">
+          <h2 id="district-analysis" className="font-display text-2xl md:text-3xl tracking-tight mb-4 border-b border-border pb-2">What the 2026 district differences actually mean</h2>
+          <p>TEA's 2026 statewide maximum compressed rate is $0.6254 per $100 of taxable value. Local property-value growth can produce a lower district Tier One MCR, subject to a $0.5628 floor. That is a <strong>$0.0626 spread per $100</strong> between the statewide ceiling and the floor—not a comparison of adopted total rates, and not proof that one district's homeowners pay less than another's. The state calculates compression from property-value growth and prior-year MCRs, while enrichment and debt service are separate decisions.</p>
+          <div className="overflow-x-auto"><table><thead><tr><th>Illustrative Tier One rate</th><th>On $210,000 taxable value</th><th>What is excluded</th></tr></thead><tbody>
+            <tr><td>$0.6254 statewide ceiling</td><td>$1,313.34</td><td>Enrichment, I&amp;S debt, and exemptions already reflected in taxable value</td></tr>
+            <tr><td>$0.5628 local-compression floor</td><td>$1,181.88</td><td>Enrichment, I&amp;S debt, and exemptions already reflected in taxable value</td></tr>
+            <tr><td>Difference in Tier One component</td><td>$131.46</td><td>Not an actual tax-bill saving or an observed district comparison</td></tr>
+          </tbody></table></div>
+          <p className="text-sm text-muted-foreground">Original calculation: rate × $210,000 ÷ 100. This isolates only the Tier One component and holds taxable value constant. It does not account for enrichment, debt rates, local exemptions, or different property values. Source: <a href={TEA_2026_MCR_URL} target="_blank" rel="noreferrer">TEA's 2026 compression methodology</a>.</p>
+          <h3 className="font-display text-xl mt-7 mb-3">Why a lower MCR does not automatically mean a lower school-tax bill</h3>
+          <p>A district's adopted M&amp;O rate may include Tier Two enrichment pennies above its compressed Tier One component. TEA describes up to eight golden and nine copper enrichment pennies; voter approval requirements depend on the number and prior authorization. A separate I&amp;S rate funds debt service. Two districts with different MCRs can therefore adopt different total rates, and two homes with the same adopted rate can owe different amounts because their school-taxable values differ.</p>
+          <p>For example, a $350,000 home qualifying for the general $140,000 school homestead exemption has $210,000 of school-taxable value <em>before any other applicable adjustments</em>. At a hypothetical adopted combined school rate of $0.9254 per $100, the simplified annual estimate is $1,943.34. That rate is an illustration, not a verified rate for any named district. Homeowners who qualify for an age-65 or disability tax ceiling should not use this illustration as their payable amount.</p>
+          <h3 className="font-display text-xl mt-7 mb-3">Which government records should you compare?</h3>
+          <ul>
+            <li><strong>2026 final Tier One MCR:</strong> TEA's August 27 final list; searchable above. This measures compression, not the full adopted rate.</li>
+            <li><strong>2026 adopted M&amp;O and I&amp;S:</strong> the school district's adopted tax-rate notice and the local tax office. Compare the two components for the <em>same</em> tax year.</li>
+            <li><strong>2026 school-taxable value:</strong> the appraisal district's property record after applicable exemptions and appraisal limits. Use the value assigned to the school taxing unit.</li>
+            <li><strong>Prior-year statewide comparisons:</strong> TEA's historical adopted-rate files, explicitly labeled through 2025, rather than presented as 2026 rates.</li>
+          </ul>
+          <p>The <a href={TEA_FINAL_2026_URL} target="_blank" rel="noreferrer">August 27 TEA final notice</a> states that total M&amp;O figures in the Summary of Finances are expected to be updated by February 2027, after Comptroller property-value and rate reporting. Until a complete comparable adopted-rate source is verified, this page intentionally does not publish a misleading statewide ranking of total 2026 school-tax burdens.</p>
+        </section>
+
         <section className="mt-10">
           <h2 className="font-display text-2xl md:text-3xl tracking-tight mb-4 border-b border-border pb-2">Research methodology and corrections</h2>
           <p>Research by Keep TX Red Data Desk. We compare the TEA June 18, 2026 statewide compression framework with its August 27 final district determinations, keeping statutory Tier One MCRs separate from district-adopted M&amp;O and I&amp;S rates. The arithmetic examples above are original calculations using stated assumptions, not observed household bills.</p>
           <p>District-specific final MCRs are available through TEA's planning tools. TEA's historical adopted-rate spreadsheets currently cover through tax year 2025; we will not silently substitute them for 2026. TEA expects its 2026 total M&amp;O data to be updated by February 2027. Corrections should cite the official district, year, rate type and source document; we will update this page when a verified comparable dataset becomes available.</p>
-          <p>Last source review: November 7, 2026. Primary sources are linked below. This page is an editorial explanation, not legal or tax advice.</p>
+          <p>Last source review: November 15, 2026. Primary sources are linked below. This page is an editorial explanation, not legal or tax advice.</p>
         </section>
         <section className="mt-10">
           <h2 className="font-display text-2xl md:text-3xl tracking-tight mb-4 border-b border-border pb-2">Official sources</h2>
@@ -219,6 +243,8 @@ function SchoolTaxRatesArticle() {
             <li><a href={TEA_STATE_FUNDING_URL} target="_blank" rel="noreferrer">Texas Education Agency — State Funding / District &amp; Charter Planning Tools</a></li>
             <li><a href={TEA_HISTORIC_RATES_URL} target="_blank" rel="noreferrer">TEA — School District Property Values and Adopted Tax Rates (historical through 2025)</a></li>
             <li><a href={COMPTROLLER_RATES_URL} target="_blank" rel="noreferrer">Texas Comptroller — Tax Rates and Levies</a></li>
+            <li><a href={COMPTROLLER_EXEMPTIONS_URL} target="_blank" rel="noreferrer">Texas Comptroller — School Residence Homestead Exemptions</a></li>
+            <li><a href={COMPTROLLER_LIMITATIONS_URL} target="_blank" rel="noreferrer">Texas Comptroller — Appraisal and School-Tax Limitations</a></li>
           </ul>
         </section>
       </div>
