@@ -13,7 +13,7 @@ BEGIN
   -- correctly routed golf/sports records. An original dated link alone never
   -- justifies a long-form draft, irrespective of its final site/section.
   IF new.source='City of Arlington — Original News'
-    AND new.link ~ '^https://www\\.arlingtontx\\.gov/News-Articles/20[0-9]{2}/[A-Za-z]+/'
+    AND new.link ~ '^https://www\.arlingtontx\.gov/News-Articles/20[0-9]{2}/[A-Za-z]+/'
     AND new.internal_slug IS NULL AND new.texasdefined_slug IS NULL
     AND coalesce((new.viral_signals->>'routing_lock')::boolean,false)=false
     AND length(coalesce(new.extracted_body,'')) < 2200
