@@ -41,7 +41,7 @@ BEGIN
     );
   RETURN NEW;
 END
-$function$
+$function$;
 
 CREATE OR REPLACE FUNCTION public.guard_spacex_public_land_disposition()
  RETURNS trigger
@@ -73,7 +73,7 @@ BEGIN
     );
   RETURN NEW;
 END
-$function$
+$function$;
 
 
 DO $newsroom_private_check$
