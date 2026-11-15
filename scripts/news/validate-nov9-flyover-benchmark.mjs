@@ -132,3 +132,38 @@ assert.ok(!officialArlingtonPathRegex.test(
   'https://wwwXarlingtontxYgov/News-Articles/2026/November/Fake-City-Report'),
   'The Arlington source guard must not match an unrelated lookalike host');
 console.log('PASS: original Arlington local community source routing is TD-only, evidence-limited and publication guarded.');
+
+
+const privateHelperIngestRepair = readFileSync(
+  'supabase/migrations/20261115160000_repair_news_feed_private_helper_trigger_permissions.sql',
+  'utf8',
+);
+const executableRepair = privateHelperIngestRepair.split('\n')
+  .filter((line) => !line.trimStart().startsWith('--')).join('\n');
+for (const originalRule of [
+  'public.guard_local_fatal_crime_fire_owner()',
+  'public.guard_spacex_public_land_disposition()',
+  'shot|shooting|stabbed|stabbing',
+  'robbed|robbery',
+  'house fire|apartment fire|residential fire',
+  'spacex|starbase|boca chica',
+  'public parkland|public park land|public land|state park land|state park',
+  'sale|sell|selling|sold|buy|buying|bought',
+  'NEW.ready_for_rewrite := false',
+  "NEW.target_site := 'keeptxred'",
+  "NEW.target_section := 'Politics'",
+  "NEW.target_section := 'Texas News'",
+  'Expected safety trigger missing or disabled',
+]) {
+  assert.ok(executableRepair.includes(originalRule),
+    'Role-safe news ingestion may not weaken original publisher or legal-review predicates: '+originalRule);
+}
+assert.doesNotMatch(executableRepair, /private\.is_(?:spacex_public_land_transaction|texas_local_fatal_crime_or_fire)\s*\(/i,
+  'Unprivileged newsroom trigger must not call helpers inside the private schema');
+assert.doesNotMatch(executableRepair, /\b(?:GRANT\s+USAGE|SECURITY\s+DEFINER|DISABLE\s+TRIGGER|DROP\s+TRIGGER)\b/i,
+  'Never bypass schema isolation or turn off existing editorial routing guards');
+assert.match(executableRepair, /public\.guard_local_fatal_crime_fire_owner\(\)[\s\S]*?RETURN NEW;/,
+  'Crime guard must stay defined as an active trigger with existing return flow');
+assert.match(executableRepair, /public\.guard_spacex_public_land_disposition\(\)[\s\S]*?RETURN NEW;/,
+  'Park disposition guard must stay defined as an active trigger');
+console.log('PASS: source-backed 42501 ingestion recovery preserves private-schema isolation and KTR editorial holds.');
