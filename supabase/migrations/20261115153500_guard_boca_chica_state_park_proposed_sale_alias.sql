@@ -12,7 +12,7 @@ AS $rule$
      AND lower(coalesce(headline,'')) ~
        '(public parkland|public park land|public land|state park land|state park|parkland sale|park land sale|parkland purchase)'
      AND lower(coalesce(headline,'')) ~
-       '(sale|sell|selling|buy|buying|bought|purchas|leas|acquir|eyeing|eyes|consider|pause|deal|trade|transfer)';
+       '(sale|sell|selling|sold|buy|buying|bought|purchas|leas|acquir|eyeing|eyes|consider|pause|deal|trade|transfer)';
 $rule$;
 
 -- The zzz... BEFORE INSERT/UPDATE guard from 20261115145500 invokes the
