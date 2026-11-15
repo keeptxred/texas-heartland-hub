@@ -57,7 +57,8 @@ export function originalSportsPermalinkPublishedAt(articleUrl: string, nowMs = D
 export function canonicalSportsOriginalPublisherUrl(raw: string): string {
   try {
     const parsed = new URL(raw);
-    if (parsed.protocol !== "https:" || !/^(?:www\.)?12thman\.com$/i.test(parsed.hostname)) return raw;
+    if (parsed.protocol !== "https:" || !/^(?:www\.)?12thman\.com$/i.test(parsed.hostname)
+      || parsed.port || parsed.username || parsed.password) return raw;
     const match = parsed.pathname.match(/^\/news\/(20\d{2})\/0?(\d{1,2})\/0?(\d{1,2})\/([a-z0-9-]+)\/?$/i);
     if (!match) return raw;
     const year = Number(match[1]), month = Number(match[2]), day = Number(match[3]);
