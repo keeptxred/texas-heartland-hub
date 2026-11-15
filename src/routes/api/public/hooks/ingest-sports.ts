@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { SPORTS_SOURCES, type SportsSource } from "@/lib/sports-sources";
 import { classifySportsText } from "@/lib/sports-taxonomy";
-import { originalSportsRssPublishedAt, originalSportsPermalinkPublishedAt } from "@/lib/sports-original-source-date";
+import { originalSportsRssPublishedAt, originalSportsPermalinkPublishedAt, canonicalSportsOriginalPublisherUrl } from "@/lib/sports-original-source-date";
 
 const TRANSIENT = new Set([408, 425, 429, 500, 502, 503, 504]);
 const SPORTS_UPSERT_BATCH_SIZE = 50;
@@ -35,7 +35,7 @@ function parseRss(xml: string, source: SportsSource): FeedRow[] {
     if (!originalDate) continue;
     const classification = classifySportsText(`${title} ${description} ${source.name}`);
     if (!source.team && !source.topic && !classification.isSports) continue;
-    out.push({ title: title.slice(0, 500), link, pub_date: originalDate, source: source.name, description: description.slice(0, 1200), trend_source: source.name });
+    out.push({ title: title.slice(0, 500), link: canonicalSportsOriginalPublisherUrl(link), pub_date: originalDate, source: source.name, description: description.slice(0, 1200), trend_source: source.name });
   }
   return out;
 }
@@ -58,7 +58,7 @@ function parseHtml(html: string, source: SportsSource): FeedRow[] {
     try { parsed = new URL(link); } catch { continue; }
     if (parsed.hostname !== base.hostname && !parsed.hostname.endsWith(`.${base.hostname}`)) continue;
     if (include && !include.test(parsed.pathname)) continue;
-    const canonical = `${parsed.origin}${parsed.pathname}${parsed.search}`;
+    const canonical = canonicalSportsOriginalPublisherUrl(`${parsed.origin}${parsed.pathname}${parsed.search}`);
     const originalDate = originalSportsPermalinkPublishedAt(canonical);
     if (!originalDate || seen.has(canonical)) continue;
     seen.add(canonical);
