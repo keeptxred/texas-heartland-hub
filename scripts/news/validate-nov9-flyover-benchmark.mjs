@@ -118,4 +118,17 @@ assert.doesNotMatch(arlingtonCommunity, /(?:CREATE|INSERT\s+INTO)\s+(?:public\.)
   'Source routing does not create or fabricate articles');
 assert.doesNotMatch(arlingtonCommunity, /(?:SET\s+enabled\s*=\s*true|Google News.*enable)/i,
   'Do not unblock Google discovery relays');
+const officialArlingtonPathPatterns = [...arlingtonCommunity.matchAll(/new\.link\s*~\s*'([^']+)'/g)]
+  .map((match) => match[1]);
+assert.equal(officialArlingtonPathPatterns.length, 2,
+  'Both original Arlington source guards must have an exact URL-host pattern');
+assert.equal(officialArlingtonPathPatterns[0], officialArlingtonPathPatterns[1],
+  'A doubled SQL regex backslash can silently disable the generic short-body hold');
+const officialArlingtonPathRegex = new RegExp(officialArlingtonPathPatterns[0]);
+assert.ok(officialArlingtonPathRegex.test(
+  'https://www.arlingtontx.gov/News-Articles/2026/November/Original-City-Report'),
+  'Real official Arlington news articles must activate both source guards');
+assert.ok(!officialArlingtonPathRegex.test(
+  'https://wwwXarlingtontxYgov/News-Articles/2026/November/Fake-City-Report'),
+  'The Arlington source guard must not match an unrelated lookalike host');
 console.log('PASS: original Arlington local community source routing is TD-only, evidence-limited and publication guarded.');
