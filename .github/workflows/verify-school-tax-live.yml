@@ -1,6 +1,8 @@
 name: Verify live school-tax authority page
 
 on:
+  push:
+    branches: [main]
   pull_request:
     branches: [main]
     paths:
@@ -25,9 +27,9 @@ permissions:
 
 jobs:
   live-school-tax:
-    if: github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch' || github.event_name == 'schedule' || github.event.workflow_run.conclusion == 'success'
+    if: github.event_name == 'push' || github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch' || github.event_name == 'schedule' || github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
-    timeout-minutes: 6
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v5
       - name: Identify checked commit and deployed source
@@ -141,7 +143,7 @@ jobs:
           } >> "$GITHUB_STEP_SUMMARY"
 
       - name: Publish exact-SHA live acceptance status
-        if: always() && (github.event_name == 'workflow_run' || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch')
+        if: always() && (github.event_name == 'push' || github.event_name == 'workflow_run' || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch')
         shell: bash
         env:
           GH_TOKEN: ${{ github.token }}
@@ -166,7 +168,7 @@ jobs:
           production_status=missing
           # A completed deployment event may arrive before its final status becomes visible.
           # Wait briefly rather than silently discarding an otherwise passing live check.
-          for attempt in {1..12}; do
+          for attempt in {1..60}; do
             production_status="$(gh api "repos/$REPOSITORY/commits/$checked_sha/status" --jq '[.statuses[] | select(.context == "keeptxred-production-current")] | first | .state // "missing"')"
             if [[ "$production_status" == "success" ]]; then
               break
@@ -175,11 +177,11 @@ jobs:
               echo "::error title=Production deployment failed::Exact-SHA production-current is $production_status"
               exit 1
             fi
-            echo "Waiting for exact-SHA production-current (attempt $attempt/12; status=$production_status)"
+            echo "Waiting for exact-SHA production-current (attempt $attempt/60; status=$production_status)"
             sleep 10
           done
           if [[ "$production_status" != "success" ]]; then
-            echo "::error title=Production status unavailable::No successful exact-SHA deployment after 120 seconds; live acceptance not certified"
+            echo "::error title=Production status unavailable::No successful exact-SHA deployment after 600 seconds; live acceptance not certified"
             exit 1
           fi
           state=failure
