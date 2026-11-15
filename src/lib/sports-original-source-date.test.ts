@@ -38,6 +38,9 @@ describe("official sports discovery original timestamps", () => {
       "https://12thman.com/news/",
       "https://attacker.example/news/2026/11/09/malicious",
       "http://12thman.com/news/2026/11/09/unsafe",
+      "https://12thman.com:8443/news/2026/11/09/volleyball-in-the-polls-november-9",
+      "https://reader@12thman.com/news/2026/11/09/volleyball-in-the-polls-november-9",
+      "https://reader:secret@12thman.com/news/2026/11/09/volleyball-in-the-polls-november-9",
       "https://12thman.com/news/2026/11/09/",
     ]) expect(canonicalSportsOriginalPublisherUrl(original)).toBe(original);
   });
