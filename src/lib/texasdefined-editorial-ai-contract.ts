@@ -5,6 +5,8 @@
  */
 export const TD_EDITORIAL_AI_AUDIENCE = "texasdefined-editorial-ai";
 export const TD_EDITORIAL_TEXT_MODEL = "@cf/meta/llama-3.1-8b-instruct-fast";
+// Bigger grounded article model for 750+ original, fact-checked words. Cloudflare-hosted, verified current model.
+export const TD_EDITORIAL_AUTHORITY_MODEL = "@cf/meta/llama-3.3-70b-instruct-fp8-fast";
 export const TD_EDITORIAL_IMAGE_MODEL = "@cf/black-forest-labs/flux-2-klein-4b";
 
 export const TD_EDITORIAL_OIDC_WORKFLOWS = [
@@ -26,7 +28,7 @@ type AiMessage = { role: "system" | "user"; content: string };
 export type TdEditorialAiRequest =
   | {
       kind: "text";
-      model: typeof TD_EDITORIAL_TEXT_MODEL;
+      model: typeof TD_EDITORIAL_TEXT_MODEL | typeof TD_EDITORIAL_AUTHORITY_MODEL;
       messages: AiMessage[];
       maxTokens: number;
       temperature: number;
@@ -48,7 +50,7 @@ export function parseTexasDefinedEditorialAiRequest(input: unknown): TdEditorial
     throw new Error("AI input must be a JSON object");
   }
   const data = payload as Record<string, unknown>;
-  if (model === TD_EDITORIAL_TEXT_MODEL) {
+  if (model === TD_EDITORIAL_TEXT_MODEL || model === TD_EDITORIAL_AUTHORITY_MODEL) {
     const messages = data.messages;
     if (!Array.isArray(messages) || messages.length !== 2) {
       throw new Error("Text input requires exactly one system and one user message");
