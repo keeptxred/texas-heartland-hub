@@ -202,7 +202,7 @@ export function scoreFeedItem(item: {
   // An exact TPWD first-party release, clean headline and strong Texas
   // relevance establish routing confidence; the later body/evidence/image
   // publication guards remain entirely separate and must still pass.
-  if (verifiedTpwdRelease && texas >= 70) confidence = Math.max(confidence, 0.80);
+  if (verifiedTpwdRelease && texas >= 30) confidence = Math.max(confidence, 0.80);
   confidence = Math.min(1, Number(confidence.toFixed(2)));
 
   const ownedByTexasDefined = isTexasDefinedOwnedSource(source) || category === "Sports";
