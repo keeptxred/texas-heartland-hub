@@ -27,27 +27,50 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 19
     steps:
-      - name: Allow the protected main production deployment to settle
-        if: github.event_name == 'push'
-        run: sleep 150
       - name: Refresh feed and original-source eligibility without creating articles
         shell: bash
         run: |
           set -euo pipefail
-          status="$(curl --silent --show-error --retry 2 --retry-delay 12 \
-            --max-time 820 --output /tmp/td-original-scoring.json \
+          # Never POST to an older deployed scorer. It ignores the
+          # td-source-routing mode and can still create KTR articles.
+          # This NEW endpoint is safe for probing: a GET cannot mutate data.
+          origin="https://keeptxred-site.freddy-coppola.workers.dev"
+          readiness=0
+          for attempt in $(seq 1 30); do
+            code="$(curl --silent --show-error --max-time 12 \
+              --output /tmp/td-score-ready.json --write-out '%{http_code}' \
+              "${origin}/api/public/hooks/texasdefined-source-scoring-readiness" || echo 000)"
+            if [[ "$code" == 200 ]] && jq -e '.ok == true and .mode == "td-source-routing"
+              and .version == "20261117-v1" and .publicationSuppressed == true' \
+              /tmp/td-score-ready.json >/dev/null 2>&1; then
+              readiness=1
+              break
+            fi
+            echo "Official source scorer release not live: attempt $attempt/30 HTTP=$code"
+            sleep 12
+          done
+          if [[ "$readiness" != 1 ]]; then
+            echo "::error::The source-only scorer release is not verified live. No POST attempted."
+            exit 1
+          fi
+          status="$(curl --silent --show-error --max-time 660 \
+            --output /tmp/td-original-scoring.json \
             --write-out '%{http_code}' --request POST \
-            'https://keeptxred-site.freddy-coppola.workers.dev/api/public/hooks/score-viral?mode=td-source-routing' || echo 000)"
+            "${origin}/api/public/hooks/score-viral?mode=td-source-routing" || echo 000)"
           if [[ "$status" != 200 ]]; then
             echo "::error::Original source scorer returned HTTP $status; no approval override or article creation."
             cat /tmp/td-original-scoring.json 2>/dev/null || true
             exit 1
           fi
-          jq -e '.ok == true and .publicationSuppressed == true and .autoPublishAttempted == 0
+          if ! jq -e '.ok == true and .publicationSuppressed == true and .autoPublishAttempted == 0
             and .autoPublished == 0 and (.autoPublishResults | type) == "array"
             and (.autoPublishResults | length) == 0
             and .scanned >= 0 and .updated >= 0 and .updateFailures >= 0' \
-            /tmp/td-original-scoring.json >/dev/null
+            /tmp/td-original-scoring.json >/dev/null; then
+            echo "::error::Original scorer response did not certify source-only operation; no publication success claimed."
+            jq -c '{ok,scanned,updated,reviewFlagged,publicationSuppressed,autoPublishAttempted,autoPublished,updateFailures,error}' /tmp/td-original-scoring.json || true
+            exit 1
+          fi
           jq -r '["## TexasDefined first-party source scoring (zero AI publications)",
             ("Scanned: " + (.scanned|tostring)),
             ("Reclassified/updated: " + (.updated|tostring)),
