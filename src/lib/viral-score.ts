@@ -197,7 +197,12 @@ export function scoreFeedItem(item: {
   if (texas >= 20) confidence += 0.25;
   // Entity extraction often misses agency press releases. An exact official
   // source URL supplies confidence about provenance, not about every claim.
-  if ((verifiedComptrollerRelease || verifiedTpwdRelease) && texas >= 20) confidence = Math.max(confidence, 0.65);
+  if (verifiedComptrollerRelease && texas >= 20) confidence = Math.max(confidence, 0.65);
+  // TexasDefined's protected ready view requires classification_confidence >= .80.
+  // An exact TPWD first-party release, clean headline and strong Texas
+  // relevance establish routing confidence; the later body/evidence/image
+  // publication guards remain entirely separate and must still pass.
+  if (verifiedTpwdRelease && texas >= 70) confidence = Math.max(confidence, 0.80);
   confidence = Math.min(1, Number(confidence.toFixed(2)));
 
   const ownedByTexasDefined = isTexasDefinedOwnedSource(source) || category === "Sports";
