@@ -222,8 +222,8 @@ describe("verified TPWD original release source scoring", () => {
   it("recognizes clean canonical first-party releases without claiming independent corroboration", () => {
     const score = scoreFeedItem({ ...release, link: "https://tpwd.texas.gov/newsmedia/releases/?req=20261117a" });
     expect(score.sourceReputationScore).toBe(90);
-    expect(score.classificationConfidence).toBeGreaterThanOrEqual(0.6);
-    expect(score.texasRelevanceScore).toBeGreaterThanOrEqual(60);
+    expect(score.classificationConfidence).toBeGreaterThanOrEqual(0.8);
+    expect(score.texasRelevanceScore).toBeGreaterThanOrEqual(70);
     expect(score.editorialLane).toBe("AUTO_PUBLISH");
   });
 
