@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import { readFileSync } from "node:fs";
 import {
   TD_EDITORIAL_AI_AUDIENCE,
+  TD_EDITORIAL_AUTHORITY_MODEL,
   TD_EDITORIAL_IMAGE_MODEL,
   TD_EDITORIAL_TEXT_MODEL,
   isTexasDefinedEditorialAiWorkflow,
@@ -30,6 +31,7 @@ describe("protected TexasDefined text and image inference", () => {
 
   it("accepts bounded 5000-token JSON article drafting and four-step authentic illustration requests", () => {
     expect(parseTexasDefinedEditorialAiRequest({model:TD_EDITORIAL_TEXT_MODEL,input:{messages,temperature:0.1,max_tokens:5000}})).toMatchObject({kind:"text",maxTokens:5000});
+    expect(parseTexasDefinedEditorialAiRequest({model:TD_EDITORIAL_AUTHORITY_MODEL,input:{messages,temperature:0.1,max_tokens:5000}})).toMatchObject({kind:"text",model:TD_EDITORIAL_AUTHORITY_MODEL,maxTokens:5000});
     const img = parseTexasDefinedEditorialAiRequest({model:TD_EDITORIAL_IMAGE_MODEL,input:{
       prompt:"An original nonphotographic editorial watercolor illustration of rainbow trout in a Texas stream with no typography.",steps:4,
     }});
