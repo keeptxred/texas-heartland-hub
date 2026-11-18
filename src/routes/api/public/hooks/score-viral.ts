@@ -191,6 +191,10 @@ export const Route = createFileRoute("/api/public/hooks/score-viral")({
 });
 
 async function scoreRecent(request: Request) {
+  // TexasDefined's protected publisher needs verified source-routing data,
+  // not an additional KeepTXRed AI article-generation attempt. This mode
+  // still performs the existing complete guarded scoring and feed ingest.
+  const scoreOnly = new URL(request.url).searchParams.get("mode") === "td-source-routing";
   const url = process.env.SUPABASE_URL;
   const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
   if (!url || !key) return json({ ok: false, error: "server not configured" }, 500);
@@ -468,7 +472,7 @@ async function scoreRecent(request: Request) {
   let autoPublishSucceeded = 0;
   let autoPublishAttempted = 0;
 
-  for (const candidate of autoPublishCandidates) {
+  for (const candidate of scoreOnly ? [] : autoPublishCandidates) {
     if (autoPublishSucceeded >= AUTO_PUBLISH_PER_RUN) break;
     if (autoPublishAttempted >= MAX_AUTO_PUBLISH_ATTEMPTS_PER_RUN) break;
     autoPublishAttempted += 1;
@@ -550,6 +554,7 @@ async function scoreRecent(request: Request) {
     reviewFlagged,
     autoPublishAttempted,
     autoPublished: autoPublishSucceeded,
+    publicationSuppressed: scoreOnly,
     postRewriteReviewBlocked,
     autoPublishResults,
     reelsQueued,
