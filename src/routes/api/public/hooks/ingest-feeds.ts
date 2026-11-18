@@ -13,6 +13,7 @@ import { canFailoverTrustedRssStatus, trustedNewsroomRssRelayUrl } from "@/lib/o
 import { isGoogleNewsDiscoveryTransport } from "@/lib/ingest-discovery-source";
 import { verifiedOfficialArticlePublishedAt, verifiedOfficialArticleTitle, verifiedOfficialIndexLinks, verifiedOfficialDatedIndexEntries } from "@/lib/newsroom-official-index-date";
 import { extractReadableNewsroomHtml } from "@/lib/newsroom-source-page.server";
+import { parseTpwdReleaseIndex } from "@/lib/tpwd-release-index";
 import { parseFox4DatedLocalHtml, parseKrgvDatedLocalHtml } from "@/lib/newsroom-local-direct-html";
 export { publishSingleFeedItem } from "@/lib/multi-source-publish";
 export { isPuzzleTitle } from "@/lib/ingest-feeds-legacy";
@@ -293,18 +294,7 @@ function parseHtmlLinks(html: string, source: Source): Item[] {
 }
 
 function parseTpwdHtml(html: string): Item[] {
-  const out: Item[] = [];
-  const seen = new Set<string>();
-  const re = /<a[^>]+href=["']([^"']*\?req=[^"']+)["'][^>]*>([\s\S]*?)<\/a>/gi;
-  for (const match of html.matchAll(re)) {
-    const link = absoluteUrl(match[1], "https://tpwd.texas.gov/newsmedia/releases/");
-    const title = decode(match[2]);
-    if (!link || !title || title.length < 12 || seen.has(link) || isLowValueTitle(title)) continue;
-    seen.add(link);
-    out.push({ title: title.slice(0, 500), link, pub_date: new Date().toISOString(), source: "Texas Parks & Wildlife", description: title });
-    if (out.length >= 25) break;
-  }
-  return out;
+  return parseTpwdReleaseIndex(html).filter((row) => !isLowValueTitle(row.title));
 }
 
 function parseTexasStandardHtml(html: string): Item[] {
