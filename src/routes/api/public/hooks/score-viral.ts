@@ -191,6 +191,10 @@ export const Route = createFileRoute("/api/public/hooks/score-viral")({
 });
 
 async function scoreRecent(request: Request) {
+  // TexasDefined's protected publisher needs verified source-routing data,
+  // not an additional KeepTXRed AI article-generation attempt. This mode
+  // still performs the existing complete guarded scoring and feed ingest.
+  const scoreOnly = new URL(request.url).searchParams.get("mode") === "td-source-routing";
   const url = process.env.SUPABASE_URL;
   const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
   if (!url || !key) return json({ ok: false, error: "server not configured" }, 500);
@@ -216,17 +220,33 @@ async function scoreRecent(request: Request) {
   const sinceIso = new Date(Date.now() - 72 * 60 * 60 * 1000).toISOString();
   const backfillSinceIso = new Date(Date.now() - 21 * 24 * 60 * 60 * 1000).toISOString();
   const columns = "id,title,source,trend_source,link,pub_date,description,viral_score,classification_confidence,viral_signals,texas_relevance_score,source_reputation_score,routing_type,trend_velocity,source_count,ready_for_rewrite,internal_slug,target_site,viral_scored_at";
-  const [{ data: recentData, error: recentError }, { data: backfillData, error: backfillError }] = await Promise.all([
+  const [
+    { data: recentData, error: recentError },
+    { data: backfillData, error: backfillError },
+    { data: tdOriginalData, error: tdOriginalError },
+  ] = await Promise.all([
     supabase.from("texas_news_feed").select(columns)
-      .gte("pub_date", sinceIso).order("pub_date", { ascending: false }).limit(230),
+      .gte("pub_date", sinceIso).order("pub_date", { ascending: false }).limit(210),
     supabase.from("texas_news_feed").select(columns)
       .gte("pub_date", backfillSinceIso).is("viral_scored_at", null)
-      .order("pub_date", { ascending: false }).limit(70),
+      .order("pub_date", { ascending: false }).limit(65),
+    // Source-side first-party TPWD titles can arrive with low NLP confidence
+    // and be older than the latest-first scoring window. Reserve at most 25
+    // review/low-confidence rows for the new canonical source eligibility
+    // check; never upgrade the item to publishing from a source label alone.
+    supabase.from("texas_news_feed").select(columns)
+      .eq("target_site", "texasdefined")
+      .eq("source", "Texas Parks & Wildlife")
+      .gte("pub_date", sinceIso)
+      .lt("classification_confidence", 0.6)
+      .order("pub_date", { ascending: false }).limit(25),
   ]);
 
-  const error = recentError ?? backfillError;
+  const error = recentError ?? backfillError ?? tdOriginalError;
   if (error) return json({ ok: false, error: error.message, ingest, discovery }, 500);
-  const rows = mergeScoringRows(recentData ?? [], backfillData ?? []) as Array<{
+  // 210 newest + 25 primary-review + 65 unscored <= existing 300-row
+  // ceiling, with ID deduplication preserving source provenance.
+  const rows = mergeScoringRows(recentData ?? [], [...(tdOriginalData ?? []), ...(backfillData ?? [])]) as Array<{
     id: number;
     title: string;
     source: string;
@@ -452,7 +472,7 @@ async function scoreRecent(request: Request) {
   let autoPublishSucceeded = 0;
   let autoPublishAttempted = 0;
 
-  for (const candidate of autoPublishCandidates) {
+  for (const candidate of scoreOnly ? [] : autoPublishCandidates) {
     if (autoPublishSucceeded >= AUTO_PUBLISH_PER_RUN) break;
     if (autoPublishAttempted >= MAX_AUTO_PUBLISH_ATTEMPTS_PER_RUN) break;
     autoPublishAttempted += 1;
@@ -534,6 +554,7 @@ async function scoreRecent(request: Request) {
     reviewFlagged,
     autoPublishAttempted,
     autoPublished: autoPublishSucceeded,
+    publicationSuppressed: scoreOnly,
     postRewriteReviewBlocked,
     autoPublishResults,
     reelsQueued,

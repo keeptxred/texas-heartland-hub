@@ -7,6 +7,8 @@ on:
       - '.github/workflows/editorial-acceptance.yml'
       - 'src/routes/api/public/hooks/ingest-feeds.ts'
       - 'src/lib/ingest-feeds-legacy.ts'
+      - 'src/routes/api/public/hooks/score-viral.ts'
+      - 'src/lib/viral-score.ts'
 
 permissions:
   contents: read
