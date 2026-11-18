@@ -1,0 +1,58 @@
+name: Refresh TexasDefined original-source newsroom scoring
+
+# GitHub owns the schedule. Zero AI and zero KTR article publication.
+# Normalize, score and route real original publisher evidence before
+# TexasDefined's four-times-daily authority-gated article publication.
+on:
+  schedule:
+    - cron: '23 2,8,14,20 * * *'
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/texasdefined-source-scoring.yml'
+      - 'src/routes/api/public/hooks/score-viral.ts'
+      - 'src/lib/viral-score.ts'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: texasdefined-primary-source-scoring
+  cancel-in-progress: false
+
+jobs:
+  score:
+    if: github.repository == 'keeptxred/texas-heartland-hub'
+    runs-on: ubuntu-latest
+    timeout-minutes: 19
+    steps:
+      - name: Allow the protected main production deployment to settle
+        if: github.event_name == 'push'
+        run: sleep 150
+      - name: Refresh feed and original-source eligibility without creating articles
+        shell: bash
+        run: |
+          set -euo pipefail
+          status="$(curl --silent --show-error --retry 2 --retry-delay 12 \
+            --max-time 820 --output /tmp/td-original-scoring.json \
+            --write-out '%{http_code}' --request POST \
+            'https://keeptxred-site.freddy-coppola.workers.dev/api/public/hooks/score-viral?mode=td-source-routing' || echo 000)"
+          if [[ "$status" != 200 ]]; then
+            echo "::error::Original source scorer returned HTTP $status; no approval override or article creation."
+            cat /tmp/td-original-scoring.json 2>/dev/null || true
+            exit 1
+          fi
+          jq -e '.ok == true and .publicationSuppressed == true and .autoPublishAttempted == 0
+            and .autoPublished == 0 and (.autoPublishResults | type) == "array"
+            and (.autoPublishResults | length) == 0
+            and .scanned >= 0 and .updated >= 0 and .updateFailures >= 0' \
+            /tmp/td-original-scoring.json >/dev/null
+          jq -r '["## TexasDefined first-party source scoring (zero AI publications)",
+            ("Scanned: " + (.scanned|tostring)),
+            ("Reclassified/updated: " + (.updated|tostring)),
+            ("Editorial review holds: " + (.reviewFlagged|tostring)),
+            ("Unattended KTR publish attempts: " + (.autoPublishAttempted|tostring)),
+            ("Unattended KTR articles published: " + (.autoPublished|tostring))] | join("\n")' \
+            /tmp/td-original-scoring.json >> "$GITHUB_STEP_SUMMARY"
+          jq -c '{ok,scanned,updated,reviewFlagged,autoPublishFlagged,publicationSuppressed,autoPublishAttempted,autoPublished,updateFailures}' /tmp/td-original-scoring.json
