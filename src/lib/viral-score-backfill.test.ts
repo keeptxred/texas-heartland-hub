@@ -19,6 +19,16 @@ describe("KeepTXRed feed scoring backfill", () => {
     expect(scored[299].id).toBe(299);
     expect(scored.some((row) => row.id === 319)).toBe(false);
   });
+  it("reserves room for 25 first-party releases outside the newest 210 and 65 unscored items", () => {
+    const recent = Array.from({ length: 210 }, (_, i) => ({ id: i + 1000 }));
+    const official = Array.from({ length: 25 }, (_, i) => ({ id: i + 7019700, source: "Texas Parks & Wildlife" }));
+    const unscored = Array.from({ length: 65 }, (_, i) => ({ id: i + 50000 }));
+    const result = mergeScoringRows(recent, [...official, ...unscored]);
+    expect(result).toHaveLength(300);
+    expect(result.some(row => row.id === 7019725)).toBe(true);
+    expect(result.filter(row => row.source === "Texas Parks & Wildlife")).toHaveLength(25);
+  });
+
   it("does not lose older stories when no recent feed items exist", () => {
     expect(mergeScoringRows([], [{ id: 42 }])).toEqual([{ id: 42 }]);
   });
