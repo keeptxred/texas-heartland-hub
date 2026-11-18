@@ -97,7 +97,7 @@ const TEXAS_CATEGORIES = new Set([
 
 const BREAKING_WORDS = /\b(breaking|signs|declares|activates|announces|emergency|ruling|sues?|lawsuit|indicted|arrested|veto|appoints|filed|passes|approves|dies|killed|shooting|storm|hurricane|flood|tornado|wildfire|evacuation|recall|impeach|tops?|ranks?|awards?|bans?|fires?|lays? off|expands?|plans?|turns?|marks?|considers?|proposes?|reduces?|cuts?)\b/i;
 const SOCIAL_HOOK_WORDS = /\b(election|elections|abbott|paxton|border|tax|taxes|shooting|hurricane|storm|flood|wildfire|crime|police|ice|migrant|migration|school|parents|hospital|jobs|layoffs|guns|gun|abortion|trump|biden|harris|whataburger|cowboys|texans|buc-ee'?s|state fair|spacex|tesla)\b/i;
-const USEFULNESS_WORDS = /\b(deadline|weekend|qualif(?:y|ies)|eligible|free|save|savings|tax-free|tax holiday|seminar|schedule|opens?|closes?|how to|what to know|warning|alert|recall|outbreak|health|safety|fraud|skimmer|school supplies|backpack|diapers|jobs?|hiring|grant|benefit|program)\b/i;
+const USEFULNESS_WORDS = /\b(deadline|weekend|qualif(?:y|ies)|eligible|free|save|savings|tax-free|tax holiday|seminar|schedule|opens?|closes?|how to|what to know|warning|alert|recall|outbreak|health|safety|fraud|skimmer|school supplies|backpack|diapers|jobs?|hiring|grant|benefit|program|rainbow trout|trout stocking|fish stocking|volunteer day|stocking schedule|state park access)\b/i;
 const CURIOSITY_WORDS = /\b(first|largest|record|finalists?|new|opens?|opening|line out the door|beluga|bees?|candy|food|fair|buc-ee'?s|mascot|lawsuit|birthday|donat(?:e|ion)|wild|unusual|only|ranked|top|viral)\b/i;
 const HIGH_RISK_REVIEW = /\b(alleged|accused|indicted|arrested|charged|suspect|murder|homicide|sexual|rape|abuse|threaten(?:ed|ing)?|shooting|killed|dead|death|dies|lawsuit|sues?|election|candidate|poll|ballot|fraud claim|unverified|developing|breaking)\b/i;
 
@@ -132,6 +132,12 @@ export function scoreFeedItem(item: {
   const verifiedComptrollerRelease =
     /\b(?:texas comptroller|comptroller of public accounts)\b/i.test(sourceHay) &&
     /^https:\/\/comptroller\.texas\.gov\/about\/media-center\/news\/20\d{6}-[a-z0-9-]+\/?(?:[?#].*)?$/i.test(item.link ?? "");
+  // Exact primary-source URL raises provenance confidence, not article quality.
+  // The TexasDefined publisher separately requires a substantive original body.
+  const verifiedTpwdRelease =
+    source.trim() === "Texas Parks & Wildlife" &&
+    /^https:\/\/tpwd\.texas\.gov\/newsmedia\/releases\/\?req=20\d{6}[a-z]$/i.test(item.link ?? "") &&
+    title.length >= 16 && title.length <= 180 && !/&[a-z]+;|<[^>]+>/i.test(title);
   const hrs = hoursSince(item.pub_date);
   const reasons: string[] = [];
   const entities = extractEntities(hay);
@@ -191,7 +197,7 @@ export function scoreFeedItem(item: {
   if (texas >= 20) confidence += 0.25;
   // Entity extraction often misses agency press releases. An exact official
   // source URL supplies confidence about provenance, not about every claim.
-  if (verifiedComptrollerRelease && texas >= 20) confidence = Math.max(confidence, 0.65);
+  if ((verifiedComptrollerRelease || verifiedTpwdRelease) && texas >= 20) confidence = Math.max(confidence, 0.65);
   confidence = Math.min(1, Number(confidence.toFixed(2)));
 
   const ownedByTexasDefined = isTexasDefinedOwnedSource(source) || category === "Sports";
@@ -204,6 +210,8 @@ export function scoreFeedItem(item: {
       }
     : verifiedComptrollerRelease
       ? { score: 90, reason: "Verified Texas Comptroller primary release URL" }
+      : verifiedTpwdRelease
+        ? { score: 90, reason: "Verified TPWD original release URL" }
       : item.source_reputation_score != null
         ? { score: item.source_reputation_score, reason: item.source_reputation_reason || "From content_sources" }
         : classifySourceReputation(source);
