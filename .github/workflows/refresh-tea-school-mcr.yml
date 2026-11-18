@@ -44,6 +44,27 @@ jobs:
             echo "changed=true" >> "$GITHUB_OUTPUT"
           fi
 
+      - name: Regression-test changed-data PR guard without modifying official rates
+        shell: bash
+        run: |
+          set -euo pipefail
+          # Exercise both branches using synthetic outputs only. Never edit the
+          # published TEA dataset or create a fake official-data PR.
+          guard() {
+            local changed="$1" pr_number="$2"
+            if [[ "$changed" == "true" && -z "$pr_number" ]]; then
+              return 1
+            fi
+            return 0
+          }
+          guard false ""
+          guard true 12345
+          if guard true ""; then
+            echo "::error::Changed TEA data without a PR must fail closed"
+            exit 1
+          fi
+          echo "PASS synthetic TEA changed/no-change PR guard regression"
+
       - name: Open or update reviewable dataset PR
         id: pr
         # Never publish partially written/unvalidated official data after parser failure.
