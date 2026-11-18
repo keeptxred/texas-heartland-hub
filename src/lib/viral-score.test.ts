@@ -208,3 +208,36 @@ describe("verified Comptroller direct-release publication scoring", () => {
     }
   });
 });
+
+describe("verified TPWD original release source scoring", () => {
+  const release = {
+    title: "Rainbow Trout Stocking Heads Back to Texas Waters Nov. 24",
+    source: "Texas Parks & Wildlife",
+    description: "Texas Parks and Wildlife Department will stock rainbow trout across Texas for the winter fishing season.",
+    pub_date: fresh(),
+    source_reputation_score: 55,
+    source_reputation_reason: "Noisy feed metadata",
+  };
+
+  it("recognizes clean canonical first-party releases without claiming independent corroboration", () => {
+    const score = scoreFeedItem({ ...release, link: "https://tpwd.texas.gov/newsmedia/releases/?req=20261117a" });
+    expect(score.sourceReputationScore).toBe(90);
+    expect(score.classificationConfidence).toBeGreaterThanOrEqual(0.6);
+    expect(score.texasRelevanceScore).toBeGreaterThanOrEqual(60);
+    expect(score.editorialLane).toBe("AUTO_PUBLISH");
+  });
+
+  it("rejects lookalikes, wrapper URLs, publisher mismatch and text-bloated headlines", () => {
+    for (const input of [
+      { link: "https://tpwd.texas.gov.evil.example/newsmedia/releases/?req=20261117a" },
+      { link: "https://news.google.com/rss/articles/primary-looking" },
+      { link: "http://tpwd.texas.gov/newsmedia/releases/?req=20261117a" },
+      { link: "https://tpwd.texas.gov/newsmedia/releases/?req=20261117a", source: "Unverified Blog" },
+      { link: "https://tpwd.texas.gov/newsmedia/releases/?req=20261117a", title: "Rainbow Trout " + "example ".repeat(40) },
+    ]) {
+      const score = scoreFeedItem({ ...release, ...input });
+      expect(score.sourceReputationScore).toBe(55);
+      expect(score.classificationConfidence).toBeLessThan(0.6);
+    }
+  });
+});
