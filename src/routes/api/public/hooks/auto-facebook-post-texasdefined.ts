@@ -5,6 +5,7 @@ import {
   type FacebookPagePost,
 } from "@/lib/facebook-page-history";
 import { centralClock, formatCentralMinute } from "@/lib/facebook-posting-schedule";
+import { createTexasDefinedFacebookPhotoPayload, loadTexasDefinedFacebookPhoto } from "@/lib/texasdefined-facebook-photo-upload";
 import { verifyGitHubActionsOidc } from "@/lib/github-actions-oidc";
 
 const OIDC_AUDIENCE = "keeptxred-facebook";
@@ -547,7 +548,7 @@ async function runAutoTexasDefinedFacebookPost(request: Request) {
       return hash32(`${adminSeed}:${dateKey}:${a.url}`) - hash32(`${adminSeed}:${dateKey}:${b.url}`);
     });
 
-  let selected: { metadata: PageMetadata; score: number } | null = null;
+  const eligibleMetadata: Array<{ metadata: PageMetadata; score: number }> = [];
   let checked = 0;
   for (const candidate of candidates) {
     if (checked >= MAX_METADATA_ATTEMPTS) break;
@@ -564,16 +565,31 @@ async function runAutoTexasDefinedFacebookPost(request: Request) {
     );
     if (duplicate) continue;
     const score = metadataTrafficScore(candidate, metadata);
-    if (!selected || score > selected.score) selected = { metadata, score };
+    eligibleMetadata.push({ metadata, score });
   }
 
-  if (!selected) {
+  // Meta may not be able to fetch the article's OG-image proxy via its URL.
+  // Try only the highest-ranked image-ready articles, never a text-only fallback.
+  let selected: { metadata: PageMetadata; score: number } | null = null;
+  let photo: Awaited<ReturnType<typeof loadTexasDefinedFacebookPhoto>> = null;
+  let imagesChecked = 0;
+  for (const candidate of eligibleMetadata.sort((a, b) => b.score - a.score).slice(0, 12)) {
+    imagesChecked += 1;
+    const readyPhoto = await loadTexasDefinedFacebookPhoto(candidate.metadata.imageUrl);
+    if (!readyPhoto) continue;
+    selected = candidate;
+    photo = readyPhoto;
+    break;
+  }
+
+  if (!selected || !photo) {
     return Response.json({
       ok: true,
       posted: false,
       no_items: true,
-      reason: "No unposted TexasDefined article with a Facebook-ready image was found",
+      reason: "No unposted TexasDefined article with a Facebook-ready, downloadable JPEG/PNG/GIF image was found",
       candidates_checked: checked,
+      images_checked: imagesChecked,
       article_history_days: ARTICLE_HISTORY_DAYS,
       posts_today: hardGuard.postsToday,
     });
@@ -582,19 +598,17 @@ async function runAutoTexasDefinedFacebookPost(request: Request) {
   const selectedMetadata = selected.metadata;
   const caption = [selectedMetadata.title, selectedMetadata.description, selectedMetadata.url].filter(Boolean).join("\n\n");
   const graphUrl = `https://graph.facebook.com/${GRAPH_VERSION}/${encodeURIComponent(String(connection.account_id))}/photos`;
+  // Meta's Page Photos endpoint accepts a file in multipart/form-data
+  // under source. Never hand it an unvalidated remote image URL.
+  const graphBody = createTexasDefinedFacebookPhotoPayload(photo, caption, String(connection.access_token));
   const graphResponse = await fetch(graphUrl, {
     method: "POST",
-    headers: { "content-type": "application/json" },
-    body: JSON.stringify({
-      url: selectedMetadata.imageUrl,
-      caption,
-      access_token: String(connection.access_token),
-    }),
+    body: graphBody,
   });
   const graphJson = (await graphResponse.json().catch(() => ({}))) as {
     id?: string;
     post_id?: string;
-    error?: { message?: string };
+    error?: { message?: string; type?: string; code?: number; error_subcode?: number; error_user_title?: string; error_user_msg?: string; fbtrace_id?: string };
   };
   if (!graphResponse.ok || (!graphJson.post_id && !graphJson.id)) {
     return Response.json(
@@ -602,7 +616,15 @@ async function runAutoTexasDefinedFacebookPost(request: Request) {
         ok: false,
         posted: false,
         error: graphJson.error?.message ?? `Facebook Graph API returned HTTP ${graphResponse.status}`,
-        requires_connection: graphResponse.status === 401 || graphResponse.status === 403,
+        graph_error_code: graphJson.error?.code ?? null,
+        graph_error_subcode: graphJson.error?.error_subcode ?? null,
+        graph_error_type: graphJson.error?.type ?? null,
+        graph_error_user_title: graphJson.error?.error_user_title ?? null,
+        graph_error_user_msg: graphJson.error?.error_user_msg ?? null,
+        graph_trace_id: graphJson.error?.fbtrace_id ?? null,
+        image_mime_type: photo.mimeType,
+        image_bytes: photo.size,
+        requires_connection: graphResponse.status === 401 || graphResponse.status === 403 || graphJson.error?.code === 190,
       },
       { status: 502 },
     );
@@ -633,6 +655,9 @@ async function runAutoTexasDefinedFacebookPost(request: Request) {
     mode,
     posts_today_before_post: hardGuard.postsToday,
     candidates_checked: checked,
+    images_checked: imagesChecked,
+    image_mime_type: photo.mimeType,
+    image_bytes: photo.size,
     article_selection_policy: {
       traffic_drivers_first: true,
       list_and_gateway_terms: TRAFFIC_TERMS,
