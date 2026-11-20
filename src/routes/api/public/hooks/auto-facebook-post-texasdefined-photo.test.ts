@@ -105,7 +105,7 @@ describe("TexasDefined Facebook Graph photo uploads", () => {
     expect(engagement).toContain("image_guard: true");
     expect(engagement).toContain("graph_error_subcode");
     expect(engagement).toContain("verifyGitHubActionsOidc");
-    expect(engagement).not.toContain("url: image.imageUrl,");
+    expect(engagement).not.toContain("body: JSON.stringify({");
   });
 
 });
