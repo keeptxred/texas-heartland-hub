@@ -150,6 +150,10 @@ async function publishTexasDefinedGeneratedImage(request: Request): Promise<Resp
       audience: OIDC_AUDIENCE,
       repository: REPOSITORY,
       workflowPath: WORKFLOW_PATH,
+      // An approved single-post manifest merged to TexasDefined main triggers
+      // the SAME trusted workflow through a path-filtered push event.
+      // The verifier still requires the exact repo/workflow/ref and OIDC JWT.
+      allowedEventNames: ["workflow_dispatch", "push"],
     });
     if (typeof claims.run_id !== "string" || !/^\d+$/.test(claims.run_id)) {
       throw new Error("GitHub Actions OIDC token is missing a valid run ID");
