@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { verifyGitHubActionsOidc } from "@/lib/github-actions-oidc";
+import { createTexasDefinedFacebookPhotoPayload, loadTexasDefinedFacebookPhoto } from "@/lib/texasdefined-facebook-photo-upload";
 import {
   resolveTexasDefinedFacebookImage,
   type ResolvedTexasDefinedFacebookImage,
@@ -287,6 +288,23 @@ async function runTexasDefinedFacebookPostWithImage(request: Request) {
     });
   }
 
+  // Image relevance alone does not prove that Meta can accept the file.
+  // A content-type/size/signature-verified image is mandatory even for this
+  // less-frequent engagement posting path.
+  const photo = await loadTexasDefinedFacebookPhoto(image.imageUrl);
+  if (!photo) {
+    return Response.json({
+      ok: true,
+      posted: false,
+      image_required: true,
+      image_guard: true,
+      reason: "Resolved TexasDefined image is unavailable, invalid, or not a supported JPEG/PNG/GIF",
+      kind,
+      image_url: image.imageUrl,
+      image_source_url: image.sourcePageUrl,
+    });
+  }
+
   if (incomingDryRun) {
     return Response.json({
       ...preview,
@@ -298,7 +316,9 @@ async function runTexasDefinedFacebookPostWithImage(request: Request) {
       image_source_url: image.sourcePageUrl,
       image_source_title: image.sourceTitle,
       image_strategy: image.strategy,
-      note: "Dry run: relevant image resolved successfully; no Facebook post or database write occurred",
+      image_mime_type: photo.mimeType,
+      image_bytes: photo.size,
+      note: "Dry run: relevant image bytes and MIME verified; no Facebook post or database write occurred",
     });
   }
 
@@ -322,19 +342,15 @@ async function runTexasDefinedFacebookPostWithImage(request: Request) {
   }
 
   const graphUrl = `https://graph.facebook.com/${GRAPH_VERSION}/${encodeURIComponent(String(connection.account_id))}/photos`;
+  const graphBody = createTexasDefinedFacebookPhotoPayload(photo, message, String(connection.access_token));
   const graphResponse = await fetch(graphUrl, {
     method: "POST",
-    headers: { "content-type": "application/json" },
-    body: JSON.stringify({
-      url: image.imageUrl,
-      caption: message,
-      access_token: String(connection.access_token),
-    }),
+    body: graphBody,
   });
   const graphJson = (await graphResponse.json().catch(() => ({}))) as {
     id?: string;
     post_id?: string;
-    error?: { message?: string };
+    error?: { message?: string; type?: string; code?: number; error_subcode?: number; error_user_title?: string; error_user_msg?: string; fbtrace_id?: string };
   };
   if (!graphResponse.ok || (!graphJson.id && !graphJson.post_id)) {
     return Response.json(
@@ -343,7 +359,13 @@ async function runTexasDefinedFacebookPostWithImage(request: Request) {
         posted: false,
         image_required: true,
         error: graphJson.error?.message ?? `Facebook Graph API returned HTTP ${graphResponse.status}`,
-        requires_connection: graphResponse.status === 401 || graphResponse.status === 403,
+        graph_error_code: graphJson.error?.code ?? null,
+        graph_error_subcode: graphJson.error?.error_subcode ?? null,
+        graph_error_type: graphJson.error?.type ?? null,
+        graph_trace_id: graphJson.error?.fbtrace_id ?? null,
+        image_mime_type: photo.mimeType,
+        image_bytes: photo.size,
+        requires_connection: graphResponse.status === 401 || graphResponse.status === 403 || graphJson.error?.code === 190,
         image_url: image.imageUrl,
         image_source_url: image.sourcePageUrl,
       },
@@ -379,6 +401,8 @@ async function runTexasDefinedFacebookPostWithImage(request: Request) {
     image_source_url: image.sourcePageUrl,
     image_source_title: image.sourceTitle,
     image_strategy: image.strategy,
+    image_mime_type: photo.mimeType,
+    image_bytes: photo.size,
     text_only_fallback: false,
   });
 }

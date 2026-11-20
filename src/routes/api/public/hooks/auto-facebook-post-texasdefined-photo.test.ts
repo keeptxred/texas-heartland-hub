@@ -97,4 +97,15 @@ describe("TexasDefined Facebook Graph photo uploads", () => {
     expect(route).toContain("graph_error_subcode");
     expect(route).not.toContain("url: selectedMetadata.imageUrl,");
   });
+  it("uses the same validated multipart source for non-article Facebook image posts", () => {
+    const engagement = readFileSync(new URL("./auto-facebook-post-texasdefined-with-image.ts", import.meta.url), "utf8");
+    expect(engagement).toContain("loadTexasDefinedFacebookPhoto(image.imageUrl)");
+    expect(engagement).toContain("createTexasDefinedFacebookPhotoPayload(photo, message");
+    expect(engagement).toContain("body: graphBody");
+    expect(engagement).toContain("image_guard: true");
+    expect(engagement).toContain("graph_error_subcode");
+    expect(engagement).toContain("verifyGitHubActionsOidc");
+    expect(engagement).not.toContain("body: JSON.stringify({");
+  });
+
 });
