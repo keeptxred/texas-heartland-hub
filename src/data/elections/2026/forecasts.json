@@ -14,18 +14,17 @@
       "modelVersion": "ktr-2026.2",
       "methodologyUrl": "https://keeptxred.com/elections/methodology",
       "simulationCount": null,
-      "lastModelRunAt": "2026-11-02T17:46:56.010Z",
+      "lastModelRunAt": "2026-11-21T17:59:57.146Z",
       "fundamentals": {
         "previousElectionMargin": null,
         "districtPartisanLean": null,
         "incumbencyAdjustment": 0,
         "fundraisingAdvantage": 0,
         "candidateQualityAdjustment": 0,
-        "dataAsOf": "2026-11-02T17:46:56.010Z",
+        "dataAsOf": "2026-11-21T17:59:57.146Z",
         "sourceUrls": [
           "https://www.activote.net/polls/2026/tx-attorney-general/2026-10-29/",
           "https://www.jordanresearchcenter.org/s/TSUStatewideOct2026.pdf",
-          "https://texaspolitics.utexas.edu/blog/latest-ut-texas-politics-poll-finds-historic-levels-of-competition-in-texas-midterm-elections",
           "https://254labs.io/news/2026-10-tx.pdf"
         ]
       }
@@ -34,45 +33,45 @@
       {
         "candidateId": "candidate-mayes-middleton-republican-race-2026-attorney-general",
         "party": "republican",
-        "winProbability": 0.62,
+        "winProbability": 0.65,
         "runoffProbability": null,
-        "projectedVoteShare": 51.2,
-        "projectedVoteShareLow": 46.7,
-        "projectedVoteShareHigh": 55.7,
-        "pollingAverage": 48.7,
-        "winProbabilityChange": 0
+        "projectedVoteShare": 51.5,
+        "projectedVoteShareLow": 47,
+        "projectedVoteShareHigh": 56,
+        "pollingAverage": 49,
+        "winProbabilityChange": 3
       },
       {
         "candidateId": "candidate-nathan-johnson-democratic-race-2026-attorney-general",
         "party": "democratic",
-        "winProbability": 0.38,
+        "winProbability": 0.35,
         "runoffProbability": null,
-        "projectedVoteShare": 48.8,
-        "projectedVoteShareLow": 44.3,
-        "projectedVoteShareHigh": 53.4,
-        "pollingAverage": 46.4,
-        "winProbabilityChange": 0
+        "projectedVoteShare": 48.6,
+        "projectedVoteShareLow": 44.1,
+        "projectedVoteShareHigh": 53.1,
+        "pollingAverage": 46.1,
+        "winProbabilityChange": -3
       }
     ],
-    "projectedMargin": 2.3,
+    "projectedMargin": 2.9,
     "projectedWinnerCandidateId": "candidate-mayes-middleton-republican-race-2026-attorney-general",
     "publishedAt": "2026-07-29T04:01:38.706Z",
     "finalizedAt": null,
     "notes": "Polling-only forecast using weighted verified public polls; no fundamentals adjustments were applied.",
     "createdAt": "2026-07-29T04:01:38.706Z",
-    "updatedAt": "2026-11-02T17:46:56.010Z",
+    "updatedAt": "2026-11-21T17:59:57.146Z",
     "verificationStatus": "verified",
-    "verifiedAt": "2026-11-02T17:46:56.010Z",
+    "verifiedAt": "2026-11-21T17:59:57.146Z",
     "verifiedBy": "GitHub Actions election forecast workflow",
     "verificationNotes": null,
     "publicationStatus": "published",
     "unpublishedAt": null,
     "scheduledFor": null,
     "publishedBy": "GitHub Actions election forecast workflow",
-    "dataAsOf": "2026-11-02T17:46:56.010Z",
-    "lastCheckedAt": "2026-11-02T17:46:56.010Z",
-    "staleAfter": "2026-11-04T17:46:56.010Z",
-    "expiresAt": "2026-11-09T17:46:56.010Z",
+    "dataAsOf": "2026-11-21T17:59:57.146Z",
+    "lastCheckedAt": "2026-11-21T17:59:57.146Z",
+    "staleAfter": "2026-11-23T17:59:57.146Z",
+    "expiresAt": "2026-11-28T17:59:57.146Z",
     "freshnessStatus": "fresh",
     "source": {
       "sourceId": "ktr-forecast-model",
@@ -80,7 +79,7 @@
       "sourceType": "forecast_provider",
       "sourceUrl": "https://keeptxred.com/elections/methodology",
       "sourceRecordId": "race-2026-attorney-general",
-      "retrievedAt": "2026-11-02T17:46:56.010Z",
+      "retrievedAt": "2026-11-21T17:59:57.146Z",
       "attributionText": "Keep TX Red deterministic election model"
     },
     "fundamentalsBased": false,
@@ -88,7 +87,6 @@
       "ktr-forecast-model",
       "source-activote-texas-october-29-2026",
       "source-tsu-statewide-late-october-2026",
-      "source-ut-texas-politics-project-october-2026",
       "source-yougov-blue-254-labs-october-2026"
     ],
     "snapshots": [
@@ -794,6 +792,43 @@
             "winProbabilityChange": 0
           }
         ]
+      },
+      {
+        "forecastId": "forecast-race-2026-attorney-general",
+        "capturedAt": "2026-11-21T17:59:57.146Z",
+        "status": "active",
+        "rating": "toss_up",
+        "confidenceLevel": "medium",
+        "projectedWinnerCandidateId": "candidate-mayes-middleton-republican-race-2026-attorney-general",
+        "projectedMargin": 2.9,
+        "candidateSummaries": [
+          {
+            "candidateId": "candidate-mayes-middleton-republican-race-2026-attorney-general",
+            "candidateSlug": "mayes-middleton-republican-race-2026-attorney-general",
+            "candidateName": "MAYES MIDDLETON",
+            "party": "republican",
+            "imageUrl": "https://www.senate.texas.gov/members/d11/img/Middleton_87-0662D-009.jpg",
+            "winProbability": 0.65,
+            "projectedVoteShare": 51.5,
+            "projectedVoteShareLow": 47,
+            "projectedVoteShareHigh": 56,
+            "pollingAverage": 49,
+            "winProbabilityChange": 3
+          },
+          {
+            "candidateId": "candidate-nathan-johnson-democratic-race-2026-attorney-general",
+            "candidateSlug": "nathan-johnson-democratic-race-2026-attorney-general",
+            "candidateName": "NATHAN JOHNSON",
+            "party": "democratic",
+            "imageUrl": "https://senate.texas.gov/members/d16/img/SNJ-Headshot-2023-web.jpg",
+            "winProbability": 0.35,
+            "projectedVoteShare": 48.6,
+            "projectedVoteShareLow": 44.1,
+            "projectedVoteShareHigh": 53.1,
+            "pollingAverage": 46.1,
+            "winProbabilityChange": -3
+          }
+        ]
       }
     ]
   },
@@ -812,18 +847,17 @@
       "modelVersion": "ktr-2026.2",
       "methodologyUrl": "https://keeptxred.com/elections/methodology",
       "simulationCount": null,
-      "lastModelRunAt": "2026-11-02T17:46:56.010Z",
+      "lastModelRunAt": "2026-11-21T17:59:57.146Z",
       "fundamentals": {
         "previousElectionMargin": null,
         "districtPartisanLean": null,
         "incumbencyAdjustment": 0,
         "fundraisingAdvantage": 0,
         "candidateQualityAdjustment": 0,
-        "dataAsOf": "2026-11-02T17:46:56.010Z",
+        "dataAsOf": "2026-11-21T17:59:57.146Z",
         "sourceUrls": [
           "https://www.activote.net/polls/2026/tx-comptroller/",
-          "https://www.jordanresearchcenter.org/s/TSUStatewideOct2026.pdf",
-          "https://texaspolitics.utexas.edu/blog/latest-ut-texas-politics-poll-finds-historic-levels-of-competition-in-texas-midterm-elections"
+          "https://www.jordanresearchcenter.org/s/TSUStatewideOct2026.pdf"
         ]
       }
     },
@@ -831,45 +865,45 @@
       {
         "candidateId": "candidate-don-huffines-republican-race-2026-comptroller",
         "party": "republican",
-        "winProbability": 0.78,
+        "winProbability": 0.82,
         "runoffProbability": null,
-        "projectedVoteShare": 53,
-        "projectedVoteShareLow": 48.5,
-        "projectedVoteShareHigh": 57.5,
-        "pollingAverage": 50.8,
-        "winProbabilityChange": 0
+        "projectedVoteShare": 53.7,
+        "projectedVoteShareLow": 49.2,
+        "projectedVoteShareHigh": 58.2,
+        "pollingAverage": 51.8,
+        "winProbabilityChange": 4
       },
       {
         "candidateId": "candidate-sarah-eckhardt-democratic-race-2026-comptroller",
         "party": "democratic",
-        "winProbability": 0.22,
+        "winProbability": 0.18,
         "runoffProbability": null,
-        "projectedVoteShare": 47,
-        "projectedVoteShareLow": 42.5,
-        "projectedVoteShareHigh": 51.5,
-        "pollingAverage": 44.8,
-        "winProbabilityChange": 0
+        "projectedVoteShare": 46.4,
+        "projectedVoteShareLow": 41.9,
+        "projectedVoteShareHigh": 50.9,
+        "pollingAverage": 44.5,
+        "winProbabilityChange": -4
       }
     ],
-    "projectedMargin": 6,
+    "projectedMargin": 7.3,
     "projectedWinnerCandidateId": "candidate-don-huffines-republican-race-2026-comptroller",
     "publishedAt": "2026-07-29T04:01:38.706Z",
     "finalizedAt": null,
     "notes": "Polling-only forecast using weighted verified public polls; no fundamentals adjustments were applied.",
     "createdAt": "2026-07-29T04:01:38.706Z",
-    "updatedAt": "2026-11-02T17:46:56.010Z",
+    "updatedAt": "2026-11-21T17:59:57.146Z",
     "verificationStatus": "verified",
-    "verifiedAt": "2026-11-02T17:46:56.010Z",
+    "verifiedAt": "2026-11-21T17:59:57.146Z",
     "verifiedBy": "GitHub Actions election forecast workflow",
     "verificationNotes": null,
     "publicationStatus": "published",
     "unpublishedAt": null,
     "scheduledFor": null,
     "publishedBy": "GitHub Actions election forecast workflow",
-    "dataAsOf": "2026-11-02T17:46:56.010Z",
-    "lastCheckedAt": "2026-11-02T17:46:56.010Z",
-    "staleAfter": "2026-11-04T17:46:56.010Z",
-    "expiresAt": "2026-11-09T17:46:56.010Z",
+    "dataAsOf": "2026-11-21T17:59:57.146Z",
+    "lastCheckedAt": "2026-11-21T17:59:57.146Z",
+    "staleAfter": "2026-11-23T17:59:57.146Z",
+    "expiresAt": "2026-11-28T17:59:57.146Z",
     "freshnessStatus": "fresh",
     "source": {
       "sourceId": "ktr-forecast-model",
@@ -877,15 +911,14 @@
       "sourceType": "forecast_provider",
       "sourceUrl": "https://keeptxred.com/elections/methodology",
       "sourceRecordId": "race-2026-comptroller",
-      "retrievedAt": "2026-11-02T17:46:56.010Z",
+      "retrievedAt": "2026-11-21T17:59:57.146Z",
       "attributionText": "Keep TX Red deterministic election model"
     },
     "fundamentalsBased": false,
     "sourceIds": [
       "ktr-forecast-model",
       "source-activote-texas-october-29-2026",
-      "source-tsu-statewide-late-october-2026",
-      "source-ut-texas-politics-project-october-2026"
+      "source-tsu-statewide-late-october-2026"
     ],
     "snapshots": [
       {
@@ -1590,6 +1623,43 @@
             "winProbabilityChange": 0
           }
         ]
+      },
+      {
+        "forecastId": "forecast-race-2026-comptroller",
+        "capturedAt": "2026-11-21T17:59:57.146Z",
+        "status": "active",
+        "rating": "leans_republican",
+        "confidenceLevel": "medium",
+        "projectedWinnerCandidateId": "candidate-don-huffines-republican-race-2026-comptroller",
+        "projectedMargin": 7.3,
+        "candidateSummaries": [
+          {
+            "candidateId": "candidate-don-huffines-republican-race-2026-comptroller",
+            "candidateSlug": "don-huffines-republican-race-2026-comptroller",
+            "candidateName": "DON HUFFINES",
+            "party": "republican",
+            "imageUrl": "https://commons.wikimedia.org/wiki/Special:Redirect/file/Don_Huffines_(51370822589)_(cropped).jpg",
+            "winProbability": 0.82,
+            "projectedVoteShare": 53.7,
+            "projectedVoteShareLow": 49.2,
+            "projectedVoteShareHigh": 58.2,
+            "pollingAverage": 51.8,
+            "winProbabilityChange": 4
+          },
+          {
+            "candidateId": "candidate-sarah-eckhardt-democratic-race-2026-comptroller",
+            "candidateSlug": "sarah-eckhardt-democratic-race-2026-comptroller",
+            "candidateName": "SARAH ECKHARDT",
+            "party": "democratic",
+            "imageUrl": "https://senate.texas.gov/members/d14/img/SE_headshot_2020.jpg",
+            "winProbability": 0.18,
+            "projectedVoteShare": 46.4,
+            "projectedVoteShareLow": 41.9,
+            "projectedVoteShareHigh": 50.9,
+            "pollingAverage": 44.5,
+            "winProbabilityChange": -4
+          }
+        ]
       }
     ]
   },
@@ -1608,14 +1678,14 @@
       "modelVersion": "ktr-2026.2",
       "methodologyUrl": "https://keeptxred.com/elections/methodology",
       "simulationCount": null,
-      "lastModelRunAt": "2026-11-02T17:46:56.010Z",
+      "lastModelRunAt": "2026-11-21T17:59:57.146Z",
       "fundamentals": {
         "previousElectionMargin": null,
         "districtPartisanLean": null,
         "incumbencyAdjustment": 0,
         "fundraisingAdvantage": 0,
         "candidateQualityAdjustment": 0,
-        "dataAsOf": "2026-11-02T17:46:56.010Z",
+        "dataAsOf": "2026-11-21T17:59:57.146Z",
         "sourceUrls": [
           "https://www.activote.net/polls/2026/tx-governor/2026-10-29/",
           "https://edition.cnn.com/2026/10/29/politics/cnn-polls-michigan-maine-texas-kansas-senate-races-midterms-vis",
@@ -1624,7 +1694,6 @@
           "https://sri.siena.edu/2026/11/01/nytimes-siena-poll-of-likely-voters-alaska-iowa-kansas-maine-michigan-ohio-and-texas/",
           "https://data.ddhq.io/polls/2026/10/30/Quantus-Insights-Texas",
           "https://www.jordanresearchcenter.org/s/TSUStatewideOct2026.pdf",
-          "https://texaspolitics.utexas.edu/blog/latest-ut-texas-politics-poll-finds-historic-levels-of-competition-in-texas-midterm-elections",
           "https://254labs.io/news/2026-10-tx.pdf"
         ]
       }
@@ -1633,45 +1702,45 @@
       {
         "candidateId": "candidate-greg-abbott-republican-race-2026-governor",
         "party": "republican",
-        "winProbability": 0.58,
+        "winProbability": 0.59,
         "runoffProbability": null,
-        "projectedVoteShare": 50.8,
-        "projectedVoteShareLow": 46.3,
-        "projectedVoteShareHigh": 55.3,
-        "pollingAverage": 48.8,
-        "winProbabilityChange": -2
+        "projectedVoteShare": 50.9,
+        "projectedVoteShareLow": 46.4,
+        "projectedVoteShareHigh": 55.4,
+        "pollingAverage": 48.9,
+        "winProbabilityChange": 1
       },
       {
         "candidateId": "candidate-gina-hinojosa-democratic-race-2026-governor",
         "party": "democratic",
-        "winProbability": 0.42,
+        "winProbability": 0.41,
         "runoffProbability": null,
-        "projectedVoteShare": 49.3,
-        "projectedVoteShareLow": 44.8,
-        "projectedVoteShareHigh": 53.8,
-        "pollingAverage": 47.3,
-        "winProbabilityChange": 2
+        "projectedVoteShare": 49.1,
+        "projectedVoteShareLow": 44.6,
+        "projectedVoteShareHigh": 53.6,
+        "pollingAverage": 47.1,
+        "winProbabilityChange": -1
       }
     ],
-    "projectedMargin": 1.5,
+    "projectedMargin": 1.8,
     "projectedWinnerCandidateId": "candidate-greg-abbott-republican-race-2026-governor",
     "publishedAt": "2026-07-29T04:01:38.706Z",
     "finalizedAt": null,
     "notes": "Polling-only forecast using weighted verified public polls; no fundamentals adjustments were applied.",
     "createdAt": "2026-07-29T04:01:38.706Z",
-    "updatedAt": "2026-11-02T17:46:56.010Z",
+    "updatedAt": "2026-11-21T17:59:57.146Z",
     "verificationStatus": "verified",
-    "verifiedAt": "2026-11-02T17:46:56.010Z",
+    "verifiedAt": "2026-11-21T17:59:57.146Z",
     "verifiedBy": "GitHub Actions election forecast workflow",
     "verificationNotes": null,
     "publicationStatus": "published",
     "unpublishedAt": null,
     "scheduledFor": null,
     "publishedBy": "GitHub Actions election forecast workflow",
-    "dataAsOf": "2026-11-02T17:46:56.010Z",
-    "lastCheckedAt": "2026-11-02T17:46:56.010Z",
-    "staleAfter": "2026-11-04T17:46:56.010Z",
-    "expiresAt": "2026-11-09T17:46:56.010Z",
+    "dataAsOf": "2026-11-21T17:59:57.146Z",
+    "lastCheckedAt": "2026-11-21T17:59:57.146Z",
+    "staleAfter": "2026-11-23T17:59:57.146Z",
+    "expiresAt": "2026-11-28T17:59:57.146Z",
     "freshnessStatus": "fresh",
     "source": {
       "sourceId": "ktr-forecast-model",
@@ -1679,7 +1748,7 @@
       "sourceType": "forecast_provider",
       "sourceUrl": "https://keeptxred.com/elections/methodology",
       "sourceRecordId": "race-2026-governor",
-      "retrievedAt": "2026-11-02T17:46:56.010Z",
+      "retrievedAt": "2026-11-21T17:59:57.146Z",
       "attributionText": "Keep TX Red deterministic election model"
     },
     "fundamentalsBased": false,
@@ -1692,7 +1761,6 @@
       "source-nyt-siena-texas-november-1-2026",
       "source-quantus-texas-october-30-2026",
       "source-tsu-statewide-late-october-2026",
-      "source-ut-texas-politics-project-october-2026",
       "source-yougov-blue-254-labs-october-2026"
     ],
     "snapshots": [
@@ -2398,6 +2466,43 @@
             "winProbabilityChange": 2
           }
         ]
+      },
+      {
+        "forecastId": "forecast-race-2026-governor",
+        "capturedAt": "2026-11-21T17:59:57.146Z",
+        "status": "active",
+        "rating": "toss_up",
+        "confidenceLevel": "medium",
+        "projectedWinnerCandidateId": "candidate-greg-abbott-republican-race-2026-governor",
+        "projectedMargin": 1.8,
+        "candidateSummaries": [
+          {
+            "candidateId": "candidate-greg-abbott-republican-race-2026-governor",
+            "candidateSlug": "greg-abbott-republican-race-2026-governor",
+            "candidateName": "GREG ABBOTT",
+            "party": "republican",
+            "imageUrl": "https://gov.texas.gov/uploads/images/general/governor2024.png",
+            "winProbability": 0.59,
+            "projectedVoteShare": 50.9,
+            "projectedVoteShareLow": 46.4,
+            "projectedVoteShareHigh": 55.4,
+            "pollingAverage": 48.9,
+            "winProbabilityChange": 1
+          },
+          {
+            "candidateId": "candidate-gina-hinojosa-democratic-race-2026-governor",
+            "candidateSlug": "gina-hinojosa-democratic-race-2026-governor",
+            "candidateName": "GINA HINOJOSA",
+            "party": "democratic",
+            "imageUrl": "https://commons.wikimedia.org/wiki/Special:Redirect/file/Gina_Hinojosa_at_the_AFL-CIO_COPE_convention_in_2024.jpg",
+            "winProbability": 0.41,
+            "projectedVoteShare": 49.1,
+            "projectedVoteShareLow": 44.6,
+            "projectedVoteShareHigh": 53.6,
+            "pollingAverage": 47.1,
+            "winProbabilityChange": -1
+          }
+        ]
       }
     ]
   },
@@ -2416,18 +2521,17 @@
       "modelVersion": "ktr-2026.2",
       "methodologyUrl": "https://keeptxred.com/elections/methodology",
       "simulationCount": null,
-      "lastModelRunAt": "2026-11-02T17:46:56.010Z",
+      "lastModelRunAt": "2026-11-21T17:59:57.146Z",
       "fundamentals": {
         "previousElectionMargin": null,
         "districtPartisanLean": null,
         "incumbencyAdjustment": 0,
         "fundraisingAdvantage": 0,
         "candidateQualityAdjustment": 0,
-        "dataAsOf": "2026-11-02T17:46:56.010Z",
+        "dataAsOf": "2026-11-21T17:59:57.146Z",
         "sourceUrls": [
           "https://www.activote.net/polls/2026/tx-lt-governor/2026-10-29/",
           "https://www.jordanresearchcenter.org/s/TSUStatewideOct2026.pdf",
-          "https://texaspolitics.utexas.edu/blog/latest-ut-texas-politics-poll-finds-historic-levels-of-competition-in-texas-midterm-elections",
           "https://254labs.io/news/2026-10-tx.pdf"
         ]
       }
@@ -2436,45 +2540,45 @@
       {
         "candidateId": "candidate-dan-patrick-republican-race-2026-lieutenant-governor",
         "party": "republican",
-        "winProbability": 0.67,
+        "winProbability": 0.72,
         "runoffProbability": null,
-        "projectedVoteShare": 51.7,
-        "projectedVoteShareLow": 47.2,
-        "projectedVoteShareHigh": 56.2,
-        "pollingAverage": 49.4,
-        "winProbabilityChange": 0
+        "projectedVoteShare": 52.3,
+        "projectedVoteShareLow": 47.8,
+        "projectedVoteShareHigh": 56.8,
+        "pollingAverage": 50,
+        "winProbabilityChange": 5
       },
       {
         "candidateId": "candidate-vikki-goodwin-democratic-race-2026-lieutenant-governor",
         "party": "democratic",
-        "winProbability": 0.33,
+        "winProbability": 0.28,
         "runoffProbability": null,
-        "projectedVoteShare": 48.3,
-        "projectedVoteShareLow": 43.8,
-        "projectedVoteShareHigh": 52.8,
-        "pollingAverage": 46,
-        "winProbabilityChange": 0
+        "projectedVoteShare": 47.7,
+        "projectedVoteShareLow": 43.2,
+        "projectedVoteShareHigh": 52.2,
+        "pollingAverage": 45.4,
+        "winProbabilityChange": -5
       }
     ],
-    "projectedMargin": 3.4,
+    "projectedMargin": 4.6,
     "projectedWinnerCandidateId": "candidate-dan-patrick-republican-race-2026-lieutenant-governor",
     "publishedAt": "2026-07-29T04:01:38.706Z",
     "finalizedAt": null,
     "notes": "Polling-only forecast using weighted verified public polls; no fundamentals adjustments were applied.",
     "createdAt": "2026-07-29T04:01:38.706Z",
-    "updatedAt": "2026-11-02T17:46:56.010Z",
+    "updatedAt": "2026-11-21T17:59:57.146Z",
     "verificationStatus": "verified",
-    "verifiedAt": "2026-11-02T17:46:56.010Z",
+    "verifiedAt": "2026-11-21T17:59:57.146Z",
     "verifiedBy": "GitHub Actions election forecast workflow",
     "verificationNotes": null,
     "publicationStatus": "published",
     "unpublishedAt": null,
     "scheduledFor": null,
     "publishedBy": "GitHub Actions election forecast workflow",
-    "dataAsOf": "2026-11-02T17:46:56.010Z",
-    "lastCheckedAt": "2026-11-02T17:46:56.010Z",
-    "staleAfter": "2026-11-04T17:46:56.010Z",
-    "expiresAt": "2026-11-09T17:46:56.010Z",
+    "dataAsOf": "2026-11-21T17:59:57.146Z",
+    "lastCheckedAt": "2026-11-21T17:59:57.146Z",
+    "staleAfter": "2026-11-23T17:59:57.146Z",
+    "expiresAt": "2026-11-28T17:59:57.146Z",
     "freshnessStatus": "fresh",
     "source": {
       "sourceId": "ktr-forecast-model",
@@ -2482,7 +2586,7 @@
       "sourceType": "forecast_provider",
       "sourceUrl": "https://keeptxred.com/elections/methodology",
       "sourceRecordId": "race-2026-lieutenant-governor",
-      "retrievedAt": "2026-11-02T17:46:56.010Z",
+      "retrievedAt": "2026-11-21T17:59:57.146Z",
       "attributionText": "Keep TX Red deterministic election model"
     },
     "fundamentalsBased": false,
@@ -2490,7 +2594,6 @@
       "ktr-forecast-model",
       "source-activote-texas-october-29-2026",
       "source-tsu-statewide-late-october-2026",
-      "source-ut-texas-politics-project-october-2026",
       "source-yougov-blue-254-labs-october-2026"
     ],
     "snapshots": [
@@ -3196,6 +3299,43 @@
             "winProbabilityChange": 0
           }
         ]
+      },
+      {
+        "forecastId": "forecast-race-2026-lieutenant-governor",
+        "capturedAt": "2026-11-21T17:59:57.146Z",
+        "status": "active",
+        "rating": "leans_republican",
+        "confidenceLevel": "medium",
+        "projectedWinnerCandidateId": "candidate-dan-patrick-republican-race-2026-lieutenant-governor",
+        "projectedMargin": 4.6,
+        "candidateSummaries": [
+          {
+            "candidateId": "candidate-dan-patrick-republican-race-2026-lieutenant-governor",
+            "candidateSlug": "dan-patrick-republican-race-2026-lieutenant-governor",
+            "candidateName": "DAN PATRICK",
+            "party": "republican",
+            "imageUrl": "https://www.senate.texas.gov/_assets/photos/LtGov_Patrick_2021.jpg",
+            "winProbability": 0.72,
+            "projectedVoteShare": 52.3,
+            "projectedVoteShareLow": 47.8,
+            "projectedVoteShareHigh": 56.8,
+            "pollingAverage": 50,
+            "winProbabilityChange": 5
+          },
+          {
+            "candidateId": "candidate-vikki-goodwin-democratic-race-2026-lieutenant-governor",
+            "candidateSlug": "vikki-goodwin-democratic-race-2026-lieutenant-governor",
+            "candidateName": "VIKKI GOODWIN",
+            "party": "democratic",
+            "imageUrl": "https://commons.wikimedia.org/wiki/Special:Redirect/file/HiRes-Vikki_Goodwin-6381-red.jpg",
+            "winProbability": 0.28,
+            "projectedVoteShare": 47.7,
+            "projectedVoteShareLow": 43.2,
+            "projectedVoteShareHigh": 52.2,
+            "pollingAverage": 45.4,
+            "winProbabilityChange": -5
+          }
+        ]
       }
     ]
   },
@@ -3214,14 +3354,14 @@
       "modelVersion": "ktr-2026.2",
       "methodologyUrl": "https://keeptxred.com/elections/methodology",
       "simulationCount": null,
-      "lastModelRunAt": "2026-11-02T17:46:56.010Z",
+      "lastModelRunAt": "2026-11-21T17:59:57.146Z",
       "fundamentals": {
         "previousElectionMargin": null,
         "districtPartisanLean": null,
         "incumbencyAdjustment": 0,
         "fundraisingAdvantage": 0,
         "candidateQualityAdjustment": 0,
-        "dataAsOf": "2026-11-02T17:46:56.010Z",
+        "dataAsOf": "2026-11-21T17:59:57.146Z",
         "sourceUrls": [
           "https://drive.google.com/file/d/1UACnmnM84Dd1hU0l6iqHNgXkyh5oCelO/view",
           "https://www.activote.net/polls/2026/tx-u-s-senate/2026-10-29/",
@@ -3231,7 +3371,6 @@
           "https://sri.siena.edu/2026/11/01/nytimes-siena-poll-of-likely-voters-alaska-iowa-kansas-maine-michigan-ohio-and-texas/",
           "https://data.ddhq.io/polls/2026/10/30/Quantus-Insights-Texas",
           "https://www.jordanresearchcenter.org/s/TSUStatewideOct2026.pdf",
-          "https://texaspolitics.utexas.edu/blog/latest-ut-texas-politics-poll-finds-historic-levels-of-competition-in-texas-midterm-elections",
           "https://254labs.io/news/2026-10-tx.pdf"
         ]
       }
@@ -3245,40 +3384,40 @@
         "projectedVoteShare": 48,
         "projectedVoteShareLow": 43.5,
         "projectedVoteShareHigh": 52.5,
-        "pollingAverage": 45.5,
-        "winProbabilityChange": -2
+        "pollingAverage": 45.4,
+        "winProbabilityChange": 0
       },
       {
         "candidateId": "candidate-james-talarico-democratic-race-2026-us-senate",
         "party": "democratic",
         "winProbability": 0.7,
         "runoffProbability": null,
-        "projectedVoteShare": 52,
-        "projectedVoteShareLow": 47.5,
-        "projectedVoteShareHigh": 56.5,
+        "projectedVoteShare": 52.1,
+        "projectedVoteShareLow": 47.6,
+        "projectedVoteShareHigh": 56.6,
         "pollingAverage": 49.5,
-        "winProbabilityChange": 2
+        "winProbabilityChange": 0
       }
     ],
-    "projectedMargin": -4,
+    "projectedMargin": -4.1,
     "projectedWinnerCandidateId": "candidate-james-talarico-democratic-race-2026-us-senate",
     "publishedAt": "2026-07-29T04:01:38.706Z",
     "finalizedAt": null,
     "notes": "Polling-only forecast using weighted verified public polls; no fundamentals adjustments were applied.",
     "createdAt": "2026-07-29T04:01:38.706Z",
-    "updatedAt": "2026-11-02T17:46:56.010Z",
+    "updatedAt": "2026-11-21T17:59:57.146Z",
     "verificationStatus": "verified",
-    "verifiedAt": "2026-11-02T17:46:56.010Z",
+    "verifiedAt": "2026-11-21T17:59:57.146Z",
     "verifiedBy": "GitHub Actions election forecast workflow",
     "verificationNotes": null,
     "publicationStatus": "published",
     "unpublishedAt": null,
     "scheduledFor": null,
     "publishedBy": "GitHub Actions election forecast workflow",
-    "dataAsOf": "2026-11-02T17:46:56.010Z",
-    "lastCheckedAt": "2026-11-02T17:46:56.010Z",
-    "staleAfter": "2026-11-04T17:46:56.010Z",
-    "expiresAt": "2026-11-09T17:46:56.010Z",
+    "dataAsOf": "2026-11-21T17:59:57.146Z",
+    "lastCheckedAt": "2026-11-21T17:59:57.146Z",
+    "staleAfter": "2026-11-23T17:59:57.146Z",
+    "expiresAt": "2026-11-28T17:59:57.146Z",
     "freshnessStatus": "fresh",
     "source": {
       "sourceId": "ktr-forecast-model",
@@ -3286,7 +3425,7 @@
       "sourceType": "forecast_provider",
       "sourceUrl": "https://keeptxred.com/elections/methodology",
       "sourceRecordId": "race-2026-us-senate",
-      "retrievedAt": "2026-11-02T17:46:56.010Z",
+      "retrievedAt": "2026-11-21T17:59:57.146Z",
       "attributionText": "Keep TX Red deterministic election model"
     },
     "fundamentalsBased": false,
@@ -3300,7 +3439,6 @@
       "source-nyt-siena-texas-november-1-2026",
       "source-quantus-texas-october-30-2026",
       "source-tsu-statewide-late-october-2026",
-      "source-ut-texas-politics-project-october-2026",
       "source-yougov-blue-254-labs-october-2026"
     ],
     "snapshots": [
@@ -4004,6 +4142,43 @@
             "projectedVoteShareHigh": 56.5,
             "pollingAverage": 49.5,
             "winProbabilityChange": 2
+          }
+        ]
+      },
+      {
+        "forecastId": "forecast-race-2026-us-senate",
+        "capturedAt": "2026-11-21T17:59:57.146Z",
+        "status": "active",
+        "rating": "leans_democratic",
+        "confidenceLevel": "medium",
+        "projectedWinnerCandidateId": "candidate-james-talarico-democratic-race-2026-us-senate",
+        "projectedMargin": -4.1,
+        "candidateSummaries": [
+          {
+            "candidateId": "candidate-ken-paxton-republican-race-2026-us-senate",
+            "candidateSlug": "ken-paxton-republican-race-2026-us-senate",
+            "candidateName": "KEN PAXTON",
+            "party": "republican",
+            "imageUrl": "https://www.texasattorneygeneral.gov/sites/default/files/inline-images/ken_paxton_bio_thumb.jpg",
+            "winProbability": 0.3,
+            "projectedVoteShare": 48,
+            "projectedVoteShareLow": 43.5,
+            "projectedVoteShareHigh": 52.5,
+            "pollingAverage": 45.4,
+            "winProbabilityChange": 0
+          },
+          {
+            "candidateId": "candidate-james-talarico-democratic-race-2026-us-senate",
+            "candidateSlug": "james-talarico-democratic-race-2026-us-senate",
+            "candidateName": "JAMES TALARICO",
+            "party": "democratic",
+            "imageUrl": "https://jamestalarico.com/wp-content/uploads/2025/09/t4tx-hero.webp",
+            "winProbability": 0.7,
+            "projectedVoteShare": 52.1,
+            "projectedVoteShareLow": 47.6,
+            "projectedVoteShareHigh": 56.6,
+            "pollingAverage": 49.5,
+            "winProbabilityChange": 0
           }
         ]
       }
