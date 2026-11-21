@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-02T17:46:56.010Z",
+  "generatedAt": "2026-11-21T17:59:57.146Z",
   "totals": {
     "races": 227,
     "candidates": 491,
@@ -22,7 +22,7 @@
         "present": true,
         "enabled": false
       },
-      "pollCount": 10,
+      "pollCount": 9,
       "pollIds": [
         "poll-a2-insights-texas-october-2026-us-senate",
         "poll-activote-texas-october-2026-us-senate",
@@ -32,7 +32,6 @@
         "poll-nyt-siena-texas-november-2026-us-senate",
         "poll-quantus-texas-october-2026-us-senate",
         "poll-tsu-texas-late-october-2026-us-senate",
-        "poll-ut-texas-october-2026-us-senate",
         "poll-yougov-texas-october-2026-us-senate"
       ],
       "pollCandidateIds": [
@@ -68,7 +67,7 @@
         "present": true,
         "enabled": false
       },
-      "pollCount": 9,
+      "pollCount": 8,
       "pollIds": [
         "poll-activote-texas-october-2026-governor",
         "poll-cnn-ssrs-texas-october-2026-governor",
@@ -77,7 +76,6 @@
         "poll-nyt-siena-texas-november-2026-governor",
         "poll-quantus-texas-october-2026-governor",
         "poll-tsu-texas-late-october-2026-governor",
-        "poll-ut-texas-october-2026-governor",
         "poll-yougov-texas-october-2026-governor"
       ],
       "pollCandidateIds": [
@@ -114,11 +112,10 @@
         "present": true,
         "enabled": false
       },
-      "pollCount": 4,
+      "pollCount": 3,
       "pollIds": [
         "poll-activote-texas-october-2026-lieutenant-governor",
         "poll-tsu-texas-late-october-2026-lieutenant-governor",
-        "poll-ut-texas-october-2026-lieutenant-governor",
         "poll-yougov-texas-october-2026-lieutenant-governor"
       ],
       "pollCandidateIds": [
@@ -155,11 +152,10 @@
         "present": true,
         "enabled": false
       },
-      "pollCount": 4,
+      "pollCount": 3,
       "pollIds": [
         "poll-activote-texas-october-2026-attorney-general",
         "poll-tsu-texas-late-october-2026-attorney-general",
-        "poll-ut-texas-october-2026-attorney-general",
         "poll-yougov-texas-october-2026-attorney-general"
       ],
       "pollCandidateIds": [
@@ -190,11 +186,10 @@
         "present": true,
         "enabled": false
       },
-      "pollCount": 3,
+      "pollCount": 2,
       "pollIds": [
         "poll-activote-texas-october-2026-comptroller",
-        "poll-tsu-texas-late-october-2026-comptroller",
-        "poll-ut-texas-october-2026-comptroller"
+        "poll-tsu-texas-late-october-2026-comptroller"
       ],
       "pollCandidateIds": [
         "candidate-don-huffines-republican-race-2026-comptroller",
