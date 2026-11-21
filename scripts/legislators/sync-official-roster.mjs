@@ -307,6 +307,13 @@ function houseRoster(html) {
         "Marc LaHood:121": "4595",
         "Mark Dorazio:122": "4145",
         "Josey Garcia:124": "4170",
+        "Ann Johnson:134": "3985",
+        "Jon E. Rosenthal:135": "3635",
+        "Jon Rosenthal:135": "3635",
+        "John H. Bucy III:136": "3595",
+        "John H. Bucy lll:136": "3595",
+        "John Bucy:136": "3595",
+        "Charlene Ward Johnson:139": "4785",
       })[`${reverseHouseName(member.member_name)}:${Number(member.id)}`] ?? member.member_bill_code}`,
       imageUrl: new URL(member.image, "https://house.texas.gov/").href,
     }))

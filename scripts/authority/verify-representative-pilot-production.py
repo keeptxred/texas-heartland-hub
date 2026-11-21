@@ -64,6 +64,9 @@ READY = (
     "marc-lahood", "mark-dorazio", "diego-bernal", "josey-garcia",
     "ray-lopez", "sam-harless", "charles-cunningham", "briscoe-cain",
     "dennis-paul",
+    "tom-oliverson", "alma-allen", "mike-schofield", "mano-deayala",
+    "ann-johnson", "jon-rosenthal", "john-bucy", "gene-wu",
+    "lacey-hull", "charlene-ward-johnson", "armando-walle",
 )
 NOT_READY = ("dan-crenshaw", "john-cornyn", "greg-abbott", "jeff-barry")
 NS = {"sm": "http://www.sitemaps.org/schemas/sitemap/0.9"}
