@@ -52,6 +52,28 @@ describe("public article readiness floor", () => {
     expect(isPublicArticleReady({ ...pendingImage, quality_flags: ["seo_noindex"] })).toBe(false);
   });
 
+  it("keeps image-pending news out of public discovery without erasing historical records", () => {
+    const pendingNews = {
+      ...base,
+      kind: "news",
+      image_url: null,
+      featured_image_url: null,
+      image_generation_status: "pending",
+    };
+    expect(isPublicArticleReady(pendingNews)).toBe(false);
+    expect(isPublicArticleReady({ ...pendingNews, image_generation_status: "failed" })).toBe(false);
+    expect(isPublicArticleReady({
+      ...pendingNews, image_generation_status: "ready",
+      image_url: "/og/default.jpg", featured_image_url: "/og/default.jpg",
+    })).toBe(false);
+    expect(isPublicArticleReady({
+      ...pendingNews, image_generation_status: "ready",
+      featured_image_url: "https://keeptxred.com/api/public/article-image/approved.jpg",
+    })).toBe(true);
+    // Evergreen/legal references intentionally permit text-first records.
+    expect(isPublicArticleReady({ ...pendingNews, kind: "evergreen" })).toBe(true);
+  });
+
   it("blocks Non-Political taxonomy until it is corrected", () => {
     expect(isPublicArticleReady({ ...base, category: "Non-Political" })).toBe(false);
   });
