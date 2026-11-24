@@ -1,3 +1,4 @@
+import { publicElectionReference } from "@/lib/public-election-reference";
 import { Link } from "@tanstack/react-router";
 import {
   COURT_TIMELINE,
@@ -375,7 +376,7 @@ export function TexasSupremeCourtHistoryPage() {
             ["Court of Criminal Appeals history", "The separate court of last resort for criminal cases.", "/texas-government/court-of-criminal-appeals-history"],
             ["Texas Supreme Court realignment", "How Republican candidates transformed statewide Supreme Court elections.", "/texas-politics/texas-supreme-court-realignment"],
             ["Texas constitutional history", "The charters that repeatedly redesigned state government.", "/texas-politics/texas-constitutional-history"],
-            ["2026 Election Central", "Current statewide judicial and other Texas election coverage.", "/elections/2026"],
+            [publicElectionReference().label, publicElectionReference().description, publicElectionReference().href],
           ].map(([title, text, href]) => (
             <a key={href} href={href} className="rounded-xl border bg-muted/20 p-5 transition hover:border-primary">
               <h3 className="font-bold">{title}</h3>
