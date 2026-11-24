@@ -1,3 +1,4 @@
+import { publicElectionReference } from "@/lib/public-election-reference";
 import type { PoliticalHistoryAuthorityPage as PoliticalHistoryPageData } from "@/data/texas-political-history-authority";
 
 const SITE_URL = "https://keeptxred.com";
@@ -111,9 +112,7 @@ export function PoliticalHistoryAuthorityPage({ page }: { page: PoliticalHistory
         <h1 className="mt-4 max-w-5xl text-4xl font-bold leading-tight md:text-6xl">{page.title}</h1>
         <p className="mt-5 max-w-4xl text-lg leading-8 text-muted-foreground">{page.intro}</p>
         <div className="mt-6 flex flex-wrap gap-3">
-          <a href="/elections/2026" className="rounded-md bg-primary px-4 py-2 text-sm font-bold text-primary-foreground">
-            Election Central
-          </a>
+          <a href={publicElectionReference().href} className="rounded-md bg-primary px-4 py-2 text-sm font-bold text-primary-foreground">{publicElectionReference().label}</a>
           <a href="/texas-politics" className="rounded-md border px-4 py-2 text-sm font-bold hover:border-primary">
             Texas political history
           </a>
