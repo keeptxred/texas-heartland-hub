@@ -1,3 +1,4 @@
+import { packetHasVerifiedEventPrimary } from "@/lib/newsroom-primary-evidence";
 import { createFileRoute } from "@tanstack/react-router";
 import { sourceAuthorityLabel, sourceUrlSupportsPrimaryRecord } from "@/data/source-authority";
 import { enrichArticleRow } from "@/lib/content-quality";
@@ -226,11 +227,8 @@ function newsroomRepairUserPrompt(
 }
 
 function productionAuthorityEligible(packetRow: PacketRow): boolean {
-  // Fail closed until event-specific first-party evidence has been collected.
-  // Secondary-only stories require separately documented editorial review.
-  return packetRow.packet_json.sources.some((source) => source.isPrimarySource
-    && sourceUrlSupportsPrimaryRecord(source.url, source.source)
-    && Boolean(source.extractedBody?.trim() || source.description?.trim()));
+  // No automatic secondary-only publication; the editor must resolve the evidence gap.
+  return packetHasVerifiedEventPrimary(packetRow.packet_json);
 }
 
 async function handler({ request }: { request: Request }) {
