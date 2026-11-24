@@ -1,5 +1,6 @@
 import { sourceUrlSupportsPrimaryRecord } from "@/data/source-authority";
-import { findEventPrimaryFeedRecords, isSubstantiveEventPrimary } from "@/lib/newsroom-primary-evidence";
+import { findEventPrimaryFeedRecords, isSubstantiveEventPrimary, packetHasVerifiedEventPrimary } from "@/lib/newsroom-primary-evidence";
+import { issuerResearchFeedsForSubjects, fetchIssuerResearchRecords } from "@/lib/newsroom-issuer-rss-evidence";
 import { createFileRoute } from "@tanstack/react-router";
 import { buildResearchPacket, type ResearchPacket } from "@/lib/newsroom-research-packet";
 import { evaluateResearchRescue, isRecoverableResearchFailure, type RecoverableResearchCandidate } from "@/lib/newsroom-research-rescue";
@@ -495,7 +496,40 @@ async function handler({ request }: { request: Request }) {
     }
   }
   const linkedPrimaryFeeds: FeedPacketRow[] = [];
-  const linkedPrimaryTargets = [...linkedTargets.entries()].slice(0, LINKED_PRIMARY_FETCH_LIMIT);
+  // A national issuer's primary statement may omit "Texas" and correctly be
+  // excluded from ordinary news ingestion. Research it only for an existing
+  // event whose packet lacks primary evidence. The Texas publication gate is
+  // still applied separately. One feed fetch consumes one of the four slots.
+  const issuerSubjects = clusters.filter((cluster) => {
+    const existing = existingPacketByCluster.get(cluster.id)?.packet_json;
+    return !existing || !packetHasVerifiedEventPrimary(existing);
+  }).map((cluster) => cluster.canonical_subject);
+  const issuerFeeds = researchRequeueAuthorized
+    ? issuerResearchFeedsForSubjects(issuerSubjects).slice(0, Math.min(2, LINKED_PRIMARY_FETCH_LIMIT))
+    : [];
+  const issuerRecords = (await Promise.all(issuerFeeds.map((feed) => fetchIssuerResearchRecords(feed, issuerSubjects)))).flat();
+  let issuerRecordsRecovered = 0;
+  for (const record of issuerRecords) {
+    const { error: writeError } = await newsroomDb.from("texas_news_feed").upsert({
+      title: record.title, source: record.source, link: record.url, pub_date: record.publishedAt,
+      description: "", extracted_body: record.extractedBody, source_reputation_score: record.sourceReputationScore,
+      ready_for_rewrite: false,
+    }, { onConflict: "link", ignoreDuplicates: true });
+    if (writeError) { console.warn("[newsroom-packets] issuer record storage failed", writeError.message); continue; }
+    // Preserve an existing richer extraction; fill only missing publisher text.
+    const { error: fillError } = await newsroomDb.from("texas_news_feed")
+      .update({ extracted_body: record.extractedBody }).eq("link", record.url)
+      .is("extracted_body", null);
+    if (fillError) console.warn("[newsroom-packets] issuer record hydration failed", fillError.message);
+    const { data: row, error: rowError } = await newsroomDb.from("texas_news_feed")
+      .select("id,title,source,link,pub_date,description,extracted_body,source_reputation_score").eq("link", record.url).maybeSingle();
+    if (rowError || !row) continue;
+    linkedPrimaryFeeds.push(row as FeedPacketRow);
+    issuerRecordsRecovered++;
+  }
+  const linkedPrimaryTargets = [...linkedTargets.entries()]
+    .filter(([url]) => !issuerRecords.some((record) => record.url === url))
+    .slice(0, LINKED_PRIMARY_FETCH_LIMIT - issuerFeeds.length);
   for (const [url, subjects] of linkedPrimaryTargets) {
     const record = await fetchLinkedPrimaryRecord(url);
     if (!record) continue;
@@ -628,9 +662,11 @@ async function handler({ request }: { request: Request }) {
     unchanged: packets.length - packetsToWrite.length,
     sourceItems: packets.reduce((sum, packet) => sum + packet.source_count, 0),
     primarySourceItems: packets.reduce((sum, packet) => sum + packet.primary_source_count, 0),
-    sourcePagesFetched: sourcePageTargets.length + linkedPrimaryTargets.length,
+    sourcePagesFetched: sourcePageTargets.length + linkedPrimaryTargets.length + issuerFeeds.length,
+    issuerResearchFeedsFetched: issuerFeeds.length,
+    issuerPrimaryRecordsRecovered: issuerRecordsRecovered,
     linkedPrimaryPagesFetched: linkedPrimaryTargets.length,
-    linkedPrimaryRecordsRecovered: linkedPrimaryFeeds.length,
+    linkedPrimaryRecordsRecovered: linkedPrimaryFeeds.length - issuerRecordsRecovered,
     sourcePagesUpdated,
     sourcePageCharsWritten,
     sourcePagesCoolingDown,
