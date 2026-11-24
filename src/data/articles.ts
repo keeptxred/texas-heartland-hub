@@ -776,8 +776,8 @@ export const ARTICLES: Article[] = [
     slug: "texas-voting-guide-2026",
     category: "Elections",
     title:
-      "The Texas Voting Guide for 2026: Primaries, Runoffs, ID Rules, and the Calendar That Actually Matters",
-    dek: "Everything a Texas voter needs for 2026 — registration deadlines, March primary, May runoff, November general, accepted photo ID, mail ballot rules, and how to find your polling place in Houston, Dallas, San Antonio, Austin, and beyond.",
+      "Texas Voting in 2026: Election Calendar, Registration, ID and Results",
+    dek: "A historical reference to Texas’s 2026 primaries, runoffs and general election, with official results, registration, voter ID, mail ballot and polling-place resources for future elections.",
     author: "Elections Desk",
     date: "June 27, 2026",
     publishedAt: "2026-06-27T10:00:00",
