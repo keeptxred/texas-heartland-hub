@@ -184,7 +184,9 @@ for (const marker of [
   }
 }
 for (const marker of [
-  'secondary single-source story held for independent corroboration',
+  'story held for event-specific primary evidence',
+  'sourceUrlSupportsPrimaryRecord',
+  'primaryRecordMatchesEvent',
   'strongMerge && independentSourceCount >= 2',
   'independentPublisherFamilyCount(cluster)',
   'sourceFamilyFromUrl(item.link)',
