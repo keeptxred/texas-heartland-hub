@@ -1,0 +1,55 @@
+name: Review indexed authority civic reference sources
+on:
+  schedule:
+    - cron: "26 14 * * 2"
+  workflow_dispatch:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'scripts/authority/indexed-reference-review.json'
+      - 'scripts/authority/review-indexed-reference.mjs'
+      - '.github/workflows/review-indexed-reference.yml'
+permissions:
+  contents: read
+concurrency:
+  group: ktr-reference-review-${{ github.event_name }}-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      issues: write
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '22'
+      - name: Validate review inventory
+        run: node scripts/authority/review-indexed-reference.mjs --validate
+      - name: Review due dates and official source availability
+        if: github.event_name != 'pull_request'
+        id: review
+        run: node scripts/authority/review-indexed-reference.mjs
+      - name: Keep review evidence
+        if: always() && github.event_name != 'pull_request'
+        uses: actions/upload-artifact@v4
+        with:
+          name: indexed-reference-review
+          path: artifacts/indexed-reference-review.*
+          if-no-files-found: warn
+          retention-days: 30
+      - name: Notify editorial recovery checkpoint only when actionable
+        if: github.event_name != 'pull_request' && steps.review.outputs.actionable != '0'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          marker="indexed-reference-review:$(date -u +%Y-%m)"
+          gh api --paginate "repos/${GITHUB_REPOSITORY}/issues/3772/comments?per_page=100" --jq '.[] | select(.user.login == "github-actions[bot]") | .body' > /tmp/ktr-reference-comments
+          if ! grep -Fq "$marker" /tmp/ktr-reference-comments; then
+            printf '\n<!-- %s -->\n' "$marker" >> artifacts/indexed-reference-review.md
+            gh issue comment 3772 --body-file artifacts/indexed-reference-review.md
+          fi
