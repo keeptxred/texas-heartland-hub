@@ -61,7 +61,12 @@ describe("KTR search-recovery authority guides", () => {
   for (const [slug, guide] of Object.entries(SEARCH_RECOVERY_AUTHORITY_GUIDES)) {
     it(`${slug} clears the authority quality floor`, () => {
       expect(guide.slug).toBe(slug);
-      expect(guide.updated).toBe(slug === "texas-lobbying-2026" ? "2026-10-29" : "2026-09-28");
+      const verifiedReviewDates: Record<string, string> = {
+        "texas-lobbying-2026": "2026-10-29",
+        "how-to-read-a-texas-bill": "2026-11-24",
+        "texas-bill-fiscal-notes": "2026-11-24",
+      };
+      expect(guide.updated).toBe(verifiedReviewDates[slug] ?? "2026-09-28");
       expect(guide.keyTakeaways.length).toBeGreaterThanOrEqual(5);
       expect(guide.sections.length).toBeGreaterThanOrEqual(5);
       expect(guide.faq.length).toBeGreaterThanOrEqual(4);

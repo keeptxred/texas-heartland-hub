@@ -231,6 +231,15 @@ function BillsPage() {
             <div className="mt-4 space-y-4 leading-7 text-muted-foreground">
               <p>If you know the bill number, enter the chamber, bill type and number, such as <strong className="text-foreground">HB 4</strong> or <strong className="text-foreground">SJR 56</strong>. If you do not know the number, search a caption or subject and narrow the results by Legislature, chamber, bill type or status.</p>
               <p>A bill number alone is not always enough to identify legislation across sessions. Use the session label on each result before relying on a bill’s status, history or documents.</p>
+              <h3 className="font-bold text-foreground">How to tell whether a filed bill is law</h3>
+              <p>A filing is a proposal, including bills filed before the next regular session begins. A bill passed by one chamber is not yet law. Check the legislative session, the latest official action, the final text, the governor’s disposition and the effective-date provision before treating a proposal as an enforceable requirement.</p>
+              <h3 className="font-bold text-foreground">Which bill document should you read?</h3>
+              <dl className="space-y-3">
+                <div><dt className="font-semibold text-foreground">Introduced text</dt><dd>Shows the original proposal. Compare it with later committee substitutes or amended versions before drawing conclusions.</dd></div>
+                <div><dt className="font-semibold text-foreground">Engrossed and enrolled text</dt><dd>Engrossed text reflects passage by the originating chamber; enrolled text is the final version passed by both chambers. Verify the governor’s action separately.</dd></div>
+                <div><dt className="font-semibold text-foreground">Bill analysis and fiscal note</dt><dd>The analysis explains the proposal; a fiscal note estimates its budget effects. Neither replaces the actual bill text. Check that the documents correspond to the version you are reading.</dd></div>
+              </dl>
+              <p className="text-sm">Document references: <a className="font-semibold text-primary underline" href="https://capitol.texas.gov/Resources/FAQ.aspx">Texas Legislature Online help</a> and the <a className="font-semibold text-primary underline" href="https://lbb.texas.gov/Fiscal_Notes.aspx">Legislative Budget Board fiscal-note explanation</a>.</p>
               <p>KeepTXRed’s bill records are designed for discovery and cross-reference. For the state’s official legislative record, verify the bill on <a href="https://capitol.texas.gov/billlookup/billnumber.aspx" target="_blank" rel="noopener noreferrer" className="font-semibold text-primary underline underline-offset-4">Texas Legislature Online</a>.</p>
             </div>
           </div>
@@ -240,6 +249,8 @@ function BillsPage() {
               <p><Link to="/texas-legislature" className="font-semibold text-primary underline underline-offset-4">Texas Legislature guide</Link><span className="text-muted-foreground"> — chambers, sessions, votes and legislative structure.</span></p>
               <p><Link to="/laws" className="font-semibold text-primary underline underline-offset-4">Texas laws</Link><span className="text-muted-foreground"> — statutes, legal guides and enacted-law explainers.</span></p>
               <p><Link to="/committees" className="font-semibold text-primary underline underline-offset-4">Texas committees</Link><span className="text-muted-foreground"> — committee structure and legislative work.</span></p>
+              <p><a href="/texas-government/reference/how-to-read-a-texas-bill" className="font-semibold text-primary underline underline-offset-4">How to read a Texas bill</a><span className="text-muted-foreground"> — interpret versions and legislative documents.</span></p>
+              <p><a href="/texas-government/reference/texas-bill-fiscal-notes" className="font-semibold text-primary underline underline-offset-4">Texas bill fiscal notes</a><span className="text-muted-foreground"> — understand the budget estimate and its limitations.</span></p>
               <p><Link to="/representatives" className="font-semibold text-primary underline underline-offset-4">Texas representatives</Link><span className="text-muted-foreground"> — connect legislation to elected officials and districts.</span></p>
             </div>
           </aside>

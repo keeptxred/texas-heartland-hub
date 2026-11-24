@@ -1,4 +1,5 @@
 import { Link } from "@tanstack/react-router";
+import { isAvailableElectionReference, publicElectionReference } from "@/lib/public-election-reference";
 
 export type LegislaturePageKey = "hub" | "house" | "senate" | "current" | "past";
 
@@ -122,10 +123,13 @@ export default function TexasLegislaturePage({ page }: { page: LegislaturePageKe
                   <li>The originating chamber debates and votes on the measure.</li>
                   <li>The second chamber repeats the committee and floor process.</li>
                   <li>Both chambers approve identical text and send it to the governor.</li>
+                  <li>The governor may sign, veto, or allow a bill to become law without a signature. A veto may be overridden by the required two-thirds votes in both chambers.</li>
+                  <li>Check the enacted measure’s effective-date provision. Passage, enactment and the date a law takes effect are different milestones.</li>
                 </ol>
                 <div className="mt-4 flex flex-wrap gap-x-5 gap-y-2 font-semibold">
                   <Link to="/bills" search={EMPTY_BILLS_SEARCH} className="text-primary hover:underline">Browse Texas bills →</Link>
                   <a href="https://capitol.texas.gov/" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">Verify with Texas Legislature Online →</a>
+                  <a href="https://statutes.capitol.texas.gov/?artSec=4.14&amp;chapter=CN.4&amp;code=CN" className="text-primary hover:underline">Texas Constitution, Article IV, Section 14 →</a>
                 </div>
               </div>
               <div className="rounded-xl border bg-card p-6">
@@ -133,6 +137,7 @@ export default function TexasLegislaturePage({ page }: { page: LegislaturePageKe
                 <div className="mt-4 space-y-5">
                   <div><h3 className="font-semibold">How many Texas legislators are there?</h3><p className="mt-1 text-muted-foreground">Texas has 181 legislators: 150 representatives and 31 senators.</p></div>
                   <div><h3 className="font-semibold">Who calls a special session?</h3><p className="mt-1 text-muted-foreground">Only the governor can call a special session and determine its subjects.</p></div>
+                  <div><h3 className="font-semibold">Does prefiling a bill change Texas law?</h3><p className="mt-1 text-muted-foreground">No. A prefiled measure is a proposal for an upcoming session. Check the session designation and the official action history to distinguish a proposal from enacted law.</p></div>
                   <div><h3 className="font-semibold">Where are official bill actions published?</h3><p className="mt-1 text-muted-foreground">Texas Legislature Online is the authoritative source for bill text, actions, votes and committee records.</p></div>
                 </div>
               </div>
@@ -140,7 +145,7 @@ export default function TexasLegislaturePage({ page }: { page: LegislaturePageKe
           </>
         ) : null}
         <div className="grid gap-6 md:grid-cols-2">
-          {content.sections.map(([title, description, href]) => (
+          {content.sections.filter(([, , href]) => isAvailableElectionReference(href)).map(([title, description, href]) => (
             <a key={href} href={href} className="rounded-xl border bg-card p-6 shadow-sm transition hover:border-primary/40 hover:shadow-md">
               <h2 className="text-xl font-bold text-foreground">{title}</h2>
               <p className="mt-2 leading-7 text-muted-foreground">{description}</p>
@@ -152,8 +157,9 @@ export default function TexasLegislaturePage({ page }: { page: LegislaturePageKe
           <h2 className="text-xl font-bold">Texas Legislature resources</h2>
           <p className="mt-2 leading-7 text-muted-foreground">KeepTXRed connects legislative information with Texas lawmakers, elections, laws, policy coverage, and practical voter resources.</p>
           <div className="mt-4 flex flex-wrap gap-x-5 gap-y-2 font-semibold text-primary">
-            <Link to="/bills" search={EMPTY_BILLS_SEARCH}>Bills</Link><Link to="/representatives">Representatives</Link><Link to="/elections/legislative">Legislative elections</Link><Link to="/laws">Texas laws</Link><Link to="/get-involved">Get involved</Link>
+            <Link to="/bills" search={EMPTY_BILLS_SEARCH}>Bills</Link><Link to="/representatives">Representatives</Link><a href={publicElectionReference().href}>{publicElectionReference().label}</a><Link to="/laws">Texas laws</Link><Link to="/get-involved">Get involved</Link>
           </div>
+          <div className="mt-4 flex flex-wrap gap-x-5 gap-y-2 font-semibold text-primary"><a href="/texas-government/reference/how-to-read-a-texas-bill">How to read a Texas bill</a><a href="/texas-government/reference/texas-bill-fiscal-notes">Understand fiscal notes</a><Link to="/contact-legislators">Contact Texas lawmakers</Link></div>
         </aside>
       </section>
     </main>

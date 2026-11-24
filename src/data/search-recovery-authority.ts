@@ -325,7 +325,7 @@ export const SEARCH_RECOVERY_AUTHORITY_GUIDES: Record<string, SearchRecoveryAuth
     "title": "How to Read a Texas Bill: Bill Text, Amendments, Fiscal Notes, Committee Reports and Votes",
     "dek": "A document-by-document guide to Texas Legislature Online so readers can tell what a bill says now, what changed, what it may cost, where it is in the process and what lawmakers actually voted on.",
     "eyebrow": "Texas legislative research guide",
-    "updated": "2026-09-28",
+    "updated": "2026-11-24",
     "keyTakeaways": [
       "A Texas bill number is only unambiguous when the legislative session is known because numbers are reused across sessions.",
       "The latest text may differ materially from the filed version because substitutes and amendments can change a bill.",
@@ -338,7 +338,14 @@ export const SEARCH_RECOVERY_AUTHORITY_GUIDES: Record<string, SearchRecoveryAuth
         "heading": "Step one: identify the exact bill and session",
         "paragraphs": [
           "Texas reuses bill numbers from one Legislature or session to another. HB 1 in one session is not the same measure as HB 1 in another. A reliable citation needs the Legislature and, when applicable, the called-session identifier in addition to the bill type and number.",
-          "Texas Legislature Online provides Bill Lookup when the number is known and additional search tools when it is not. KTR bill pages preserve session-aware identifiers; readers should confirm that session before comparing sponsors, actions, documents or outcomes."
+          "Texas Legislature Online provides Bill Lookup when the number is known and additional search tools when it is not. The KTR bill lookup preserves session-aware identifiers; confirm the session before comparing sponsors, actions, documents or outcomes."
+        ]
+      },
+      {
+        "heading": "Worked example: identify a prefiled bill without confusing it with current law",
+        "paragraphs": [
+          "Suppose a reader finds HB 1 in both 89(R) and 90(R). Those are separate legislative records. Select the correct session in the bill lookup, open the record, and confirm its most recent action and text version. A 90(R) filing before the regular session begins is still a proposal; it does not change the law simply by appearing in the database.",
+          "For an enacted measure, locate its enrolled text, confirm executive disposition, and read its effective-date language. Then consult the applicable statute to establish current legal requirements. If a news report cites an earlier text, compare the relevant section of that version with the later version before relying on the report."
         ]
       },
       {
@@ -352,7 +359,7 @@ export const SEARCH_RECOVERY_AUTHORITY_GUIDES: Record<string, SearchRecoveryAuth
         "heading": "Step three: use analyses and committee documents as context",
         "paragraphs": [
           "Bill analyses can explain background, existing law and intended operation. Committee reports can package a reported version with related documents. They are valuable because statutory language can be difficult to interpret without context.",
-          "They remain explanatory documents. If an analysis and the operative text appear inconsistent, the text is the language being considered. KTR should use analyses to clarify structure, not allow them to replace the bill text."
+          "They remain explanatory documents. If an analysis and the operative text appear inconsistent, the text is the language being considered. Use analyses to clarify the proposal; resolve differences by consulting the relevant bill version."
         ]
       },
       {
@@ -424,6 +431,10 @@ export const SEARCH_RECOVERY_AUTHORITY_GUIDES: Record<string, SearchRecoveryAuth
       {
         "label": "Texas laws",
         "href": "/laws"
+      },
+      {
+        "label": "Read Texas bill fiscal notes",
+        "href": "/texas-government/reference/texas-bill-fiscal-notes"
       }
     ],
     "methodology": "This guide uses Texas Legislature Online as the primary bill-document system and the Legislative Budget Board for fiscal-note methodology. KTR summaries should identify the session, document version, action date and vote stage needed to reproduce each claim."
@@ -433,7 +444,7 @@ export const SEARCH_RECOVERY_AUTHORITY_GUIDES: Record<string, SearchRecoveryAuth
     "title": "What Does a Texas Bill Cost? How to Read Fiscal Notes and Legislative Budget Estimates",
     "dek": "A guide to Legislative Budget Board fiscal notes, five-year estimates, state and local impacts, assumptions, indeterminate effects and the difference between a projected fiscal effect and an actual future cost.",
     "eyebrow": "Texas fiscal research guide",
-    "updated": "2026-09-28",
+    "updated": "2026-11-24",
     "keyTakeaways": [
       "The Legislative Budget Board defines a fiscal note as a written estimate of costs, savings, revenue gains or revenue losses that may result from a bill or joint resolution.",
       "Fiscal notes are estimates built on assumptions; they are not invoices and do not guarantee actual future spending or revenue.",
@@ -453,7 +464,14 @@ export const SEARCH_RECOVERY_AUTHORITY_GUIDES: Record<string, SearchRecoveryAuth
         "heading": "Read the assumptions before repeating the headline number",
         "paragraphs": [
           "An estimate can depend on staffing, caseloads, participation, fee collections, federal matching funds, technology costs, implementation dates and agency interpretations. Those assumptions explain how the result was produced.",
-          "KTR should preserve material assumptions beside a fiscal figure. If an agency assumes a specific number of employees, cases or transactions, that belongs with the estimate because it is part of the model."
+          "When quoting a fiscal figure, preserve its material assumptions. If an agency assumes a specific number of employees, cases or transactions, that belongs with the estimate because it is part of the model."
+        ]
+      },
+      {
+        "heading": "Worked example: compare one-time and recurring costs",
+        "paragraphs": [
+          "For illustration only, imagine a proposal that requires $2 million to start a program and $500,000 per year for operations. If the startup cost and first operating year fall in the same fiscal year, the five-year gross cost would be $4.5 million, before offsets. The recurring annual amount would still be $500,000, not $900,000 simply because that is the five-year average.",
+          "Actual fiscal notes may show net revenue or savings, separate funds, offsets or indeterminate effects. Read the table headings, implementation date and assumptions before adding any amounts. Do not treat a lack of a quantified estimate as a finding of zero cost."
         ]
       },
       {
@@ -467,7 +485,7 @@ export const SEARCH_RECOVERY_AUTHORITY_GUIDES: Record<string, SearchRecoveryAuth
         "heading": "State impact and local impact are different questions",
         "paragraphs": [
           "Some bills create duties for counties, cities, school districts or other local governments even when the state impact is limited. Fiscal materials can describe those local effects separately, and a measure can shift a cost from one level of government to another.",
-          "KTR should label state and local estimates separately. When a local effect is indeterminate, that status should be preserved rather than converted into a number that the official analysis did not provide."
+          "Keep state and local estimates separate. When a local effect is indeterminate, that status should be preserved rather than converted into a number that the official analysis did not provide."
         ]
       },
       {
@@ -528,6 +546,10 @@ export const SEARCH_RECOVERY_AUTHORITY_GUIDES: Record<string, SearchRecoveryAuth
       {
         "label": "Texas Legislature guide",
         "href": "/texas-legislature"
+      },
+      {
+        "label": "How to read a Texas bill",
+        "href": "/texas-government/reference/how-to-read-a-texas-bill"
       },
       {
         "label": "Texas laws",

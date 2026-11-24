@@ -36,7 +36,6 @@ export function searchRecoveryAuthorityHead(guide: SearchRecoveryAuthorityGuide)
           "@id": `${canonical}#article`,
           headline: guide.title,
           description: guide.dek,
-          datePublished: guide.updated,
           dateModified: guide.updated,
           mainEntityOfPage: { "@type": "WebPage", "@id": canonical },
           publisher: { "@type": "Organization", name: "Keep TX Red", url: SITE_URL },
