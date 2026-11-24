@@ -1,4 +1,4 @@
-import { publicElectionReference } from "@/lib/public-election-reference";
+import { availableElectionReferences, publicElectionReference } from "@/lib/public-election-reference";
 import type { PoliticalHistoryAuthorityPage as PoliticalHistoryPageData } from "@/data/texas-political-history-authority";
 
 const SITE_URL = "https://keeptxred.com";
@@ -167,7 +167,7 @@ export function PoliticalHistoryAuthorityPage({ page }: { page: PoliticalHistory
       <section className="mt-12" aria-labelledby={`${page.slug}-related`}>
         <h2 id={`${page.slug}-related`} className="text-3xl font-bold">Continue through the Texas civic authority network</h2>
         <div className="mt-6 grid gap-4 md:grid-cols-2">
-          {page.relatedLinks.map((link) => (
+          {availableElectionReferences(page.relatedLinks).map((link) => (
             <a key={link.href} href={canonicalInternalHref(link.href)} className="rounded-xl border bg-card p-5 transition-colors hover:border-primary">
               <h3 className="font-bold text-primary">{link.label} →</h3>
               <p className="mt-2 text-sm leading-6 text-muted-foreground">{link.description}</p>
