@@ -273,6 +273,14 @@ export function sourceUrlSupportsPrimaryRecord(
     return false;
   }
   if (host.endsWith(".gov") || host.endsWith(".mil")) return true;
+  // Direct corporate records: never treat a third-party URL or a corporate
+  // storefront/homepage as event evidence. Extend verified publisher routes
+  // through this shared classifier, not a feed label.
+  const path = new URL(url).pathname;
+  if ((host === "nvidianews.nvidia.com" && /^\/news\/[^/]+\/?$/.test(path))
+    || (host === "blogs.nvidia.com" && /^\/blog\/[^/]+\/?$/.test(path))
+    || (host === "investor.nvidia.com" && /\/(news-releases|financial-info|sec-filings)\//i.test(path))) return true;
+  if (host.endsWith(".state.tx.us")) return true;
   const profile = getSourceAuthorityProfileForPublisher(sourceName, url);
   if (profile?.kind !== "government" && profile?.kind !== "official") return false;
   return sourceUrlMatchesProfileHost(host, profile);
@@ -288,7 +296,7 @@ export function sourceAuthorityLabel(input: {
     return `${source} — newspaper clipping index (secondary discovery)`;
   }
   const profile = getSourceAuthorityProfileForPublisher(input.source, input.url);
-  if (input.isPrimarySource && sourceUrlSupportsPrimaryRecord(input.url, input.source)) {
+  if (sourceUrlSupportsPrimaryRecord(input.url, input.source)) {
     return `${input.source} — primary / official source`;
   }
   if (profile) return `${input.source} — ${profile.label.toLowerCase()}`;
