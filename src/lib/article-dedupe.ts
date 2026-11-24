@@ -168,15 +168,21 @@ export function isOfficialArticleSource(source: ArticleSource): boolean {
   }
 }
 
-function officialSourcesOnly(sources: ArticleSource[] | undefined): ArticleSource[] | undefined {
+function dedupeSources(sources: ArticleSource[] | undefined, preserveNewsSources: boolean): ArticleSource[] | undefined {
   if (!Array.isArray(sources)) return sources;
   const seen = new Set<string>();
   const out: ArticleSource[] = [];
 
   for (const source of sources) {
-    if (!source || !isOfficialArticleSource(source)) continue;
+    if (!source || (!preserveNewsSources && !isOfficialArticleSource(source))) continue;
     const url = (source.url ?? "").trim();
     const label = (source.label ?? "").trim();
+    if (preserveNewsSources) {
+      try {
+        const parsed = new URL(url);
+        if (!label || !["https:", "http:"].includes(parsed.protocol) || parsed.username || parsed.password) continue;
+      } catch { continue; }
+    }
     const key = url.toLowerCase();
     if (!key || seen.has(key)) continue;
     seen.add(key);
@@ -186,7 +192,7 @@ function officialSourcesOnly(sources: ArticleSource[] | undefined): ArticleSourc
   return out;
 }
 
-export function dedupeArticleBody<T extends ArticleBodyShape>(body: T): T {
+export function dedupeArticleBody<T extends ArticleBodyShape>(body: T, options: { preserveNewsSources?: boolean } = {}): T {
   if (!body || typeof body !== "object") return body;
   const sourceBody = applyReviewedStaticArticleBodyUpgrade(body);
   const seenPara = new Set<string>();
@@ -236,7 +242,8 @@ export function dedupeArticleBody<T extends ArticleBodyShape>(body: T): T {
     }
   }
 
-  const sources = officialSourcesOnly(sourceBody.sources);
+  // News uses a general Sources heading and must retain attributed corporate records and reporting.
+  const sources = dedupeSources(sourceBody.sources, options.preserveNewsSources === true);
 
   return { ...sourceBody, intro, sections, keyTakeaways, faq, sources } as T;
 }

@@ -1,3 +1,4 @@
+import { packetHasVerifiedEventPrimary } from "./newsroom-primary-evidence";
 import { categoryForPillar } from "./newsroom-rewrite-adapter";
 import { newsroomPacketHasTexasIncidentEvidence } from "./newsroom-texas-evidence-guard";
 import { newsroomHasPublisherDiversity } from "./newsroom-publication-preflight";
@@ -56,7 +57,7 @@ export function evaluateResearchRescue(input: {
     retry: false, reason: "hold", evidenceChars, previousEvidenceChars,
   });
   if (!isRecoverableResearchFailure(candidate) || !packet || retryCount(candidate) >= 1) return hold();
-  if (!newsroomPacketHasTexasIncidentEvidence(packet)) return hold();
+  if (!newsroomPacketHasTexasIncidentEvidence(packet) || !packetHasVerifiedEventPrimary(packet)) return hold();
   const createdMs = Date.parse(candidate.created_at);
   const updatedMs = Date.parse(candidate.updated_at);
   if (!Number.isFinite(createdMs) || createdMs > nowMs + 60_000 || createdMs < nowMs - NEWS_WINDOW_MS) return hold();

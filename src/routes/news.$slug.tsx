@@ -178,7 +178,10 @@ export const Route = createFileRoute("/news/$slug")({
     const rawBody: StructuredArticleBody = {
       updated: ever.body.updated,
       intro: ever.body.intro,
-      sections: ever.body.sections,
+      // Old auto-generated context sections were populated by substring matches.
+      // Never render them from historical rows; curated topical context is
+      // independently validated by the article router.
+      sections: ever.kind === "news" ? ever.body.sections?.filter((section) => !/^Permanent KTR Context$/i.test(section.heading?.trim() ?? "")) : ever.body.sections,
       faq: ever.body.faq,
       sources: ever.body.sources,
       related: materials.defaultRelatedSlugs,
@@ -188,7 +191,7 @@ export const Route = createFileRoute("/news/$slug")({
     };
     return {
       article: synth,
-      body: dedupeArticleBody(rawBody) as StructuredArticleBody,
+      body: dedupeArticleBody(rawBody, { preserveNewsSources: ever.kind === "news" }) as StructuredArticleBody,
       relatedArticles: materials.relatedArticles,
       ctr: { variants: ever.headline_variants, score: ever.ctr_score },
     };

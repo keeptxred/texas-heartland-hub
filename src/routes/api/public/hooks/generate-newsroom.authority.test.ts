@@ -24,7 +24,7 @@ describe("newsroom authority contract", () => {
   });
 
   it("keeps weak single-source aggregation out of production and out of the index", () => {
-    expect(source).toContain("packetRow.source_count >= 2 || packetRow.primary_source_count >= 1");
+    expect(source).toContain("packetHasVerifiedEventPrimary(packetRow.packet_json)");
     expect(source).toContain("sourceCount < 2 && primarySourceCount === 0");
     expect(source).toContain('"seo_noindex"');
     expect(source).toContain('"single_source_aggregation"');

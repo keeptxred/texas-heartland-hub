@@ -1,3 +1,4 @@
+import { sourceUrlSupportsPrimaryRecord } from "@/data/source-authority";
 import { classifyContentPillar } from "./content-pillars";
 import { isGovernmentNewsClippingUrl } from "./newsroom-discovery-sources";
 import { classifySportsText } from "./sports-taxonomy";
@@ -51,8 +52,8 @@ export function isOfficialSportsSource(sourceName: string | null | undefined, so
 export function isPrimaryNewsSource(sourceName: string | null | undefined, sourceUrl: string | null | undefined): boolean {
   const hostname = hostnameOf(sourceUrl);
   if (!hostname || hostname === "news.google.com" || isGovernmentNewsClippingUrl(sourceUrl)) return false;
-  if (hostname.endsWith(".gov") || hostname.endsWith(".mil") || hostname.endsWith(".state.tx.us")) return true;
-  if (isOfficialSportsSource(sourceName, sourceUrl)) return true;
+  if (sourceUrlSupportsPrimaryRecord(sourceUrl, sourceName)) return true;
+  if (OFFICIAL_SPORTS_HOSTS.some((allowed) => hostMatches(hostname, allowed))) return true;
   return false;
 }
 

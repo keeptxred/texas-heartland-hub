@@ -23,7 +23,7 @@ describe("generated news authority enrichment", () => {
     expect(body.sections.some((section) => section.heading === "How This Story Was Built")).toBe(true);
     expect(body.sections.flatMap((section) => section.paragraphs ?? []).join(" ")).toContain("not presented as original Keep TX Red reporting");
     expect(body.sections.flatMap((section) => section.paragraphs ?? []).join(" ")).toContain("/sources/the-texan");
-    expect(body.sections.flatMap((section) => section.paragraphs ?? []).join(" ")).toContain("/bills");
+    expect(body.sections.flatMap((section) => section.paragraphs ?? []).join(" ")).not.toContain("/bills");
     expect(body.authority.model).toBe("single-source-rewrite");
   });
 
@@ -60,7 +60,7 @@ describe("generated news authority enrichment", () => {
     expect(body.sources[0].label).toBe("County Elections Office — primary / official source");
   });
 
-  it("adds exact verified authority entities ahead of generic internal resources", () => {
+  it("adds exact verified authority entities instead of generic internal resources", () => {
     const entity = STATIC_AUTHORITY_ENTITIES.find(
       (candidate) => candidate.entityType === "legislator" && candidate.active && candidate.lastVerified && candidate.sourceOfTruth?.url,
     );
@@ -82,7 +82,7 @@ describe("generated news authority enrichment", () => {
     };
     const related = body.sections.find((section) => section.heading === "Related Keep TX Red Resources");
     expect(related?.paragraphs?.[0]).toContain(authorityEntityPath(entity.entityType, entity.slug));
-    expect(related?.paragraphs?.join(" ")).toContain("/bills");
+    expect(related?.paragraphs?.join(" ")).not.toContain("/bills");
     expect(body.authority.contextualAuthorityLinkCount).toBeGreaterThanOrEqual(1);
   });
 

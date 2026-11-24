@@ -23,7 +23,7 @@ describe("KTR synthetic-source cache repair is precisely scoped and idempotent",
     expect(migration).toContain("USING invalidated");
     expect(migration).toContain("fetch_state.feed_item_id = invalidated.id");
     const builder = readFileSync("src/routes/api/public/hooks/build-newsroom-research-packets.ts", "utf8");
-    expect(builder).toContain("fetchReadableNewsroomSource(feed.link)");
+    expect(builder).toContain("fetchReadableNewsroomSource(feed.link, researchRequeueAuthorized");
     expect(builder).toContain("const SOURCE_PAGE_FETCH_LIMIT = 40");
     expect(builder).toContain("shouldFetchNewsroomSourcePage");
     const generator = readFileSync("src/routes/api/public/hooks/generate-newsroom.ts", "utf8");

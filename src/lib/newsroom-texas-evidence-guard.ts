@@ -14,11 +14,11 @@ const TEXAS_OFFICIAL_HOST = /(?:^|\.)(?:texas\.gov|tx\.gov|texasattorneygeneral\
  * clear false-positive KTR public-safety category prior to any AI charge.
  */
 export function newsroomPacketHasTexasIncidentEvidence(packet: ResearchPacket): boolean {
-  if (packet.pillar !== "texas-law-enforcement-public-safety") return true;
+  // The rule applies to every automated news category, not just public safety.
   const lead = packet.sources.map((source) =>
-    `${String(source.title ?? "")} ${String(source.extractedBody ?? "").slice(0, 650)}`,
+    `${String(source.title ?? "")} ${String(source.extractedBody || source.description || "").slice(0, 1800)}`,
   ).join(" ");
-  if (TEXAS_FOCUSED_EVENT.test(`${packet.subject} ${lead}`)) return true;
+  if (TEXAS_FOCUSED_EVENT.test(lead)) return true;
   return packet.sources.some((source) => {
     try {
       const hostname = new URL(source.url).hostname.toLowerCase();

@@ -1,3 +1,4 @@
+import { sourceUrlSupportsPrimaryRecord } from "@/data/source-authority";
 import { dpsOfficialArticleRelayUrl } from "./dps-firstparty-article-relay";
 import { isGovernmentNewsClippingUrl } from "./newsroom-discovery-sources";
 import { trimTdemPressReleaseArchive } from "./tdem-press-release-body";
@@ -288,7 +289,7 @@ export function isVerifiedDpsRelayHtml(input: {
   return true;
 }
 
-export async function fetchReadableNewsroomSource(url: string): Promise<string | null> {
+export async function fetchReadableNewsroomSource(url: string, onPrimaryLinks?: (links: string[]) => void): Promise<string | null> {
   const requestOptions = {
     headers: {
       "User-Agent": "Mozilla/5.0 (compatible; KeepTXRedBot/1.2; +https://keeptxred.com)",
@@ -337,6 +338,52 @@ export async function fetchReadableNewsroomSource(url: string): Promise<string |
     contentType: type,
     body,
   })) return null;
+  if (declaredHtml && onPrimaryLinks) onPrimaryLinks(extractLinkedPrimaryRecordUrls(body, response.url || url));
   const extracted = extractReadableNewsroomHtml(body);
   return extracted ? trimTdemPressReleaseArchive(url, extracted) : null;
+}
+
+
+/** Extract only direct links from article content, not navigation or search results. */
+export function extractLinkedPrimaryRecordUrls(html: string, base: string): string[] {
+  const article = html.replace(/<(header|footer|nav|aside|script|style|form)\b[^>]*>[\s\S]*?<\/\1>/gi, " ");
+  const blocks = article.match(/<article\b[^>]*>[\s\S]*?<\/article>/gi) ?? [];
+  const scope = blocks.sort((a, b) => b.length - a.length)[0] ?? article;
+  const urls = new Set<string>();
+  for (const match of scope.matchAll(/<a\b[^>]*\bhref\s*=\s*["']([^"']+)["']/gi)) {
+    try {
+      const url = new URL(match[1].replace(/&amp;/gi, "&"), base);
+      if (url.protocol !== "https:" || url.port || url.username || url.password || url.pathname === "/" || url.pathname.endsWith(".pdf")) continue;
+      if (!sourceUrlSupportsPrimaryRecord(url.href)) continue;
+      url.hash = "";
+      urls.add(url.href);
+      if (urls.size >= 8) break;
+    } catch { /* malformed anchor */ }
+  }
+  return [...urls];
+}
+
+export async function fetchLinkedPrimaryRecord(url: string): Promise<{ title: string; publishedAt: string; body: string } | null> {
+  if (!sourceUrlSupportsPrimaryRecord(url)) return null;
+  try {
+    const parsed = new URL(url);
+    if (parsed.protocol !== "https:" || parsed.port || parsed.username || parsed.password || parsed.pathname === "/") return null;
+    // Never follow redirects from a discovered source into another destination.
+    const response = await fetch(url, { redirect: "error", signal: AbortSignal.timeout(8_000), headers: {
+      "User-Agent": "Mozilla/5.0 (compatible; KeepTXRedBot/1.2; +https://keeptxred.com)",
+      Accept: "text/html,application/xhtml+xml",
+    } });
+    if (!response.ok || !/^(?:text\/html|application\/xhtml\+xml)\b/i.test(response.headers.get("content-type") ?? "")) return null;
+    if (!sourceUrlSupportsPrimaryRecord(response.url || url)) return null;
+    const html = await response.text();
+    const body = extractReadableNewsroomHtml(html);
+    const title = newsroomHtmlText(html.match(/<h1\b[^>]*>([\s\S]*?)<\/h1>/i)?.[1] ?? html.match(/<title\b[^>]*>([\s\S]*?)<\/title>/i)?.[1] ?? "");
+    const date = html.match(/"datePublished"\s*:\s*"([^"]+)"/i)?.[1]
+      ?? html.match(/<meta\b[^>]*(?:property|name)\s*=\s*["']article:published_time["'][^>]*content\s*=\s*["']([^"']+)["']/i)?.[1];
+    const parsedDate = Date.parse(date ?? "");
+    if (!title || !body || !Number.isFinite(parsedDate)) return null;
+    const age = Date.now() - parsedDate;
+    if (age < -60 * 60 * 1000 || age > 72 * 60 * 60 * 1000) return null;
+    return { title: title.slice(0, 500), publishedAt: new Date(parsedDate).toISOString(), body };
+  } catch { return null; }
 }

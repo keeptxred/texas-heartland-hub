@@ -18,19 +18,7 @@ type NewsLoaderData = {
 
 function loaderText(data: NewsLoaderData | undefined): string {
   if (!data) return "";
-  return [
-    data.article?.title,
-    data.article?.dek,
-    ...(data.body?.intro ?? []),
-    ...(data.body?.sections ?? []).flatMap((section) => [
-      section.heading,
-      ...(section.paragraphs ?? []),
-      ...(section.bullets ?? []),
-    ]),
-    ...(data.body?.keyTakeaways ?? []),
-  ]
-    .filter((value): value is string => typeof value === "string" && value.trim().length > 0)
-    .join(" ");
+  return [data.article?.title, data.article?.dek].filter(Boolean).join(" ");
 }
 
 export function NewsGovernmentGraphRouter() {
@@ -45,8 +33,8 @@ export function NewsGovernmentGraphRouter() {
     title: loaderData?.article?.title ?? "",
     dek: loaderData?.article?.dek,
     category: loaderData?.article?.category,
-    text,
-  }), [loaderData?.article?.category, loaderData?.article?.dek, loaderData?.article?.title, text]);
+    text: "",
+  }).filter((match) => match.reasons.some((reason) => reason.startsWith("title:") || reason.startsWith("dek:")) && /\btexas\b/i.test(text)), [loaderData?.article?.category, loaderData?.article?.dek, loaderData?.article?.title, text]);
   const [links, setLinks] = useState<PublicGovernmentGraphLink[]>([]);
 
   useEffect(() => {
@@ -58,7 +46,7 @@ export function NewsGovernmentGraphRouter() {
       };
     }
 
-    void getGovernmentGraphLinksForText({ data: { text, limit: 6 } })
+    void getGovernmentGraphLinksForText({ data: { text, limit: 3, contextualNews: true } })
       .then((nextLinks) => {
         if (!cancelled) setLinks(nextLinks);
       })
