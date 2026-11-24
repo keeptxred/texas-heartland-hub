@@ -46,8 +46,8 @@ function topLevelPathBucket(url) {
   }
 }
 
-export function selectInspectionUrls({ sitemapUrls, priorityUrls, limit, metricDate }) {
-  const cappedLimit = Math.max(1, Math.min(500, Number(limit) || 200));
+export function selectInspectionUrls({ sitemapUrls, priorityUrls, limit, metricDate, fullSitemap = false }) {
+  const cappedLimit = Math.max(1, Math.min(fullSitemap ? 1000 : 500, Number(limit) || 200));
   const priority = [];
   const seen = new Set();
   for (const value of priorityUrls ?? []) {
@@ -63,6 +63,16 @@ export function selectInspectionUrls({ sitemapUrls, priorityUrls, limit, metricD
     .filter(Boolean))]
     .filter((url) => !seen.has(url))
     .sort();
+
+  // A recovery census must cover every canonical sitemap URL, not merely
+  // increase the sample. Refuse a truncated census and preserve the daily
+  // rotating sample behavior for ordinary runs.
+  if (fullSitemap) {
+    if (priority.length + remaining.length > cappedLimit) {
+      throw new Error(`Full sitemap inspection needs ${priority.length + remaining.length} slots, exceeding the configured ${cappedLimit} cap`);
+    }
+    return [...priority, ...remaining];
+  }
 
   const slots = Math.max(0, cappedLimit - priority.length);
   if (slots === 0 || remaining.length === 0) return priority.slice(0, cappedLimit);

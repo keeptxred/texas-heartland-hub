@@ -64,6 +64,16 @@ describe('sitewide GSC transport contract', () => {
     expect(script).toContain('inspectionQuotaExhausted: inspectionBatch.quotaExhausted');
   });
 
+  it('allows a weekly or manually requested full sitemap census without changing the daily limit', () => {
+    expect(workflow).toContain('full_sitemap_inspection:');
+    expect(workflow).toContain('GSC_INSPECTION_LIMIT: "200"');
+    expect(workflow).toContain('GSC_FULL_SITEMAP_INSPECTION:');
+    expect(script).toContain('fullSitemap: fullSitemapInspection');
+    expect(script).toContain('Full sitemap inspection refused incomplete inventory');
+    expect(script).toContain('Full sitemap inspection incomplete:');
+    expect(script.indexOf('let inspectionsStored = 0')).toBeLessThan(script.indexOf('Full sitemap inspection incomplete:'));
+  });
+
   it('keeps the protected write endpoint limited to the canonical workflow on active main runs', () => {
     expect(endpoint).toContain('["schedule", "workflow_dispatch", "push"].includes');
     expect(endpoint).toContain('run?.head_branch !== "main"');

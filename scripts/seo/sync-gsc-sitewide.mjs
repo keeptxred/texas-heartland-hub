@@ -11,7 +11,8 @@ const githubToken = process.env.GITHUB_TOKEN || '';
 const githubRunId = process.env.GITHUB_RUN_ID || '';
 const githubRepository = process.env.GITHUB_REPOSITORY || '';
 const githubEventName = process.env.GITHUB_EVENT_NAME || '';
-const inspectionLimit = Math.max(1, Math.min(500, Number(process.env.GSC_INSPECTION_LIMIT || 200)));
+const fullSitemapInspection = process.env.GSC_FULL_SITEMAP_INSPECTION === 'true' && githubEventName !== 'push';
+const inspectionLimit = fullSitemapInspection ? 1000 : Math.max(1, Math.min(500, Number(process.env.GSC_INSPECTION_LIMIT || 200)));
 const metricLookbackDays = Math.max(1, Math.min(90, Number(process.env.GSC_SITEWIDE_LOOKBACK_DAYS || 28)));
 const dryRun = process.argv.includes('--dry-run');
 
@@ -118,6 +119,7 @@ async function fetchSitemapUrls() {
   const queue = [{ url: 'https://keeptxred.com/sitemap.xml', depth: 0 }];
   const visitedSitemaps = new Set();
   const pageUrls = new Set();
+  const sitemapFailures = [];
 
   while (queue.length > 0 && visitedSitemaps.size < 100) {
     const item = queue.shift();
@@ -125,16 +127,26 @@ async function fetchSitemapUrls() {
     visitedSitemaps.add(item.url);
     let response;
     try {
-      response = await fetch(fetchTransportUrl(item.url), { headers: { 'User-Agent': 'KeepTXRed-GSC-Sitewide-Sync/1.0' } });
+      response = await fetch(fetchTransportUrl(item.url), {
+        headers: { 'User-Agent': 'KeepTXRed-GSC-Sitewide-Sync/1.0', 'x-keeptxred-deployment-smoke': 'canonical' },
+        signal: AbortSignal.timeout(30_000),
+      });
     } catch (error) {
+      sitemapFailures.push(item.url);
       console.warn(`Unable to fetch sitemap ${item.url}: ${error instanceof Error ? error.message : String(error)}`);
       continue;
     }
     if (!response.ok) {
+      sitemapFailures.push(item.url);
       console.warn(`Unable to fetch sitemap ${item.url}: HTTP ${response.status}`);
       continue;
     }
     const xml = await response.text();
+    if (!/<(?:sitemapindex|urlset)\b/i.test(xml)) {
+      sitemapFailures.push(item.url);
+      console.warn(`Invalid sitemap XML at ${item.url}`);
+      continue;
+    }
     for (const location of extractSitemapLocs(xml)) {
       let parsed;
       try { parsed = new URL(location); } catch { continue; }
@@ -146,6 +158,9 @@ async function fetchSitemapUrls() {
       const normalized = normalizeSiteUrl(location);
       if (normalized) pageUrls.add(normalized.url);
     }
+  }
+  if (fullSitemapInspection && (sitemapFailures.length || queue.length || !pageUrls.size)) {
+    throw new Error(`Full sitemap inspection refused incomplete inventory: ${sitemapFailures.length} failed child/root requests, ${queue.length} unvisited entries, ${pageUrls.size} URLs`);
   }
   return { pageUrls: [...pageUrls], sitemapCount: visitedSitemaps.size };
 }
@@ -287,7 +302,7 @@ const latestMetricUrls = metrics.filter((row) => row.metricDate === metricDate).
 const priorityUrls = [...builtInPriority, ...latestMetricUrls];
 const inspectionEnabled = githubEventName !== 'push';
 const inspectionUrls = inspectionEnabled
-  ? selectInspectionUrls({ sitemapUrls, priorityUrls, limit: inspectionLimit, metricDate })
+  ? selectInspectionUrls({ sitemapUrls, priorityUrls, limit: inspectionLimit, metricDate, fullSitemap: fullSitemapInspection })
   : [];
 const inspectionBatch = inspectionEnabled
   ? await inspectUrls(accessToken, inspectionUrls)
@@ -313,6 +328,7 @@ console.log(JSON.stringify({
   sitemapCount,
   sitemapUrls: sitemapUrls.length,
   inspectionLimit,
+  fullSitemapInspection,
   inspectionEnabled,
   inspectionQuotaExhausted: inspectionBatch.quotaExhausted,
   inspectionsRequested: inspectionUrls.length,
@@ -323,3 +339,7 @@ console.log(JSON.stringify({
     return counts;
   }, {}),
 }, null, 2));
+
+if (fullSitemapInspection && (inspectionBatch.quotaExhausted || inspectionsStored !== inspectionUrls.length)) {
+  throw new Error(`Full sitemap inspection incomplete: ${inspectionsStored}/${inspectionUrls.length} inspections stored; partial results preserved`);
+}

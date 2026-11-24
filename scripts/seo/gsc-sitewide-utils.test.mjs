@@ -47,6 +47,16 @@ describe('sitewide GSC URL utilities', () => {
     expect(new Set(selected).size).toBe(selected.length);
   });
 
+  it('covers every advertised URL and bounded priority URL during a recovery census', () => {
+    const sitemapUrls = Array.from({ length: 616 }, (_, index) => `https://keeptxred.com/page-${index}`);
+    const priorityUrls = ['https://keeptxred.com/page-0', 'https://keeptxred.com/retained-observation'];
+    const selected = selectInspectionUrls({ sitemapUrls, priorityUrls, limit: 1000, metricDate: '2026-11-24', fullSitemap: true });
+    expect(selected).toHaveLength(617);
+    expect(new Set(selected)).toEqual(new Set([...sitemapUrls, ...priorityUrls]));
+    expect(() => selectInspectionUrls({ sitemapUrls, priorityUrls, limit: 500, metricDate: '2026-11-24', fullSitemap: true })).toThrow('exceeding the configured');
+    expect(selectInspectionUrls({ sitemapUrls, priorityUrls, limit: 200, metricDate: '2026-11-24' })).toHaveLength(200);
+  });
+
   it('spreads non-priority inspection slots across top-level route families', () => {
     const sitemapUrls = [
       ...Array.from({ length: 12 }, (_, index) => `https://keeptxred.com/texas-politics/figures/person-${index}`),
