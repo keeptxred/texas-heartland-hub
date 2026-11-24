@@ -114,6 +114,10 @@ if (priorityUrls.length > MAX_PRIORITY_URLS) {
 if (new Set(priorityUrls).size !== priorityUrls.length) {
   errors.push(`${PRIORITY_SITEMAP} contains duplicate URLs.`);
 }
+const primaryOwners = new Set(primary.map((entry) => entry.loc));
+for (const loc of priorityUrls) {
+  if (!primaryOwners.has(loc)) errors.push(`Priority sitemap URL has no primary owner: ${loc}`);
+}
 
 // 1. duplicate canonical ownership across primary URL sitemaps. Discovery
 // overlays intentionally repeat page URLs and are excluded from ownership.
@@ -209,6 +213,25 @@ async function checkPage(loc) {
     .filter((link) => /(?:^|\s)canonical(?:\s|$)/i.test(link.rel || ""))
     .map((link) => link.href).filter(Boolean);
   if (!canonicals.length) errors.push(`Sitemap URL ${path} is missing its canonical tag`);
+  const visibleMarkup = res.body.replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, "");
+  const headings = [...visibleMarkup.matchAll(/<h1\b[^>]*>([\s\S]*?)<\/h1>/gi)]
+    .map((m) => m[1].replace(/<[^>]+>/g, "").trim());
+  if (headings.some((heading) => /^(?:404(?:\s*[-–:]\s*|\s+))?(?:page not found|article not found|not found|this page didn.t load)[.!]?$/i.test(heading))) {
+    errors.push(`Sitemap URL ${path} returns HTTP 200 with a not-found heading`);
+  }
+  for (const match of visibleMarkup.matchAll(/<a\b[^>]*>/gi)) {
+    const href = attributes(match[0]).href;
+    if (!href) continue;
+    try {
+      const destination = new URL(href, loc);
+      if (destination.origin === CANONICAL_HOST &&
+        /(?:^|\/)(?:\$|%24)[a-z_][a-z0-9_]*(?=\/|$)/i.test(destination.pathname)) {
+        errors.push(`Sitemap URL ${path} links to unresolved route template ${destination.pathname}`);
+      }
+    } catch {
+      // Malformed or non-HTTP links are not router-template destinations.
+    }
+  }
   if (canonicals.length > 1 && new Set(canonicals).size > 1) {
     errors.push(`Sitemap URL ${path} emits conflicting canonicals: ${[...new Set(canonicals)].join(", ")}`);
   }
