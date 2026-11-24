@@ -519,7 +519,7 @@ async function handler({ request }: { request: Request }) {
     // Preserve an existing richer extraction; fill only missing publisher text.
     const { error: fillError } = await newsroomDb.from("texas_news_feed")
       .update({ extracted_body: record.extractedBody }).eq("link", record.url)
-      .or("extracted_body.is.null,extracted_body.eq.");
+      .is("extracted_body", null);
     if (fillError) console.warn("[newsroom-packets] issuer record hydration failed", fillError.message);
     const { data: row, error: rowError } = await newsroomDb.from("texas_news_feed")
       .select("id,title,source,link,pub_date,description,extracted_body,source_reputation_score").eq("link", record.url).maybeSingle();
