@@ -1,3 +1,4 @@
+import { publicElectionReference } from "@/lib/public-election-reference";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ALL_TEXAS_POLITICAL_FIGURES } from "@/data/texas-political-figures-all";
 import { politicalFigureHeroBySlug } from "@/data/texas-political-figure-heroes";
@@ -69,7 +70,7 @@ function TexasPoliticalFiguresHub() {
         <p className="text-xs font-bold uppercase tracking-[0.18em] text-primary">Evergreen Texas political history</p>
         <h1 className="mt-4 max-w-5xl text-4xl font-bold leading-tight md:text-6xl">Texas Political Figures: Careers, Power and Political Legacy</h1>
         <p className="mt-5 max-w-4xl text-lg leading-8 text-muted-foreground">These are not thin campaign bios. Each profile explains how the person rose, what office or organizational power they held, the durable arguments around their record, and how their career fits the larger transformation of Texas politics. The library reaches back to Reconstruction so the state's Republican history is not treated as if it began with the modern conservative realignment.</p>
-        <div className="mt-6 flex flex-wrap gap-3"><a href="/texas-politics/how-texas-became-republican" className="rounded-md bg-primary px-4 py-2 text-sm font-bold text-primary-foreground">How Texas became Republican</a><a href="/texas-politics/reconstruction-republicans" className="rounded-md border px-4 py-2 text-sm font-bold hover:border-primary">Republicans during Reconstruction</a><a href="/texas-politics/texas-supreme-court-realignment" className="rounded-md border px-4 py-2 text-sm font-bold hover:border-primary">Supreme Court realignment</a><a href="/elections/2026" className="rounded-md border px-4 py-2 text-sm font-bold hover:border-primary">Current elections</a><a href="/texas-government" className="rounded-md border px-4 py-2 text-sm font-bold hover:border-primary">Government powers</a><a href="/laws" className="rounded-md border px-4 py-2 text-sm font-bold hover:border-primary">Texas law & policy</a></div>
+        <div className="mt-6 flex flex-wrap gap-3"><a href="/texas-politics/how-texas-became-republican" className="rounded-md bg-primary px-4 py-2 text-sm font-bold text-primary-foreground">How Texas became Republican</a><a href="/texas-politics/reconstruction-republicans" className="rounded-md border px-4 py-2 text-sm font-bold hover:border-primary">Republicans during Reconstruction</a><a href="/texas-politics/texas-supreme-court-realignment" className="rounded-md border px-4 py-2 text-sm font-bold hover:border-primary">Supreme Court realignment</a><a href={publicElectionReference().href} className="rounded-md border px-4 py-2 text-sm font-bold hover:border-primary">{publicElectionReference().label}</a><a href="/texas-government" className="rounded-md border px-4 py-2 text-sm font-bold hover:border-primary">Government powers</a><a href="/laws" className="rounded-md border px-4 py-2 text-sm font-bold hover:border-primary">Texas law & policy</a></div>
       </header>
 
       <section className="mt-10 rounded-2xl border bg-muted/30 p-6 md:p-8" aria-labelledby="browse-figures">
@@ -115,7 +116,7 @@ function TexasPoliticalFiguresHub() {
 
       <section className="mt-12 rounded-2xl border bg-muted/30 p-6 md:p-8">
         <h2 className="text-2xl font-bold">Why KeepTXRed separates profiles from live election pages</h2>
-        <p className="mt-3 max-w-4xl leading-7 text-muted-foreground">A person's career history should not become wrong every time a filing status, poll or office changes. These pages hold the durable biography and institutional context. Election Central remains the source for verified current candidates, race pages, polls and results, while Texas Government explains the legal powers of the office itself.</p>
+        <p className="mt-3 max-w-4xl leading-7 text-muted-foreground">A person's career history should not become wrong every time a filing status, poll or office changes. These pages hold the durable biography and institutional context. Election coverage is published separately when the cycle is active. County election offices provide local voting information year-round, while Texas Government explains the legal powers of the office itself.</p>
       </section>
     </main>
   );

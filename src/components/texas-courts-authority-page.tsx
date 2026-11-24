@@ -1,3 +1,4 @@
+import { publicElectionReference } from "@/lib/public-election-reference";
 import { Link } from "@tanstack/react-router";
 import {
   TEXAS_APPEAL_PATHS,
@@ -289,7 +290,7 @@ export function TexasCourtsAuthorityPage() {
             ["Judicial selection and elections", "How Texas chooses judges, fills vacancies, sets qualifications, and debates reform.", "/texas-government/judicial-selection-elections"],
             ["Texas Business Court", "Current divisions, appointed judges, jurisdiction, exclusions and appeals to the Fifteenth Court.", "/texas-government/texas-business-court"],
             ["Texas Government", "Current offices, institutions, authority pages, and official government resources.", "/texas-government"],
-            ["2026 Election Central", "Current statewide and district judicial election coverage.", "/elections/2026"],
+            [publicElectionReference().label, publicElectionReference().description, publicElectionReference().href],
             ["Texas constitutional history", "How successive constitutions redesigned the judiciary and state government.", "/texas-politics/texas-constitutional-history"],
           ].map(([label, text, href]) => (
             <Link key={href} to={href} className="rounded-xl border bg-card p-5 hover:border-primary">
