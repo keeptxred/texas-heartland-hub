@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { isSubstantiveEventPrimary, findEventPrimaryFeedRecords, primaryRecordMatchesEvent } from "./newsroom-primary-evidence";
+import { extractLinkedPrimaryRecordUrls } from "./newsroom-source-page.server";
 import { getNewsContextGraphLinks } from "./government-graph";
 import type { ResearchPacketSource } from "./newsroom-research-packet";
 
@@ -24,6 +25,10 @@ describe("event-specific first-party evidence", () => {
     expect(findEventPrimaryFeedRecords(subject,[record],new Set([1]))).toEqual([]);
     expect(primaryRecordMatchesEvent(subject,"NVIDIA launches new GPU","NVIDIA announces a graphics card")).toBe(false);
     expect(primaryRecordMatchesEvent("SB 49 introduced","Senate Bill 49 introduced","The legislature filed a bill")).toBe(true);
+  });
+  it("follows only genuine first-party article anchors, not menus or spoofed domains", () => {
+    const html = `<nav><a href="https://www.sec.gov/other">Menu</a></nav><article><a href="${official.url}">Company announcement</a><a href="https://nvidianews.nvidia.com.evil.example/news/fake">Fake</a><a href="https://www.sec.gov/Archives/edgar/data/1045810/000104581026000090/nvda-20261122.htm">Filing</a><a href="https://lrl.texas.gov/currentissues/clips/resultsLinkclip.cfm">Clipping</a></article>`;
+    expect(extractLinkedPrimaryRecordUrls(html, "https://publisher.example/story")).toEqual([official.url, "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000090/nvda-20261122.htm"]);
   });
   it("never suggests unrelated Texas statutes for a corporate leadership story", () => {
     expect(getNewsContextGraphLinks("NVIDIA reinstates Jensen Huang as CEO: what the decision means for Texas")).toEqual([]);
