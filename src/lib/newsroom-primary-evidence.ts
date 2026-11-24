@@ -8,7 +8,7 @@ function words(value: string): Set<string> {
 }
 const bill = /\b(HB|SB|HJR|SJR|House Bill|Senate Bill|House Joint Resolution|Senate Joint Resolution)\s*([0-9]+)\b/ig;
 function billIds(value: string): Set<string> {
-  return new Set([...value.matchAll(bill)].map((m) => ({ "house bill": "hb", "senate bill": "sb", "house joint resolution": "hjr", "senate joint resolution": "sjr" }[m[1].toLowerCase()] ?? m[1].toLowerCase()) + Number(m[2])));
+  return new Set([...value.matchAll(bill)].map((m) => (({ "house bill": "hb", "senate bill": "sb", "house joint resolution": "hjr", "senate joint resolution": "sjr" } as Record<string, string>)[m[1].toLowerCase()] ?? m[1].toLowerCase()) + Number(m[2])));
 }
 /** Event identity, not generic keyword or publisher-name similarity. */
 export function primaryRecordMatchesEvent(subject: string, title: string, body: string): boolean {
