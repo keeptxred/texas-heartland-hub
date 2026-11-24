@@ -1,3 +1,4 @@
+import { publicElectionReference } from "@/lib/public-election-reference";
 import { Link } from "@tanstack/react-router";
 import {
   JUDICIAL_SELECTION_REFORM_FINDINGS,
@@ -129,7 +130,7 @@ export function TexasJudicialSelectionHistoryPage() {
           <a href="#selection-matrix" className="rounded-md bg-primary px-4 py-2 text-sm font-bold text-primary-foreground">Selection by court</a>
           <a href="#vacancies" className="rounded-md border px-4 py-2 text-sm font-bold hover:border-primary">Vacancies and appointments</a>
           <a href="#reform" className="rounded-md border px-4 py-2 text-sm font-bold hover:border-primary">Reform history</a>
-          <Link to="/elections/2026" className="rounded-md border px-4 py-2 text-sm font-bold hover:border-primary">2026 Election Central</Link>
+          <a href={publicElectionReference().href} className="rounded-md border px-4 py-2 text-sm font-bold hover:border-primary">{publicElectionReference().label}</a>
         </div>
       </header>
 
@@ -296,7 +297,7 @@ export function TexasJudicialSelectionHistoryPage() {
           ))}
         </div>
         <div className="mt-6 flex flex-wrap gap-4 text-sm font-bold">
-          <Link to="/elections/2026" className="text-primary underline-offset-4 hover:underline">2026 Election Central →</Link>
+          <a href={publicElectionReference().href} className="text-primary underline-offset-4 hover:underline">{publicElectionReference().label}</a>
           <Link to="/texas-government/texas-supreme-court-history" className="text-primary underline-offset-4 hover:underline">Texas Supreme Court history →</Link>
           <Link to="/texas-government/court-of-criminal-appeals-history" className="text-primary underline-offset-4 hover:underline">Court of Criminal Appeals history →</Link>
         </div>
