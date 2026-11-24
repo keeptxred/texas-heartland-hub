@@ -1,0 +1,82 @@
+{
+  "note": "reviewed is a substantiated editorial review date, not an automatic crawl date; null means release/editorial verification pending. Add reviewed destinations as they are verified. Never advance dates solely because a source returns HTTP 200.",
+  "records": [
+    {
+      "path": "/register-to-vote",
+      "reviewed": "2026-11-24",
+      "reviewDays": 30,
+      "group": "voter-resources",
+      "sources": [
+        "https://www.votetexas.gov/register-to-vote/",
+        "https://www.votetexas.gov/faq/registration",
+        "https://www.votetexas.gov/register-to-vote/update-voter-registration.html",
+        "https://www.sos.state.tx.us/elections/voter/important-election-dates.shtml"
+      ]
+    },
+    {
+      "path": "/county-elections",
+      "reviewed": "2026-11-24",
+      "reviewDays": 30,
+      "group": "voter-resources",
+      "sources": [
+        "https://www.sos.state.tx.us/elections/voter/county.shtml",
+        "https://www.sos.state.tx.us/elections/voter/important-election-dates.shtml",
+        "https://www.sos.state.tx.us/elections/pamphlets/earlyvote.shtml"
+      ]
+    },
+    {
+      "path": "/bills",
+      "reviewed": null,
+      "reviewDays": 30,
+      "group": "legislative-reference",
+      "sources": [
+        "https://capitol.texas.gov/billlookup/billnumber.aspx",
+        "https://capitol.texas.gov/"
+      ]
+    },
+    {
+      "path": "/texas-legislature",
+      "reviewed": null,
+      "reviewDays": 30,
+      "group": "legislative-reference",
+      "sources": [
+        "https://capitol.texas.gov/",
+        "https://statutes.capitol.texas.gov/Docs/CN/htm/CN.4.htm"
+      ]
+    },
+    {
+      "path": "/texas-government/reference/how-to-read-a-texas-bill",
+      "reviewed": null,
+      "reviewDays": 90,
+      "group": "legislative-reference",
+      "sources": [
+        "https://capitol.texas.gov/billlookup/billnumber.aspx",
+        "https://lbb.texas.gov/Fiscal_Notes.aspx",
+        "https://www.lrl.texas.gov/sessions/billStatistics.cfm"
+      ]
+    },
+    {
+      "path": "/texas-government/reference/texas-bill-fiscal-notes",
+      "reviewed": null,
+      "reviewDays": 90,
+      "group": "legislative-reference",
+      "sources": [
+        "https://lbb.texas.gov/Fiscal_Notes.aspx",
+        "https://capitol.texas.gov/billlookup/billnumber.aspx",
+        "https://statutes.capitol.texas.gov/Docs/GV/htm/GV.314.htm"
+      ]
+    },
+    {
+      "path": "/laws/constitutional-amendments",
+      "reviewed": "2026-11-24",
+      "reviewDays": 30,
+      "group": "constitutional-reference",
+      "sources": [
+        "https://www.sos.state.tx.us/elections/voter/important-election-dates.shtml",
+        "https://www.sos.state.tx.us/texreg/archive/December52025/The%20Governor/The%20Governor.html",
+        "https://www.lrl.texas.gov/legis/billsearch/amendmentdetails.cfm?amendmentID=734&billNumberDetail=3&billSuffixDetail=&billtypeDetail=SJR&legSession=89-0",
+        "https://dev-search.txcourts.gov/Case.aspx?cn=15-26-00074-CV&coa=coa15"
+      ]
+    }
+  ]
+}
