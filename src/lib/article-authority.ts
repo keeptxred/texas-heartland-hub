@@ -93,7 +93,7 @@ export function applyGeneratedNewsAuthority(input: AuthorityInput): AuthorityEnr
   }
 
   const body = { ...(input.bodyJson as AuthorityBody) };
-  const contextualAuthorityLinks = pickExactArticleAuthorityLinks(bodyContextText(body).replace(/\\[([^\\]]+)\\]\\([^)]*\\)/g, ""));
+  const contextualAuthorityLinks = pickExactArticleAuthorityLinks(bodyContextText(body).replace(/\[([^\]]+)\]\([^)]*\)/g, ""));
   const sections = Array.isArray(body.sections) ? body.sections.filter((section) => !/^(?:Permanent KTR Context|Related Keep TX Red Resources)$/i.test(section.heading?.trim() ?? "")) : [];
   const existingSources = Array.isArray(body.sources) ? uniqueSources(body.sources) : [];
 
