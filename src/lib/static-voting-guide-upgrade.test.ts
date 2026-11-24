@@ -23,7 +23,19 @@ describe("2026 voting guide reviewed corrections", () => {
     expect(mail?.paragraphs?.join(" ")).not.toContain("one of four conditions");
   });
 
+  it("keeps elapsed dates historical and directs voters to current official resources", () => {
+    const intro = upgraded.intro.join(" ");
+    expect(intro).toContain("Those dates have passed");
+    expect(intro).toContain("/register-to-vote");
+    expect(intro).toContain("/county-elections");
+    const content = JSON.stringify(upgraded);
+    expect(content).toContain("Qualifying DPS online transactions");
+    expect(content).toContain("Reasonable Impediment Declaration");
+    expect(content).not.toContain("November is the formality");
+    expect(upgraded.sources.some(source => source.url.includes("elections-results-archive"))).toBe(true);
+  });
+
   it("records the reviewed correction date after publication", () => {
-    expect(upgraded.updated).toBe("2026-08-19");
+    expect(upgraded.updated).toBe("2026-11-24");
   });
 });
