@@ -654,7 +654,7 @@ if (!fs.existsSync(retiredStaticNewsPath)) {
 const publicOwnershipSurfaces = [
   ['src/lib/daily-news.functions.ts', ['isPublicArticleReady(article)', 'isKeepTxRedSearchOwnedStory({', 'discover_category']],
   ['src/lib/category-feed.functions.ts', ['isPublicArticleReady(row)', 'isKeepTxRedSearchOwnedStory({', 'discover_category']],
-  ['src/routes/happening-now.tsx', ['isPublicArticleReady(article)', 'isKeepTxRedSearchOwnedStory({', 'discover_category']],
+  ['src/routes/happening-now.tsx', ['getDailyArticles()', 'articles.filter(isNewsroomReport)', 'Route.useLoaderData()']],
   ['src/routes/api/public/hooks/prepare-distribution-packages.ts', ['isPublicArticleReady(article)', 'isKeepTxRedSearchOwnedStory({', 'discover_category']],
   ['src/lib/authority-relationships.ts', ['isPublicArticleReady(article)', 'isKeepTxRedSearchOwnedStory({', 'discover_category', 'kind']],
 ];
