@@ -4,7 +4,6 @@ import { enrichArticleRow } from "@/lib/content-quality";
 import { runCloudflareJson } from "@/lib/cloudflare-json-ai.server";
 import { newsroomPacketHasTexasIncidentEvidence } from "@/lib/newsroom-texas-evidence-guard";
 import { verifyGitHubActionsOidc } from "@/lib/github-actions-oidc";
-import { getGovernmentGraphLinks } from "@/lib/government-graph";
 import { prepareFeaturedImageForUnpublishedNewsroomArticle } from "@/lib/featured-image.functions";
 import { newsroomNewStoryCutoff } from "@/lib/newsroom-candidate-window";
 import { newsroomHasPublisherDiversity, newsroomLeadSourceUrl, uniquePacketSources } from "@/lib/newsroom-publication-preflight";
@@ -227,7 +226,11 @@ function newsroomRepairUserPrompt(
 }
 
 function productionAuthorityEligible(packetRow: PacketRow): boolean {
-  return packetRow.source_count >= 2 || packetRow.primary_source_count >= 1;
+  // Fail closed until event-specific first-party evidence has been collected.
+  // Secondary-only stories require separately documented editorial review.
+  return packetRow.packet_json.sources.some((source) => source.isPrimarySource
+    && sourceUrlSupportsPrimaryRecord(source.url, source.source)
+    && Boolean(source.extractedBody?.trim() || source.description?.trim()));
 }
 
 async function handler({ request }: { request: Request }) {
@@ -672,23 +675,8 @@ async function handler({ request }: { request: Request }) {
         paragraphs: timeline,
       }] : []),
     ].filter((section) => section.paragraphs.length > 0);
-    const graphText = [
-      cluster.canonical_subject,
-      cluster.pillar_slug ?? "",
-      draft.title,
-      draft.dek,
-      draft.summary,
-      draft.relevance,
-      ...draft.sections.flatMap((section) => [section.heading, ...section.paragraphs]),
-      ...draft.keyTakeaways,
-    ].join(" ");
-    const graphLinks = getGovernmentGraphLinks(graphText, 6, [`/news/${slug}`]);
-    const permanentContextSections = graphLinks.length > 0 ? [{
-      heading: "Permanent KTR Context",
-      paragraphs: [
-        `This story connects to KTR's permanent policy and government coverage: ${graphLinks.map((node) => `[${node.label}](${node.href})`).join(", ")}. These pages continue tracking the issue after this news cycle moves on.`,
-      ],
-    }] : [];
+    // No keyword-driven permanent policy links in generated news. The shared
+    // authority enrichment adds only verified exact contextual entities.
     const bodyJson = {
       updated: now.toISOString(),
       intro: recoverElectionDraft ? [
@@ -699,7 +687,6 @@ async function handler({ request }: { request: Request }) {
         ...authoritySections,
         { heading: "Texas relevance", paragraphs: [draft.relevance.trim()] },
         ...draft.sections,
-        ...permanentContextSections,
         {
           heading: "Source Attribution",
           paragraphs: [
