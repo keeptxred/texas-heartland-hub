@@ -85,7 +85,7 @@ describe("citation magnet discovery and extraction contracts", () => {
     expect(voterId).toContain("Seven acceptable photo IDs");
     expect(districts).toContain("2026 race →");
     expect(votes).toContain("does not establish a member-by-member position or vote margin");
-    expect(amendments).toContain("No statewide constitutional-amendment slate is currently published");
+    expect(amendments).toContain("The November 3, 2026 general election has passed");
     expect(effectiveDates).toContain("September 1, 2026");
     expect(billRelationships).toContain("Bill → law → agency context");
     expect(billRelationships).toContain("does not by itself prove that the agency administers the resulting law");
@@ -93,9 +93,12 @@ describe("citation magnet discovery and extraction contracts", () => {
   });
 
   it("keeps the constitutional amendment reference fresh, source-rich, and connected", () => {
-    expect(amendments).toContain("verified September 7, 2026");
+    expect(amendments).toContain("reviewed November 24, 2026");
     expect(amendments).toContain("Article XVII of the Texas Constitution");
-    expect(amendments).toContain("adopted 16 of the 17 proposed amendments");
+    expect(amendments).toContain("covers 16 of the 17 measures");
+    expect(amendments).toContain("2,016,281 votes for Proposition 14 and 924,001 against");
+    expect(amendments).toContain("15-26-00074-CV");
+    expect(amendments).toContain("voter approval is not the same as implementation");
     expect(amendments).toContain("When does an approved Texas constitutional amendment take effect?");
     expect(amendments).toContain("Texas constitutional amendment FAQ");
     for (const path of ["/laws/effective-dates", "/laws/topics", "/texas-politics/texas-election-history", "/register-to-vote", "/texas-legislature", "/bills"]) {
