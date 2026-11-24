@@ -1,3 +1,4 @@
+import { publicElectionReference } from "@/lib/public-election-reference";
 import { Link } from "@tanstack/react-router";
 import {
   CCA_HISTORIC_FIRSTS,
@@ -307,7 +308,7 @@ export function TexasCourtOfCriminalAppealsHistoryPage() {
             ["Texas Supreme Court history", "The separate civil court of last resort from the Republic to today.", "/texas-government/texas-supreme-court-history"],
             ["Texas judicial selection", "How elections, appointments, vacancies, and reform debates shaped the judiciary.", "/texas-government/judicial-selection-elections"],
             ["Texas courts", "The statewide structure of trial courts and appellate courts.", "/texas-courts"],
-            ["2026 Election Central", "Current statewide judicial races and election information.", "/elections/2026"],
+            [publicElectionReference().label, publicElectionReference().description, publicElectionReference().href],
             ["Texas election history", "How statewide party competition and voting patterns changed over time.", "/texas-politics/texas-election-history"],
           ].map(([title, text, href]) => (
             <Link key={href} to={href} className="rounded-xl border bg-card p-5 transition hover:border-primary">
