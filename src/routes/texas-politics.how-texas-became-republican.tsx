@@ -1,3 +1,4 @@
+import { publicElectionReference } from "@/lib/public-election-reference";
 import { createFileRoute, Link } from "@tanstack/react-router";
 
 const SITE_URL = "https://keeptxred.com";
@@ -110,7 +111,7 @@ function TexasRepublicanRealignmentPage() {
         <div className="mt-6 flex flex-wrap gap-3">
           <a href="/texas-politics/figures" className="rounded-md bg-primary px-4 py-2 text-sm font-bold text-primary-foreground">Political figure profiles</a>
           <a href="/texas-government" className="rounded-md border px-4 py-2 text-sm font-bold hover:border-primary">Texas Government</a>
-          <a href="/elections/2026" className="rounded-md border px-4 py-2 text-sm font-bold hover:border-primary">Current elections</a>
+          <a href={publicElectionReference().href} className="rounded-md border px-4 py-2 text-sm font-bold hover:border-primary">{publicElectionReference().label}</a>
         </div>
       </header>
 
