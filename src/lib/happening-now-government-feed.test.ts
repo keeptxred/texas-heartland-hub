@@ -8,7 +8,8 @@ describe("Happening Now rolling newsroom contract", () => {
     expect(source).not.toContain("OFFICIAL_SOURCE_PATTERNS");
     expect(source).not.toContain("isOfficialGovernmentSource");
     expect(source).not.toContain('.from("texas_news_feed")');
-    expect(source).toContain('.from("daily_articles")');
+    expect(source).toContain("getDailyArticles()");
+    expect(source).toContain("articles.filter(isNewsroomReport)");
   });
 
   it("has no user-facing source, topic, keyword, or time-window filters", () => {

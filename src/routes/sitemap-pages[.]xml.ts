@@ -109,7 +109,7 @@ const STATIC_PAGE_LASTMOD_OVERRIDES: Record<string, string> = {
   "/laws/topics": LAW_DATA_REFRESH,
   "/laws/constitutional-amendments": toIsoDate("2026-11-24T00:00:00-06:00"),
   "/laws/effective-dates": CITATION_MAGNET_REFRESH,
-  "/data": LAW_DATA_REFRESH,
+  "/data": toIsoDate("2026-11-24T00:00:00-06:00"),
   "/civic-tools": CIVIC_TOOLS_REFRESH,
   "/civic-tools/government-authority-finder": CIVIC_TOOLS_REFRESH,
   "/civic-tools/texas-law-finder": CIVIC_TOOLS_REFRESH,
@@ -162,6 +162,9 @@ const STATIC_PAGE_LASTMOD_OVERRIDES: Record<string, string> = {
   "/texas-law-enforcement": GUIDE_LASTMOD,
   "/texas-case": TEXAS_CASE_REFRESH,
   "/texas-case/facts": TEXAS_CASE_REFRESH,
+  "/happening-now": toIsoDate("2026-11-24T00:00:00-06:00"),
+  "/news/isd-tax-burdens": toIsoDate("2026-11-15T00:00:00-06:00"), // Dedicated rebuilt route, not the retired static article fixture.
+  "/find-representative": toIsoDate("2026-11-24T00:00:00-06:00"),
   ...GUIDE_LASTMOD_BY_PATH,
   ...TEXAS_CASE_LASTMOD,
   ...TEXAS_CASE_FACTS_LASTMOD,
@@ -203,6 +206,7 @@ const STATIC_PATHS:string[]=[
   "/texas-political-reference","/policy","/texas-economy","/texas-border-security","/texas-energy",
   "/texas-agriculture","/texas-veterans","/texas-law-enforcement","/texas-case","/texas-case/facts",
   "/authors","/shop",
+  "/news/isd-tax-burdens",
 ];
 
 export const Route=createFileRoute("/sitemap-pages.xml")({server:{handlers:{GET:async()=>{const paths=[...STATIC_PATHS,...INDEXABLE_ISSUE_GUIDES.map((guide)=>`/issues/${guide.slug}`),...INDEXABLE_GUIDES.map((guide)=>`/guides/${guide.slug}`),...INDEXABLE_TEXAS_CASE_POSITIONS.map((position)=>`/texas-case/${position.slug}`),...INDEXABLE_TEXAS_CASE_FACTS.map((facts)=>`/texas-case/facts/${facts.slug}`),...INDEXABLE_POLITICAL_SEARCH_GUIDES.map((guide)=>`/texas-political-reference/${guide.slug}`),...INDEXABLE_POLICY_TRACKERS.map((tracker)=>`/policy/${tracker.slug}`),...INDEXABLE_LAW_TOPICS.map((topic)=>`/laws/topic/${topic.slug}`),...INDEXABLE_DATA_SETS.map((dataset)=>`/data/${dataset.slug}`),...INDEXABLE_AGENCY_AUTHORITY_PROFILES.map((agency)=>`/texas-government/agencies/${agency.slug}`)];const entries:UrlEntry[]=paths.map((path)=>({loc:`${BASE_URL}${path}`,lastmod:STATIC_PAGE_LASTMOD_OVERRIDES[path] || undefined}));return xmlResponse(renderUrlset(entries))}}}});

@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { type FormEvent, useMemo, useState } from "react";
 import { PageHero } from "@/components/page-hero";
+import { CitationTrustPanel } from "@/components/authority/CitationTrustPanel";
 import {
   US_HOUSE_DELEGATION, TEXAS_HOUSE_MEMBERS, TEXAS_SENATE_MEMBERS,
   US_HOUSE_VACANCIES, representativeSlug, type Rep,
@@ -162,7 +163,7 @@ function FindRepPage() {
           ? "Enter your Texas street address to identify your congressional, Texas House, and Texas Senate districts and connect them to verified election races."
           : "Enter a Texas street address to find your congressional, Texas House, and Texas Senate districts and current representatives."}
       />
-      <div className="mx-auto max-w-5xl px-4 py-14">
+      <main className="mx-auto max-w-5xl px-4 py-14">
         <form onSubmit={submit} className="border-2 border-foreground/10 bg-card p-6 md:p-8">
           <label
             className="text-xs font-bold uppercase tracking-widest text-muted-foreground"
@@ -198,6 +199,20 @@ function FindRepPage() {
             </p>
           ) : null}
         </form>
+
+        <section className="mt-8 rounded-xl border bg-card p-6" aria-labelledby="district-lookup-help">
+          <h2 id="district-lookup-help" className="font-display text-2xl">Which officials represent my Texas address?</h2>
+          <p className="mt-3 leading-7">One residence can belong to a U.S. House district, a Texas House district and a Texas Senate district at the same time. Enter a complete street address to identify those three districts. The two U.S. senators represent the entire state, rather than a single congressional district.</p>
+          <p className="mt-3 leading-7">District boundaries may change between elections and the start of a new term. For congressional lookup, KTR selects the Census map for the seated Congress, not a future election map. Member directories and vacancies may change separately. Confirm the officeholder through the chamber's official directory before sending correspondence or requesting casework.</p>
+          <h3 className="mt-5 font-bold">Official alternatives if an address does not match</h3>
+          <p className="mt-2 text-sm leading-6 text-muted-foreground">A ZIP code alone may cover several districts. If the Census geocoder cannot match your address, use the Texas Legislature's official lookup. For city, school board or county offices, consult the appropriate local government. Verify your polling place and ballot with the election authority, not this district tool.</p>
+          <div className="mt-4 flex flex-wrap gap-x-5 gap-y-3 text-sm">
+            <a href="https://wrm.capitol.texas.gov/" className="font-semibold text-primary underline">Texas Legislature: Who Represents Me?</a>
+            <a href="https://www.house.gov/representatives/find-your-representative" className="font-semibold text-primary underline">Official U.S. House lookup</a>
+            <Link to="/contact-legislators" className="font-semibold text-primary underline">Contact your legislators</Link>
+            <Link to="/county-elections" className="font-semibold text-primary underline">County election offices</Link>
+          </div>
+        </section>
 
         {lookup ? (
           <section className="mt-8 space-y-6" aria-live="polite">
@@ -328,6 +343,19 @@ function FindRepPage() {
           </section>
         ) : null}
 
+        <CitationTrustPanel
+          className="mt-8"
+          title="District lookup sources and limitations"
+          lastVerified="November 24, 2026"
+          methodology="KTR uses the Census Bureau address geocoder and named TIGERweb legislative map layers. If the required vintage is missing or district matches are ambiguous, the lookup cannot establish the district. The official chamber and Texas Legislature tools are the controlling references for current representation."
+          sources={[
+            { name: "U.S. Census Bureau — geocoding service", url: "https://geocoding.geo.census.gov/geocoder/Geocoding_Services_API.html" },
+            { name: "U.S. Census Bureau — legislative map layers", url: "https://tigerweb.geo.census.gov/arcgis/rest/services/TIGERweb/Legislative/MapServer" },
+            { name: "Texas Legislature — official address lookup", url: "https://wrm.capitol.texas.gov/" },
+            { name: "U.S. House — current representative lookup", url: "https://www.house.gov/representatives/find-your-representative" },
+          ]}
+        />
+
         <div className="mt-10 grid gap-4 text-sm sm:grid-cols-3">
           <Link to="/representatives" className="border-2 border-foreground/10 p-5 hover:border-primary">
             <strong className="font-display text-xl">Representatives</strong>
@@ -345,7 +373,7 @@ function FindRepPage() {
             <span className="text-xs text-muted-foreground">Political coverage and policy</span>
           </Link>
         </div>
-      </div>
+      </main>
     </>
   );
 }

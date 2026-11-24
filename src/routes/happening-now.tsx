@@ -1,32 +1,25 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
-import { isLowValueTitle } from "@/lib/low-value-titles";
+import { getDailyArticles, type DailyArticle } from "@/lib/daily-news.functions";
+import { isNewsroomReport } from "@/lib/newsroom-presentation";
 import { buildSeo, PUBLISHER_LOGO } from "@/lib/seo";
-import { meetsArticleMainWordCount } from "@/lib/article-length";
-import { isPublicArticleReady, type PublicArticleCandidate } from "@/lib/public-article-readiness";
-import { isKeepTxRedSearchOwnedStory } from "@/lib/ktr-search-ownership";
 import { shouldContainArticleImage } from "@/lib/article-image-attribution";
 
 const MAX_VISIBLE_STORIES = 24;
-const FETCH_CANDIDATES = 72;
 const REFRESH_MS = 60_000;
 const HAPPENING_NOW_TITLE = "Happening Now — Latest Texas News";
 const HAPPENING_NOW_DESCRIPTION =
   "Happening Now on Keep TX Red: the newest publish-ready Texas politics, elections, government, law, business, and economic-policy stories in one rolling feed.";
 
-function timeAgo(iso: string) {
-  const timestamp = Date.parse(iso);
-  if (!Number.isFinite(timestamp)) return "";
-  const diff = Math.max(0, Date.now() - timestamp);
-  const hours = Math.floor(diff / 3_600_000);
-  if (hours < 1) return `${Math.max(1, Math.floor(diff / 60_000))} min ago`;
-  if (hours < 24) return `${hours}h ago`;
-  return `${Math.floor(hours / 24)}d ago`;
+function absoluteDate(iso: string) {
+  const date = new Date(iso);
+  return Number.isFinite(date.getTime()) ? date.toLocaleDateString("en-US", { timeZone: "America/Chicago", year: "numeric", month: "short", day: "numeric" }) : "Date unavailable";
 }
 
-function isRollingNewsKind(kind?: string | null) {
-  return kind === "news";
+function currentReports(articles: DailyArticle[]) {
+  return articles.filter(isNewsroomReport)
+    .sort((a, b) => Date.parse(b.published_at) - Date.parse(a.published_at))
+    .slice(0, MAX_VISIBLE_STORIES);
 }
 
 export function happeningNowHead() {
@@ -78,26 +71,15 @@ export function happeningNowHead() {
 
 export const Route = createFileRoute("/happening-now")({
   head: happeningNowHead,
+  loader: async () => currentReports((await getDailyArticles()).articles),
   component: HappeningNowPage,
 });
 
-type ArticleRow = PublicArticleCandidate & {
-  id: string;
-  slug: string;
-  title: string;
-  dek: string | null;
-  category: string;
-  source_name: string | null;
-  published_at: string;
-  kind?: string | null;
-  featured_image_url?: string | null;
-  image_url?: string | null;
-  image_alt_text?: string | null;
-  is_breaking?: boolean | null;
-};
+type ArticleRow = DailyArticle;
 
 function storyImage(article: ArticleRow) {
-  return article.featured_image_url || article.image_url || null;
+  const image = article.image_generation_status === "ready" ? article.featured_image_url?.trim() : null;
+  return image && !/\/og\/default\.jpg(?:[?#].*)?$/i.test(image) ? image : null;
 }
 
 function StoryCard({ article }: { article: ArticleRow }) {
@@ -109,7 +91,7 @@ function StoryCard({ article }: { article: ArticleRow }) {
         <a href={`/news/${article.slug}`} className="block aspect-[16/9] overflow-hidden bg-muted">
           <img
             src={image}
-            alt={article.image_alt_text || article.title}
+            alt={article.image_alt_text || ""}
             className={`h-full w-full ${shouldContainArticleImage(image) ? "object-contain bg-white p-4" : "object-cover"} transition-transform duration-300 hover:scale-[1.02]`}
             loading="lazy"
           />
@@ -120,7 +102,7 @@ function StoryCard({ article }: { article: ArticleRow }) {
           {article.is_breaking ? <span className="text-primary">Breaking</span> : null}
           <span className="text-muted-foreground">{article.category}</span>
           <time className="text-muted-foreground" dateTime={article.published_at}>
-            {timeAgo(article.published_at)}
+            {absoluteDate(article.published_at)}
           </time>
         </div>
         <h2 className="font-serif text-lg font-bold leading-snug">
@@ -142,58 +124,23 @@ function StoryCard({ article }: { article: ArticleRow }) {
 }
 
 function HappeningNowPage() {
-  const [items, setItems] = useState<ArticleRow[]>([]);
-  const [fetchedAt, setFetchedAt] = useState("");
-  const [loading, setLoading] = useState(true);
+  const initial = Route.useLoaderData();
+  const [items, setItems] = useState<ArticleRow[]>(initial);
   const [loadError, setLoadError] = useState(false);
 
   useEffect(() => {
     let active = true;
-
     async function load() {
-      const { data, error } = await supabase
-        .from("daily_articles")
-        .select(
-          "id,slug,title,dek,category,discover_category,source_name,source_url,published_at,kind,featured_image_url,image_url,image_alt_text,is_breaking,content_quality_score,body_json,quality_flags",
-        )
-        .order("published_at", { ascending: false })
-        .limit(FETCH_CANDIDATES);
-
-      if (!active) return;
-      if (error) {
-        console.error("[happening-now] published article load failed", error.message);
-        setLoadError(true);
-        setLoading(false);
-        return;
+      try {
+        const latest = currentReports((await getDailyArticles()).articles);
+        if (active) {
+          setItems(latest);
+          setLoadError(false);
+        }
+      } catch {
+        if (active) setLoadError(true);
       }
-
-      const latest = ((data ?? []) as ArticleRow[])
-        .filter(
-          (article) =>
-            Boolean(article.slug)
-            && Boolean(article.published_at)
-            && isRollingNewsKind(article.kind)
-            && !isLowValueTitle(article.title)
-            && isPublicArticleReady(article)
-            && isKeepTxRedSearchOwnedStory({
-              title: article.title,
-              description: article.dek,
-              category: article.category,
-              source: article.source_name,
-              kind: article.kind,
-            })
-            && meetsArticleMainWordCount(article.kind, article.body_json as never),
-        )
-        .sort((a, b) => Date.parse(b.published_at) - Date.parse(a.published_at))
-        .slice(0, MAX_VISIBLE_STORIES);
-
-      setItems(latest);
-      setFetchedAt(new Date().toISOString());
-      setLoadError(false);
-      setLoading(false);
     }
-
-    void load();
     const timer = window.setInterval(() => void load(), REFRESH_MS);
     return () => {
       active = false;
@@ -212,23 +159,14 @@ function HappeningNowPage() {
             ★ Happening Now
           </span>
           <h1 className="mt-3 font-display text-4xl leading-[0.95] tracking-tight md:text-6xl">
-            Latest & Greatest
+            Latest
             <br />
             <span className="text-primary">Texas News</span>
           </h1>
           <p className="mt-4 max-w-2xl text-base text-white/90 md:text-lg">
-            The newest publish-ready Keep TX Red stories in one rolling newsroom. New reporting moves
-            to the top automatically; older stories roll off this page while remaining in their
-            permanent news and category archives.
+            Verified Texas news reporting published within the past seven days. New reports appear first; older coverage remains in the dated newsroom archive. Evergreen explainers are listed separately rather than presented as breaking news.
           </p>
-          {fetchedAt ? (
-            <p className="mt-3 text-xs uppercase tracking-widest text-white/85">
-              Last refreshed: {new Date(fetchedAt).toLocaleString("en-US", {
-                timeZone: "America/Chicago",
-              })}{" "}
-              CT
-            </p>
-          ) : null}
+
         </div>
       </section>
 
@@ -242,11 +180,8 @@ function HappeningNowPage() {
 
         {!lead ? (
           <div className="border-2 border-dashed border-border p-10 text-center text-muted-foreground">
-            {loading
-              ? "Loading the latest Keep TX Red stories…"
-              : loadError
-                ? "The latest-news feed is temporarily unavailable. Please try again shortly."
-                : "No publish-ready stories are available right now. The page refreshes automatically."}
+            {loadError ? "The latest-news feed is temporarily unavailable." : "No newly verified reports are available in the past seven days."}
+            <p className="mt-3"><a href="/news" className="font-semibold text-primary underline">Browse previous verified reporting and permanent guides</a></p>
           </div>
         ) : (
           <>
@@ -255,7 +190,7 @@ function HappeningNowPage() {
                 <a href={`/news/${lead.slug}`} className="block min-h-64 overflow-hidden bg-muted md:min-h-full">
                   <img
                     src={storyImage(lead) as string}
-                    alt={lead.image_alt_text || lead.title}
+                    alt={lead.image_alt_text || ""}
                     className={`h-full w-full ${shouldContainArticleImage(storyImage(lead)) ? "object-contain bg-white p-6" : "object-cover"}`}
                   />
                 </a>
@@ -265,7 +200,7 @@ function HappeningNowPage() {
                   {lead.is_breaking ? <span className="text-primary">Breaking</span> : null}
                   <span className="text-muted-foreground">{lead.category}</span>
                   <time className="text-muted-foreground" dateTime={lead.published_at}>
-                    {timeAgo(lead.published_at)}
+                    {absoluteDate(lead.published_at)}
                   </time>
                 </div>
                 <h2 className="font-display text-3xl leading-tight tracking-tight md:text-4xl">
@@ -287,12 +222,13 @@ function HappeningNowPage() {
             {rest.length > 0 ? (
               <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                 {rest.map((article) => (
-                  <StoryCard key={article.id} article={article} />
+                  <StoryCard key={article.slug} article={article} />
                 ))}
               </div>
             ) : null}
           </>
         )}
+        <nav aria-label="Newsroom references" className="mt-10 flex flex-wrap gap-x-5 gap-y-3 border-t pt-6 text-sm font-semibold"><a className="text-primary underline" href="/news">News archive</a><a className="text-primary underline" href="/editorial-standards">Sourcing and corrections</a><a className="text-primary underline" href="/authors">Editorial desks</a><a className="text-primary underline" href="/texas-government">Texas government reference</a></nav>
       </main>
     </div>
   );

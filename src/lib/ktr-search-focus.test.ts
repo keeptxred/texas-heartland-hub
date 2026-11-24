@@ -14,7 +14,7 @@ describe("KTR impression-recovery search focus", () => {
       expect(source).not.toContain('to="/texas-sports"');
     }
     expect(texasNews).not.toContain('id: "sports"');
-    expect(happeningNow).toContain('return kind === "news"');
+    expect(happeningNow).toContain("articles.filter(isNewsroomReport)");
     expect(happeningNow).not.toContain('kind?.startsWith("sports-")');
   });
 
