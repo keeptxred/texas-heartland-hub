@@ -94,7 +94,7 @@ export function applyGeneratedNewsAuthority(input: AuthorityInput): AuthorityEnr
 
   const body = { ...(input.bodyJson as AuthorityBody) };
   const contextualAuthorityLinks = pickExactArticleAuthorityLinks(bodyContextText(body).replace(/\[([^\]]+)\]\([^)]*\)/g, ""));
-  const sections = Array.isArray(body.sections) ? body.sections.filter((section) => !/^(?:Permanent KTR Context|Related Keep TX Red Resources)$/i.test(section.heading?.trim() ?? "")) : [];
+  const sections = Array.isArray(body.sections) ? body.sections.filter((section) => !/^(?:Permanent KTR Context|Related Keep TX Red Resources|How This Story Was Built|Source Context)$/i.test(section.heading?.trim() ?? "")) : [];
   const existingSources = Array.isArray(body.sources) ? uniqueSources(body.sources) : [];
 
   if (existingSources.length === 0 && input.sourceUrl) {
@@ -187,6 +187,7 @@ export function applyGeneratedNewsAuthority(input: AuthorityInput): AuthorityEnr
     model: sourceCount > 1 ? "aggregated" : "single-source-rewrite",
     sourceCount,
     primarySourceCount,
+    nonPrimarySourceCount: sourceCount - primarySourceCount,
     contextualAuthorityLinkCount: contextualAuthorityLinks.length,
     transparentAggregation: true,
     originalReportingClaimed: false,
