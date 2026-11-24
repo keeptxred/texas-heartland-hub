@@ -13,13 +13,16 @@
  * live-checked rather than treated as a second canonical owner.
  *
  * Usage: node scripts/seo/validate-indexability.mjs [--base http://localhost:8080]
- * Live checks are skipped (with a warning) when the base URL is unreachable.
+ * Local live checks may be skipped when no development server is running.
+ * Explicit production checks must fail when the target is unreachable.
  */
 import { newsClusterKey, isBadYearSlug, parseArticleSlug } from "../../src/lib/article-slug-integrity.ts";
 
 const baseArg = process.argv.indexOf("--base");
 const BASE = baseArg > -1 ? process.argv[baseArg + 1] : process.env.SEO_BASE || "http://localhost:8080";
 const CANONICAL_HOST = "https://keeptxred.com";
+const REQUIRE_LIVE = process.env.SEO_REQUIRE_LIVE === "1" || BASE.replace(/\/+$/, "") === CANONICAL_HOST;
+const FULL_SCAN = process.env.SEO_FULL_SCAN === "1";
 const SAMPLE = Number(process.env.SEO_SAMPLE || 60);
 const PRIORITY_SITEMAP = "/sitemap-priority.xml";
 const MAX_PRIORITY_URLS = 30;
@@ -53,8 +56,16 @@ const errors = [];
 const warnings = [];
 
 async function text(path) {
-  const response = await fetch(`${BASE}${path}`, { redirect: "manual" });
-  return { status: response.status, body: await response.text(), location: response.headers.get("location") };
+  const response = await fetch(`${BASE}${path}`, {
+    redirect: "manual",
+    signal: AbortSignal.timeout(20_000),
+  });
+  return {
+    status: response.status,
+    body: await response.text(),
+    location: response.headers.get("location"),
+    robots: response.headers.get("x-robots-tag") || "",
+  };
 }
 
 function locs(xml) {
@@ -63,14 +74,18 @@ function locs(xml) {
 
 let reachable = true;
 try {
-  const probe = await fetch(`${BASE}/sitemap.xml`, { redirect: "manual" });
+  const probe = await fetch(`${BASE}/sitemap.xml`, { redirect: "manual", signal: AbortSignal.timeout(20_000) });
   reachable = probe.ok;
 } catch {
   reachable = false;
 }
 
 if (!reachable) {
-  console.warn(`[seo:indexability] ${BASE} unreachable — live checks skipped.`);
+  if (REQUIRE_LIVE) {
+    console.error(`[seo:indexability] ${BASE} unreachable — required live checks FAILED.`);
+    process.exit(1);
+  }
+  console.warn(`[seo:indexability] ${BASE} unreachable — local live checks skipped.`);
   process.exit(0);
 }
 
@@ -115,6 +130,9 @@ for (const { loc } of all) {
     continue;
   }
   const path = loc.slice(CANONICAL_HOST.length) || "/";
+  if (/(?:^|\/)(?:\$|%24)[^/]*(?:\/|$)/i.test(path)) {
+    errors.push(`Unresolved route parameter in sitemap: ${path}`);
+  }
   for (const pattern of DISALLOWED) {
     if (pattern.test(path)) errors.push(`Low-value/blocked URL in sitemap: ${path}`);
   }
@@ -158,26 +176,50 @@ const alwaysLiveCheckedUrls = primary
 const otherPrimaryUrls = [...new Set(
   primary.filter((entry) => !ALWAYS_LIVE_CHECK_SITEMAPS.has(entry.sitemap)).map((entry) => entry.loc),
 )];
-const randomPrimarySample = otherPrimaryUrls.sort(() => Math.random() - 0.5).slice(0, SAMPLE);
+const randomPrimarySample = FULL_SCAN
+  ? otherPrimaryUrls
+  : otherPrimaryUrls.sort(() => Math.random() - 0.5).slice(0, SAMPLE);
 const sample = [...new Set([...alwaysLiveCheckedUrls, ...priorityUrls, ...randomPrimarySample])];
 
-for (const loc of sample) {
+async function checkPage(loc) {
   const path = loc.slice(CANONICAL_HOST.length) || "/";
-  const res = await text(path);
+  let res;
+  try {
+    res = await text(path);
+  } catch (error) {
+    errors.push(`Sitemap URL ${path} fetch failed: ${error.message}`);
+    return;
+  }
   if (res.status !== 200) {
     errors.push(`Sitemap URL ${path} returned ${res.status} (redirects and errors must not be listed)`);
-    continue;
+    return;
   }
-  if (/name="robots"[^>]*content="[^"]*noindex/i.test(res.body)) {
-    errors.push(`Sitemap URL ${path} is noindex`);
+  const head = res.body.match(/<head(?:\s[^>]*)?>[\s\S]*?<\/head>/i)?.[0] || "";
+  const attributes = (tag) => Object.fromEntries(
+    [...tag.matchAll(/([\w:-]+)\s*=\s*(?:"([^"]*)"|\x27([^\x27]*)\x27|([^\s>]+))/g)]
+      .map((m) => [m[1].toLowerCase(), m[2] ?? m[3] ?? m[4]]),
+  );
+  const metas = [...head.matchAll(/<meta\b[^>]*>/gi)].map((m) => attributes(m[0]));
+  if (/\b(?:noindex|none)\b/i.test(res.robots) || metas.some((meta) =>
+    /^(?:robots|googlebot)$/i.test(meta.name || "") && /\b(?:noindex|none)\b/i.test(meta.content || ""))) {
+    errors.push(`Sitemap URL ${path} is noindex (HTTP header or HTML metadata)`);
   }
-  const canonicals = [...res.body.matchAll(/rel="canonical"\s+href="([^"]+)"/g)].map((m) => m[1]);
+  const canonicals = [...head.matchAll(/<link\b[^>]*>/gi)]
+    .map((m) => attributes(m[0]))
+    .filter((link) => /(?:^|\s)canonical(?:\s|$)/i.test(link.rel || ""))
+    .map((link) => link.href).filter(Boolean);
+  if (!canonicals.length) errors.push(`Sitemap URL ${path} is missing its canonical tag`);
   if (canonicals.length > 1 && new Set(canonicals).size > 1) {
     errors.push(`Sitemap URL ${path} emits conflicting canonicals: ${[...new Set(canonicals)].join(", ")}`);
   }
   if (canonicals.length > 0 && !canonicals.includes(loc)) {
     errors.push(`Sitemap URL ${path} canonicalises to ${canonicals[0]} instead of itself`);
   }
+}
+
+// Bounded concurrency keeps complete live audits feasible without flooding the Worker.
+for (let offset = 0; offset < sample.length; offset += 4) {
+  await Promise.all(sample.slice(offset, offset + 4).map(checkPage));
 }
 
 // 6. robots.txt sanity
