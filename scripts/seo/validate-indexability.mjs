@@ -56,31 +56,46 @@ const errors = [];
 const warnings = [];
 
 async function text(path) {
-  const response = await fetch(`${BASE}${path}`, {
-    redirect: "manual",
-    signal: AbortSignal.timeout(20_000),
-  });
-  return {
-    status: response.status,
-    body: await response.text(),
-    location: response.headers.get("location"),
-    robots: response.headers.get("x-robots-tag") || "",
-  };
+  const url = `${BASE}${path}`;
+  let lastError;
+  for (let attempt = 1; attempt <= 3; attempt++) {
+    try {
+      const response = await fetch(url, {
+        redirect: "manual",
+        signal: AbortSignal.timeout(20_000),
+        headers: { "cache-control": "no-cache", connection: "close" },
+      });
+      const result = {
+        status: response.status,
+        body: await response.text(),
+        location: response.headers.get("location"),
+        robots: response.headers.get("x-robots-tag") || "",
+      };
+      if ((result.status === 429 || result.status >= 500) && attempt < 3) {
+        console.warn(`[seo:indexability] ${path}: HTTP ${result.status}, retry ${attempt}/2`);
+      } else {
+        return result;
+      }
+    } catch (error) {
+      lastError = error;
+      if (attempt < 3) console.warn(`[seo:indexability] ${path}: ${error.cause?.code || error.message}, retry ${attempt}/2`);
+    }
+    if (attempt < 3) await new Promise((resolve) => setTimeout(resolve, attempt * 500));
+  }
+  throw new Error(`${path}: ${lastError?.cause?.code || lastError?.message || "fetch failed"} after three attempts`);
 }
 
 function locs(xml) {
   return [...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => m[1].trim());
 }
 
-let reachable = true;
+let index;
 try {
-  const probe = await fetch(`${BASE}/sitemap.xml`, { redirect: "manual", signal: AbortSignal.timeout(20_000) });
-  reachable = probe.ok;
-} catch {
-  reachable = false;
+  index = await text("/sitemap.xml");
+} catch (error) {
+  console.warn(`[seo:indexability] ${error.message}`);
 }
-
-if (!reachable) {
+if (!index || index.status !== 200) {
   if (REQUIRE_LIVE) {
     console.error(`[seo:indexability] ${BASE} unreachable — required live checks FAILED.`);
     process.exit(1);
@@ -89,15 +104,18 @@ if (!reachable) {
   process.exit(0);
 }
 
-const index = await text("/sitemap.xml");
-if (index.status !== 200) errors.push(`/sitemap.xml returned ${index.status}`);
-
 const childSitemaps = locs(index.body).map((loc) => loc.replace(CANONICAL_HOST, ""));
 if (childSitemaps.length === 0) errors.push("Sitemap index lists no child sitemaps.");
 
 const all = [];
 for (const child of childSitemaps) {
-  const res = await text(child);
+  let res;
+  try {
+    res = await text(child);
+  } catch (error) {
+    errors.push(`Child sitemap ${child} fetch failed: ${error.message}`);
+    continue;
+  }
   if (res.status !== 200) {
     errors.push(`${child} returned ${res.status}`);
     continue;
@@ -276,7 +294,7 @@ console.log(`[seo:indexability] ${all.length} sitemap entries (${primary.length}
 for (const warning of warnings) console.warn(`  warn: ${warning}`);
 if (errors.length) {
   console.error(`[seo:indexability] FAILED with ${errors.length} error(s):`);
-  for (const error of errors.slice(0, 60)) console.error(`  - ${error}`);
+  for (const error of errors) console.error(`  - ${error}`);
   process.exit(1);
 }
 console.log("[seo:indexability] PASS");
