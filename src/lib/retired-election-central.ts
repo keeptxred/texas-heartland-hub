@@ -10,9 +10,9 @@ const LEGACY_ELECTION_CENTRAL_PATHS = new Set([
   "/texas-news/elections",
 ]);
 
-export function isRetiredElectionCentralPath(pathname: string): boolean {
+export function isRetiredElectionCentralPath(pathname: string, enabled = ELECTION_FEATURE_FLAGS.homepagePromotion): boolean {
   const normalized = pathname.toLowerCase().replace(/\/+$/, "") || "/";
-  if (ELECTION_FEATURE_FLAGS.homepagePromotion) return false;
+  if (enabled) return false;
   return normalized === "/elections"
     || normalized.startsWith("/elections/")
     || LEGACY_ELECTION_CENTRAL_PATHS.has(normalized);
