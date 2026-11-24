@@ -40,6 +40,14 @@ describe("article source authority", () => {
     ]);
   });
 
+  it("retains attributed NVIDIA official records and secondary news sources in news rendering", () => {
+    const official = { label: "NVIDIA — primary / official source", url: "https://nvidianews.nvidia.com/news/nvidia-board-reinstates-jensen-huang-as-president-ceo-and-board-director" };
+    const sec = { label: "SEC Form 8-K", url: "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000090/nvda-20261122.htm" };
+    const secondary = { label: "Reuters — independent reporting", url: "https://www.reuters.com/world/example/" };
+    const body = dedupeArticleBody({ sources: [official, sec, secondary, official, { label: "Unsafe", url: "javascript:alert(1)" }, { label: "Invalid", url: "bad-url" }] }, { preserveNewsSources: true });
+    expect(body.sources).toEqual([official, sec, secondary]);
+  });
+
   it("drops a section when deduplication removes all of its visible content", () => {
     const repeated = "Texas schools use this program to fill critical teacher shortages in bilingual education.";
     const body = dedupeArticleBody({
