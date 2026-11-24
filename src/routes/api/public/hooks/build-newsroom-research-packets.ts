@@ -1,3 +1,5 @@
+import { sourceUrlSupportsPrimaryRecord } from "@/data/source-authority";
+import { findEventPrimaryFeedRecords, isSubstantiveEventPrimary } from "@/lib/newsroom-primary-evidence";
 import { createFileRoute } from "@tanstack/react-router";
 import { buildResearchPacket, type ResearchPacket } from "@/lib/newsroom-research-packet";
 import { evaluateResearchRescue, isRecoverableResearchFailure, type RecoverableResearchCandidate } from "@/lib/newsroom-research-rescue";
@@ -469,6 +471,15 @@ async function handler({ request }: { request: Request }) {
     membershipsByCluster.set(membership.cluster_id, [...(membershipsByCluster.get(membership.cluster_id) ?? []), membership]);
   }
 
+  // Search direct first-party records beyond cluster membership. Bounded to
+  // recent official feed entries; no AI calls or invented URLs.
+  const primaryResult = await newsroomDb.from("texas_news_feed")
+    .select("id,title,source,link,pub_date,description,extracted_body,source_reputation_score")
+    .gte("pub_date", new Date(Date.now() - LOOKBACK_HOURS * 60 * 60 * 1000).toISOString())
+    .or("link.ilike.https://%.gov/%,link.ilike.https://%.mil/%,link.ilike.https://%.state.tx.us/%,link.ilike.https://nvidianews.nvidia.com/%,link.ilike.https://blogs.nvidia.com/%,link.ilike.https://investor.nvidia.com/%,link.ilike.https://%ercot.com/%")
+    .order("pub_date", { ascending: false }).limit(400);
+  if (primaryResult.error) console.warn("[newsroom-packets] primary discovery unavailable", primaryResult.error.message);
+  const officialFeeds = ((primaryResult.data ?? []) as FeedPacketRow[]).filter((feed) => sourceUrlSupportsPrimaryRecord(feed.link, feed.source));
   const packets: PacketWriteRow[] = candidates.flatMap((candidate) => {
     const cluster = clusterById.get(candidate.cluster_id);
     if (!cluster) return [];
@@ -484,17 +495,19 @@ async function handler({ request }: { request: Request }) {
         publishedAt: feed.pub_date ?? null,
         description: sourceDescriptionMatchesHeadline(feed.title ?? "", feed.description ?? "") ? (feed.description ?? "") : "",
         extractedBody: feed.extracted_body ?? "",
-        isPrimarySource: membership.is_primary_source,
+        isPrimarySource: sourceUrlSupportsPrimaryRecord(feed.link, feed.source),
         sourceReputationScore: feed.source_reputation_score ?? null,
       }];
     });
+    const discovered = findEventPrimaryFeedRecords(cluster.canonical_subject, officialFeeds, new Set(sources.map((source) => source.feedItemId)));
+    const verifiedSources = [...sources, ...discovered].map((source) => ({ ...source, isPrimarySource: isSubstantiveEventPrimary(source, cluster.canonical_subject) }));
     const packet = buildResearchPacket({
       clusterId: candidate.cluster_id,
       subject: cluster.canonical_subject,
       pillar: cluster.pillar_slug,
       recommendedFormat: candidate.recommended_format,
       editorialScore: candidate.editorial_score,
-      sources,
+      sources: verifiedSources,
     });
     return [{
       cluster_id: candidate.cluster_id,
