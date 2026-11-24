@@ -1,0 +1,68 @@
+name: KeepTXRed production indexing recovery audit
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'scripts/seo/validate-indexability.mjs'
+      - 'scripts/seo/audit-gsc-recovery-probes.mjs'
+      - '.github/workflows/gsc-recovery-audit.yml'
+  schedule:
+    - cron: '41 11 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ktr-gsc-recovery-${{ github.event_name }}-${{ github.event.pull_request.number || 'production' }}
+  cancel-in-progress: false
+
+jobs:
+  audit:
+    if: github.repository == 'keeptxred/texas-heartland-hub'
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Probe historical redirect and canonical URLs
+        id: probes
+        # A PR checks the currently deployed site, not its own future revision.
+        # Preserve baseline findings without blocking the fix from deploying.
+        continue-on-error: ${{ github.event_name == 'pull_request' }}
+        run: node scripts/seo/audit-gsc-recovery-probes.mjs
+      - name: Audit canonical sitemap and robots directives
+        if: always()
+        id: sitemap
+        continue-on-error: ${{ github.event_name == 'pull_request' }}
+        env:
+          SEO_BASE: https://keeptxred.com
+          SEO_REQUIRE_LIVE: '1'
+          SEO_FULL_SCAN: '1'
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts
+          node --experimental-strip-types scripts/seo/validate-indexability.mjs 2>&1 | tee artifacts/gsc-sitemap-audit.log
+      - name: Retain diagnostic evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: gsc-recovery-audit
+          path: |
+            artifacts/gsc-recovery-probes.json
+            artifacts/gsc-sitemap-audit.log
+          if-no-files-found: error
+          retention-days: 30
+      - name: Report audit outcomes
+        if: always()
+        env:
+          PROBES: ${{ steps.probes.outcome }}
+          SITEMAP: ${{ steps.sitemap.outcome }}
+        run: |
+          echo "Historical URL probes: $PROBES" >> "$GITHUB_STEP_SUMMARY"
+          echo "Complete sitemap indexability audit: $SITEMAP" >> "$GITHUB_STEP_SUMMARY"
+          echo "PR observations describe the deployed site, not the proposed revision." >> "$GITHUB_STEP_SUMMARY"
