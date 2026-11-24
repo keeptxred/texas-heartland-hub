@@ -9,16 +9,20 @@ const EFFECTIVE_DATES_URL = 'https://www.sos.state.tx.us/elections/historical/ca
 const ARTICLE_XVII_URL = 'https://statutes.capitol.texas.gov/SOTWDocs/CN/pdf/CN.17.pdf';
 const TLC_2025_ANALYSIS_URL = 'https://tlc.texas.gov/docs/amendments/analyses25.pdf';
 const LAST_BALLOT_URL = 'https://www.sos.state.tx.us/about/newsreleases/2025/062525.shtml';
+const ELECTION_CALENDAR_URL = 'https://www.sos.state.tx.us/elections/voter/important-election-dates.shtml';
+const PROP14_RESULT_URL = 'https://www.lrl.texas.gov/legis/billsearch/amendmentdetails.cfm?amendmentID=734&billNumberDetail=3&billSuffixDetail=&billtypeDetail=SJR&legSession=89-0';
+const PROP14_APPEAL_URL = 'https://dev-search.txcourts.gov/Case.aspx?cn=15-26-00074-CV&coa=coa15';
+const ELECTION_CONTEST_URL = 'https://statutes.capitol.texas.gov/?artSec=233.006&chapter=EL.233&code=EL&tab=1';
 const LAST_CANVASS_URL = 'https://www.sos.state.tx.us/texreg/archive/December52025/The%20Governor/The%20Governor.html';
 const EMPTY_BILLS_SEARCH = { q: '', status: '', legislature: 0, chamber: '', billType: '', page: 1 } as const;
 
 export const Route = createFileRoute('/laws/constitutional-amendments')({
   head: () => ({
     meta: [
-      { title: 'Texas Constitutional Amendments: 2026 Status & How the Process Works | KeepTXRed' },
-      { name: 'description', content: 'Current 2026 Texas constitutional-amendment ballot status, the Article XVII amendment process, 2025 election context, effective-date rules and official state sources.' },
+      { title: 'Texas Constitutional Amendments: Results, Proposals & Process | KeepTXRed' },
+      { name: 'description', content: 'Understand Texas constitutional amendments, the 2025 vote and contested Proposition 14, Article XVII, effective dates and where to verify future proposals.' },
       { name: 'robots', content: 'index, follow, max-image-preview:large' },
-      { property: 'og:title', content: 'Texas Constitutional Amendments: 2026 Status & Process' },
+      { property: 'og:title', content: 'Texas Constitutional Amendments: Results & Process' },
       { property: 'og:description', content: 'A maintained Texas constitutional-amendment reference covering the current ballot status, voter-approval process, 2025 results context and official sources.' },
       { property: 'og:url', content: CANONICAL },
       { property: 'og:type', content: 'website' },
@@ -27,10 +31,10 @@ export const Route = createFileRoute('/laws/constitutional-amendments')({
     scripts: [{ type: 'application/ld+json', children: JSON.stringify({
       '@context': 'https://schema.org',
       '@type': 'WebPage',
-      name: 'Texas Constitutional Amendments: 2026 Status and Process',
+      name: 'Texas Constitutional Amendments: Results and Process',
       url: CANONICAL,
-      dateModified: '2026-09-07',
-      isBasedOn: [CURRENT_ELECTION_URL, HISTORY_URL, EFFECTIVE_DATES_URL, ARTICLE_XVII_URL, TLC_2025_ANALYSIS_URL, LAST_BALLOT_URL, LAST_CANVASS_URL],
+      dateModified: '2026-11-24',
+      isBasedOn: [CURRENT_ELECTION_URL, HISTORY_URL, EFFECTIVE_DATES_URL, ARTICLE_XVII_URL, TLC_2025_ANALYSIS_URL, LAST_BALLOT_URL, LAST_CANVASS_URL, ELECTION_CALENDAR_URL, PROP14_RESULT_URL, PROP14_APPEAL_URL, ELECTION_CONTEST_URL],
       about: { '@type': 'Thing', name: 'Texas constitutional amendments' },
     }).replace(/</g, '\\u003c') }],
   }),
@@ -48,12 +52,14 @@ function ConstitutionalAmendmentsTracker() {
       </header>
 
       <section className="mt-8 rounded-2xl border bg-card p-6" aria-labelledby="current-amendment-status">
-        <p className="text-xs font-bold uppercase tracking-wide text-primary">Current status · verified September 7, 2026</p>
-        <h2 id="current-amendment-status" className="mt-2 text-3xl font-bold">No statewide constitutional-amendment slate is currently published for the November 3, 2026 general election</h2>
-        <p className="mt-4 leading-7 text-muted-foreground">The Texas Secretary of State’s current November 3, 2026 election calendar covers the general election for federal, state and county officers and also explains how local political subdivisions may place their own measures on the ballot. As of this verification date, the state has not published a statewide constitutional-amendment proposition slate for that election.</p>
-        <p className="mt-3 leading-7 text-muted-foreground">That distinction matters: a city, school district, county or other political subdivision may have a local proposition even when there is no statewide constitutional-amendment election. Use your county’s final sample ballot for the measures that apply to your address.</p>
+        <p className="text-xs font-bold uppercase tracking-wide text-primary">Election status · reviewed November 24, 2026</p>
+        <h2 id="current-amendment-status" className="mt-2 text-3xl font-bold">The November 3, 2026 general election has passed</h2>
+        <p className="mt-4 leading-7 text-muted-foreground">The November 3 general election was scheduled for federal, state and county officers, with local measures where applicable. The state’s 2026 general-election materials did not announce a statewide constitutional-amendment slate. The state’s statute website identifies November 2025 as the latest amendment election incorporated in its published constitutional text. Check the Secretary of State’s election calendar and legislative joint resolutions for the next statewide amendment election; do not assume a future proposition or ballot number before it is officially assigned.</p>
+        <p className="mt-3 leading-7 text-muted-foreground">That distinction matters: a city, school district, county or other political subdivision may have a local proposition even when there is no statewide constitutional-amendment election. Use the official local sample ballot for the measures that apply to your address at each future election.</p>
         <div className="mt-5 flex flex-wrap gap-4">
-          <a href={CURRENT_ELECTION_URL} target="_blank" rel="noopener noreferrer" className="font-semibold text-primary hover:underline">Check the official 2026 election calendar →</a>
+          <a href={CURRENT_ELECTION_URL} target="_blank" rel="noopener noreferrer" className="font-semibold text-primary hover:underline">November 2026 election calendar (archive) →</a>
+          <a href={ELECTION_CALENDAR_URL} className="font-semibold text-primary hover:underline">Official upcoming election dates →</a>
+          <Link to="/county-elections" className="font-semibold text-primary hover:underline">County election offices →</Link>
           <Link to="/register-to-vote" className="font-semibold text-primary hover:underline">Texas voter registration →</Link>
         </div>
       </section>
@@ -83,11 +89,22 @@ function ConstitutionalAmendmentsTracker() {
       <section className="mt-8" aria-labelledby="recent-amendment-election">
         <h2 id="recent-amendment-election" className="text-3xl font-bold">The most recent statewide amendment election: November 4, 2025</h2>
         <p className="mt-3 leading-7 text-muted-foreground">The 89th Texas Legislature referred 17 proposed constitutional amendments to voters in 2025. The Secretary of State published the official ballot order and the Texas Legislative Council published a proposition-by-proposition analysis covering the ballot language, background and arguments discussed during the legislative process.</p>
-        <p className="mt-3 leading-7 text-muted-foreground">After the election, the governor’s official canvass proclamation recorded that Texas voters adopted 16 of the 17 proposed amendments. Proposition 14 was the one measure not included among the 16 adopted amendments in that certified proclamation.</p>
+        <p className="mt-3 leading-7 text-muted-foreground">The governor’s published canvass proclamation covers 16 of the 17 measures. That is not evidence that Proposition 14 lost at the ballot box: the Legislative Reference Library records 2,016,281 votes for Proposition 14 and 924,001 against. Its implementation was affected by a separate election contest.</p>
         <div className="mt-5 grid gap-4 md:grid-cols-3">
           <a href={LAST_BALLOT_URL} target="_blank" rel="noopener noreferrer" className="rounded-2xl border p-5 hover:bg-muted/40"><span className="block font-bold">2025 ballot order</span><span className="mt-2 block text-sm leading-6 text-muted-foreground">Official Secretary of State proposition list and joint-resolution references.</span></a>
           <a href={TLC_2025_ANALYSIS_URL} target="_blank" rel="noopener noreferrer" className="rounded-2xl border p-5 hover:bg-muted/40"><span className="block font-bold">2025 amendment analyses</span><span className="mt-2 block text-sm leading-6 text-muted-foreground">Texas Legislative Council background and analysis for all 17 proposals.</span></a>
-          <a href={LAST_CANVASS_URL} target="_blank" rel="noopener noreferrer" className="rounded-2xl border p-5 hover:bg-muted/40"><span className="block font-bold">2025 certified canvass</span><span className="mt-2 block text-sm leading-6 text-muted-foreground">Governor’s proclamation recording the 16 adopted amendments.</span></a>
+          <a href={LAST_CANVASS_URL} target="_blank" rel="noopener noreferrer" className="rounded-2xl border p-5 hover:bg-muted/40"><span className="block font-bold">2025 certified canvass</span><span className="mt-2 block text-sm leading-6 text-muted-foreground">Governor’s proclamation covering 16 measures; consult the separate Proposition 14 record below.</span></a>
+        </div>
+      </section>
+
+      <section className="mt-8 rounded-2xl border p-6" aria-labelledby="prop14-status">
+        <h2 id="prop14-status" className="text-2xl font-bold">Proposition 14: voter approval is not the same as implementation</h2>
+        <p className="mt-3 leading-7">The 2025 proposal would establish the Dementia Prevention and Research Institute of Texas and fund it with a $3 billion transfer. The official legislative library reports the measure as adopted by voters, but the published 2025 canvass proclamation omitted it. The separate contest illustrates why researchers should record the vote result, official proclamation, effective-date rules and subsequent litigation independently.</p>
+        <p className="mt-3 leading-7">The Fifteenth Court of Appeals docket, case 15-26-00074-CV, shows a trial-court judgment on February 4, 2026 and submission on briefs on September 23, 2026. The docket reviewed November 24 did not show a final appellate judgment. Consult that docket and the latest official constitutional text before relying on the measure as operative law; this page does not predict the outcome of the litigation.</p>
+        <div className="mt-4 flex flex-wrap gap-4 text-sm font-semibold text-primary">
+          <a href={PROP14_RESULT_URL} className="underline">Official vote record</a>
+          <a href={PROP14_APPEAL_URL} className="underline">Official appellate docket</a>
+          <a href={ELECTION_CONTEST_URL} className="underline">Election Code Chapter 233</a>
         </div>
       </section>
 
@@ -107,7 +124,7 @@ function ConstitutionalAmendmentsTracker() {
       <section className="mt-8" aria-labelledby="amendment-faq">
         <h2 id="amendment-faq" className="text-3xl font-bold">Texas constitutional amendment FAQ</h2>
         <div className="mt-4 space-y-4">
-          <div className="rounded-2xl border p-5"><h3 className="text-lg font-bold">Are there statewide Texas constitutional amendments on the November 3, 2026 ballot?</h3><p className="mt-2 leading-7 text-muted-foreground">As of September 7, 2026, the Secretary of State’s current statewide election materials do not publish a statewide constitutional-amendment slate for the November 3 general election. Local propositions can still appear on local ballots.</p></div>
+          <div className="rounded-2xl border p-5"><h3 className="text-lg font-bold">How do I find the next statewide Texas constitutional amendment election?</h3><p className="mt-2 leading-7 text-muted-foreground">Check the Secretary of State’s upcoming election dates and official proposition materials. The ordinary pattern is a statewide amendment election following an odd-year legislative session, but a joint resolution can provide a specific election date. A local proposition is not a proposed amendment to the state constitution.</p></div>
           <div className="rounded-2xl border p-5"><h3 className="text-lg font-bold">Can the Legislature amend the Texas Constitution without voters?</h3><p className="mt-2 leading-7 text-muted-foreground">No. The Legislature can propose an amendment after meeting the Article XVII voting threshold, but the proposal must then be submitted to Texas voters and receive a majority of votes cast on that proposition.</p></div>
           <div className="rounded-2xl border p-5"><h3 className="text-lg font-bold">Where can I find the exact ballot language?</h3><p className="mt-2 leading-7 text-muted-foreground">Use the Texas Secretary of State’s election materials for the official proposition wording and the historical constitutional-amendment archive for prior elections. The Texas Legislative Council also publishes analyses when statewide amendments are referred to voters.</p></div>
           <div className="rounded-2xl border p-5"><h3 className="text-lg font-bold">Where should I follow the next statewide amendment election?</h3><p className="mt-2 leading-7 text-muted-foreground">This page will track the statewide status. For historical context, see <Link to="/texas-politics/texas-election-history" className="font-semibold text-primary hover:underline">Texas election history</Link>. For current election details, verify with the Secretary of State.</p></div>
@@ -136,9 +153,13 @@ function ConstitutionalAmendmentsTracker() {
           { name: 'Texas Legislative Council — 2025 Proposed Constitutional Amendment Analyses', url: TLC_2025_ANALYSIS_URL },
           { name: 'Texas Secretary of State — 2025 ballot order', url: LAST_BALLOT_URL },
           { name: 'Texas Register — November 19, 2025 canvass proclamation', url: LAST_CANVASS_URL },
+          { name: 'Texas Secretary of State — Important Election Dates', url: ELECTION_CALENDAR_URL },
+          { name: 'Legislative Reference Library — Proposition 14 vote record', url: PROP14_RESULT_URL },
+          { name: 'Fifteenth Court of Appeals — 15-26-00074-CV', url: PROP14_APPEAL_URL },
+          { name: 'Texas Election Code — Chapter 233, contests on measures', url: ELECTION_CONTEST_URL },
         ]}
-        methodology="KeepTXRed checks the Secretary of State’s current election calendar for a published statewide amendment election, uses Article XVII for the constitutional proposal and voter-approval requirements, uses the Secretary of State historical archive and effective-date table for prior elections, and uses the Texas Legislative Council and official canvass proclamation for 2025 context. Local propositions are kept separate from statewide constitutional amendments."
-        lastVerified="September 7, 2026"
+        methodology="KeepTXRed checks the Secretary of State’s current election calendar for a published statewide amendment election, uses Article XVII for the constitutional proposal and voter-approval requirements, uses the Secretary of State historical archive and effective-date table for prior elections, and uses the Texas Legislative Council, official canvass proclamation, legislative library vote record and court docket to distinguish 2025 voter approval, certification and implementation. Local propositions are kept separate from statewide constitutional amendments."
+        lastVerified="November 24, 2026"
         title="Constitutional amendment sources and methodology"
       />
     </main>
