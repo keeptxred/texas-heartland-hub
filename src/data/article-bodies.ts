@@ -2118,8 +2118,8 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
       {
         "heading": "Which public records answer which question?",
         "paragraphs": [
-          "The [Texas Secretary of State](https://www.sos.state.tx.us/elections/) provides statewide election notices, candidate and filing information, election-law guidance, and official calendar links. County election offices publish local polling places, sample ballots and often local results; for a city, school district or other subdivision, the ordering authority may publish additional candidate notices and canvass records.",
-          "Campaign contribution and expenditure reports are separate from election results. When researching candidates, consult the appropriate official campaign-finance agency, such as the Texas Ethics Commission for covered Texas state and local filings or the Federal Election Commission for federal campaigns. A campaign report does not establish who won an election."
+          "The [Texas Secretary of State](https://www.sos.state.tx.us/elections/) provides statewide election notices, candidate and filing information, election-law guidance, and official calendar links. [County election offices](/county-elections) publish local polling places, sample ballots and often local results; for a city, school district or other subdivision, the ordering authority may publish additional candidate notices and canvass records.",
+          "Campaign contribution and expenditure reports are separate from election results. When researching candidates, consult the [Texas campaign-finance reference](/texas-government/reference/texas-campaign-finance-2026) and the appropriate official campaign-finance agency, such as the Texas Ethics Commission for covered Texas state and local filings or the Federal Election Commission for federal campaigns. A campaign report does not establish who won an election."
         ]
       },
       {
@@ -2278,7 +2278,7 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
       },
       {
         "q": "Does every odd-numbered November have a constitutional amendment ballot?",
-        "a": "No. Constitutional amendments appear when lawfully proposed and submitted to voters. Check the specific election's Secretary of State ballot notices."
+        "a": "No. Constitutional amendments appear when lawfully proposed and submitted to voters. Check the specific election's Secretary of State ballot notices and the [Texas constitutional amendment process](/laws/constitutional-amendments)."
       },
       {
         "q": "Is the primary runoff the same date as a city runoff?",
@@ -2290,7 +2290,7 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
       },
       {
         "q": "Where can I find my actual Texas sample ballot?",
-        "a": "Begin with the election-specific page of your county election office, using your registration record and precinct. For smaller local subdivisions, also check the subdivision's posted notice of election."
+        "a": "Begin with the election-specific page of your [county election office](/county-elections), using your registration record and precinct. For smaller local subdivisions, also check the subdivision's posted notice of election."
       }
     ],
     "sources": [
@@ -2407,7 +2407,7 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
       {
         "heading": "8. Check ballot access and deadlines separately from registration",
         "paragraphs": [
-          "Registration alone does not tell you your assigned polling location, which districts are on your ballot, whether you qualify to vote by mail, or the last date to request a mail ballot. Those rules depend on the election and sometimes the county or special district. Use your county election office and the Secretary of State's current election-calendar notices instead of recycling a prior year's timetable.",
+          "Registration alone does not tell you your assigned polling location, which districts are on your ballot, whether you qualify to vote by mail, or the last date to request a mail ballot. Those rules depend on the election and sometimes the county or special district. Use the [county election office directory](/county-elections), [registration resource page](/register-to-vote) and the Secretary of State's current election-calendar notices instead of recycling a prior year's timetable.",
           "Before voting, confirm your voter record, the correct county and precinct, the date and place of voting, and which acceptable identification or alternative procedure applies. If the portal and county records disagree, contact the county voter registrar before the deadline."
         ]
       }
@@ -2475,7 +2475,7 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
     "related": [
       "primary-vs-general-election",
       "beginners-guide-texas-elections",
-      "voter-id-surge"
+      "texas-voting-guide-2026"
     ],
     "cta": {
       "label": "Check or start registration with VoteTexas",
