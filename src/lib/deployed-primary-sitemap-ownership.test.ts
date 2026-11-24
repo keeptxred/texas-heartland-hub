@@ -20,7 +20,8 @@ describe("deployed primary sitemap ownership hard gate", () => {
 
   it("does not rely on the failed chained workflow trigger", () => {
     expect(existsSync(".github/workflows/verify-primary-sitemap-ownership-after-deploy.yml")).toBe(false);
-    expect(existsSync("scripts/seo/verify-deployed-primary-sitemap-ownership.py")).toBe(true);
+    expect(existsSync("scripts/seo/verify-deployed-primary-sitemap-ownership.py")).toBe(false);
+    expect(ownershipSmoke).toContain("def verify_primary_sitemap_ownership(");
   });
 
   it("checks exact primary ownership for the core crawl hubs", () => {
