@@ -21,7 +21,15 @@ export function extractFirstPartyRssArticleBody(
   // content type=html is acceptable only if it is an explicit content node.
   const rss = entryXml.match(/<content:encoded\b[^>]*>([\s\S]*?)<\/content:encoded>/i)?.[1];
   const atom = entryXml.match(/<content\b[^>]*\btype\s*=\s*["'](?:html|xhtml)["'][^>]*>([\s\S]*?)<\/content>/i)?.[1];
-  const raw = rss ?? atom;
+  // NVIDIA's verified issuer feed uses an iPressroom release-specific content
+  // element, not RSS content:encoded or Atom type=html. Limit this exception
+  // to direct release URLs on that exact official hostname.
+  const issuer = url.hostname.toLowerCase() === "nvidianews.nvidia.com"
+    && /^\/news\/[^/]+\/?$/.test(url.pathname)
+    && /<contentType>\s*releases\s*<\/contentType>/i.test(entryXml)
+    ? entryXml.match(/<content\b[^>]*>([\s\S]*?)<\/content>/i)?.[1]
+    : undefined;
+  const raw = rss ?? atom ?? issuer;
   if (!raw || raw.length > 300_000) return null;
 
   const html = raw
