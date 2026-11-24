@@ -6,9 +6,9 @@ function words(value: string): Set<string> {
   return new Set((value.toLowerCase().match(/[a-z0-9]{3,}/g) ?? [])
     .filter((word) => !GENERIC.has(word)));
 }
-const bill = /\b(?:HB|SB|HJR|SJR)\s*([0-9]+)\b/ig;
+const bill = /\b(HB|SB|HJR|SJR|House Bill|Senate Bill|House Joint Resolution|Senate Joint Resolution)\s*([0-9]+)\b/ig;
 function billIds(value: string): Set<string> {
-  return new Set([...value.matchAll(bill)].map((m) => m[0].replace(/\s/g,"").toLowerCase()));
+  return new Set([...value.matchAll(bill)].map((m) => ({ "house bill": "hb", "senate bill": "sb", "house joint resolution": "hjr", "senate joint resolution": "sjr" }[m[1].toLowerCase()] ?? m[1].toLowerCase()) + Number(m[2])));
 }
 /** Event identity, not generic keyword or publisher-name similarity. */
 export function primaryRecordMatchesEvent(subject: string, title: string, body: string): boolean {
