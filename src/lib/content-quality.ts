@@ -1,3 +1,4 @@
+import { pickExactArticleAuthorityLinks } from "@/lib/article-authority-entity-links";
 // Content growth optimization helpers.
 // Pure, deterministic post-processors that run inside the existing
 // generation hooks. No new AI calls, no new automation pipelines.
@@ -265,7 +266,9 @@ export function enrichArticleRow<T extends QualityRow>(row: T): T {
   const regions = classifyRegions(text);
   const impact = buildTexasImpactSummary(text, regions);
   const affiliate = detectAffiliateCategory(text);
-  const links = pickInternalLinks({ category: row.category ?? null, title: row.title ?? null, keywords: row.keywords ?? null });
+  const links = row.kind === "news"
+    ? pickExactArticleAuthorityLinks(`${row.title ?? ""} ${row.dek ?? ""}`).map((link) => ({ ...link, kind: "resource" as const }))
+    : pickInternalLinks({ category: row.category ?? null, title: row.title ?? null, keywords: row.keywords ?? null });
   const authority = applyGeneratedNewsAuthority({
     bodyJson: row.body_json,
     kind: row.kind,
