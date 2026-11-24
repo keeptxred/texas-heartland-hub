@@ -348,7 +348,7 @@ export async function fetchReadableNewsroomSource(url: string, onPrimaryLinks?: 
 export function extractLinkedPrimaryRecordUrls(html: string, base: string): string[] {
   const article = html.replace(/<(header|footer|nav|aside|script|style|form)\b[^>]*>[\s\S]*?<\/\1>/gi, " ");
   const blocks = article.match(/<article\b[^>]*>[\s\S]*?<\/article>/gi) ?? [];
-  const scope = blocks.length ? blocks.sort((a, b) => b.length - a.length)[0] : article;
+  const scope = blocks.sort((a, b) => b.length - a.length)[0] ?? article;
   const urls = new Set<string>();
   for (const match of scope.matchAll(/<a\b[^>]*\bhref\s*=\s*["']([^"']+)["']/gi)) {
     try {
