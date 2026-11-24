@@ -54,7 +54,7 @@ describe("publication quality gate", () => {
     expect(readiness.reason).toContain("Secretary of State");
   });
 
-  it("allows independently corroborated multi-source events", () => {
+  it("holds even independently corroborated secondary-only events for primary evidence", () => {
     const primary = item({ link: "https://firstnews.com/story" });
     const readiness = assessPublicationReadiness(cluster(primary, {
       strongMerge: true,
@@ -67,8 +67,8 @@ describe("publication quality gate", () => {
         },
       ] as StoryCluster["members"],
     }));
-    expect(readiness.publish).toBe(true);
-    expect(readiness.mode).toBe("multi_source");
+    expect(readiness.publish).toBe(false);
+    expect(readiness.mode).toBe("hold_for_corroboration");
     expect(readiness.independentSourceCount).toBe(2);
   });
 
