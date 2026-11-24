@@ -10,6 +10,7 @@ import { categoryForPillar } from "@/lib/newsroom-rewrite-adapter";
 import { newsroomIndependentPublisherFamilyFromUrl, newsroomLikelySameOriginalReport, newsroomOriginalReportKey } from "@/lib/newsroom-publication-preflight";
 import {
   fetchReadableNewsroomSource,
+  fetchLinkedPrimaryRecord,
   isNewsroomSourceFetchCoolingDown,
   newsroomHydrationPriority,
   looksSyntheticNewsroomText,
@@ -34,6 +35,7 @@ const CANDIDATE_LIMIT = 1000;
 // the work at the highest-scored candidate sources first.
 const SOURCE_PAGE_FETCH_LIMIT = 40;
 const SOURCE_PAGE_CONCURRENCY = 4;
+const LINKED_PRIMARY_FETCH_LIMIT = 4;
 // Clean at most one recent first-party TDEM archive per scheduled packet build.
 // This is part of the SAME global 40-page fetch budget, never another crawler.
 const TDEM_CACHE_CLEANUP_SCAN_LIMIT = 8;
@@ -401,11 +403,12 @@ async function handler({ request }: { request: Request }) {
     .sort((a, b) => (priorityByFeedId.get(b.id) ?? 0) - (priorityByFeedId.get(a.id) ?? 0)
       || Number(Boolean(b.source_reputation_score)) - Number(Boolean(a.source_reputation_score))
       || a.id - b.id)
-    .slice(0, SOURCE_PAGE_FETCH_LIMIT);
+    .slice(0, SOURCE_PAGE_FETCH_LIMIT - (researchRequeueAuthorized ? LINKED_PRIMARY_FETCH_LIMIT : 0));
 
   const sourcePageResults = await mapWithConcurrency(sourcePageTargets, SOURCE_PAGE_CONCURRENCY, async (feed) => {
-    const body = feed.link ? await fetchReadableNewsroomSource(feed.link) : null;
-    return { feed, body };
+    let primaryLinks: string[] = [];
+    const body = feed.link ? await fetchReadableNewsroomSource(feed.link, researchRequeueAuthorized ? (links) => { primaryLinks = links; } : undefined) : null;
+    return { feed, body, primaryLinks };
   });
 
   let sourcePagesUpdated = 0;
@@ -471,6 +474,46 @@ async function handler({ request }: { request: Request }) {
     membershipsByCluster.set(membership.cluster_id, [...(membershipsByCluster.get(membership.cluster_id) ?? []), membership]);
   }
 
+  // The signed zero-AI research job also follows direct official links in
+  // original reporting, independently of which publishers have RSS feeds.
+  // The total page fetch budget remains 40. A verified title, actual body,
+  // publication date, exact URL, and event match are mandatory before storage.
+  const linkedTargets = new Map<string, Set<string>>();
+  if (researchRequeueAuthorized) {
+    const pendingIds = new Set(pending.map((row) => row.cluster_id));
+    for (const result of sourcePageResults) {
+      if (!result.body || !result.primaryLinks.length) continue;
+      const subjects = memberships.filter((membership) => membership.feed_item_id === result.feed.id && pendingIds.has(membership.cluster_id))
+        .map((membership) => clusterById.get(membership.cluster_id)?.canonical_subject)
+        .filter((subject): subject is string => Boolean(subject));
+      for (const url of result.primaryLinks) {
+        if (!subjects.length || feeds.some((feed) => feed.link === url)) continue;
+        const set = linkedTargets.get(url) ?? new Set<string>();
+        for (const subject of subjects) set.add(subject);
+        linkedTargets.set(url, set);
+      }
+    }
+  }
+  const linkedPrimaryFeeds: FeedPacketRow[] = [];
+  const linkedPrimaryTargets = [...linkedTargets.entries()].slice(0, LINKED_PRIMARY_FETCH_LIMIT);
+  for (const [url, subjects] of linkedPrimaryTargets) {
+    const record = await fetchLinkedPrimaryRecord(url);
+    if (!record) continue;
+    const publisher = new URL(url).hostname;
+    const source = {feedItemId: 0, title: record.title, url, source: publisher, publishedAt: record.publishedAt,
+      description: "", extractedBody: record.body, isPrimarySource: true, sourceReputationScore: 90};
+    if (![...subjects].some((subject) => isSubstantiveEventPrimary(source, subject))) continue;
+    const { error: writeError } = await newsroomDb.from("texas_news_feed").upsert({
+      title: record.title, source: publisher, link: url, pub_date: record.publishedAt,
+      description: "", extracted_body: record.body, source_reputation_score: 90, ready_for_rewrite: false,
+    }, {onConflict: "link", ignoreDuplicates: true});
+    if (writeError) { console.warn("[newsroom-packets] direct source storage failed", writeError.message); continue; }
+    const { data: row, error: rowError } = await newsroomDb.from("texas_news_feed")
+      .select("id,title,source,link,pub_date,description,extracted_body,source_reputation_score").eq("link", url).maybeSingle();
+    if (rowError || !row) continue;
+    linkedPrimaryFeeds.push(row as FeedPacketRow);
+  }
+
   // Search direct first-party records beyond cluster membership. Bounded to
   // recent official feed entries; no AI calls or invented URLs.
   const primaryResult = await newsroomDb.from("texas_news_feed")
@@ -479,7 +522,7 @@ async function handler({ request }: { request: Request }) {
     .or("link.ilike.https://%.gov/%,link.ilike.https://%.mil/%,link.ilike.https://%.state.tx.us/%,link.ilike.https://nvidianews.nvidia.com/%,link.ilike.https://blogs.nvidia.com/%,link.ilike.https://investor.nvidia.com/%,link.ilike.https://%ercot.com/%")
     .order("pub_date", { ascending: false }).limit(400);
   if (primaryResult.error) console.warn("[newsroom-packets] primary discovery unavailable", primaryResult.error.message);
-  const officialFeeds = ((primaryResult.data ?? []) as FeedPacketRow[]).filter((feed) => sourceUrlSupportsPrimaryRecord(feed.link, feed.source));
+  const officialFeeds = [...new Map([...linkedPrimaryFeeds, ...((primaryResult.data ?? []) as FeedPacketRow[])].map((feed) => [feed.id, feed])).values()].filter((feed) => sourceUrlSupportsPrimaryRecord(feed.link, feed.source));
   const packets: PacketWriteRow[] = candidates.flatMap((candidate) => {
     const cluster = clusterById.get(candidate.cluster_id);
     if (!cluster) return [];
@@ -585,7 +628,9 @@ async function handler({ request }: { request: Request }) {
     unchanged: packets.length - packetsToWrite.length,
     sourceItems: packets.reduce((sum, packet) => sum + packet.source_count, 0),
     primarySourceItems: packets.reduce((sum, packet) => sum + packet.primary_source_count, 0),
-    sourcePagesFetched: sourcePageTargets.length,
+    sourcePagesFetched: sourcePageTargets.length + linkedPrimaryTargets.length,
+    linkedPrimaryPagesFetched: linkedPrimaryTargets.length,
+    linkedPrimaryRecordsRecovered: linkedPrimaryFeeds.length,
     sourcePagesUpdated,
     sourcePageCharsWritten,
     sourcePagesCoolingDown,
