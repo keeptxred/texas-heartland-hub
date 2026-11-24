@@ -61,7 +61,11 @@ for (const [file, source] of contents) {
   }
   // The read-only historical redirect probe must request the legacy hostname.
   // All public page, metadata, feed and other source files remain subject to this gate.
-  const isHistoricalRedirectProbe = file === "scripts/seo/audit-gsc-recovery-probes.mjs";
+  const isHistoricalRedirectProbe = [
+    "scripts/seo/audit-gsc-recovery-probes.mjs",
+    // Exact original URL inputs, including WWW variants, used by the read-only live audit.
+    "scripts/authority/indexed-authority-inventory.json",
+  ].includes(file);
   if (!isApiRoute && !isHistoricalRedirectProbe && /https:\/\/www\.keeptxred\.com/i.test(source)) {
     fail(file, "noncanonical www hostname detected");
   }
