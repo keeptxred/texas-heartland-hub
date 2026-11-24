@@ -65,6 +65,18 @@
         "https://capitol.texas.gov/billlookup/billnumber.aspx",
         "https://statutes.capitol.texas.gov/Docs/GV/htm/GV.314.htm"
       ]
+    },
+    {
+      "path": "/laws/constitutional-amendments",
+      "reviewed": "2026-11-24",
+      "reviewDays": 30,
+      "group": "constitutional-reference",
+      "sources": [
+        "https://www.sos.state.tx.us/elections/voter/important-election-dates.shtml",
+        "https://www.sos.state.tx.us/texreg/archive/December52025/The%20Governor/The%20Governor.html",
+        "https://www.lrl.texas.gov/legis/billsearch/amendmentdetails.cfm?amendmentID=734&billNumberDetail=3&billSuffixDetail=&billtypeDetail=SJR&legSession=89-0",
+        "https://dev-search.txcourts.gov/Case.aspx?cn=15-26-00074-CV&coa=coa15"
+      ]
     }
   ]
 }
