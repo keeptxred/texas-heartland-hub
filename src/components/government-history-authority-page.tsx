@@ -1,4 +1,4 @@
-import { publicElectionReference } from "@/lib/public-election-reference";
+import { availableElectionReferences, publicElectionReference } from "@/lib/public-election-reference";
 import type { GovernmentHistoryAuthorityPage as GovernmentHistoryPageData, GovernmentHistoryLink } from "@/data/texas-government-history-authority";
 
 const SITE_URL = "https://keeptxred.com";
@@ -89,7 +89,7 @@ export function governmentHistoryAuthorityHead(page: GovernmentHistoryPageData) 
 }
 
 export function GovernmentHistoryAuthorityPage({ page }: { page: GovernmentHistoryPageData }) {
-  const relatedLinks = getGovernmentHistoryRelatedLinks(page);
+  const relatedLinks = availableElectionReferences(getGovernmentHistoryRelatedLinks(page));
 
   return (
     <main className="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-8">
