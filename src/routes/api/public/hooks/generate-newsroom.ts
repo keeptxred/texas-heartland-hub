@@ -814,7 +814,7 @@ async function handler({ request }: { request: Request }) {
       aiCalls,
       reusedApprovedDraft: recoverElectionDraft,
       reusedValidatedDraft: recoverSavedDraft,
-      graphLinks: graphLinks.map((node) => node.href),
+      graphLinks: [], // Context links are vetted separately at render time.
     });
   } catch (error) {
     const details = error instanceof Error ? error.message : String(error);
