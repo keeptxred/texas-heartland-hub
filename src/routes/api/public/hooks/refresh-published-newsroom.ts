@@ -1,3 +1,6 @@
+import { packetHasVerifiedEventPrimary } from "@/lib/newsroom-primary-evidence";
+import { newsroomPacketHasTexasIncidentEvidence } from "@/lib/newsroom-texas-evidence-guard";
+import { applyGeneratedNewsAuthority } from "@/lib/article-authority";
 import { createFileRoute } from "@tanstack/react-router";
 import { runCloudflareJson } from "@/lib/cloudflare-json-ai.server";
 import {
@@ -338,12 +341,14 @@ async function handler({ request }: { request: Request }) {
     const packetRow = packetByCluster.get(candidate.cluster_id);
     const article = articleById.get(cluster.published_article_id);
     if (!packetRow || !article) continue;
+    if ((article.body_json?.authority as Record<string, unknown> | undefined)?.editoriallyCorrected === true) continue;
 
     const articleChangedAt = timestamp(article.updated_at ?? article.published_at);
     if (timestamp(packetRow.built_at) <= articleChangedAt) continue;
     if (timestamp(cluster.last_seen_at) <= articleChangedAt) continue;
 
     const packet = compactResearchPacket(packetRow.packet_json);
+    if (!packetHasVerifiedEventPrimary(packet) || !newsroomPacketHasTexasIncidentEvidence(packet)) continue;
     const previousUrls = currentSourceUrls(article.body_json);
     const newSources = packet.sources.filter((source) => source.url && !previousUrls.has(source.url));
     if (!newSources.length) continue;
@@ -447,7 +452,7 @@ async function handler({ request }: { request: Request }) {
       : {};
     const previousUpdateCount = Number(previousLivingStory.updateCount ?? 0);
 
-    const nextBody: Record<string, unknown> = {
+    const proposedBody: Record<string, unknown> = {
       ...previousBody,
       updated: now.toISOString(),
       sections: [
@@ -466,6 +471,7 @@ async function handler({ request }: { request: Request }) {
         updateCount: Number.isFinite(previousUpdateCount) ? previousUpdateCount + 1 : 1,
       },
     };
+    const nextBody = applyGeneratedNewsAuthority({ kind: "news", bodyJson: proposedBody, sourceName: selected.article.source_name, sourceUrl: selected.article.source_url }).bodyJson as Record<string, unknown>;
     const nextBodyText = articleBodyText(nextBody);
     const proposedUrl = `https://keeptxred.com/news/${selected.article.slug}`;
 
