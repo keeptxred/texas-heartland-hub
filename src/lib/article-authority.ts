@@ -93,7 +93,7 @@ export function applyGeneratedNewsAuthority(input: AuthorityInput): AuthorityEnr
   }
 
   const body = { ...(input.bodyJson as AuthorityBody) };
-  const contextualAuthorityLinks = pickExactArticleAuthorityLinks(bodyContextText(body));
+  const contextualAuthorityLinks = pickExactArticleAuthorityLinks(bodyContextText(body).replace(/\\[([^\\]]+)\\]\\([^)]*\\)/g, ""));
   const sections = Array.isArray(body.sections) ? body.sections.filter((section) => !/^(?:Permanent KTR Context|Related Keep TX Red Resources)$/i.test(section.heading?.trim() ?? "")) : [];
   const existingSources = Array.isArray(body.sources) ? uniqueSources(body.sources) : [];
 
@@ -169,7 +169,18 @@ export function applyGeneratedNewsAuthority(input: AuthorityInput): AuthorityEnr
     });
   }
 
-  body.sections = sections;
+  // Drop AI-supplied internal markdown links in story prose. Verified exact
+  // entity links are rebuilt in the dedicated resources section above.
+  const allowed = new Set(["/sources", ...contextualAuthorityLinks.map((link) => link.href),
+    ...sources.flatMap((source) => { const profile = getSourceAuthorityProfileForPublisher(source.label, source.url); return profile ? [`/sources/${profile.slug}`] : []; })]);
+  const clean = (text: string) => text.replace(/\[([^\]]+)\]\(((?:https?:\/\/(?:www\.)?keeptxred\.com)?\/[^)\s]*)\)/gi, (full, label: string, href: string) => {
+    const path = href.replace(/^https?:\/\/(?:www\.)?keeptxred\.com/i, "");
+    return allowed.has(path) ? full : label;
+  });
+  body.intro = body.intro?.map(clean);
+  body.faq = body.faq?.map((faq) => ({ ...faq, q: faq.q ? clean(faq.q) : faq.q, a: faq.a ? clean(faq.a) : faq.a }));
+  body.keyTakeaways = body.keyTakeaways?.map(clean);
+  body.sections = sections.map((section) => ({ ...section, paragraphs: section.paragraphs?.map(clean), bullets: section.bullets?.map(clean) }));
   body.sources = sources;
   body.authority = {
     ...(body.authority ?? {}),
