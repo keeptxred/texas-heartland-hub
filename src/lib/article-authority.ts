@@ -1,6 +1,5 @@
 import {
   getSourceAuthorityProfileForPublisher,
-  isPrimaryOrOfficialSource,
   sourceAuthorityLabel,
   sourceUrlSupportsPrimaryRecord,
 } from "@/data/source-authority";
@@ -33,8 +32,6 @@ export type AuthorityEnrichmentResult = {
   flags: string[];
 };
 
-const EXPLICIT_PRIMARY_SOURCE_RE = /primary\s*\/\s*official source|primary government source|official system source/i;
-
 function normalizeSourceName(label: string): string {
   return label
     .replace(/\s+[—–-]\s+(?:primary\s*\/\s*official source|primary government source|official system source|reporting source|news and commentary source|policy and analysis source|published source|original report|source)$/i, "")
@@ -64,6 +61,7 @@ function bodyContextText(body: AuthorityBody): string {
   const parts: string[] = [];
   for (const paragraph of body.intro ?? []) parts.push(paragraph);
   for (const section of body.sections ?? []) {
+    if (/^(?:how this story was built|source context|source attribution|coverage timeline|permanent ktr context|related keep tx red resources)$/i.test(section.heading?.trim() ?? "")) continue;
     if (section.heading) parts.push(section.heading);
     for (const paragraph of section.paragraphs ?? []) parts.push(paragraph);
     for (const bullet of section.bullets ?? []) parts.push(bullet);
@@ -96,7 +94,7 @@ export function applyGeneratedNewsAuthority(input: AuthorityInput): AuthorityEnr
 
   const body = { ...(input.bodyJson as AuthorityBody) };
   const contextualAuthorityLinks = pickExactArticleAuthorityLinks(bodyContextText(body));
-  const sections = Array.isArray(body.sections) ? [...body.sections] : [];
+  const sections = Array.isArray(body.sections) ? body.sections.filter((section) => !/^(?:Permanent KTR Context|Related Keep TX Red Resources)$/i.test(section.heading?.trim() ?? "")) : [];
   const existingSources = Array.isArray(body.sources) ? uniqueSources(body.sources) : [];
 
   if (existingSources.length === 0 && input.sourceUrl) {
@@ -108,15 +106,13 @@ export function applyGeneratedNewsAuthority(input: AuthorityInput): AuthorityEnr
 
   const sources = existingSources.map((source) => {
     const originalLabel = source.label || input.sourceName || "Published source";
-    const wasExplicitPrimary = EXPLICIT_PRIMARY_SOURCE_RE.test(originalLabel);
     const sourceName = normalizeSourceName(originalLabel);
 
     return {
       label: sourceAuthorityLabel({
         source: sourceName,
         url: source.url,
-        isPrimarySource: (wasExplicitPrimary || isPrimaryOrOfficialSource(sourceName))
-          && sourceUrlSupportsPrimaryRecord(source.url, sourceName),
+        isPrimarySource: sourceUrlSupportsPrimaryRecord(source.url, sourceName),
       }),
       url: source.url,
     };
@@ -129,6 +125,7 @@ export function applyGeneratedNewsAuthority(input: AuthorityInput): AuthorityEnr
   const sourceCount = sources.length;
   const flags: string[] = [];
   if (sourceCount === 1 && primarySourceCount === 0) flags.push("single_source_aggregation");
+  if (primarySourceCount === 0) flags.push("missing_verified_primary_record");
 
   if (!hasHeading(sections, "How This Story Was Built")) {
     const sourceSentence = sourceCount > 1
@@ -161,7 +158,7 @@ export function applyGeneratedNewsAuthority(input: AuthorityInput): AuthorityEnr
 
   const relatedLinks = uniqueInternalLinks([
     ...contextualAuthorityLinks,
-    ...(input.internalLinks ?? []),
+    // Upstream category or AI suggestions are not evidence of relevance.
   ])
     .slice(0, 5)
     .map((link) => `[${link.label}](${link.href})`);
