@@ -5,19 +5,21 @@ import { TEXAS_COURTS_REVIEWED } from "@/data/texas-courts-authority";
 import { FIFTEENTH_COURT_REVIEWED } from "@/data/texas-fifteenth-court-authority";
 import { SCJC_REVIEWED } from "@/data/texas-judicial-conduct-authority";
 import { TEXAS_TRIAL_COURTS_REVIEWED } from "@/data/texas-trial-courts-authority";
-import { GOVERNMENT_ENTITIES, GOVERNMENT_REVIEWED_AT, governmentPath, governmentReviewedAt } from "@/lib/texas-government";
+import { GOVERNMENT_ENTITIES, governmentPath, governmentReviewedAt } from "@/lib/texas-government";
 import { SEARCH_RECOVERY_AUTHORITY_GUIDES, SEARCH_RECOVERY_AUTHORITY_SLUGS } from "@/data/search-recovery-authority";
 import { getPublicationGovernmentEntities } from "@/lib/government-entity-publication";
 import { isGovernmentEntityIndexable } from "@/lib/government-entity-indexability";
 import { BASE_URL, renderUrlset, toIsoDate, xmlResponse } from "@/lib/sitemap-shared";
 
+// Preserve the meaningful hub refresh date formerly listed in sitemap-pages.
+const GOVERNMENT_HUB_REVIEWED = "2026-08-30T09:00:00-05:00";
 const INDEXABLE_GOVERNMENT_ENTITIES = getPublicationGovernmentEntities(GOVERNMENT_ENTITIES).filter(isGovernmentEntityIndexable);
 
 export const Route = createFileRoute("/sitemap-government.xml")({
   server: {
     handlers: {
       GET: async () => xmlResponse(renderUrlset([
-        { loc: `${BASE_URL}/texas-government`, lastmod: toIsoDate(GOVERNMENT_REVIEWED_AT) },
+        { loc: `${BASE_URL}/texas-government`, lastmod: toIsoDate(GOVERNMENT_HUB_REVIEWED) },
         { loc: `${BASE_URL}/texas-courts`, lastmod: toIsoDate(TEXAS_COURTS_REVIEWED) },
         { loc: `${BASE_URL}/texas-government/texas-trial-courts`, lastmod: toIsoDate(TEXAS_TRIAL_COURTS_REVIEWED) },
         { loc: `${BASE_URL}/texas-government/texas-business-court`, lastmod: toIsoDate(TEXAS_BUSINESS_COURT_REVIEWED) },

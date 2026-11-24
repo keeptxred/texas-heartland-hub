@@ -8,7 +8,7 @@ const VALUE_CLASSES = {
     "/", "/news", "/happening-now", "/keep-texas-red",
     "/houston", "/texas-business",
     "/texas-legislature", "/texas-legislature/house", "/texas-legislature/senate", "/texas-legislature/sessions",
-    "/texas-government", "/texas-government/agencies", "/districts", "/representatives",
+    "/texas-government/agencies", "/districts", "/representatives",
     "/get-involved", "/laws", "/laws/topics", "/data", "/civic-tools", "/topics", "/issues", "/tools",
     "/texas-politics", "/texas-political-reference", "/policy", "/texas-economy", "/texas-border-security", "/texas-energy",
     "/texas-agriculture", "/texas-veterans", "/texas-law-enforcement", "/texas-case", "/texas-case/facts", "/authors", "/shop",
@@ -65,6 +65,9 @@ describe("AdSense static sitemap value classification", () => {
     const classified = Object.values(VALUE_CLASSES).flat();
     expect(new Set(classified).size, "duplicate path across value classes").toBe(classified.length);
     expect([...classified].sort()).toEqual(sitemapPaths);
+    const governmentSitemap = readFileSync(new URL("../routes/sitemap-government[.]xml.ts", import.meta.url), "utf8");
+    expect(governmentSitemap).toContain("`${BASE_URL}/texas-government`");
+    expect(sitemapPaths).not.toContain("/texas-government");
   });
 
   it("keeps functional tools separate from prose-depth gates", () => {

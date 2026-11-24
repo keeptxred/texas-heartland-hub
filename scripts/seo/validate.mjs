@@ -59,7 +59,10 @@ for (const [file, source] of contents) {
   if (/check back for updates/i.test(source) && !file.endsWith("article-length.ts")) {
     warn(file, "generic freshness boilerplate detected");
   }
-  if (!isApiRoute && /https:\/\/www\.keeptxred\.com/i.test(source)) {
+  // The read-only historical redirect probe must request the legacy hostname.
+  // All public page, metadata, feed and other source files remain subject to this gate.
+  const isHistoricalRedirectProbe = file === "scripts/seo/audit-gsc-recovery-probes.mjs";
+  if (!isApiRoute && !isHistoricalRedirectProbe && /https:\/\/www\.keeptxred\.com/i.test(source)) {
     fail(file, "noncanonical www hostname detected");
   }
 }

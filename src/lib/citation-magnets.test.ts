@@ -10,6 +10,7 @@ const manifest = JSON.parse(
 };
 const llms = readFileSync(new URL("../../public/llms.txt", import.meta.url), "utf8");
 const pagesSitemap = readFileSync(new URL("../routes/sitemap-pages[.]xml.ts", import.meta.url), "utf8");
+const governmentSitemap = readFileSync(new URL("../routes/sitemap-government[.]xml.ts", import.meta.url), "utf8");
 const electionSitemap = readFileSync(new URL("../routes/sitemap-elections[.]xml.ts", import.meta.url), "utf8");
 const trustPanel = readFileSync(new URL("../components/authority/CitationTrustPanel.tsx", import.meta.url), "utf8");
 const currentSession = readFileSync(new URL("../components/legislature/CurrentSessionAuthorityReference.tsx", import.meta.url), "utf8");
@@ -57,13 +58,13 @@ describe("citation magnet discovery and extraction contracts", () => {
   it("keeps new law, government, and vote references in the governed page sitemap", () => {
     for (const path of [
       "/texas-legislature/votes",
-      "/texas-government",
       "/texas-government/agencies",
       "/laws/constitutional-amendments",
       "/laws/effective-dates",
     ]) {
       expect(pagesSitemap).toContain(`\"${path}\"`);
     }
+    expect(governmentSitemap).toContain("`${BASE_URL}/texas-government`");
   });
 
   it("keeps the retired Election Central feed empty and removes its manifest records", () => {

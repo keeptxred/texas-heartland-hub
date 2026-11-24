@@ -5,6 +5,7 @@ import { attachSupabaseAuth } from "@/integrations/supabase/auth-attacher";
 import { isExplicitlyRetiredStaticNewsPath } from "@/lib/retired-static-news";
 import { isRetiredElectionCentralPath } from "@/lib/retired-election-central";
 import { isRetiredBillDocumentPath } from "@/lib/retired-bill-documents";
+import { hasUnresolvedPublicRouteParameter } from "@/lib/unresolved-route-parameter";
 
 const errorMiddleware = createMiddleware().server(async ({ next }) => {
   try {
@@ -204,6 +205,21 @@ function hasNoindexState(url: URL): boolean {
 
 const seoUrlCleanup = createMiddleware().server(async ({ next, request }) => {
   const url = new URL(request.url);
+  // Do not redirect a literal route template to a generic topical destination.
+  // Search Console reported these non-document URLs as historical crawl errors.
+  if (
+    (request.method === "GET" || request.method === "HEAD") &&
+    hasUnresolvedPublicRouteParameter(url.pathname)
+  ) {
+    return new Response(request.method === "HEAD" ? null : "Page not found.", {
+      status: 404,
+      headers: {
+        "content-type": "text/plain; charset=utf-8",
+        "x-robots-tag": "noindex, follow",
+        "cache-control": "public, max-age=300",
+      },
+    });
+  }
   // Permanently retire individual bill and bill-directory HTML documents, while
   // keeping the single /bills search page and its data API accessible.
   if (isRetiredBillDocumentPath(url.pathname)) {

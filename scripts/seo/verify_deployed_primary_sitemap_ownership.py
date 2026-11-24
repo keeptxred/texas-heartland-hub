@@ -68,6 +68,7 @@ EXPECTED_PRIMARY_OWNER = {
     f"{SITE_ORIGIN}/representatives/judith-zaffirini": f"{SITE_ORIGIN}/sitemap-representatives.xml",
     f"{SITE_ORIGIN}/representatives/terri-leo-wilson": f"{SITE_ORIGIN}/sitemap-representatives.xml",
     f"{SITE_ORIGIN}/representatives/mihaela-plesa": f"{SITE_ORIGIN}/sitemap-representatives.xml",
+    f"{SITE_ORIGIN}/texas-government": f"{SITE_ORIGIN}/sitemap-government.xml",
     f"{SITE_ORIGIN}/texas-government/fifteenth-court-of-appeals": f"{SITE_ORIGIN}/sitemap-government.xml",
 }
 
