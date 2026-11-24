@@ -20,7 +20,7 @@ describe("deployed primary sitemap ownership hard gate", () => {
 
   it("does not rely on the failed chained workflow trigger", () => {
     expect(existsSync(".github/workflows/verify-primary-sitemap-ownership-after-deploy.yml")).toBe(false);
-    expect(existsSync("scripts/seo/verify-deployed-primary-sitemap-ownership.py")).toBe(false);
+    expect(existsSync("scripts/seo/verify-deployed-primary-sitemap-ownership.py")).toBe(true);
   });
 
   it("checks exact primary ownership for the core crawl hubs", () => {
@@ -45,6 +45,13 @@ describe("deployed primary sitemap ownership hard gate", () => {
     expect(ownershipSmoke).toContain(
       'f"{SITE_ORIGIN}/districts": f"{SITE_ORIGIN}/sitemap-pages.xml"',
     );
+    expect(ownershipSmoke).toContain(
+      'f"{SITE_ORIGIN}/texas-government": f"{SITE_ORIGIN}/sitemap-government.xml"',
+    );
+    const generalPages = readFileSync("src/routes/sitemap-pages[.]xml.ts", "utf8");
+    const staticPaths = generalPages.match(/const STATIC_PATHS:string\[\]=\[([\s\S]*?)\];/)?.[1] || "";
+    expect(staticPaths).not.toContain('"/texas-government"');
+    expect(readFileSync("src/routes/sitemap-government[.]xml.ts", "utf8")).toContain("${BASE_URL}/texas-government");
     expect(ownershipSmoke).toContain("expected exactly one primary owner");
     expect(ownershipSmoke).toContain("RETIRED_ELECTION_CENTRAL_PATHS");
     expect(ownershipSmoke).not.toContain('f"{SITE_ORIGIN}/elections/2026": f"{SITE_ORIGIN}/sitemap-elections.xml"');
