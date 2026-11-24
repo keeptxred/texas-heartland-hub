@@ -191,7 +191,7 @@ export const Route = createFileRoute("/news/$slug")({
     };
     return {
       article: synth,
-      body: dedupeArticleBody(rawBody) as StructuredArticleBody,
+      body: dedupeArticleBody(rawBody, { preserveNewsSources: ever.kind === "news" }) as StructuredArticleBody,
       relatedArticles: materials.relatedArticles,
       ctr: { variants: ever.headline_variants, score: ever.ctr_score },
     };
