@@ -1,3 +1,4 @@
+import { availableElectionReferences, publicElectionReference } from "@/lib/public-election-reference";
 import { createFileRoute, Link, notFound, redirect } from "@tanstack/react-router";
 import {
   ALL_TEXAS_POLITICAL_FIGURES,
@@ -178,7 +179,7 @@ function PoliticalFigurePage() {
           </figure>
         ) : null}
         <div className="mt-6 flex flex-wrap gap-3">
-          {figure.relatedLinks.map((link) => <a key={link.href} href={link.href} className="rounded-md border px-4 py-2 text-sm font-bold hover:border-primary">{link.label}</a>)}
+          {availableElectionReferences(figure.relatedLinks).map((link) => <a key={link.href} href={link.href} className="rounded-md border px-4 py-2 text-sm font-bold hover:border-primary">{link.label}</a>)}
         </div>
       </header>
 
@@ -207,8 +208,8 @@ function PoliticalFigurePage() {
 
       <aside className="mt-12 rounded-2xl border bg-muted/30 p-6 md:p-8" aria-labelledby="figure-context">
         <h2 id="figure-context" className="text-2xl font-bold">Keep the biography connected to current Texas politics</h2>
-        <p className="mt-3 leading-7 text-muted-foreground">Evergreen profiles explain career, offices, political coalitions and durable controversies. For current races, ballot status, polling and results, use Election Central. For the constitutional powers of a Texas office, use the Texas Government authority guides.</p>
-        <div className="mt-5 flex flex-wrap gap-3"><a href="/elections/2026" className="rounded-md bg-primary px-4 py-2 text-sm font-bold text-primary-foreground">Texas Election Central</a><a href="/texas-government" className="rounded-md border bg-card px-4 py-2 text-sm font-bold hover:border-primary">Texas Government</a></div>
+        <p className="mt-3 leading-7 text-muted-foreground">Evergreen profiles explain career, offices, political coalitions and durable controversies. For election administration and active-cycle resources, use the election reference below. For the constitutional powers of a Texas office, use the Texas Government authority guides.</p>
+        <div className="mt-5 flex flex-wrap gap-3"><a href={publicElectionReference().href} className="rounded-md bg-primary px-4 py-2 text-sm font-bold text-primary-foreground">{publicElectionReference().label}</a><a href="/texas-government" className="rounded-md border bg-card px-4 py-2 text-sm font-bold hover:border-primary">Texas Government</a></div>
       </aside>
 
       <section className="mt-12" aria-labelledby="more-figures">
