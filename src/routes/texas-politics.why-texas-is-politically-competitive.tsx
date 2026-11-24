@@ -1,3 +1,4 @@
+import { publicElectionReference } from "@/lib/public-election-reference";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { buildSeo, SITE_URL } from "@/lib/seo";
 
@@ -88,11 +89,7 @@ const clusterLinks = [
     title: "How Texas Became Republican",
     description: "The modern partisan realignment from the 1950s through statewide GOP control.",
   },
-  {
-    href: "/elections/2026",
-    title: "2026 Texas Election Central",
-    description: "Current races, candidates, voting information, polls and results.",
-  },
+  { href: publicElectionReference().href, title: publicElectionReference().label, description: publicElectionReference().description },
 ];
 
 export const Route = createFileRoute("/texas-politics/why-texas-is-politically-competitive")({
@@ -301,8 +298,7 @@ function TexasPoliticalCompetitivenessPage() {
           <p className="leading-8 text-foreground/90">
             That is especially important in legislative districts where one party has a large general-election advantage.
             In those seats, the most consequential competition may occur in the primary or runoff rather than in
-            November. KTR's <Link to="/elections/2026" className="font-semibold text-primary underline underline-offset-4">2026 Election Central</Link> tracks
-            those races separately rather than treating statewide toplines as a substitute for district-level analysis.
+            November. District-level returns are more informative than statewide toplines alone. See <a href={publicElectionReference().href} className="font-semibold text-primary underline underline-offset-4">{publicElectionReference().label}</a> for the available election resources.
           </p>
         </section>
 
