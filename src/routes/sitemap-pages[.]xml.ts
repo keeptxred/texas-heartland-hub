@@ -108,7 +108,7 @@ const STATIC_PAGE_LASTMOD_OVERRIDES: Record<string, string> = {
   "/laws/topics": LAW_DATA_REFRESH,
   "/laws/constitutional-amendments": CITATION_MAGNET_REFRESH,
   "/laws/effective-dates": CITATION_MAGNET_REFRESH,
-  "/data": LAW_DATA_REFRESH,
+  "/data": toIsoDate("2026-11-24T00:00:00-06:00"),
   "/civic-tools": CIVIC_TOOLS_REFRESH,
   "/civic-tools/government-authority-finder": CIVIC_TOOLS_REFRESH,
   "/civic-tools/texas-law-finder": CIVIC_TOOLS_REFRESH,
@@ -161,6 +161,7 @@ const STATIC_PAGE_LASTMOD_OVERRIDES: Record<string, string> = {
   "/texas-law-enforcement": GUIDE_LASTMOD,
   "/texas-case": TEXAS_CASE_REFRESH,
   "/texas-case/facts": TEXAS_CASE_REFRESH,
+  "/happening-now": toIsoDate("2026-11-24T00:00:00-06:00"),
   "/news/isd-tax-burdens": toIsoDate("2026-11-15T00:00:00-06:00"), // Dedicated rebuilt route, not the retired static article fixture.
   "/find-representative": toIsoDate("2026-11-24T00:00:00-06:00"),
   ...GUIDE_LASTMOD_BY_PATH,
