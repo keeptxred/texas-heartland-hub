@@ -1,3 +1,5 @@
+import { packetHasVerifiedEventPrimary } from "@/lib/newsroom-primary-evidence";
+import { newsroomPacketHasTexasIncidentEvidence } from "@/lib/newsroom-texas-evidence-guard";
 import { createFileRoute } from "@tanstack/react-router";
 import { runCloudflareJson } from "@/lib/cloudflare-json-ai.server";
 import {
@@ -109,6 +111,7 @@ async function handler({ request }: { request: Request }) {
     const cluster = clusterById.get(row.cluster_id);
     const packet = packetByCluster.get(row.cluster_id);
     if (!cluster || !packet || packet.source_count <= 0) return false;
+    if (!packetHasVerifiedEventPrimary(packet.packet_json) || !newsroomPacketHasTexasIncidentEvidence(packet.packet_json)) return false;
     return researchPacketEvidenceChars(packet.packet_json) >= evidenceFloorForPillar(cluster.pillar_slug);
   });
   if (!candidate) {
