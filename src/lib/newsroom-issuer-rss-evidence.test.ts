@@ -1,0 +1,33 @@
+import { describe, expect, it } from "vitest";
+import { ISSUER_RESEARCH_FEEDS, issuerResearchFeedsForSubjects, parseIssuerResearchRecords } from "./newsroom-issuer-rss-evidence";
+import { extractFirstPartyRssArticleBody } from "./newsroom-firstparty-rss-body";
+
+const now = Date.parse("2026-11-24T20:00:00Z");
+const feed = ISSUER_RESEARCH_FEEDS[0]!;
+const subject = "NVIDIA reinstates Jensen Huang as CEO";
+const url = "https://nvidianews.nvidia.com/news/nvidia-board-reinstates-jensen-huang-as-president-ceo-and-board-director";
+const release = "NVIDIA announced that Jensen Huang has been reinstated as president and CEO and director following a unanimous board decision. The directors met to consider the leadership transition and the responsibilities of the company's executives. Colette Kress remains chief financial officer following her temporary service as interim chief executive. Harvey Jones continues as chair of the board. The directors described the leadership change and their decision to retain outside counsel for an ongoing review. The company explained that the review remains open and that the directors will continue to evaluate the evidence before reaching final conclusions. The release reports the company's own decisions and does not independently resolve any external investigation.";
+function item(link = url, date = "Mon, 23 Nov 2026 13:55:00 GMT", title = "NVIDIA Board Reinstates Jensen Huang as President, CEO and Board Director") {
+  return '<item><title>' + title + '</title><link>' + link + '</link><contentType>releases</contentType><content><![CDATA[<p>' + release + '</p>]]></content><pubDate>' + date + '</pubDate></item>';
+}
+function rss(...items: string[]) { return "<rss><channel>" + items.join("") + "</channel></rss>"; }
+
+describe("issuer evidence research without broad national ingestion", () => {
+  it("uses the official feed only for a named existing issuer event", () => {
+    expect(issuerResearchFeedsForSubjects([subject])).toEqual([feed]);
+    expect(issuerResearchFeedsForSubjects(["Texas county approves budget"])).toEqual([]);
+    expect(parseIssuerResearchRecords(rss(item()), feed, [subject], now)).toMatchObject([
+      { title: "NVIDIA Board Reinstates Jensen Huang as President, CEO and Board Director", url, isPrimarySource: true, publishedAt: "2026-11-23T13:55:00.000Z" },
+    ]);
+    expect(parseIssuerResearchRecords(rss(item()), feed, ["NVIDIA launches new gaming GPU"], now)).toEqual([]);
+  });
+  it("rejects stale, fabricated-date, foreign-host, and repeated records", () => {
+    expect(parseIssuerResearchRecords(rss(item(url, "Mon, 16 Nov 2026 13:55:00 GMT"), item(url, "invalid"), item("https://nvidianews.nvidia.com.example.org/news/fake"), item(), item()), feed, [subject], now)).toHaveLength(1);
+    expect(parseIssuerResearchRecords(rss(item()), {...feed, url: "https://example.org/rss"}, [subject], now)).toEqual([]);
+  });
+  it("permits nonstandard content only on the verified NVIDIA release path", () => {
+    expect(extractFirstPartyRssArticleBody(item(), feed.source, url)).toContain("Jensen Huang");
+    expect(extractFirstPartyRssArticleBody(item(), feed.source, "https://example.org/news/fake")).toBeNull();
+    expect(extractFirstPartyRssArticleBody(item().replace("<contentType>releases</contentType>", ""), feed.source, url)).toBeNull();
+  });
+});
