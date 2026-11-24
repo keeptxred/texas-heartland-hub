@@ -1,0 +1,373 @@
+{
+  "description": "Public URL addresses only; fixed owner-authorized recovery inventory, issue 3772. Historical inclusion does not establish present indexation.",
+  "records": [
+    {
+      "id": 1,
+      "url": "https://keeptxred.com/bills"
+    },
+    {
+      "id": 2,
+      "url": "https://keeptxred.com/texas-legislature"
+    },
+    {
+      "id": 3,
+      "url": "https://keeptxred.com/shop/6a45389b4a06e00a2f00683c"
+    },
+    {
+      "id": 4,
+      "url": "https://keeptxred.com/news/beginners-guide-texas-elections"
+    },
+    {
+      "id": 5,
+      "url": "https://keeptxred.com/news/2026-07-11-unt-appoints-scholar-focused-on-race-and-neoliberalism-as-interim-provost"
+    },
+    {
+      "id": 6,
+      "url": "https://keeptxred.com/texas-politics"
+    },
+    {
+      "id": 7,
+      "url": "https://keeptxred.com/texas-government/agencies/texas-department-public-safety"
+    },
+    {
+      "id": 8,
+      "url": "https://keeptxred.com/news/texas-school-board-powers"
+    },
+    {
+      "id": 9,
+      "url": "https://keeptxred.com/news/texas-open-meetings-public-info"
+    },
+    {
+      "id": 10,
+      "url": "https://keeptxred.com/authors/energy-desk"
+    },
+    {
+      "id": 11,
+      "url": "https://keeptxred.com/news"
+    },
+    {
+      "id": 12,
+      "url": "https://keeptxred.com/texas-economy"
+    },
+    {
+      "id": 13,
+      "url": "https://keeptxred.com/news/live-2026-07-07-governor-abbott-orders-prompt-investigation-into-birth-tourism-package-wf40tc"
+    },
+    {
+      "id": 14,
+      "url": "https://keeptxred.com/authors"
+    },
+    {
+      "id": 15,
+      "url": "https://keeptxred.com/news/texas-governor-powers"
+    },
+    {
+      "id": 16,
+      "url": "https://keeptxred.com/texas-government"
+    },
+    {
+      "id": 17,
+      "url": "https://keeptxred.com/shop"
+    },
+    {
+      "id": 18,
+      "url": "https://keeptxred.com/news/texas-grid-ercot-explained"
+    },
+    {
+      "id": 19,
+      "url": "https://keeptxred.com/news/texas-voter-registration-guide"
+    },
+    {
+      "id": 20,
+      "url": "https://keeptxred.com/"
+    },
+    {
+      "id": 21,
+      "url": "https://keeptxred.com/news/moving-to-texas-guide"
+    },
+    {
+      "id": 22,
+      "url": "https://keeptxred.com/keep-texas-red"
+    },
+    {
+      "id": 23,
+      "url": "https://keeptxred.com/find-representative"
+    },
+    {
+      "id": 24,
+      "url": "https://keeptxred.com/terms-of-service"
+    },
+    {
+      "id": 25,
+      "url": "https://keeptxred.com/representatives"
+    },
+    {
+      "id": 26,
+      "url": "https://keeptxred.com/privacy"
+    },
+    {
+      "id": 27,
+      "url": "https://keeptxred.com/laws"
+    },
+    {
+      "id": 28,
+      "url": "https://keeptxred.com/about"
+    },
+    {
+      "id": 29,
+      "url": "https://keeptxred.com/texas-government/agencies/health-human-services-commission"
+    },
+    {
+      "id": 30,
+      "url": "https://keeptxred.com/editorial-standards"
+    },
+    {
+      "id": 31,
+      "url": "https://keeptxred.com/news/live-2026-07-02-governor-abbott-selects-don-huffines-to-serve-as-new-texas-comptroller-whlu3f"
+    },
+    {
+      "id": 32,
+      "url": "https://keeptxred.com/news/texas-gun-laws-explained"
+    },
+    {
+      "id": 33,
+      "url": "https://keeptxred.com/texas-government/agencies/texas-commission-environmental-quality"
+    },
+    {
+      "id": 34,
+      "url": "https://keeptxred.com/data"
+    },
+    {
+      "id": 35,
+      "url": "https://keeptxred.com/authors/education-desk"
+    },
+    {
+      "id": 36,
+      "url": "https://keeptxred.com/texas-government/reference/texas-lobbying-2026"
+    },
+    {
+      "id": 37,
+      "url": "https://keeptxred.com/texas-government/reference/texas-campaign-finance-2026"
+    },
+    {
+      "id": 38,
+      "url": "https://keeptxred.com/issues/texas-property-tax-relief"
+    },
+    {
+      "id": 39,
+      "url": "https://keeptxred.com/news/school-choice-esa-guide"
+    },
+    {
+      "id": 40,
+      "url": "https://keeptxred.com/news/primary-vs-general-election"
+    },
+    {
+      "id": 41,
+      "url": "https://keeptxred.com/houston"
+    },
+    {
+      "id": 42,
+      "url": "https://keeptxred.com/texas-government/land-commissioner"
+    },
+    {
+      "id": 43,
+      "url": "https://keeptxred.com/shop/6a442df46ffc0e3b360ce6bd"
+    },
+    {
+      "id": 44,
+      "url": "https://keeptxred.com/glossary"
+    },
+    {
+      "id": 45,
+      "url": "https://keeptxred.com/news/why-texas-has-no-income-tax"
+    },
+    {
+      "id": 46,
+      "url": "https://keeptxred.com/texas-government/secretary-of-state"
+    },
+    {
+      "id": 47,
+      "url": "https://keeptxred.com/happening-now"
+    },
+    {
+      "id": 48,
+      "url": "https://keeptxred.com/news/texas-water-rights-explained"
+    },
+    {
+      "id": 49,
+      "url": "https://keeptxred.com/shop/6a52e202fd678250810a14fd"
+    },
+    {
+      "id": 50,
+      "url": "https://keeptxred.com/news/texas-border-geography-101"
+    },
+    {
+      "id": 51,
+      "url": "https://keeptxred.com/shop/6a550682b08986747003b066"
+    },
+    {
+      "id": 52,
+      "url": "https://keeptxred.com/county-elections"
+    },
+    {
+      "id": 53,
+      "url": "https://keeptxred.com/shop/6a500b2ff2038250b80cad63"
+    },
+    {
+      "id": 54,
+      "url": "https://keeptxred.com/news/texas-border-policy-full-guide"
+    },
+    {
+      "id": 55,
+      "url": "https://keeptxred.com/contact"
+    },
+    {
+      "id": 56,
+      "url": "https://keeptxred.com/news/texas-school-finance-explained"
+    },
+    {
+      "id": 57,
+      "url": "https://www.keeptxred.com/news/texas-school-finance-explained"
+    },
+    {
+      "id": 58,
+      "url": "https://keeptxred.com/authors/elections-desk"
+    },
+    {
+      "id": 59,
+      "url": "https://keeptxred.com/news/texas-attorney-general-powers"
+    },
+    {
+      "id": 60,
+      "url": "https://keeptxred.com/shop/6a45407bf91b2ba6ea0c1afc"
+    },
+    {
+      "id": 61,
+      "url": "https://keeptxred.com/news/live-2026-06-28-governor-abbott-announces-axiom-space-redomiciles-in-texas-gcfyg"
+    },
+    {
+      "id": 62,
+      "url": "https://keeptxred.com/policy"
+    },
+    {
+      "id": 63,
+      "url": "https://keeptxred.com/authors/civics-desk"
+    },
+    {
+      "id": 64,
+      "url": "https://keeptxred.com/laws/constitutional-amendments"
+    },
+    {
+      "id": 65,
+      "url": "https://keeptxred.com/elections/races/texas-2026-texas-house-district-11-2026"
+    },
+    {
+      "id": 66,
+      "url": "https://keeptxred.com/news/texas-political-terminology"
+    },
+    {
+      "id": 67,
+      "url": "https://keeptxred.com/elections/races/texas-2026-texas-house-district-5-2026"
+    },
+    {
+      "id": 68,
+      "url": "https://keeptxred.com/elections/races/2026-texas-house-district-98"
+    },
+    {
+      "id": 69,
+      "url": "https://keeptxred.com/texas-government/reference/texas-bill-fiscal-notes"
+    },
+    {
+      "id": 70,
+      "url": "https://keeptxred.com/elections/statewide"
+    },
+    {
+      "id": 71,
+      "url": "https://keeptxred.com/news/what-local-governments-control"
+    },
+    {
+      "id": 72,
+      "url": "https://keeptxred.com/texas-government/reference/how-to-read-a-texas-bill"
+    },
+    {
+      "id": 73,
+      "url": "https://keeptxred.com/texas-government/reference/texas-precinct-chairs-county-parties"
+    },
+    {
+      "id": 74,
+      "url": "https://keeptxred.com/news/constitutional-carry-one-year-later"
+    },
+    {
+      "id": 75,
+      "url": "https://keeptxred.com/news/texas-voting-guide-2026"
+    },
+    {
+      "id": 76,
+      "url": "https://keeptxred.com/elections/candidates"
+    },
+    {
+      "id": 77,
+      "url": "https://keeptxred.com/elections/legislative"
+    },
+    {
+      "id": 78,
+      "url": "https://keeptxred.com/elections/results"
+    },
+    {
+      "id": 79,
+      "url": "https://keeptxred.com/elections/districts"
+    },
+    {
+      "id": 80,
+      "url": "https://keeptxred.com/contact-legislators"
+    },
+    {
+      "id": 81,
+      "url": "https://keeptxred.com/shop/6a466888b706a0bfc50e0a2e"
+    },
+    {
+      "id": 82,
+      "url": "https://keeptxred.com/texas-government/comptroller"
+    },
+    {
+      "id": 83,
+      "url": "https://keeptxred.com/register-to-vote"
+    },
+    {
+      "id": 84,
+      "url": "https://keeptxred.com/authors/border-bureau"
+    },
+    {
+      "id": 85,
+      "url": "https://www.keeptxred.com/news/2026-07-12-texas-a-m-officials-respond-to-project-launching-wine-grapes-into-space"
+    },
+    {
+      "id": 86,
+      "url": "https://www.keeptxred.com/news/2026-07-11-texas-judge-suspended-following-indictment-in-drug-possession-case"
+    },
+    {
+      "id": 87,
+      "url": "https://keeptxred.com/news/live-2026-07-11-unpacking-the-growth-of-texas-themed-mental-puzzles-and-digital-entert-pntib2"
+    },
+    {
+      "id": 88,
+      "url": "https://keeptxred.com/news/2026-07-10-breaking-texas-officials-respond-to-fatal-ice-shooting-in-houston"
+    },
+    {
+      "id": 89,
+      "url": "https://keeptxred.com/news/live-2026-07-10-federal-agency-faces-scrutiny-after-houston-officer-involved-shooting--s2fagc"
+    },
+    {
+      "id": 90,
+      "url": "https://keeptxred.com/news/2026-07-10-former-texas-tech-marketing-professor-pleads-guilty-to-drug-trafficking"
+    },
+    {
+      "id": 91,
+      "url": "https://keeptxred.com/news/isd-tax-burdens"
+    },
+    {
+      "id": 92,
+      "url": "https://keeptxred.com/texas/property-taxes-2026"
+    }
+  ]
+}
