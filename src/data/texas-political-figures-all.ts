@@ -1,3 +1,4 @@
+import { availableElectionReferences } from "@/lib/public-election-reference";
 import type { TexasPoliticalFigure } from "@/data/texas-political-figures";
 import { TEXAS_POLITICAL_FIGURES as ESTABLISHED_FIGURES } from "@/data/texas-political-figures";
 import { withPoliticalFigureDepthSupplements } from "@/data/texas-political-figure-depth-supplements";
@@ -25,7 +26,7 @@ export type TexasPoliticalFigurePage = TexasPoliticalFigure & {
 
 const canonicalizeFigureRelatedLinks = (figure: TexasPoliticalFigurePage): TexasPoliticalFigurePage => ({
   ...figure,
-  relatedLinks: figure.relatedLinks.map((link) => ({ ...link, href: canonicalInternalRedirectHref(link.href) })),
+  relatedLinks: availableElectionReferences(figure.relatedLinks).map((link) => ({ ...link, href: canonicalInternalRedirectHref(link.href) })),
 });
 
 const establishedFigures = ESTABLISHED_FIGURES.map(withPoliticalFigureDepthSupplements);
