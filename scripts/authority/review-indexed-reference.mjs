@@ -2,7 +2,7 @@ import { readFile, mkdir, writeFile } from "node:fs/promises";
 const { records } = JSON.parse(await readFile(new URL("./indexed-reference-review.json", import.meta.url), "utf8"));
 const now = new Date();
 const origin = "https://keeptxred.com";
-const allowed = new Set(["www.votetexas.gov", "www.sos.state.tx.us", "capitol.texas.gov", "statutes.capitol.texas.gov", "lbb.texas.gov", "www.lrl.texas.gov"]);
+const allowed = new Set(["www.votetexas.gov", "www.sos.state.tx.us", "capitol.texas.gov", "statutes.capitol.texas.gov", "lbb.texas.gov", "www.lrl.texas.gov", "dev-search.txcourts.gov"]);
 const urls = new Set();
 const paths = new Set();
 for (const row of records) {
