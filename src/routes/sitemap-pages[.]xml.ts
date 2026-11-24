@@ -107,7 +107,7 @@ const STATIC_PAGE_LASTMOD_OVERRIDES: Record<string, string> = {
   "/districts": DISTRICT_REFRESH,
   "/laws": LAW_DATA_REFRESH,
   "/laws/topics": LAW_DATA_REFRESH,
-  "/laws/constitutional-amendments": CITATION_MAGNET_REFRESH,
+  "/laws/constitutional-amendments": toIsoDate("2026-11-24T00:00:00-06:00"),
   "/laws/effective-dates": CITATION_MAGNET_REFRESH,
   "/data": LAW_DATA_REFRESH,
   "/civic-tools": CIVIC_TOOLS_REFRESH,
