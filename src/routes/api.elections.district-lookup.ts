@@ -129,7 +129,7 @@ export function selectLegislativeLayers(layers: { id: number; name: string }[], 
   const cycleStart = year % 2 === 1 && now < new Date(Date.UTC(year, 0, 3, 17))
     ? year - 2 : year % 2 === 1 ? year : year - 1;
   const congress = 119 + (cycleStart - 2025) / 2;
-  const suffix = congress % 100 >= 11 && congress % 100 <= 13 ? "th" : ({ 1: "st", 2: "nd", 3: "rd" }[congress % 10] ?? "th");
+  const suffix = congress % 100 >= 11 && congress % 100 <= 13 ? "th" : (["th", "st", "nd", "rd"][congress % 10] ?? "th");
   const required = (name: string) => {
     const match = layers.find(layer => layer.name === name);
     if (!match || !Number.isInteger(match.id)) throw new Error("Required legislative map vintage unavailable: " + name);
