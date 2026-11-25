@@ -10,8 +10,30 @@ const bill = /\b(HB|SB|HJR|SJR|House Bill|Senate Bill|House Joint Resolution|Sen
 function billIds(value: string): Set<string> {
   return new Set([...value.matchAll(bill)].map((m) => (({ "house bill": "hb", "senate bill": "sb", "house joint resolution": "hjr", "senate joint resolution": "sjr" } as Record<string, string>)[m[1].toLowerCase()] ?? m[1].toLowerCase()) + Number(m[2])));
 }
+// Entity overlap alone cannot distinguish a CEO's departure from a later
+// reinstatement. Use explicit leadership-action phrases from the headline,
+// not the body (which often describes earlier events as background).
+type LeadershipAction = "return" | "departure" | "appointment" | "investigation";
+const LEADERSHIP_ROLE = /\b(?:ceo|chief executive(?: officer)?|president|board director)\b/i;
+const LEADERSHIP_ACTIONS: ReadonlyArray<readonly [LeadershipAction, RegExp]> = [
+  ["return", /\b(?:reinstat\w*|reappoint\w*|return(?:s|ed|ing)?|resum(?:e|es|ed|ing)|(?:bring|brings|bringing|brought)\b.{0,80}\bback|(?:back|again) as)\b/i],
+  ["departure", /\b(?:resign\w*|depart(?:s|ed|ing|ure)?|step(?:s|ped|ping)? down|oust\w*|remov(?:e|es|ed|ing)|dismiss\w*|(?:leav(?:e|es|ing)|left) (?:the )?(?:role|post|company)|(?:retires|retired|retirement))\b/i],
+  ["appointment", /\b(?:appoint(?:s|ed|ment|ing)?|nam(?:es|ed|ing)|select(?:s|ed|ing)?|promot(?:es|ed|ing))\b/i],
+  ["investigation", /\b(?:investigat\w*|inquiry|probe)\b/i],
+];
+function leadershipAction(title: string): LeadershipAction | null {
+  if (!LEADERSHIP_ROLE.test(title)) return null;
+  return LEADERSHIP_ACTIONS.find(([, pattern]) => pattern.test(title))?.[0] ?? null;
+}
+
+function leadershipEventCompatible(subject: string, recordTitle: string): boolean {
+  const expected = leadershipAction(subject);
+  return expected === null || expected === leadershipAction(recordTitle);
+}
+
 /** Event identity, not generic keyword or publisher-name similarity. */
 export function primaryRecordMatchesEvent(subject: string, title: string, body: string): boolean {
+  if (!leadershipEventCompatible(subject, title)) return false;
   const subjectBills = billIds(subject);
   const recordBills = billIds(title + " " + body.slice(0, 1800));
   if (subjectBills.size && [...subjectBills].some((id) => recordBills.has(id))) return true;

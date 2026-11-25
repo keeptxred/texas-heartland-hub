@@ -19,6 +19,16 @@ describe("event-specific first-party evidence", () => {
     expect(isSubstantiveEventPrimary({...official, url:"https://nvidianews.nvidia.com.evil.example/news/x"}, subject)).toBe(false);
     expect(isSubstantiveEventPrimary({...official, extractedBody:"", description:""}, subject)).toBe(false);
   });
+
+  it("requires the same leadership event when the same executive appears in multiple headlines", () => {
+    const title = official.title;
+    const body = official.extractedBody;
+    expect(primaryRecordMatchesEvent("jensen huang returns nvidia as ceo", title, body)).toBe(true);
+    expect(primaryRecordMatchesEvent("nvidia s board directors brings jensen huang back as ceo", title, body)).toBe(true);
+    expect(primaryRecordMatchesEvent("NVIDIA CEO Jensen Huang resigns", title, body)).toBe(false);
+    expect(primaryRecordMatchesEvent("NVIDIA investigates CEO Jensen Huang", title, body)).toBe(false);
+    expect(primaryRecordMatchesEvent("NVIDIA reinstates Jensen Huang as CEO", "NVIDIA CEO Jensen Huang resigns", body)).toBe(false);
+  });
   it("matches a missing official feed row without inventing URLs", () => {
     const record = {id:1,title:official.title,source:official.source,link:official.url,pub_date:official.publishedAt,description:official.description,extracted_body:official.extractedBody,source_reputation_score:100};
     expect(findEventPrimaryFeedRecords(subject,[record],new Set()).map(s=>s.url)).toEqual([official.url]);
