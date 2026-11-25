@@ -66,7 +66,7 @@ function AboutPage() {
         <section>
           <h2 className="font-display text-3xl tracking-tight">What We Cover</h2>
           <ul className="mt-3 list-disc space-y-2 pl-5 text-muted-foreground">
-            <li>Texas elections, candidates, voting, polling, forecasts, and results</li>
+            <li>Texas election reporting, voting guidance, and historical election records</li>
             <li>The Texas Legislature, committees, bills, votes, and special sessions</li>
             <li>Statewide officials, agencies, ethics, investigations, and government accountability</li>
             <li>Texas law, courts, border policy, energy, education, regulation, taxes, and public policy</li>
@@ -77,7 +77,7 @@ function AboutPage() {
         <section>
           <h2 className="font-display text-3xl tracking-tight">Editorial Standards</h2>
           <p className="mt-3 text-muted-foreground">Our reporting prioritizes verifiable facts and primary sources, including Texas Legislature Online, the Secretary of State, the Comptroller, state agencies, court records, and county filings. Opinion and analysis are labeled. We do not publish anonymous attacks, fabricated quotations, or sponsored content disguised as reporting.</p>
-          <p className="mt-3"><a href="/editorial-standards" className="text-primary underline">Read our full Editorial Standards</a>.</p>
+          <p className="mt-3"><a href="/editorial-standards" className="text-primary underline">Read our full Editorial Standards</a> and <a href="/authors" className="text-primary underline">our editorial desks and source guidance</a>.</p>
         </section>
 
         <section>
@@ -87,12 +87,12 @@ function AboutPage() {
 
         <section>
           <h2 className="font-display text-3xl tracking-tight">Corrections</h2>
-          <p className="mt-3 text-muted-foreground">To report a factual error, email <a href="mailto:admin@keeptxred.com" className="text-primary underline">admin@keeptxred.com</a> with the article URL and the specific correction. We review correction requests and add a dated note when a published article is materially changed.</p>
+          <p className="mt-3 text-muted-foreground">To report a factual error, email <a href="mailto:corrections@keeptxred.com" className="text-primary underline">corrections@keeptxred.com</a> with the article URL and the specific correction. We review correction requests and add a dated note when a published article is materially changed.</p>
         </section>
 
         <section>
           <h2 className="font-display text-3xl tracking-tight">Editorial Independence</h2>
-          <p className="mt-3 text-muted-foreground">Keep TX Red is reader-supported and ad-supported. It is not authorized by any candidate or candidate&apos;s committee. We do not accept money from campaigns or political action committees in exchange for editorial coverage.</p>
+          <p className="mt-3 text-muted-foreground">Keep TX Red operates an independent publication and a merchandise storefront. It is not authorized by any candidate or candidate&apos;s committee. We do not accept money from campaigns or political action committees in exchange for editorial coverage.</p>
         </section>
 
         <section id="store-business-information" className="rounded-xl border border-border bg-secondary/30 p-6">

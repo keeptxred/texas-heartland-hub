@@ -191,7 +191,7 @@ function FindRepPage() {
           </div>
           <p className="mt-4 text-xs leading-5 text-muted-foreground">
             This lookup sends the address to the U.S. Census Bureau geocoder to identify legislative
-            districts. KTR does not persist the submitted address. Congressional election maps can differ from the districts currently represented; use the official chamber lookup to confirm your sitting member.
+            districts. Coordinates are checked against Census district map services; KTR does not create a stored address record in its application database. See our <Link to="/privacy" className="text-primary underline">privacy policy</Link>. Congressional election maps can differ from the districts currently represented; use the official chamber lookup to confirm your sitting member.
           </p>
           {lookupError ? (
             <p className="mt-4 border border-red-200 bg-red-50 p-3 text-sm font-semibold text-red-800">

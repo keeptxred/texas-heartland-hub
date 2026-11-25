@@ -3,7 +3,7 @@ import { LegalPage } from "@/components/legal-page";
 import { buildSeo } from "@/lib/seo";
 
 const SHIPPING_TITLE = "Shipping Policy";
-const SHIPPING_DESCRIPTION = "Production, delivery estimates, tracking, address changes, delays, and international shipping information for Keep TX Red orders.";
+const SHIPPING_DESCRIPTION = "Production, delivery estimates, tracking, address changes, delays, and U.S. shipping information for Keep TX Red orders.";
 
 export function shippingPolicyHead() {
   const seo = buildSeo({
@@ -27,7 +27,7 @@ export const Route = createFileRoute("/shipping-policy")({
 
 function ShippingPolicyPage() {
   return (
-    <LegalPage title="Shipping Policy" description="Keep TX Red products are printed on demand. The timelines below include both production and carrier transit time.">
+    <LegalPage title="Shipping Policy" updated="November 25, 2026" description="Keep TX Red products are printed on demand. The timelines below include both production and carrier transit time.">
       <section>
         <h2>Order Processing and Production</h2>
         <p>
@@ -71,9 +71,9 @@ function ShippingPolicyPage() {
       </section>
 
       <section>
-        <h2>International Orders</h2>
+        <h2>Shipping Destinations</h2>
         <p>
-          International availability, delivery times, taxes, duties, customs charges, and import fees vary by destination. Unless checkout states otherwise, the recipient is responsible for customs duties, taxes, brokerage charges, or other government fees imposed after shipment.
+          Keep TX Red currently accepts orders for U.S. shipping addresses only. International checkout is not available.
         </p>
       </section>
 
