@@ -11,7 +11,7 @@ describe("Phase 2A — Texas school board civic authority recovery", () => {
     const meta = ARTICLES.find((a) => a.slug === slug);
     expect(meta?.publishedAt).toBe("2026-05-27T16:00:00");
     expect(meta?.date).toBe("May 27, 2026");
-    expect(body.updated).toBe("2026-11-04");
+    expect(body.updated).toBe("2026-11-25");
   });
 
   it("has substantial distinct civic research value and verifiable primary law", () => {

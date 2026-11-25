@@ -2483,8 +2483,8 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
     }
   },
   "texas-school-board-powers": {
-    "updated": "2026-11-04",
-    "editorNote": "Substantively revised November 2026. Removed unsupported statewide turnout and uniform board-size claims; school district governance, election scheduling and independent record checking now reference official state materials.",
+    "updated": "2026-11-25",
+    "editorNote": "Substantively revised November 2026. Removed unsupported statewide turnout and uniform board-size claims; school district governance, election scheduling and independent record checking now reference official state materials. November 25 review adds specific decision pathways and official records or procedural guidance.",
     "intro": [
       "Texas independent school districts are governed by boards of trustees. These boards adopt policy, oversee finances and evaluate the superintendent, but do not personally run classrooms or the district's day-to-day operations. State law also sets requirements that local boards cannot simply ignore. For a voter evaluating a trustee candidate, the most useful distinction is between decisions a board can lawfully change and those that belong to the superintendent, Texas Education Agency, State Board of Education or other authorities.",
       "Texas Education Code Chapter 11 provides much of the legal framework. The Texas Education Agency's school-board guidance describes trustees as a collective governing body responsible for setting direction, financial and academic oversight, and accountability. This page explains those roles, the public records to check and the election questions that vary among districts."
@@ -2537,6 +2537,14 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
         "paragraphs": [
           "Compare measurable commitments with the board's adopted goals and the superintendent's implementation reports. Look for documented actions on student outcomes, fiscal oversight, staffing retention, debt management and legal compliance. The meaning of an academic performance metric depends on its definitions, reporting period and student population; one number without context is not enough.",
           "Keep the board and administrative roles separate when assigning credit or responsibility. A board vote for a policy is a governance action, while a later classroom or building outcome often depends on implementation and many outside factors. When a campaign claims a school is failing or a budget is wasteful, request the cited official report and check whether the candidate accurately identifies the board decision that could address it."
+        ]
+      },
+      {
+        "heading": "Three different routes for a school complaint",
+        "paragraphs": [
+          "A disagreement with a campus practice ordinarily starts with the district's published local grievance policy. Find its form and deadline, identify the specific decision and requested remedy, and retain the written outcome at each level. Alleged violations of education statutes or rules may also fall within TEA's investigative authority. Use the [official complaint navigator](https://tea.texas.gov/families-students/resolving-concerns-and-complaints) to identify the right process.",
+          "An appeal to the Commissioner of Education under Education Code §7.057 differs from a general TEA complaint. It applies only to specified grounds and generally requires exhaustion of local remedies. TEA's hearings guidance specifies a 45-calendar-day petition deadline after the challenged decision is first communicated. Verify applicability and deadlines promptly: sending a general complaint does not itself perfect an appeal. Special education disputes have separate procedures.",
+          "Example: a proposal to change districtwide attendance policy belongs in the board agenda and vote record. A disagreement over applying existing policy to one student ordinarily begins with the local grievance process. A claimed violation of school law or appealable final board decision may require a separate statutory procedure. Our [open meetings and public information guide](/news/texas-open-meetings-public-info) explains how to obtain government records."
         ]
       },
       {
@@ -2609,6 +2617,18 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
       {
         "label": "Texas Government Code Chapter 552 — Public Information",
         "url": "https://statutes.capitol.texas.gov/Docs/GV/htm/GV.552.htm"
+      },
+      {
+        "label": "TEA — Resolving Concerns and Complaints",
+        "url": "https://tea.texas.gov/families-students/resolving-concerns-and-complaints"
+      },
+      {
+        "label": "TEA — Section 7.057 Grievance Appeals",
+        "url": "https://tea.texas.gov/about-tea/government-relations-and-legal/hearings-and-appeals/texas-education-code-ss-7057-grievance-appeals"
+      },
+      {
+        "label": "TEA — Hearings and Appeals FAQ",
+        "url": "https://tea.texas.gov/about-tea/government-relations-and-legal/hearings-and-appeals/hearings-and-appeals-frequently-asked-questions"
       }
     ],
     "related": [
@@ -2817,8 +2837,8 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
   },
 
   "what-local-governments-control": {
-    "updated": "2026-11-04",
-    "editorNote": "Substantively revised November 2026 to distinguish county, municipal, school-district, and special-district authority with statutory sources and a jurisdiction-checking procedure.",
+    "updated": "2026-11-25",
+    "editorNote": "Substantively revised November 2026 to distinguish county, municipal, school-district, and special-district authority with statutory sources and a jurisdiction-checking procedure. November 25 review adds specific decision pathways and official records or procedural guidance.",
     "intro": [
       "A Texas address can fall within several governments at once. The county, a city, an independent school district, and one or more special districts can have different elected boards and legal powers. The quickest way to get a problem resolved is to identify which entity controls the service or decision, not simply which office is geographically closest.",
       "Each type of government has powers set by the Texas Constitution, state laws, and—where permitted—local charters or enabling acts. Home-rule cities have broader local self-government authority than general-law cities, but neither can ignore applicable state law. Counties operate under powers granted by law; an elected county officer's duties are not interchangeable with those of the commissioners court."
@@ -2864,6 +2884,14 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
         "paragraphs": [
           "Responsibility follows jurisdiction and ownership, not a simple city-versus-county slogan. A state highway can pass through municipal limits; a county road may lie outside an incorporated city; and utility or emergency services can be supplied by districts or contractors. Even within the same ZIP code, a resident's school district, fire district, and water provider may have different boundaries.",
           "For a road issue, begin with the roadway name and check the official city, county, or state-maintained road map. For fire or emergency services, ask the relevant city or emergency-services district for its service-area map and provider. For water and sewer, check the utility bill or water provider and any district board notices. Record the responsible entity before contacting an elected official."
+        ]
+      },
+      {
+        "heading": "Worked example: a road, a water bill and a school tax notice",
+        "paragraphs": [
+          "Suppose a resident sees a pothole on a numbered farm-to-market road, receives a water bill from a district and wants to protest a home's assessed value. Even near the same address, these matters may belong to different public bodies. Check TxDOT's [departmental map](https://www.txdot.gov/data-maps/reference-maps/departmental-map.html) for the state-maintained network and confirm responsibility with the district office. For a non-state road, check city and county records.",
+          "Use the [TCEQ Water Districts Map Viewer](https://www.tceq.texas.gov/gis/iwudview.html) to identify potential district boundaries, then confirm the provider named on the bill and its governing documents. The map is a starting point, not proof that a district operates each connection. A water charge and district property tax are separate items.",
+          "An appraisal protest normally concerns the appraisal district's valuation and appraisal review process, while objections to a taxing unit's budget or adopted rate belong to its public proceedings. Our [Texas school tax rate and district lookup guide](/news/isd-tax-burdens) provides a specific school-finance application. These examples illustrate how to identify authority; they do not establish responsibility for an actual address."
         ]
       },
       {
@@ -2937,6 +2965,14 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
       {
         "label": "Texas Government Code Chapter 552 — Public Information",
         "url": "https://statutes.capitol.texas.gov/Docs/GV/htm/GV.552.htm"
+      },
+      {
+        "label": "TxDOT — Departmental Map and State-Maintained Routes",
+        "url": "https://www.txdot.gov/data-maps/reference-maps/departmental-map.html"
+      },
+      {
+        "label": "TCEQ — Water Districts Map Viewer",
+        "url": "https://www.tceq.texas.gov/gis/iwudview.html"
       }
     ],
     "related": [
@@ -3902,8 +3938,8 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
     cta: { label: "Estimate Your Property Tax", href: "https://texasdefined.com/decide/property-taxes" },
   },
   "texas-attorney-general-powers": {
-    "updated": "2026-11-04",
-    "editorNote": "Substantively revised November 2026 against the Texas Constitution, Government Code Chapter 402 and Texas OAG guidance. Corrects earlier claims that attorney general opinions create binding law or that the office has unlimited criminal jurisdiction.",
+    "updated": "2026-11-25",
+    "editorNote": "Substantively revised November 2026 against the Texas Constitution, Government Code Chapter 402 and Texas OAG guidance. Corrects earlier claims that attorney general opinions create binding law or that the office has unlimited criminal jurisdiction. November 25 review adds specific decision pathways and official records or procedural guidance.",
     "intro": [
       "The Texas Attorney General is a separately elected constitutional officer and the chief legal officer for the State of Texas. The office represents the state's legal interests in many disputes and operates statutory programs involving consumer protection, child support, legal opinions and other responsibilities. That does not make the Attorney General the personal lawyer of individual Texans, the supervisor of every local prosecutor or an appellate judge who can change the law by opinion.",
       "To understand a specific headline, first ask which type of action is involved: a civil lawsuit on behalf of the state, formal interpretation of existing law, consumer enforcement, child-support case, public-information ruling or criminal prosecution within granted jurisdiction. The governing authority varies, and news coverage can mislead when those duties are presented as one unlimited power."
@@ -3963,6 +3999,14 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
         "paragraphs": [
           "The OAG's official consumer-facing guidance states that the Attorney General may not act as a private attorney in ordinary legal disputes. It also does not regulate individual lawyers through the State Bar or routinely override the decisions of a local prosecutor. Even where the agency handles a related public program, an individual may need a legal aid resource, local court or different agency.",
           "Recognizing limits can save time. A complaint about a judge's ruling has an appellate or judicial-process route, not a direct order from the AG; a private custody dispute is distinct from child-support enforcement; and a business service dispute may require consumer assistance outside any state enforcement case. Consult the official OAG contact and referrals rather than relying on generalized political rhetoric."
+        ]
+      },
+      {
+        "heading": "Where to take a specific complaint or records dispute",
+        "paragraphs": [
+          "A consumer complaint can help the OAG identify suspected unlawful conduct but is not a request for personal representation. Use the [official consumer complaint portal](https://www.texasattorneygeneral.gov/consumer-protection/file-consumer-complaint). The agency warns that complaints and attachments may be public records; omit unnecessary sensitive identifiers and financial or medical details.",
+          "For a withheld government record, distinguish an agency's pending request for an OAG ruling from an issued ruling. The [Open Records Division's post-ruling guidance](https://www.texasattorneygeneral.gov/open-government/members-public/what-expect-after-ruling-issued) explains release, cost and potential court challenges. A requestor may report failure to release records as directed through the applicable complaint process. Read the particular ruling and the [Texas public information guide](/news/texas-open-meetings-public-info) before deciding which step applies.",
+          "Example: a dispute with a retailer's refund policy, an unpaid court-ordered support obligation and a county's refusal to release an invoice involve different mechanisms. Preserve the contract and correspondence, support case record or precise public-records request respectively. Reporting a problem does not guarantee a lawsuit or payment."
         ]
       },
       {
@@ -4027,6 +4071,14 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
       {
         "label": "Texas Government Code Chapter 552 — Public Information",
         "url": "https://statutes.capitol.texas.gov/Docs/GV/htm/GV.552.htm"
+      },
+      {
+        "label": "OAG — File a Consumer Complaint",
+        "url": "https://www.texasattorneygeneral.gov/consumer-protection/file-consumer-complaint"
+      },
+      {
+        "label": "OAG — What to Expect After a Ruling Is Issued",
+        "url": "https://www.texasattorneygeneral.gov/open-government/members-public/what-expect-after-ruling-issued"
       }
     ],
     "related": [
@@ -4041,8 +4093,8 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
   },
 
   "texas-governor-powers": {
-    "updated": "2026-11-04",
-    "editorNote": "Substantively revised November 2026 to distinguish constitutional governor powers from the independent elected officers, Senate confirmation, budget veto, legislative sessions and statutory emergency powers. Historic publication date unchanged.",
+    "updated": "2026-11-25",
+    "editorNote": "Substantively revised November 2026 to distinguish constitutional governor powers from the independent elected officers, Senate confirmation, budget veto, legislative sessions and statutory emergency powers. Historic publication date unchanged. November 25 review adds specific decision pathways and official records or procedural guidance.",
     "intro": [
       "Texas has an independently elected governor, but the office does not supervise every other elected statewide officer. The Texas Constitution divides executive responsibilities among several offices, and the Legislature, courts and other elected bodies exercise their own authority. That arrangement is commonly called the plural executive. It makes the governor's actual powers important to understand rather than assuming the office functions like a president directing a cabinet.",
       "The most consequential tools include appointing certain state officials, vetoing legislation within constitutional rules, calling special legislative sessions, issuing lawful executive orders and exercising powers assigned by disaster and emergency statutes. Each tool has limits. Texans assessing an announcement should identify the law authorizing it, the date it takes effect and the body responsible for implementation."
@@ -4065,7 +4117,7 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
       {
         "heading": "Calling the Legislature into special session",
         "paragraphs": [
-          "Regular Texas legislative sessions follow the constitutional schedule and last up to 140 days. Article IV §8 authorizes the governor to convene the Legislature on extraordinary occasions and requires the proclamation to state the purposes. Special sessions are generally limited in duration, and Article III supplies restrictions on the subjects the Legislature may consider.",
+          "Regular Texas legislative sessions follow the constitutional schedule and last up to 140 days. Article IV §8 authorizes the governor to convene the Legislature on extraordinary occasions and requires the proclamation to state the purposes. Special sessions are constitutionally limited to thirty days, and Article III supplies restrictions on the subjects the Legislature may consider.",
           "The governor can influence which subjects appear in a special-session call, but cannot personally enact a bill or force both legislative chambers to pass a particular version. A bill still must proceed through the relevant chamber procedures and obtain the approvals required by law. Review the call, amended calls, official legislative journals, and enacted session laws rather than equating a special-session announcement with changed policy."
         ]
       },
@@ -4102,6 +4154,14 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
         "paragraphs": [
           "The Lieutenant Governor presides over the Senate and has legislative influence but is separately elected. The Attorney General is the state's legal officer with duties under the Constitution and Government Code. The Comptroller exercises statutory tax and finance responsibilities. The judiciary interprets the law and resolves cases within its jurisdiction. None of these offices derives all of its power from a governor's personal instruction.",
           "The governor has political influence, appointment authority and a public platform, but specific disputes about elections, taxes, litigation or rulemaking require locating the lawful decision-maker. A court judgment can constrain an executive order, an appropriations act can limit an agency expenditure, and a separately elected officer's statutory duties continue despite political disagreement."
+        ]
+      },
+      {
+        "heading": "Veto deadlines and special-session limits in practice",
+        "paragraphs": [
+          "Article IV §14 gives the governor ten days, excluding Sundays, after presentation to return an ordinary bill with objections. If adjournment prevents return, the governor must file objections with the Secretary of State and publicly proclaim them within twenty days after adjournment to prevent the bill from becoming law. A bill can become law without a signature. The override threshold is two-thirds of members present in each chamber, subject to constitutional reconsideration procedures.",
+          "Article III §40 limits a special session to thirty days and restricts legislation to subjects designated in the governor's proclamation or later presented by the governor. Another proclamation can convene a new session, but the governor does not gain legislative voting power.",
+          "Example: if a bill is returned with a veto during a session, inspect both chamber journals for votes on reconsideration. If the Legislature has adjourned and the bill is vetoed during the post-adjournment window, do not imply legislators can immediately vote on an override. Check recorded dates and final disposition in the [legislative records](/texas-legislature) and use our [bill-reading guide](/texas-government/reference/how-to-read-a-texas-bill)."
         ]
       },
       {
@@ -4163,6 +4223,10 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
       {
         "label": "Texas Legislative Budget Board",
         "url": "https://www.lbb.texas.gov/"
+      },
+      {
+        "label": "Texas Constitution — Article III §40, special sessions",
+        "url": "https://statutes.capitol.texas.gov/Docs/CN/htm/CN.3/CN.3.40.htm"
       }
     ],
     "related": [
