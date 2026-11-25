@@ -24,7 +24,7 @@ describe("newsroom source-page enrichment", () => {
     expect(priority(true, true, 8_900, 9_000)).toBeGreaterThan(priority(true, true, 9_500, 9_000));
     const builder = readFileSync("src/routes/api/public/hooks/build-newsroom-research-packets.ts", "utf8");
     expect(builder).toContain("newsroomHydrationPriority({");
-    expect(builder).toContain(".slice(0, SOURCE_PAGE_FETCH_LIMIT - (researchRequeueAuthorized ? LINKED_PRIMARY_FETCH_LIMIT : 0))");
+    expect(builder).toContain(".slice(0, SOURCE_PAGE_FETCH_LIMIT - (researchDiscoveryAuthorized ? LINKED_PRIMARY_FETCH_LIMIT : 0))");
     expect(builder).toContain("const SOURCE_PAGE_FETCH_LIMIT = 40");
   });
 
@@ -81,7 +81,7 @@ describe("newsroom source-page enrichment", () => {
     expect(builder).toContain("tdemMaintenanceFeeds.map((feed) => feed.id)");
     expect(builder).toContain("sourcePageStateById.set(row.feed_item_id, row)");
     expect(builder).toContain("priorityByFeedId.set(feed.id, Math.max(priorityByFeedId.get(feed.id) ?? 0, 25_000))");
-    expect(builder).toContain(".slice(0, SOURCE_PAGE_FETCH_LIMIT - (researchRequeueAuthorized ? LINKED_PRIMARY_FETCH_LIMIT : 0))");
+    expect(builder).toContain(".slice(0, SOURCE_PAGE_FETCH_LIMIT - (researchDiscoveryAuthorized ? LINKED_PRIMARY_FETCH_LIMIT : 0))");
     expect(builder).toContain("sourcePageCoolingDown(feed.id)");
     // This legacy TDEM hygiene regression must inspect ONLY the TDEM cleanup
     // section. The separate verified failed-story rescue deliberately requeues
@@ -295,7 +295,7 @@ describe("newsroom source-page enrichment", () => {
   it("keeps the existing main-word and independent publisher safety checks separate from extraction", () => {
     const packetBuilder = readFileSync("src/routes/api/public/hooks/build-newsroom-research-packets.ts", "utf8");
     const publisher = readFileSync("src/routes/api/public/hooks/generate-newsroom.ts", "utf8");
-    expect(packetBuilder).toContain("fetchReadableNewsroomSource(feed.link, researchRequeueAuthorized");
+    expect(packetBuilder).toContain("fetchReadableNewsroomSource(feed.link, researchDiscoveryAuthorized");
     expect(publisher).toContain("newsroomHasPublisherDiversity(sources)");
     expect(publisher).toContain("researchPacketEvidenceChars(packetRow.packet_json)");
     expect(publisher).toContain("const imageReady = Boolean(preparedImage.ok");
