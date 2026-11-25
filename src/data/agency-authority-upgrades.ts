@@ -1,3 +1,4 @@
+import { getAgencyPracticalGuide } from "@/data/agency-practical-guides";
 import type { AgencyAuthorityProfile, AgencyAuthoritySource } from "@/data/agency-authority";
 
 type AgencyExpansion = {
@@ -151,7 +152,7 @@ const EXPANSIONS: Record<string, AgencyExpansion> = {
   },
   "health-human-services-commission": {
     quickAnswer: " HHSC is the administrative center of the Texas health and human-services system, with responsibility for Medicaid and many benefits, regulatory and service programs. Its decisions are heavily shaped by both state law and federal program rules, particularly in Medicaid, so state policymakers have meaningful discretion but do not control every eligibility, financing or coverage rule independently.",
-    authority: " Government Code Chapter 531 and related health statutes organize HHSC and assign system responsibilities. Legislative appropriations provide state funding, while federal statutes, waivers, regulations and matching-fund requirements govern large portions of Medicaid and other programs. HHSC can adopt rules within delegated authority but cannot create appropriations or disregard federal conditions attached to federal participation.",
+    authority: " Government Code Chapter 523 and related health statutes organize HHSC and assign system responsibilities. Legislative appropriations provide state funding, while federal statutes, waivers, regulations and matching-fund requirements govern large portions of Medicaid and other programs. HHSC can adopt rules within delegated authority but cannot create appropriations or disregard federal conditions attached to federal participation.",
     responsibilities: [
       "Administer Medicaid eligibility, benefits and managed-care structures within state and federal law. Texas can make policy choices through its state plan, waivers and contracts, but many choices require federal approval or must satisfy federal minimum requirements.",
       "Operate or oversee eligibility systems for major health and human-services benefits and coordinate contracted service delivery. Eligibility decisions are governed by program rules and due-process requirements rather than informal discretion by an individual agency employee.",
@@ -218,18 +219,19 @@ const EXPANSIONS: Record<string, AgencyExpansion> = {
 };
 
 export function upgradeAgencyAuthorityProfile(profile: AgencyAuthorityProfile): AgencyAuthorityProfile {
+  if (profile.reviewed === "2026-08-20" || profile.reviewed === "2026-11-25") return profile;
   const expansion = EXPANSIONS[profile.slug];
   if (!expansion) return profile;
   return {
     ...profile,
-    reviewed: "2026-08-20",
+    reviewed: ["texas-department-public-safety", "health-human-services-commission", "texas-commission-environmental-quality"].includes(profile.slug) ? "2026-11-25" : "2026-08-20",
     quickAnswer: `${profile.quickAnswer}${expansion.quickAnswer}`,
     authority: `${profile.authority}${expansion.authority}`,
     responsibilities: [...profile.responsibilities, ...expansion.responsibilities],
     notResponsibleFor: [...profile.notResponsibleFor, ...expansion.notResponsibleFor],
     accountability: [...profile.accountability, ...expansion.accountability],
     programs: [...profile.programs, ...expansion.programs],
-    sources: [...profile.sources, ...(expansion.sources ?? [])],
+    sources: [...profile.sources, ...(expansion.sources ?? []), ...getAgencyPracticalGuide(profile.slug).map(({ label, url }) => ({ label, url, primary: true }))],
   };
 }
 

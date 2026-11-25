@@ -240,7 +240,7 @@ export const AGENCY_AUTHORITY_PROFILES: AgencyAuthorityProfile[] = [
     reviewed,
     dek: "What HHSC administers across Medicaid, health and human-services programs, regulation and benefits, and how its authority relates to other Texas health agencies.",
     quickAnswer: "HHSC is the executive-branch agency charged with administration and oversight of major Texas health and human-services programs, including the state's Medicaid program and a broad range of benefits, regulatory, care and support functions assigned by law.",
-    authority: "HHSC is established in Texas Government Code Chapter 531 and operates under state and federal health-program law, legislative appropriations, administrative rules and federal program requirements. Some functions are carried out through other agencies in the Texas Health and Human Services system.",
+    authority: "HHSC is organized under Texas Government Code Chapter 523, following the April 1, 2025 recodification of former Chapter 531 provisions and operates under state and federal health-program law, legislative appropriations, administrative rules and federal program requirements. Some functions are carried out through other agencies in the Texas Health and Human Services system.",
     responsibilities: [
       "Administer and oversee the Texas Medicaid program, including managed-care structures.",
       "Administer major health and human-services benefits and support programs assigned by law.",
@@ -256,14 +256,14 @@ export const AGENCY_AUTHORITY_PROFILES: AgencyAuthorityProfile[] = [
     accountability: ["Texas Legislature and appropriations", "Federal oversight for Medicaid and federally funded programs", "Administrative rules, audits, program data, contracts and public records"],
     programs: ["Texas Medicaid and managed care", "Eligibility and benefits administration", "Long-term care and disability services", "Provider and facility regulation assigned to HHSC", "Health and human-services contracting"],
     sources: [
-      { label: "Texas Government Code — Chapter 531", url: "https://statutes.capitol.texas.gov/Docs/GV/htm/GV.531.htm", primary: true },
+      { label: "Texas Government Code — Chapter 523 (HHSC)", url: "https://statutes.capitol.texas.gov/Docs/GV/pdf/GV.523.pdf", primary: true },
       { label: "Texas HHSC", url: "https://www.hhs.texas.gov/", primary: true },
       { label: "HHSC Medicaid program definition", url: "https://fhb.hhs.texas.gov/handbooks/starplus-handbook/sph-glossary", primary: true },
     ],
     related: [
       { label: "Healthcare Policy Tracker", href: "/policy/healthcare" },
       { label: "State Budget Policy Tracker", href: "/policy/state-budget" },
-      { label: "Texas State Budget Data", href: "/data/state-budget" },
+      { label: "Texas government data and budget sources", href: "/data" },
     ],
     keywords: ["HHSC", "Health and Human Services Commission", "Medicaid", "benefits", "healthcare", "long term care", "human services", "managed care"],
   },
