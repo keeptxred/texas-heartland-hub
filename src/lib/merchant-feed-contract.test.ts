@@ -32,7 +32,7 @@ describe("Google Merchant feed contract", () => {
   });
 
   it("routes catalog images through the Merchant image URL normalizer", () => {
-    expect(feed).toContain("merchantImageUrl(product.image)");
+    expect(feed).toContain("if (enabledVariants.length === 0) return [];");
     expect(feed).toContain("merchantImageUrl(variant.image || variant.images?.[0] || product.image)");
   });
 

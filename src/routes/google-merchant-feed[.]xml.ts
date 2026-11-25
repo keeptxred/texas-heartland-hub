@@ -3,6 +3,7 @@ import type {} from "@tanstack/react-start";
 import { merchantOfferDescription } from "@/lib/merchant-offer-description";
 import { additionalMerchantImages } from "@/lib/merchant-offer-images";
 import { merchantImageUrl } from "@/lib/merchant-image-url";
+import { availableProductVariants, variantPrice } from "@/lib/shop-product-offers";
 import { parseProductVariantOptions } from "@/lib/product-variant-options";
 import { getProducts, type Product, type ProductVariant } from "@/lib/products.functions";
 import { BASE_URL } from "@/lib/sitemap-shared";
@@ -149,37 +150,16 @@ function merchantItems(product: Product): MerchantItem[] {
   const description = limitText(plainText(seoDescription(product)), DESCRIPTION_LIMIT);
   const canonicalLink = `${BASE_URL}/shop/${encodeURIComponent(product.id)}`;
   const { category, apparel } = productCategory(product);
-  const enabledVariants = (product.variants ?? []).filter((variant) => variant.is_enabled !== false);
-
-  if (enabledVariants.length === 0) {
-    const imageLink = merchantImageUrl(product.image);
-    if (!imageLink || !Number.isFinite(product.price) || product.price <= 0 || !description) return [];
-
-    const color = product.colors?.length === 1 ? product.colors[0]?.trim() || undefined : undefined;
-    if (apparel) return [];
-
-    return [{
-      id: product.id,
-      mpn: product.id,
-      title: itemTitle(product),
-      description,
-      link: canonicalLink,
-      canonicalLink,
-      imageLink,
-      price: product.price,
-      currency: product.currency || "USD",
-      category,
-      apparel,
-      color,
-    }];
-  }
+  const enabledVariants = availableProductVariants(product);
+  // Checkout requires an actual enabled Printify variant ID.
+  if (enabledVariants.length === 0) return [];
 
   const optionNames = variantOptionNames(product, enabledVariants, apparel);
 
   return enabledVariants.flatMap((variant) => {
     const imageLink = merchantImageUrl(variant.image || variant.images?.[0] || product.image);
     const additionalImageLinks = additionalMerchantImages(imageLink, variant.images ?? [], merchantImageUrl);
-    const price = Number(variant.price || product.price);
+    const price = variantPrice(product, variant);
     const attrs = variantAttributes(variant);
     const color = attrs.color || (product.colors?.length === 1 ? product.colors[0]?.trim() : undefined);
     const size = attrs.size;

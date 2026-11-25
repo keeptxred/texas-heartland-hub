@@ -8,6 +8,7 @@ import {
   useCart,
 } from "@/lib/cart-context";
 import { getProducts, type Product, type ProductVariant } from "@/lib/products.functions";
+import { availableProductVariants, variantPrice } from "@/lib/shop-product-offers";
 import { SITE_URL } from "@/lib/seo";
 
 type CartSearch = {
@@ -16,7 +17,7 @@ type CartSearch = {
 
 type MerchantSelection = {
   product: Product;
-  variant: ProductVariant | null;
+  variant: ProductVariant;
 };
 
 export const Route = createFileRoute("/cart")({
@@ -39,11 +40,7 @@ export const Route = createFileRoute("/cart")({
 
 function merchantSelection(products: Product[], id: string): MerchantSelection | null {
   for (const product of products) {
-    const enabledVariants = (product.variants ?? []).filter((variant) => variant.is_enabled !== false);
-    if (enabledVariants.length === 0 && product.id === id) {
-      return { product, variant: null };
-    }
-
+    const enabledVariants = availableProductVariants(product);
     const variant = enabledVariants.find((item) => `${product.id}-${item.id}` === id);
     if (variant) return { product, variant };
   }
@@ -87,7 +84,7 @@ function CartPage() {
 
     const { product, variant } = requestedSelection;
     const image = variant?.image || variant?.images?.[0] || product.image;
-    const price = Number(variant?.price || product.price);
+    const price = variantPrice(product, variant);
     const color = variant?.color?.trim() || (product.colors?.length === 1 ? product.colors[0]?.trim() || null : null);
     const size = variant ? variant.size || parseVariantSize(variant.title) : null;
 

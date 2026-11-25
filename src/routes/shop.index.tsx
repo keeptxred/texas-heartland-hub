@@ -4,6 +4,7 @@ import { useSuspenseQuery, queryOptions } from "@tanstack/react-query";
 import { SITE_URL } from "@/lib/seo";
 import { getProducts, type Product } from "@/lib/products.functions";
 import { useCart } from "@/lib/cart-context";
+import { availableProductVariants, productPriceRange } from "@/lib/shop-product-offers";
 import { seoTitle, seoAlt } from "@/lib/shop-seo";
 
 const productsQuery = queryOptions({
@@ -115,20 +116,20 @@ export const Route = createFileRoute("/shop/")({
 });
 
 function formatPrice(product: Product) {
-  return new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: product.currency,
-  }).format(product.price);
+  const range = productPriceRange(product);
+  if (!range) return "Unavailable";
+  const money = new Intl.NumberFormat("en-US", { style: "currency", currency: product.currency || "USD" });
+  return range.min === range.max ? money.format(range.min) : `${money.format(range.min)}–${money.format(range.max)}`;
 }
 
 function ProductCard({ product }: { product: Product }) {
   const displayTitle = seoTitle(product);
   const colorToImage = new Map<string, string>();
-  for (const variant of product.variants ?? []) {
-    const color = (variant.color || variant.title?.split("/")[0] || "").trim();
+  for (const variant of availableProductVariants(product)) {
+    const color = (variant.color || "").trim();
     if (color && !colorToImage.has(color) && variant.image) colorToImage.set(color, variant.image);
   }
-  const colorChips = colorToImage.size > 0 ? Array.from(colorToImage.keys()) : product.colors ?? [];
+  const colorChips = colorToImage.size > 0 ? Array.from(colorToImage.keys()) : [];
   const [selectedColor, setSelectedColor] = useState<string | null>(null);
   const displayImage = (selectedColor && colorToImage.get(selectedColor)) || product.image;
 
@@ -192,8 +193,8 @@ function ProductCard({ product }: { product: Product }) {
 
 function ShopPage() {
   const { data } = useSuspenseQuery(productsQuery);
-  const products = data?.products ?? [];
-  const loadError = data?.error;
+  const products = data?.isFallback ? [] : (data?.products ?? []).filter(product => availableProductVariants(product).length > 0);
+  const loadError = data?.isFallback || data?.error;
   const { count, open } = useCart();
   const search = Route.useSearch();
   const navigate = Route.useNavigate();
@@ -210,8 +211,8 @@ function ShopPage() {
     .filter(({ product }) => productMatchesCollection(product, selectedCollection))
     .filter(({ product }) => !normalizedQuery || productSearchText(product).includes(normalizedQuery))
     .sort((a, b) => {
-      if (selectedSort === "price-low") return a.product.price - b.product.price;
-      if (selectedSort === "price-high") return b.product.price - a.product.price;
+      if (selectedSort === "price-low") return (productPriceRange(a.product)?.min ?? 0) - (productPriceRange(b.product)?.min ?? 0);
+      if (selectedSort === "price-high") return (productPriceRange(b.product)?.max ?? 0) - (productPriceRange(a.product)?.max ?? 0);
       if (selectedSort === "best-selling") {
         const difference = Number(isBestSeller(b.product)) - Number(isBestSeller(a.product));
         return difference || a.originalIndex - b.originalIndex;
@@ -275,7 +276,7 @@ function ShopPage() {
             <div>
               <div className="mb-3 text-[11px] font-semibold uppercase tracking-[0.3em] text-primary">Keep TX Red — Official Shop</div>
               <h1 className="max-w-3xl font-display text-4xl leading-tight tracking-tight md:text-5xl">Texas Patriotic Apparel, Hats & Gifts</h1>
-              <p className="mt-4 max-w-2xl text-white/90">Every order helps keep our newsroom independent. Add items to your cart and check out securely with card.</p>
+              <p className="mt-4 max-w-2xl text-white/90">Browse available made-to-order merchandise, choose your color and size, and check out securely with card.</p>
             </div>
             <button
               onClick={open}

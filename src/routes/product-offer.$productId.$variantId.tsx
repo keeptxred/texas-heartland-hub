@@ -2,6 +2,7 @@ import { useState } from "react";
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
 import { additionalMerchantImages } from "@/lib/merchant-offer-images";
+import { availableProductVariants, variantPrice } from "@/lib/shop-product-offers";
 import { SITE_URL } from "@/lib/seo";
 import { getProducts, type Product, type ProductVariant } from "@/lib/products.functions";
 import { CartProvider, buildAddPayload, parseVariantSize, useCart } from "@/lib/cart-context";
@@ -40,7 +41,7 @@ export const Route = createFileRoute("/product-offer/$productId/$variantId")({
     const product = data.products.find((item) => item.id === params.productId);
     if (!product) throw notFound();
 
-    const variant = (product.variants ?? []).find(
+    const variant = availableProductVariants(product).find(
       (item) => item.is_enabled !== false && String(item.id) === params.variantId,
     );
     if (!variant) throw notFound();
@@ -127,7 +128,7 @@ function ProductOfferPage() {
   const gallery = [image, ...additionalMerchantImages(image, variant.images ?? [], (value) => value || "")];
   const [activeImage, setActiveImage] = useState<string | null>(null);
   const displayImage = activeImage && gallery.includes(activeImage) ? activeImage : image;
-  const price = Number(variant.price || product.price);
+  const price = variantPrice(product, variant);
   const currency = product.currency || "USD";
   const size = parseVariantSize(variant.title);
   const color = variant.color?.trim() || null;
