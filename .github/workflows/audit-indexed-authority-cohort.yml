@@ -1,6 +1,8 @@
 name: Audit indexed authority cohort live
 on:
   workflow_dispatch:
+  schedule:
+    - cron: '34 13 * * 3'
   workflow_run:
     workflows: ["Deploy verified KeepTXRed to Cloudflare"]
     types: [completed]
@@ -9,6 +11,7 @@ on:
     branches: [main]
     paths:
       - 'scripts/authority/indexed-authority-inventory.json'
+      - 'scripts/authority/indexed-authority-content-evidence.json'
       - 'scripts/authority/audit-indexed-authority-inventory.mjs'
       - '.github/workflows/audit-indexed-authority-cohort.yml'
 permissions:
