@@ -65,6 +65,8 @@ describe("KTR search-recovery authority guides", () => {
         "texas-lobbying-2026": "2026-10-29",
         "how-to-read-a-texas-bill": "2026-11-24",
         "texas-bill-fiscal-notes": "2026-11-24",
+        "texas-campaign-finance-2026": "2026-11-25",
+        "texas-precinct-chairs-county-parties": "2026-11-25",
       };
       expect(guide.updated).toBe(verifiedReviewDates[slug] ?? "2026-09-28");
       expect(guide.keyTakeaways.length).toBeGreaterThanOrEqual(5);
