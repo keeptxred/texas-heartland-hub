@@ -27,7 +27,7 @@ export const Route = createFileRoute("/privacy")({
 
 function PrivacyPage() {
   return (
-    <LegalPage title="Privacy Policy" updated="October 14, 2026" description="This policy explains the information Keep TX Red handles when you read the site, use our tools, contact us, or place a shop order.">
+    <LegalPage title="Privacy Policy" updated="November 25, 2026" description="This policy explains the information Keep TX Red handles when you read the site, use our tools, contact us, or place a shop order.">
       <section>
         <h2>Google Customer Reviews</h2>
         <p>On a verified paid order confirmation page, we share your email address, order reference, delivery country, and estimated delivery date with Google to display the Google Customer Reviews survey choice. Google sends a review survey only if you agree in its opt-in prompt. Declining does not affect your order or customer support.</p>
@@ -76,6 +76,12 @@ function PrivacyPage() {
         <p>
           Stripe processes card payments. Keep TX Red receives transaction status and limited payment-related details needed to manage the order, but does not receive or store your complete card number or security code.
         </p>
+      </section>
+
+      <section>
+        <h2>Representative Lookup and Browser Storage</h2>
+        <p>If you use the representative lookup, the street address you submit is sent through our lookup endpoint to the U.S. Census Bureau geocoder. The resulting geographic coordinates are used with Census TIGERweb district map services to identify legislative districts. The lookup does not create a stored address record in our application database. The Census services and network infrastructure may retain their own technical records; see the <a href="https://www.census.gov/about/policies/privacy.html" target="_blank" rel="noopener noreferrer">Census Bureau privacy information</a>. You can instead use the official legislature lookup linked on our representative page.</p>
+        <p className="mt-3">The shop stores cart selections in your browser to remember your items between visits. You can remove the stored cart by clearing site data in your browser. Clearing it does not cancel an order already placed.</p>
       </section>
 
       <section>
