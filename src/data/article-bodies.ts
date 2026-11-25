@@ -2245,7 +2245,7 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
       {
         "heading": "How to obtain the actual sample ballot",
         "paragraphs": [
-          "First verify your registration and current county through the [Texas voter portal](https://teamrv-mvp.sos.texas.gov/MVP/mvp.do). Next visit your county elections administrator or county clerk's election page for the election date, early-voting locations, precinct information and sample-ballot lookup. For a city, ISD or other subdivision, also review its notice of election and candidate filings if county materials do not show the full detail.",
+          "First verify your registration and current county through the [Texas voter portal](https://teamrv-mvp.sos.texas.gov/MVP/mvp.do). Next use the [county election office directory](/county-elections) to locate your county elections administrator or county clerk's election page for the election date, early-voting locations, precinct information and sample-ballot lookup. For a city, ISD or other subdivision, also review its notice of election and candidate filings if county materials do not show the full detail.",
           "A statewide candidate list is not a substitute for your sample ballot: only the offices and propositions authorized for your voting districts appear for your address. If an item looks missing or appears tied to a district where you do not live, ask the county election office to verify the precinct before relying on a third-party map."
         ]
       },
