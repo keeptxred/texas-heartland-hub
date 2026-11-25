@@ -11,7 +11,7 @@ describe("Phase 2A Texas border geography authority", () => {
     const meta = ARTICLES.find(article => article.slug === slug);
     expect(meta?.publishedAt).toBe("2026-05-27T21:00:00");
     expect(meta?.date).toBe("May 27, 2026");
-    expect(body.updated).toBe("2026-11-04");
+    expect(body.updated).toBe("2026-11-25");
   });
 
   it("provides substantial original verification guidance based on official sources", () => {
