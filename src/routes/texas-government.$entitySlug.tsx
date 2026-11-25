@@ -1,3 +1,4 @@
+import { getStatewideOfficeRecords } from "@/data/statewide-office-records";
 import { publicElectionReference } from "@/lib/public-election-reference";
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { ExternalLink, Gavel, Landmark, Scale, ShieldCheck, Users } from "lucide-react";
@@ -84,6 +85,7 @@ function GovernmentEntityRoutePage() {
 
 function GovernmentEntityPage() {
   const { entity, relatedEntities, news, scoredRelated } = Route.useLoaderData();
+  const records = getStatewideOfficeRecords(entity.slug);
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
       <nav className="mb-5 text-sm text-muted-foreground" aria-label="Breadcrumb"><Link to="/">Home</Link> / <Link to="/texas-government">Texas Government</Link> / {entity.name}</nav>
@@ -103,6 +105,11 @@ function GovernmentEntityPage() {
           <AuthoritySection id="leadership" title="Current officeholder or leadership" icon={<Users className="h-6 w-6 text-primary"/>}><div className="rounded-xl border bg-muted/30 p-5"><p className="text-xs font-bold uppercase tracking-[0.16em] text-primary">{entity.officeholderTitle}</p><h3 className="mt-2 text-2xl font-bold">{entity.currentOfficeholder}</h3><p className="mt-2 text-sm leading-6 text-muted-foreground">{entity.officeholderNote}</p><div className="mt-4 flex flex-wrap gap-3">{entity.relatedRepresentatives.slice(0, 2).map((link: any) => <AuthorityLink key={link.href} link={link}/>)}<a href={entity.officialUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-sm font-bold text-primary hover:underline">Official leadership source <ExternalLink className="h-4 w-4"/></a></div></div></AuthoritySection>
           <AuthoritySection id="history" title="Historical information" icon={<Landmark className="h-6 w-6 text-primary"/>}><ol className="space-y-4">{entity.history.map((item: any, index: number) => <li key={item} className="relative border-l-2 border-border pb-4 pl-6 last:pb-0"><span className="absolute -left-[7px] top-1 h-3 w-3 rounded-full bg-primary"/><span className="text-xs font-bold uppercase tracking-wide text-muted-foreground">Milestone {index + 1}</span><p className="mt-1 leading-7">{item}</p></li>)}</ol></AuthoritySection>
           <AuthoritySection id="powers" title="Important powers" icon={<Gavel className="h-6 w-6 text-primary"/>}><div className="grid gap-3 sm:grid-cols-2">{entity.powers.map((power: any) => <div key={power} className="rounded-lg border p-4"><p className="font-medium leading-6">{power}</p></div>)}</div><h3 className="mt-6 text-lg font-bold">What this entity cannot do</h3><ul className="mt-3 space-y-2 text-muted-foreground">{entity.limitations.map((item: any) => <li key={item}>• {item}</li>)}</ul></AuthoritySection>
+          {records && <AuthoritySection id="official-records" title="Official records and practical services" icon={<Landmark className="h-6 w-6 text-primary"/>}>
+            <p className="leading-7">{records.distinction}</p>
+            <div className="mt-5 space-y-4">{records.examples.map((record) => <div key={record.url} className="rounded-lg border p-4"><a href={record.url} className="font-semibold text-primary underline underline-offset-4">{record.label}</a><p className="mt-2 text-sm leading-6">{record.description}</p></div>)}</div>
+            <h3 className="mt-6 font-semibold">Related Texas reference guides</h3><div className="mt-3"><LinkGrid links={records.related} /></div>
+          </AuthoritySection>}
           <AuthoritySection id="laws" title="Related laws and legislation" icon={<Scale className="h-6 w-6 text-primary"/>}><LinkGrid links={[...entity.relatedLaws, { label: "Texas bill database", href: "/bills", description: "Search current status, sponsors, committees and legislative history." }]} /></AuthoritySection>
           <AuthoritySection id="elections" title="Related elections" icon={<Gavel className="h-6 w-6 text-primary"/>}><LinkGrid links={entity.relatedElections.length ? entity.relatedElections : [publicElectionReference()]} /></AuthoritySection>
           <AuthoritySection id="representatives" title="Related representatives and officials" icon={<Users className="h-6 w-6 text-primary"/>}><LinkGrid links={entity.relatedRepresentatives} /></AuthoritySection>
