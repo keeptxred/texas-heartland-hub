@@ -27,7 +27,7 @@ export const Route = createFileRoute("/terms-of-service")({
 
 function TermsOfServicePage() {
   return (
-    <LegalPage title="Terms of Service" description="These terms govern your access to KeepTXRed.com and purchases made through the Keep TX Red shop.">
+    <LegalPage title="Terms of Service" updated="November 25, 2026" description="These terms govern your access to KeepTXRed.com and purchases made through the Keep TX Red shop.">
       <section>
         <h2>Acceptance of These Terms</h2>
         <p>
@@ -59,7 +59,7 @@ function TermsOfServicePage() {
       <section>
         <h2>Shipping, Returns, and Refunds</h2>
         <p>
-          Production and delivery are governed by our <Link to="/shipping-policy">Shipping Policy</Link>. Returns, replacements, cancellations, and refunds are governed by our <Link to="/return-refund-policy">Return &amp; Refund Policy</Link>. Those policies are incorporated into these terms.
+          Production and delivery are governed by our <Link to="/shipping-policy">Shipping Policy</Link>. Returns, replacements, cancellations, and refunds are governed by our <Link to="/return-refund-policy">Return &amp; Refund Policy</Link>. Those policies are incorporated into these terms. The store currently ships only to U.S. addresses. Read the <Link to="/privacy">Privacy Policy</Link> for information about how the site and checkout handle your information.
         </p>
       </section>
 
