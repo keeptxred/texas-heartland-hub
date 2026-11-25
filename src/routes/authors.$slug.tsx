@@ -1,4 +1,5 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
+import { getEditorialDeskGuide } from "@/data/editorial-desk-guides";
 import { AUTHORS, EDITORIAL_BYLINE_DISCLOSURE, authorSlug, type Author } from "@/data/authors";
 import { ARTICLES, isPublished } from "@/data/articles";
 import { getPublishedAuthorArticles, type DailyArticle } from "@/lib/daily-news.functions";
@@ -150,6 +151,7 @@ type ProfileArticle = {
 function AuthorPage() {
   const { author, liveArticles, discoverableStaticSlugs } = Route.useLoaderData() as AuthorLoaderData;
   const discoverableStatic = new Set(discoverableStaticSlugs);
+  const guide = getEditorialDeskGuide(author.slug);
 
   const staticArticles: ProfileArticle[] = ARTICLES.filter(
     (article) =>
@@ -180,7 +182,7 @@ function AuthorPage() {
     .slice(0, 20);
 
   return (
-    <div className="mx-auto max-w-3xl px-4 py-14">
+    <main className="mx-auto max-w-3xl px-4 py-14">
       <nav aria-label="Breadcrumb" className="text-[11px] uppercase tracking-[0.25em] text-muted-foreground mb-6">
         <Link to="/news" className="hover:text-primary">Newsroom</Link>
         <span className="mx-2">/</span>
@@ -207,6 +209,16 @@ function AuthorPage() {
         </div>
       </div>
 
+      {guide && <section className="mt-10 border-t pt-6" aria-labelledby="desk-verification">
+        <h2 id="desk-verification" className="font-display text-2xl tracking-tight">How to verify this coverage</h2>
+        <p className="mt-3 leading-7">{guide.focus}</p>
+        <h3 className="mt-5 font-semibold">Primary-source research starting points</h3>
+        <dl className="mt-3 space-y-4">{guide.sources.map((source) => <div key={source.href}><dt><a href={source.href} className="font-semibold text-primary underline underline-offset-4">{source.label}</a></dt><dd className="mt-1 text-sm leading-6 text-muted-foreground">{source.use}</dd></div>)}</dl>
+        <h3 className="mt-5 font-semibold">Related reference guides</h3>
+        <ul className="mt-3 space-y-2">{guide.references.map((reference) => <li key={reference.href}><a href={reference.href} className="text-primary underline underline-offset-4">{reference.label}</a></li>)}</ul>
+        <p className="mt-5 text-sm leading-6 text-muted-foreground">These resources are research starting points, not a claim that every article cites every listed source. Check the individual article for its evidence and <Link to="/contact" className="text-primary underline">contact Keep TX Red</Link> with a specific correction.</p>
+      </section>}
+
       <section className="mt-12 pt-6 border-t-2 border-foreground">
         <h2 className="font-display text-2xl tracking-tight mb-4">Recent Articles</h2>
         {byAuthor.length === 0 ? (
@@ -229,6 +241,6 @@ function AuthorPage() {
       <p className="mt-12 text-xs text-muted-foreground border-t border-border pt-4 leading-5">
         This is an organizational editorial byline, not a personal profile. Source attribution, AI assistance, synthesis, corrections, and other production practices are described in Keep TX Red's <Link to="/editorial-standards" className="text-primary underline underline-offset-2">Editorial Standards</Link>.
       </p>
-    </div>
+    </main>
   );
 }
