@@ -3974,6 +3974,14 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
           "No state personal income tax is one part of a broader tax system. To compare household costs across states, consider taxable purchases, housing costs, property taxes, other fees and federal obligations. Do not infer an individual's total tax burden from one statutory rate.",
           "Economic and migration trends also have multiple possible causes, including employment, housing, demographics and policy. This guide does not claim that the constitutional tax prohibition alone caused economic growth."
         ]
+      },
+      {
+        "heading": "Compare the right tax base before interpreting the rate",
+        "paragraphs": [
+          "Consider two illustrative taxpayers: one makes $1,000 of fully taxable purchases in a jurisdiction charging the maximum combined sales tax rate, while another makes $1,000 of purchases that qualify for applicable exemptions. The first would pay $82.50 in sales tax; the second would not owe that tax on the exempt purchases. The statutory percentage alone cannot establish their total tax payments, and real shopping baskets contain items subject to different tax treatment.",
+          "Likewise, franchise tax rates are not interchangeable with the personal income tax rates imposed by some other states. Texas franchise tax reporting concerns taxable entities and a statutory business tax base; state personal income taxes generally concern an individual's taxable income under that state's law. Comparing percentages without distinguishing the taxpayer and base can produce a misleading conclusion. Consult the Comptroller's reporting-year forms and instructions before drawing conclusions about an actual business.",
+          "For property taxes, ask which taxing units apply, which value each uses, and whether a limitation or exemption changes the amount subject to tax. A statewide property-value average cannot answer those parcel-specific questions. These distinctions also explain why news stories about aggregate tax collections, tax relief appropriations and household savings should be evaluated separately. For example, a budget appropriation for relief does not establish the amount of savings realized by every homeowner."
+        ]
       }
     ],
     "faq": [
