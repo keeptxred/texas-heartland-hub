@@ -47,6 +47,19 @@
       "pendingRelease": true
     },
     {
+      "id": 8,
+      "url": "https://keeptxred.com/news/texas-school-board-powers",
+      "requiredText": [
+        "Three different routes for a school complaint",
+        "45-calendar-day"
+      ],
+      "requiredLinks": [
+        "https://tea.texas.gov/families-students/resolving-concerns-and-complaints",
+        "/news/texas-open-meetings-public-info"
+      ],
+      "pendingRelease": true
+    },
+    {
       "id": 9,
       "url": "https://keeptxred.com/news/texas-open-meetings-public-info",
       "requiredText": [
@@ -56,6 +69,31 @@
       ],
       "requiredLinks": [
         "https://www.texasattorneygeneral.gov/open-government/members-public/overview-public-information-act"
+      ],
+      "pendingRelease": true
+    },
+    {
+      "id": 10,
+      "url": "https://keeptxred.com/authors/energy-desk",
+      "requiredText": [
+        "For an electricity claim"
+      ],
+      "requiredLinks": [
+        "https://www.ercot.com/gridinfo",
+        "https://www.rrc.texas.gov/oil-and-gas/research-and-statistics/production-data/"
+      ],
+      "pendingRelease": true
+    },
+    {
+      "id": 15,
+      "url": "https://keeptxred.com/news/texas-governor-powers",
+      "requiredText": [
+        "Veto deadlines and special-session limits in practice",
+        "excluding Sundays"
+      ],
+      "requiredLinks": [
+        "https://statutes.capitol.texas.gov/Docs/CN/htm/CN.3/CN.3.40.htm",
+        "/texas-government/reference/how-to-read-a-texas-bill"
       ],
       "pendingRelease": true
     },
@@ -133,6 +171,18 @@
       ]
     },
     {
+      "id": 35,
+      "url": "https://keeptxred.com/authors/education-desk",
+      "requiredText": [
+        "Compare school performance within the applicable accountability year"
+      ],
+      "requiredLinks": [
+        "https://educationfreedom.texas.gov/families/",
+        "https://tea.texas.gov/school-and-district-leaders/accountability/academic-accountability/performance-reporting/school-report-cards"
+      ],
+      "pendingRelease": true
+    },
+    {
       "id": 39,
       "url": "https://keeptxred.com/news/school-choice-esa-guide",
       "requiredText": [
@@ -168,6 +218,32 @@
         "https://porthouston.com/about/public-meetings/agendas-minutes/"
       ],
       "pendingRelease": false
+    },
+    {
+      "id": 42,
+      "url": "https://keeptxred.com/texas-government/land-commissioner",
+      "requiredText": [
+        "The General Land Office manages assigned state land interests",
+        "School Land Board and other GLO boards"
+      ],
+      "requiredLinks": [
+        "https://www.glo.texas.gov/about-glo/about-the-commissioner",
+        "https://www.glo.texas.gov/open-government/boards-committees"
+      ],
+      "pendingRelease": true
+    },
+    {
+      "id": 46,
+      "url": "https://keeptxred.com/texas-government/secretary-of-state",
+      "requiredText": [
+        "Business Services and SOSPortal",
+        "September 29, 2026"
+      ],
+      "requiredLinks": [
+        "https://www.sos.state.tx.us/corp/index.shtml",
+        "https://www.sos.state.tx.us/about/sosbio.shtml"
+      ],
+      "pendingRelease": true
     },
     {
       "id": 47,
@@ -207,6 +283,43 @@
       ]
     },
     {
+      "id": 58,
+      "url": "https://keeptxred.com/authors/elections-desk",
+      "requiredText": [
+        "Record the election date, jurisdiction and office"
+      ],
+      "requiredLinks": [
+        "https://www.sos.state.tx.us/elections/historical/elections-results-archive.shtml",
+        "/county-elections"
+      ],
+      "pendingRelease": true
+    },
+    {
+      "id": 59,
+      "url": "https://keeptxred.com/news/texas-attorney-general-powers",
+      "requiredText": [
+        "Where to take a specific complaint or records dispute",
+        "may be public records"
+      ],
+      "requiredLinks": [
+        "https://www.texasattorneygeneral.gov/consumer-protection/file-consumer-complaint",
+        "https://www.texasattorneygeneral.gov/open-government/members-public/what-expect-after-ruling-issued"
+      ],
+      "pendingRelease": true
+    },
+    {
+      "id": 63,
+      "url": "https://keeptxred.com/authors/civics-desk",
+      "requiredText": [
+        "Start with the institution that has jurisdiction"
+      ],
+      "requiredLinks": [
+        "https://statutes.capitol.texas.gov/",
+        "https://www.texasattorneygeneral.gov/open-government/members-public/overview-public-information-act"
+      ],
+      "pendingRelease": true
+    },
+    {
       "id": 64,
       "url": "https://keeptxred.com/laws/constitutional-amendments",
       "requiredText": [
@@ -228,6 +341,18 @@
       "requiredLinks": [
         "/texas-government/reference/how-to-read-a-texas-bill"
       ]
+    },
+    {
+      "id": 71,
+      "url": "https://keeptxred.com/news/what-local-governments-control",
+      "requiredText": [
+        "Worked example: a road, a water bill and a school tax notice"
+      ],
+      "requiredLinks": [
+        "https://www.txdot.gov/data-maps/reference-maps/departmental-map.html",
+        "https://www.tceq.texas.gov/gis/iwudview.html"
+      ],
+      "pendingRelease": true
     },
     {
       "id": 72,
@@ -253,6 +378,19 @@
       ]
     },
     {
+      "id": 82,
+      "url": "https://keeptxred.com/texas-government/comptroller",
+      "requiredText": [
+        "Texas state taxes and local property taxes are separate systems",
+        "Certification Revenue Estimate"
+      ],
+      "requiredLinks": [
+        "https://comptroller.texas.gov/transparency/reports/certification-revenue-estimate/",
+        "https://comptroller.texas.gov/taxes/property-tax/county-directory/"
+      ],
+      "pendingRelease": true
+    },
+    {
       "id": 83,
       "url": "https://keeptxred.com/register-to-vote",
       "requiredText": [
@@ -263,6 +401,18 @@
         "/county-elections",
         "https://www.sos.state.tx.us/elections/voter/important-election-dates.shtml"
       ]
+    },
+    {
+      "id": 84,
+      "url": "https://keeptxred.com/authors/border-bureau",
+      "requiredText": [
+        "Separate state public-safety operations from federal immigration administration"
+      ],
+      "requiredLinks": [
+        "https://www.cbp.gov/newsroom/stats",
+        "https://www.dps.texas.gov/section/general-counsel/public-information-requests"
+      ],
+      "pendingRelease": true
     },
     {
       "id": 91,
