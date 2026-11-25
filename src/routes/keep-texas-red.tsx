@@ -249,6 +249,7 @@ function KeepTexasRedPage() {
         </div>
       </section>
 
+<section className="mt-8 rounded-xl border bg-card p-5 md:p-7" aria-label="Evidence and editorial viewpoint"><h2 className="font-display text-2xl tracking-tight">Evidence and editorial viewpoint</h2><p className="mt-3 text-sm leading-7 text-muted-foreground">Keep TX Red publishes a conservative editorial perspective. A stated position is not itself a factual record. Readers can check the underlying bill, vote, budget, agency record or court decision regardless of whether they share that viewpoint. Policy arguments should be distinguished from reported events and verified official findings.</p><ul className="mt-4 space-y-2 text-sm"><li><a href="/editorial-standards" className="font-semibold text-primary underline underline-offset-4">Editorial standards</a> — Our distinction between reporting, synthesis, opinion and corrections.</li><li><a href="/texas-legislature" className="font-semibold text-primary underline underline-offset-4">Texas Legislature</a> — Find official chamber and committee records.</li><li><a href="/data" className="font-semibold text-primary underline underline-offset-4">Texas Data Center</a> — Locate official measurements and their limitations.</li><li><a href="/contact" className="font-semibold text-primary underline underline-offset-4">Contact</a> — Send documented factual corrections.</li></ul></section>
       <section className="mt-12 border-t border-border pt-8">
         <h2 className="font-display text-2xl tracking-tight">Continue exploring</h2>
         <ul className="mt-4 grid gap-3 text-sm sm:grid-cols-2">
@@ -256,7 +257,6 @@ function KeepTexasRedPage() {
           <li><Link to="/texas-politics" className="text-primary hover:underline">Texas politics →</Link></li>
           <li><Link to="/texas-politics/why-texas-is-politically-competitive" className="text-primary hover:underline">Why Texas is politically competitive →</Link></li>
           <li><Link to="/texas-economy" className="text-primary hover:underline">Texas economic policy →</Link></li>
-          <li><Link to="/texas-politics" className="text-primary hover:underline">Texas Politics →</Link></li>
           <li><Link to="/bills" search={EMPTY_BILLS_SEARCH} className="text-primary hover:underline">Search Texas bills →</Link></li>
           <li><Link to="/about" className="text-primary hover:underline">About Keep TX Red →</Link></li>
         </ul>
