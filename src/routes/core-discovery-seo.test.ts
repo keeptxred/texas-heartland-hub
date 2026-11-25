@@ -46,7 +46,7 @@ const hubs = [
     name: "Houston",
     head: houstonHead,
     path: "/houston",
-    title: "Houston News, Politics & Business | Keep TX Red",
+    title: "Houston News, Government & Public Records | Keep TX Red",
   },
 ] as const;
 

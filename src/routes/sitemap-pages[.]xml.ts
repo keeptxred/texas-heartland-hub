@@ -67,7 +67,7 @@ const ISSUE_GUIDE_LASTMOD = Object.fromEntries(INDEXABLE_ISSUE_GUIDES.map((guide
 
 const STATIC_PAGE_LASTMOD_OVERRIDES: Record<string, string> = {
   "/news": toIsoDate("2026-08-07T00:00:00-05:00"),
-  "/houston": GSC_CANONICAL_REFRESH,
+  "/houston": toIsoDate("2026-11-24T00:00:00-06:00"),
   "/keep-texas-red": GSC_CANONICAL_REFRESH,
   "/register-to-vote": toIsoDate("2026-11-24T00:00:00-06:00"),
   "/county-elections": toIsoDate("2026-11-24T00:00:00-06:00"),

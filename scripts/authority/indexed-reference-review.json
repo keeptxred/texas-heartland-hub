@@ -77,6 +77,21 @@
         "https://www.lrl.texas.gov/legis/billsearch/amendmentdetails.cfm?amendmentID=734&billNumberDetail=3&billSuffixDetail=&billtypeDetail=SJR&legSession=89-0",
         "https://dev-search.txcourts.gov/Case.aspx?cn=15-26-00074-CV&coa=coa15"
       ]
+    },
+    {
+      "path": "/houston",
+      "reviewed": "2026-11-24",
+      "reviewDays": 30,
+      "group": "local-government",
+      "sources": [
+        "https://www.houstontx.gov/citysec",
+        "https://www.houstontx.gov/budget/",
+        "https://agenda.harriscountytx.gov/",
+        "https://budget.harriscountytx.gov/budget.aspx",
+        "https://www.harrisvotes.com/Voter/Election-Information",
+        "https://porthouston.com/about/public-meetings/agendas-minutes/",
+        "https://www.houstontx.gov/pia"
+      ]
     }
   ]
 }
