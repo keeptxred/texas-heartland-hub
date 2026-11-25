@@ -2,7 +2,7 @@ import { readFile, mkdir, writeFile } from "node:fs/promises";
 const { records } = JSON.parse(await readFile(new URL("./indexed-reference-review.json", import.meta.url), "utf8"));
 const now = new Date();
 const origin = "https://keeptxred.com";
-const allowed = new Set(["www.votetexas.gov", "www.sos.state.tx.us", "capitol.texas.gov", "statutes.capitol.texas.gov", "lbb.texas.gov", "www.lrl.texas.gov", "dev-search.txcourts.gov", "www.houstontx.gov", "agenda.harriscountytx.gov", "budget.harriscountytx.gov", "www.harrisvotes.com", "porthouston.com"]);
+const allowed = new Set(["agenda.harriscountytx.gov","budget.harriscountytx.gov","capitol.texas.gov","comptroller.texas.gov","dev-search.txcourts.gov","educationfreedom.texas.gov","geocoding.geo.census.gov","lbb.texas.gov","porthouston.com","statutes.capitol.texas.gov","tea.texas.gov","tigerweb.geo.census.gov","wrm.capitol.texas.gov","www.ercot.com","www.ferc.gov","www.harrisvotes.com","www.house.gov","www.houstontx.gov","www.ibwc.gov","www.lrl.texas.gov","www.puc.texas.gov","www.sos.state.tx.us","www.tceq.texas.gov","www.texasattorneygeneral.gov","www.twdb.texas.gov","www.votetexas.gov"]);
 const urls = new Set();
 const paths = new Set();
 for (const row of records) {
@@ -38,7 +38,7 @@ async function probe(url) {
 }
 const queue = [...urls];
 while (queue.length) {
-  const batch = queue.splice(0, 3);
+  const batch = queue.splice(0, 5);
   await Promise.all(batch.map(async url => results.set(url, await probe(url))));
 }
 const items = records.map(row => {
