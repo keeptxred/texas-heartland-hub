@@ -48,7 +48,7 @@ function ContactPage() {
       <section className="mb-10 rounded-xl border border-border bg-secondary/40 p-6">
         <h2 className="font-display text-2xl">Shop Order Support</h2>
         <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-          For damaged, defective, misprinted, incorrect, delayed, or missing orders, email <a href="mailto:admin@keeptxred.com" className="text-primary underline underline-offset-4">admin@keeptxred.com</a>. Include your order number, a description of the issue, and clear photographs when applicable.
+          For damaged, defective, misprinted, incorrect, delayed, or missing orders, email <a href="mailto:admin@keeptxred.com" className="text-primary underline underline-offset-4">admin@keeptxred.com</a>. Include your order number, a description of the issue, and clear photographs when applicable. Do not email a full payment card number, security code, or account password.
         </p>
         <a
           href="mailto:admin@keeptxred.com?subject=Keep%20TX%20Red%20Order%20Support"
@@ -105,7 +105,7 @@ function ContactPage() {
             <ContactCard
               title="Corrections"
               email="corrections@keeptxred.com"
-              description="Send the article URL and the specific factual statement you believe should be corrected."
+              description="Send the article URL, the specific statement you believe should be corrected, and a supporting source or record when available."
             />
             <div className="rounded-xl border border-border p-5">
               <h3 className="font-display text-lg">Store Policies</h3>
