@@ -20,7 +20,7 @@ describe("November 25 civic and policy authority revisions", () => {
     expect(body).toContain("three business days");
     expect(body).toContain("September 1, 2025");
     expect(body).toContain("§551.102");
-    expect(body).toContain("§552.221");
+    expect(body).toContain("Section 552.221");
     expect(body).toContain("§552.301");
     expect(body).not.toContain("Written notice posted at least 72 hours");
     expect(body).not.toContain("has 10 business days to produce records");
