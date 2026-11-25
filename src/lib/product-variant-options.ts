@@ -21,6 +21,7 @@ export function isProductSizeOption(value: string | null | undefined): boolean {
 
 export function splitProductVariantTitle(title: string | null | undefined): string[] {
   return String(title ?? "")
+    .replace(/\\+"/g, '"')
     .split(/\s*\/\s*/)
     .map((part) => part.trim())
     .filter(Boolean);
