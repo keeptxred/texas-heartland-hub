@@ -5228,7 +5228,7 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
     "editorNote": "Revised against the official Texas Education Freedom Accounts family guidance and dated 2026 program releases. Future application dates are not assumed.",
     "intro": [
       "The Texas Education Freedom Accounts (TEFA) program is the education savings account initiative established by Senate Bill 2 in 2025, with an initial $1 billion appropriation. The Texas Comptroller administers the program. It funds approved educational expenses for selected eligible students rather than paying unrestricted cash to parents.",
-      "Applications for the 2026–27 school year are closed. As of this review, the official family page directs families who missed that cycle to the 2027–28 interest list. Joining the interest list is not an application or award. Current families should use their official parent portal to confirm their award and deadlines."
+      "Applications for the 2026–27 school year are closed. As of this review, the [official TEFA family page](https://educationfreedom.texas.gov/families/) directs families who missed that cycle to the 2027–28 interest list. Joining the interest list is not an application or award. Current families should use their official parent portal to confirm their award and deadlines."
     ],
     "sections": [
       {
@@ -5358,8 +5358,8 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
       "how-a-bill-becomes-texas-law"
     ],
     "cta": {
-      "label": "Official TEFA application information",
-      "href": "https://educationfreedom.texas.gov/"
+      "label": "Explore Texas education policy and public records",
+      "href": "/data"
     },
     "keyTakeaways": [
       "The 2026–27 application period is closed; use the official interest list for the next cycle.",
