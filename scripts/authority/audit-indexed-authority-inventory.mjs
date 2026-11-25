@@ -1,7 +1,23 @@
 import { readFile, mkdir, writeFile } from "node:fs/promises";
 
 const {records} = JSON.parse(await readFile(new URL("./indexed-authority-inventory.json", import.meta.url), "utf8"));
+const { checks, dispositions } = JSON.parse(await readFile(new URL("./indexed-authority-content-evidence.json", import.meta.url), "utf8"));
 const KTR = "https://keeptxred.com";
+const checkById = new Map(checks.map(check => [check.id, check]));
+const dispositionById = new Map(dispositions.map(item => [item.id, item]));
+for (const group of [checks, dispositions]) {
+  if (new Set(group.map(item => item.id)).size !== group.length ||
+      group.some(item => records[item.id - 1]?.url !== item.url)) {
+    throw Error("Content evidence must match the exact owner-supplied inventory.");
+  }
+}
+for (const check of checks) {
+  if (!Array.isArray(check.requiredText) || !Array.isArray(check.requiredLinks) ||
+      !check.requiredText.length && !check.requiredLinks.length ||
+      [...check.requiredText, ...check.requiredLinks].some(item => typeof item !== "string" || !item.trim())) {
+    throw Error("Missing substantive acceptance markers for row " + check.id);
+  }
+}
 const hosts = new Set(["keeptxred.com","www.keeptxred.com","texasdefined.com","www.texasdefined.com"]);
 if (records.length !== 92 || new Set(records.map(r => r.url)).size !== 92 ||
   records.some((r,i) => r.id !== i+1 || !["keeptxred.com","www.keeptxred.com"].includes(new URL(r.url).hostname))) {
@@ -11,7 +27,14 @@ if (process.argv.includes("--validate")) {
   console.log("Verified 92 distinct original URL records.");
   process.exit(0);
 }
-const decode = s => String(s).replace(/&amp;/g,"&").replace(/&quot;/g,'"').replace(/&#39;|&apos;/g,"'").replace(/&lt;/g,"<").replace(/&gt;/g,">");
+const decode = s => String(s).replace(/&#x([0-9a-f]+);/gi, (match, hex) => {
+  const n = parseInt(hex, 16);
+  return n > 0 && n <= 0x10ffff ? String.fromCodePoint(n) : match;
+}).replace(/&#(\d+);/g, (match, decimal) => {
+  const n = Number(decimal);
+  return n > 0 && n <= 0x10ffff ? String.fromCodePoint(n) : match;
+}).replace(/&amp;/g,"&").replace(/&quot;/g,'"').replace(/&apos;/g,"'").replace(/&lt;/g,"<").replace(/&gt;/g,">").replace(/&nbsp;/g," ");
+const normalizeMarker = s => String(s).normalize("NFKC").replace(/[‘’]/g,"'").replace(/[“”]/g,'"').replace(/\s+/g," ").trim().toLowerCase();
 const text = s => decode(String(s).replace(/<[^>]*>/g," ").replace(/\s+/g," ").trim());
 function attrs(tag) {
   return Object.fromEntries([...tag.matchAll(/([\w:-]+)\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s>]+))/g)]
@@ -136,6 +159,16 @@ async function probe(record) {
       }
       row.mainInternalLinks=[...links].sort();
       row.mainExternalLinks=[...external].sort();
+      const check = checkById.get(record.id);
+      if (check) {
+        const content = normalizeMarker(text(editorialMarkup || visible));
+        const observed = new Set([...links, ...external]);
+        row.contentEvidence = {
+          pendingRelease: Boolean(check.pendingRelease),
+          missingText: check.requiredText.filter(marker => !content.includes(normalizeMarker(marker))),
+          missingLinks: check.requiredLinks.filter(href => !observed.has(canonicalKey(href, current))),
+        };
+      }
       row.disposition=u.hostname.endsWith("texasdefined.com")?"cross-site-destination":row.noindex?"noindex-observed":"html-observed";
       if(row.canonicals.length!==1 || row.canonicals[0]!==current) row.observations.push("canonical-check-needed");
       if(!row.title || !row.description || row.h1.length!==1) row.observations.push("metadata-or-heading-check-needed");
@@ -160,11 +193,42 @@ for(const row of results) {
   const source=canonicalKey(row.finalUrl,row.finalUrl);
   for(const target of row.mainInternalLinks) if(target!==source&&byTarget.has(target))byTarget.get(target).add(source);
 }
-for(const row of results) if(row.finalUrl&&row.status===200)row.inboundCohortMainLinks=[...(byTarget.get(canonicalKey(row.finalUrl,row.finalUrl))||[])].sort();
+for(const row of results) {
+  if(row.finalUrl&&row.status===200)row.inboundCohortMainLinks=[...(byTarget.get(canonicalKey(row.finalUrl,row.finalUrl))||[])].sort();
+  const check = checkById.get(row.id);
+  if (check) {
+    row.contentEvidence ??= { pendingRelease: Boolean(check.pendingRelease), missingText: check.requiredText, missingLinks: check.requiredLinks };
+    const evidence = row.contentEvidence;
+    evidence.passed = row.status === 200 && row.disposition === "html-observed" && row.sitemapSubmitted === true
+      && row.canonicals?.length === 1 && row.canonicals[0] === row.finalUrl
+      && evidence.missingText.length === 0 && evidence.missingLinks.length === 0;
+    if (!evidence.passed) row.observations.push(evidence.pendingRelease ? "pending-release-content-evidence" : "released-content-evidence-mismatch");
+  }
+  const expected = dispositionById.get(row.id);
+  if (expected) {
+    const passed = expected.expected === null ? null : row.disposition === expected.expected
+      && (!expected.finalUrl || row.finalUrl === expected.finalUrl)
+      && (expected.expected !== "not-found-observed" || row.sitemapSubmitted === false)
+      && (expected.expected !== "cross-site-destination" || row.originalSitemapSubmitted === false);
+    row.dispositionEvidence = { expected: expected.expected, reason: expected.reason, passed };
+    if (passed === false) row.observations.push("known-disposition-mismatch");
+    if (passed === null) row.observations.push("historical-disposition-unresolved");
+  }
+}
+const contentChecks = results.filter(row => row.contentEvidence);
+const evidenceSummary = {
+  checked: contentChecks.length,
+  passed: contentChecks.filter(row => row.contentEvidence.passed).length,
+  pendingReleaseMissing: contentChecks.filter(row => row.contentEvidence.pendingRelease && !row.contentEvidence.passed).length,
+  releasedMissing: contentChecks.filter(row => !row.contentEvidence.pendingRelease && !row.contentEvidence.passed).length,
+  knownDispositionMismatches: results.filter(row => row.dispositionEvidence?.passed === false).length,
+  unresolvedHistorical: results.filter(row => row.dispositionEvidence?.passed === null).length,
+};
 await mkdir("artifacts",{recursive:true});
 const summary=results.reduce((a,r)=>(a[r.disposition]=(a[r.disposition]||0)+1,a),{});
-await writeFile("artifacts/indexed-authority-live.json",JSON.stringify({checkedAt:new Date().toISOString(),revision:process.env.GITHUB_SHA||null,requestCount,sitemap:{entries:sitemap.entries.size,visited:sitemap.visited,errors:sitemap.errors},summary,results},null,2)+"\n");
-console.log("INDEXED_AUTHORITY_INVENTORY "+JSON.stringify({count:results.length,summary,sitemapEntries:sitemap.entries.size,sitemapErrors:sitemap.errors.length,requestCount}));
-for(const row of results) console.log("INDEXED_AUTHORITY_ROW "+JSON.stringify({id:row.id,url:row.url,finalUrl:row.finalUrl,status:row.status,disposition:row.disposition,title:row.title,words:row.mainWords,canonical:row.canonicals,noindex:row.noindex,sitemap:row.sitemapSubmitted,inbound:row.inboundCohortMainLinks?.length,external:row.mainExternalLinks?.length,observations:row.observations,error:row.error}));
+await writeFile("artifacts/indexed-authority-live.json",JSON.stringify({checkedAt:new Date().toISOString(),revision:process.env.GITHUB_SHA||null,requestCount,sitemap:{entries:sitemap.entries.size,visited:sitemap.visited,errors:sitemap.errors},summary,evidenceSummary,results},null,2)+"\n");
+console.log("INDEXED_AUTHORITY_INVENTORY "+JSON.stringify({count:results.length,summary,sitemapEntries:sitemap.entries.size,sitemapErrors:sitemap.errors.length,requestCount,evidenceSummary}));
+for(const row of results) console.log("INDEXED_AUTHORITY_ROW "+JSON.stringify({id:row.id,url:row.url,finalUrl:row.finalUrl,status:row.status,disposition:row.disposition,title:row.title,words:row.mainWords,canonical:row.canonicals,noindex:row.noindex,sitemap:row.sitemapSubmitted,inbound:row.inboundCohortMainLinks?.length,external:row.mainExternalLinks?.length,observations:row.observations,contentEvidence:row.contentEvidence,dispositionEvidence:row.dispositionEvidence,error:row.error}));
 console.log("Observations require editorial and disposition review; this scan is not an authority grade or Google inspection.");
 if(sitemap.errors.length||results.some(r=>["transport-error","unexpected-http"].includes(r.disposition)))process.exitCode=1;
+if (process.argv.includes("--enforce-released") && (evidenceSummary.releasedMissing || evidenceSummary.knownDispositionMismatches)) process.exitCode=1;
