@@ -31,7 +31,7 @@ describe("GSC canonical override regressions", () => {
 
   it("does not let the Houston canonical page regress into a lifestyle moving guide", () => {
     const houston = source("src/routes/houston.tsx");
-    expect(houston).toContain("Houston News, Politics & Business");
+    expect(houston).toContain("Houston News, Government & Public Records");
     expect(houston).not.toContain("Moving to Houston Guide");
     expect(houston).not.toContain("Plan a move to Houston");
   });
