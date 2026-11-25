@@ -1,9 +1,10 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import { useEffect, useMemo, useState } from "react";
-import { useSuspenseQuery, queryOptions } from "@tanstack/react-query";
+import { useState } from "react";
+import { queryOptions } from "@tanstack/react-query";
 import { SITE_URL } from "@/lib/seo";
 import { getProducts, type Product } from "@/lib/products.functions";
-import { buildAddPayload, parseVariantSize, useCart } from "@/lib/cart-context";
+import { buildAddPayload, useCart } from "@/lib/cart-context";
+import { availableProductVariants, initialProductVariant, variantPrice, variantOptions, chooseVariant, productOfferImage } from "@/lib/shop-product-offers";
 import { seoTitle, seoDescription, seoAlt } from "@/lib/shop-seo";
 
 const productsQuery = queryOptions({
@@ -22,7 +23,7 @@ function productImageUrls(product: Product): string[] {
     new Set(
       [
         product.image,
-        ...(product.variants ?? []).flatMap((variant) => [
+        ...availableProductVariants(product).flatMap((variant) => [
           variant.image,
           ...(variant.images ?? []),
         ]),
@@ -34,6 +35,7 @@ function productImageUrls(product: Product): string[] {
 export const Route = createFileRoute("/shop/$productId")({
   loader: async ({ context, params }) => {
     const data = await context.queryClient.ensureQueryData(productsQuery);
+    if (data.isFallback) throw new Error("Product catalog temporarily unavailable.");
     const product = data.products.find((p) => p.id === params.productId);
     if (!product) throw notFound();
     return { product };
@@ -53,6 +55,7 @@ export const Route = createFileRoute("/shop/$productId")({
     const description = seoDescription(p);
     const url = `${SITE_URL}/shop/${p.id}`;
     const images = productImageUrls(p);
+    const initial = initialProductVariant(p);
     const productSchema = {
       "@context": "https://schema.org",
       "@type": "Product",
@@ -61,14 +64,14 @@ export const Route = createFileRoute("/shop/$productId")({
       image: images,
       url,
       brand: { "@type": "Brand", name: "Keep Texas Red" },
-      offers: {
+      ...(initial ? { offers: {
         "@type": "Offer",
-        price: p.price.toFixed(2),
+        price: variantPrice(p, initial).toFixed(2),
         priceCurrency: p.currency || "USD",
         availability: "https://schema.org/InStock",
         itemCondition: "https://schema.org/NewCondition",
         url,
-      },
+      } } : {}),
     };
     return {
       meta: [
@@ -85,7 +88,7 @@ export const Route = createFileRoute("/shop/$productId")({
         ...(p.image ? [{ name: "twitter:image", content: p.image }] : []),
       ],
       links: [{ rel: "canonical", href: url }],
-      scripts: [{ type: "application/ld+json", children: JSON.stringify(productSchema) }],
+      scripts: initial ? [{ type: "application/ld+json", children: JSON.stringify(productSchema) }] : [],
     };
   },
   notFoundComponent: () => (
@@ -105,131 +108,48 @@ export const Route = createFileRoute("/shop/$productId")({
   component: ProductPage,
 });
 
-function formatPrice(p: Product) {
-  return new Intl.NumberFormat("en-US", { style: "currency", currency: p.currency }).format(p.price);
+function formatPrice(price: number, currency: string) {
+  return new Intl.NumberFormat("en-US", { style: "currency", currency: currency || "USD" }).format(price);
 }
 
 function ProductPage() {
-  const { productId } = Route.useParams();
-  const { data } = useSuspenseQuery(productsQuery);
-  const product = data.products.find((p) => p.id === productId)!;
+  const { product } = Route.useLoaderData();
+  return <ProductDetails key={product.id} product={product} />;
+}
+
+function ProductDetails({ product }: { product: Product }) {
   const { addItem } = useCart();
   const displayTitle = seoTitle(product);
-
-  const variants = product.variants ?? [];
-
-  // Canonical image getter — always recalculates from selectedVariant.
-  const getProductImage = (
-    prod: Product,
-    variant: (typeof variants)[number] | null,
-  ) =>
-    variant?.image ||
-    variant?.images?.[0] ||
-    prod.image;
-
-  const variantImage = (v: (typeof variants)[number]) =>
-    v.image || v.images?.[0] || null;
-
-  // Group variants by color. Scan ALL variants for each color (not just the
-  // first) so we still find an image when the first size variant lacks one.
-  const colorToImage = new Map<string, string>();
-  const colorOrder: string[] = [];
-  for (const v of variants) {
-    if (!v.color) continue;
-    if (!colorOrder.includes(v.color)) colorOrder.push(v.color);
-    const img = variantImage(v);
-    if (img && !colorToImage.has(v.color)) {
-      colorToImage.set(v.color, img);
-    }
-  }
-  // Ensure colors without any variant image still appear as chips.
-  for (const color of colorOrder) {
-    if (!colorToImage.has(color)) colorToImage.set(color, product.image);
-  }
-
-  // Sort dimension-style options (e.g. 2"×2", 3"×3") numerically for stickers.
-  const isDimensionProduct = product.title.toLowerCase().includes("sticker")
-    || colorOrder.every((c) => /^\d+/.test(c.trim()));
-
-  const dimensionRank = (s: string) => {
-    const m = s.trim().match(/^(\d+)/);
-    return m ? parseInt(m[1], 10) : Infinity;
-  };
-
-  const sortedColorOrder = isDimensionProduct
-    ? [...colorOrder].sort((a, b) => dimensionRank(a) - dimensionRank(b))
-    : colorOrder;
-
-  const colorChips = sortedColorOrder.length > 0 ? sortedColorOrder : (product.colors ?? []);
-  const initialColor = colorChips[0] ?? null;
-  const [selectedColor, setSelectedColor] = useState<string | null>(initialColor);
-
-  // Sizes available for the currently selected color, in variant order.
-  const sizesForColor = useMemo(() => {
-    const seen: string[] = [];
-    for (const v of variants) {
-      if (selectedColor && v.color !== selectedColor) continue;
-      const size = parseVariantSize(v.title);
-      if (size && !seen.includes(size)) seen.push(size);
-    }
-    const ORDER = ["XXS","XS","S","M","L","XL","2XL","XXL","3XL","XXXL","4XL","XXXXL","5XL","6XL"];
-    const rank = (s: string) => {
-      const up = s.toUpperCase().replace(/\s+/g, "");
-      const i = ORDER.indexOf(up);
-      return i === -1 ? 999 : i;
-    };
-    return [...seen].sort((a, b) => {
-      const ra = rank(a);
-      const rb = rank(b);
-      if (ra !== rb) return ra - rb;
-      return a.localeCompare(b);
-    });
-  }, [variants, selectedColor]);
-
-  const [selectedSize, setSelectedSize] = useState<string | null>(sizesForColor[0] ?? null);
-  // If the color changes and current size isn't offered in that color, snap
-  // to the first available size.
-  useEffect(() => {
-    if (sizesForColor.length === 0) {
-      if (selectedSize !== null) setSelectedSize(null);
-      return;
-    }
-    if (!selectedSize || !sizesForColor.includes(selectedSize)) {
-      setSelectedSize(sizesForColor[0]);
-    }
-  }, [sizesForColor, selectedSize]);
-
+  const variants = availableProductVariants(product);
+  const initial = initialProductVariant(product);
+  const [variantId, setVariantId] = useState<number | null>(initial?.id ?? null);
   const [qty, setQty] = useState(1);
-
-  // Match variant by color + size when possible.
-  const selectedVariant =
-    variants.find(
-      (v) =>
-        (!selectedColor || v.color === selectedColor) &&
-        (!selectedSize || parseVariantSize(v.title) === selectedSize),
-    ) ?? null;
-
-  const displayImage =
-    getProductImage(product, selectedVariant) ||
-    (selectedColor && colorToImage.get(selectedColor)) ||
-    product.image;
-  const galleryImages = productImageUrls(product);
   const [selectedGalleryImage, setSelectedGalleryImage] = useState<string | null>(null);
-  const activeImage = selectedGalleryImage ?? displayImage;
-
-  const unitPrice = selectedVariant?.price ?? product.price;
+  const selectedVariant = variants.find(v => v.id === variantId) ?? initial;
+  const { color: selectedColor, size: selectedSize } = selectedVariant ? variantOptions(selectedVariant) : { color: null, size: null };
+  const colorChips = [...new Set(variants.map(v => variantOptions(v).color).filter((v): v is string => Boolean(v)))];
+  const sizesForColor = [...new Set(variants.filter(v => variantOptions(v).color === selectedColor).map(v => variantOptions(v).size).filter((v): v is string => Boolean(v)))].sort((a,b) => {
+    const order = ["XXS","XS","S","M","L","XL","2XL","XXL","3XL","XXXL","4XL","XXXXL","5XL","6XL"];
+    const rank = (s: string) => { const i = order.indexOf(s.toUpperCase()); return i < 0 ? 999 : i; };
+    return rank(a) - rank(b) || a.localeCompare(b, "en", { numeric: true });
+  });
+  const choose = (color: string | null, size: string | null) => {
+    const next = chooseVariant(product, color, size);
+    if (!next) return;
+    setVariantId(next.id);
+    setSelectedGalleryImage(null);
+  };
+  const displayImage = selectedVariant ? productOfferImage(product, selectedVariant) : product.image;
+  const galleryImages = Array.from(new Set([displayImage, ...(selectedVariant?.images ?? [])].filter(Boolean)));
+  const activeImage = selectedGalleryImage && galleryImages.includes(selectedGalleryImage) ? selectedGalleryImage : displayImage;
+  const unitPrice = selectedVariant ? variantPrice(product, selectedVariant) : null;
 
   const handleAdd = () => {
-    addItem(
-      buildAddPayload(product, {
-        color: selectedColor,
-        size: selectedSize,
-        image: displayImage,
-        price: unitPrice,
-        qty,
-        variant: selectedVariant,
-      }),
-    );
+    if (!selectedVariant || unitPrice === null) return;
+    addItem(buildAddPayload(product, {
+      color: selectedColor, size: selectedSize, image: displayImage,
+      price: unitPrice, qty, variant: selectedVariant,
+    }));
   };
 
   return (
@@ -279,12 +199,12 @@ function ProductPage() {
             Keep TX Red — Official Shop
           </div>
           <h1 className="font-display text-3xl md:text-4xl leading-tight">{displayTitle}</h1>
-          <div className="mt-3 text-2xl font-semibold text-primary">{formatPrice(product)}</div>
+          <div className="mt-3 text-2xl font-semibold text-primary" aria-live="polite">{unitPrice !== null ? formatPrice(unitPrice, product.currency) : "Currently unavailable"}</div>
 
-          {colorChips.length > 1 && (
+          {colorChips.length > 0 && (
             <div className="mt-6">
               <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2">
-                {product.title.toLowerCase().includes("sticker") || colorChips.every((c) => /^\d+x\d+$/.test(c.trim())) ? "Size" : "Color"}
+                Color
                 {selectedColor ? `: ${selectedColor}` : ""}
               </div>
               <div className="flex flex-wrap gap-2">
@@ -294,7 +214,7 @@ function ProductPage() {
                     <button
                       key={color}
                       type="button"
-                      onClick={() => setSelectedColor(color)}
+                      onClick={() => choose(color, selectedSize)}
                       aria-pressed={isSelected}
                       className={`rounded-full border px-3 py-1.5 text-sm font-medium transition-colors ${
                         isSelected
@@ -310,7 +230,7 @@ function ProductPage() {
             </div>
           )}
 
-          {sizesForColor.length > 1 && (
+          {sizesForColor.length > 0 && (
             <div className="mt-5">
               <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2">
                 Size{selectedSize ? `: ${selectedSize}` : ""}
@@ -322,7 +242,7 @@ function ProductPage() {
                     <button
                       key={size}
                       type="button"
-                      onClick={() => setSelectedSize(size)}
+                      onClick={() => choose(selectedColor, size)}
                       aria-pressed={isSelected}
                       className={`min-w-[3rem] rounded-md border px-3 py-2 text-sm font-medium transition-colors ${
                         isSelected
@@ -368,40 +288,23 @@ function ProductPage() {
           <button
             type="button"
             onClick={handleAdd}
-            className="mt-8 inline-flex items-center justify-center gap-2 rounded-lg bg-primary text-primary-foreground font-display font-semibold tracking-wide px-6 py-4 shadow-lg shadow-primary/20 hover:bg-primary/90 transition-all"
+            disabled={!selectedVariant}
+            className="mt-8 inline-flex items-center justify-center gap-2 rounded-lg bg-primary text-primary-foreground font-display font-semibold tracking-wide px-6 py-4 shadow-lg shadow-primary/20 hover:bg-primary/90 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            Add to Cart
+            {selectedVariant ? "Add to Cart" : "Unavailable"}
             <span aria-hidden>→</span>
           </button>
+          {selectedVariant && <p className="mt-3 text-sm text-muted-foreground">Selected option: {[selectedColor, selectedSize].filter(Boolean).join(" / ") || selectedVariant.title}</p>}
           <p className="mt-3 text-[11px] text-muted-foreground text-center">
             🔒 Secure checkout · Free U.S. shipping on orders over $35 · Production in 3–7 business days
           </p>
+          <div className="mt-5 border-t border-border pt-4 text-sm leading-relaxed text-muted-foreground">
+            <p>Made to order. Review the selected color and size before checkout. Delivery normally takes another 2–5 business days after production.</p>
+            <p className="mt-2">See our <Link to="/shipping-policy" className="underline">shipping policy</Link>, <Link to="/return-refund-policy" className="underline">return and refund policy</Link>, or <Link to="/contact" className="underline">contact customer support</Link>.</p>
+          </div>
         </div>
       </section>
 
-      {/* Structured data: Product + Breadcrumb */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "Product",
-            name: displayTitle,
-            description: seoDescription(product),
-            image: galleryImages,
-            url: `${SITE_URL}/shop/${product.id}`,
-            brand: { "@type": "Brand", name: "Keep Texas Red" },
-            offers: {
-              "@type": "Offer",
-              price: unitPrice.toFixed(2),
-              priceCurrency: product.currency || "USD",
-              availability: "https://schema.org/InStock",
-              itemCondition: "https://schema.org/NewCondition",
-              url: `${SITE_URL}/shop/${product.id}`,
-            },
-          }),
-        }}
-      />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
