@@ -1,0 +1,346 @@
+{
+  "note": "Exact content checks establish rendered change evidence, not authority certification or Google indexation. Pending release entries are observed and not enforced until release acceptance. Unresolved rows are not treated as intentional retirements.",
+  "checks": [
+    {
+      "id": 1,
+      "url": "https://keeptxred.com/bills",
+      "requiredText": [
+        "How to tell whether a filed bill is law",
+        "Which bill document should you read?"
+      ],
+      "requiredLinks": [
+        "/texas-government/reference/how-to-read-a-texas-bill",
+        "/texas-government/reference/texas-bill-fiscal-notes"
+      ]
+    },
+    {
+      "id": 2,
+      "url": "https://keeptxred.com/texas-legislature",
+      "requiredText": [
+        "Does prefiling a bill change Texas law?",
+        "Passage, enactment and the date a law takes effect are different milestones"
+      ],
+      "requiredLinks": [
+        "/texas-government/reference/how-to-read-a-texas-bill",
+        "/texas-government/reference/texas-bill-fiscal-notes"
+      ]
+    },
+    {
+      "id": 4,
+      "url": "https://keeptxred.com/news/beginners-guide-texas-elections",
+      "requiredText": [],
+      "requiredLinks": [
+        "/county-elections"
+      ]
+    },
+    {
+      "id": 9,
+      "url": "https://keeptxred.com/news/texas-open-meetings-public-info",
+      "requiredText": [
+        "three business days",
+        "How the ten-business-day rule actually works",
+        "§552.301"
+      ],
+      "requiredLinks": [
+        "https://www.texasattorneygeneral.gov/open-government/members-public/overview-public-information-act"
+      ],
+      "pendingRelease": true
+    },
+    {
+      "id": 18,
+      "url": "https://keeptxred.com/news/texas-grid-ercot-explained",
+      "requiredText": [
+        "Why ERCOT's federal jurisdiction is different",
+        "200 MWh",
+        "Federal Power Act"
+      ],
+      "requiredLinks": [
+        "https://www.ferc.gov/industries-data/electric/electric-power-markets/ercot"
+      ],
+      "pendingRelease": true
+    },
+    {
+      "id": 19,
+      "url": "https://keeptxred.com/news/texas-voter-registration-guide",
+      "requiredText": [],
+      "requiredLinks": [
+        "/county-elections",
+        "/register-to-vote"
+      ]
+    },
+    {
+      "id": 23,
+      "url": "https://keeptxred.com/find-representative",
+      "requiredText": [
+        "Which officials represent my Texas address?",
+        "seated Congress",
+        "District lookup sources and limitations"
+      ],
+      "requiredLinks": [
+        "https://wrm.capitol.texas.gov/",
+        "/contact-legislators"
+      ]
+    },
+    {
+      "id": 34,
+      "url": "https://keeptxred.com/data",
+      "requiredText": [
+        "Where to find Texas public data",
+        "Before comparing two figures"
+      ],
+      "requiredLinks": [
+        "/news/isd-tax-burdens",
+        "/texas-government/reference/texas-bill-fiscal-notes"
+      ]
+    },
+    {
+      "id": 39,
+      "url": "https://keeptxred.com/news/school-choice-esa-guide",
+      "requiredText": [
+        "2026–27 school year are closed",
+        "$10,474",
+        "$2,000",
+        "$30,000",
+        "What families should compare before changing schools"
+      ],
+      "requiredLinks": [
+        "https://educationfreedom.texas.gov/families/"
+      ],
+      "pendingRelease": true
+    },
+    {
+      "id": 40,
+      "url": "https://keeptxred.com/news/primary-vs-general-election",
+      "requiredText": [],
+      "requiredLinks": [
+        "/county-elections",
+        "/texas-government/reference/texas-campaign-finance-2026"
+      ]
+    },
+    {
+      "id": 41,
+      "url": "https://keeptxred.com/houston",
+      "requiredText": [
+        "Who makes decisions affecting Houston?",
+        "How to verify a Houston government story"
+      ],
+      "requiredLinks": [
+        "https://agenda.harriscountytx.gov/",
+        "https://porthouston.com/about/public-meetings/agendas-minutes/"
+      ],
+      "pendingRelease": true
+    },
+    {
+      "id": 47,
+      "url": "https://keeptxred.com/happening-now",
+      "requiredText": [
+        "Verified Texas news reporting published within the past seven days",
+        "News archive"
+      ],
+      "requiredLinks": [
+        "/news",
+        "/editorial-standards"
+      ]
+    },
+    {
+      "id": 48,
+      "url": "https://keeptxred.com/news/texas-water-rights-explained",
+      "requiredText": [
+        "Groundwater: ownership is not a guaranteed volume",
+        "25,000 gallons a day",
+        "When an exempt well still needs registration"
+      ],
+      "requiredLinks": [
+        "https://www.twdb.texas.gov/groundwater/faq/faqgwm.asp"
+      ],
+      "pendingRelease": true
+    },
+    {
+      "id": 52,
+      "url": "https://keeptxred.com/county-elections",
+      "requiredText": [
+        "Which election office should you contact?",
+        "Find a county by name",
+        "not individual county webpages"
+      ],
+      "requiredLinks": [
+        "/register-to-vote"
+      ]
+    },
+    {
+      "id": 64,
+      "url": "https://keeptxred.com/laws/constitutional-amendments",
+      "requiredText": [
+        "The November 3, 2026 general election has passed",
+        "Proposition 14: voter approval is not the same as implementation",
+        "2,016,281"
+      ],
+      "requiredLinks": [
+        "https://dev-search.txcourts.gov/Case.aspx?cn=15-26-00074-CV&coa=coa15"
+      ]
+    },
+    {
+      "id": 69,
+      "url": "https://keeptxred.com/texas-government/reference/texas-bill-fiscal-notes",
+      "requiredText": [
+        "Worked example: compare one-time and recurring costs",
+        "$4.5 million"
+      ],
+      "requiredLinks": [
+        "/texas-government/reference/how-to-read-a-texas-bill"
+      ]
+    },
+    {
+      "id": 72,
+      "url": "https://keeptxred.com/texas-government/reference/how-to-read-a-texas-bill",
+      "requiredText": [
+        "Worked example: identify a prefiled bill without confusing it with current law"
+      ],
+      "requiredLinks": [
+        "/texas-government/reference/texas-bill-fiscal-notes"
+      ]
+    },
+    {
+      "id": 75,
+      "url": "https://keeptxred.com/news/texas-voting-guide-2026",
+      "requiredText": [
+        "Those dates have passed",
+        "Reasonable Impediment Declaration",
+        "How to research the completed 2026 election"
+      ],
+      "requiredLinks": [
+        "/register-to-vote",
+        "/county-elections"
+      ]
+    },
+    {
+      "id": 83,
+      "url": "https://keeptxred.com/register-to-vote",
+      "requiredText": [
+        "Register at least 30 days before the election",
+        "November 3 general election is past"
+      ],
+      "requiredLinks": [
+        "/county-elections",
+        "https://www.sos.state.tx.us/elections/voter/important-election-dates.shtml"
+      ]
+    },
+    {
+      "id": 91,
+      "url": "https://keeptxred.com/news/isd-tax-burdens",
+      "requiredText": [
+        "Texas School Property Taxes in 2026",
+        "Estimate your school property-tax bill"
+      ],
+      "requiredLinks": [
+        "https://tea.texas.gov/about-tea/state-funding/ty2026-final-mcrs.pdf"
+      ]
+    }
+  ],
+  "dispositions": [
+    {
+      "id": 65,
+      "url": "https://keeptxred.com/elections/races/texas-2026-texas-house-district-11-2026",
+      "expected": "not-found-observed",
+      "reason": "Owner-directed election-center retirement until the next election cycle."
+    },
+    {
+      "id": 67,
+      "url": "https://keeptxred.com/elections/races/texas-2026-texas-house-district-5-2026",
+      "expected": "not-found-observed",
+      "reason": "Owner-directed election-center retirement until the next election cycle."
+    },
+    {
+      "id": 68,
+      "url": "https://keeptxred.com/elections/races/2026-texas-house-district-98",
+      "expected": "not-found-observed",
+      "reason": "Owner-directed election-center retirement until the next election cycle."
+    },
+    {
+      "id": 70,
+      "url": "https://keeptxred.com/elections/statewide",
+      "expected": "not-found-observed",
+      "reason": "Owner-directed election-center retirement until the next election cycle."
+    },
+    {
+      "id": 76,
+      "url": "https://keeptxred.com/elections/candidates",
+      "expected": "not-found-observed",
+      "reason": "Owner-directed election-center retirement until the next election cycle."
+    },
+    {
+      "id": 77,
+      "url": "https://keeptxred.com/elections/legislative",
+      "expected": "not-found-observed",
+      "reason": "Owner-directed election-center retirement until the next election cycle."
+    },
+    {
+      "id": 78,
+      "url": "https://keeptxred.com/elections/results",
+      "expected": "not-found-observed",
+      "reason": "Owner-directed election-center retirement until the next election cycle."
+    },
+    {
+      "id": 79,
+      "url": "https://keeptxred.com/elections/districts",
+      "expected": "not-found-observed",
+      "reason": "Owner-directed election-center retirement until the next election cycle."
+    },
+    {
+      "id": 89,
+      "url": "https://keeptxred.com/news/live-2026-07-10-federal-agency-faces-scrutiny-after-houston-officer-involved-shooting--s2fagc",
+      "expected": "not-found-observed",
+      "reason": "Explicit retired_low_value decision in historical_article_recovery_status: original evidence packet unavailable."
+    },
+    {
+      "id": 85,
+      "url": "https://www.keeptxred.com/news/2026-07-12-texas-a-m-officials-respond-to-project-launching-wine-grapes-into-space",
+      "expected": null,
+      "reason": "Unresolved historical article; no exact current/archived article or redirect record. Research equivalent content before any restoration."
+    },
+    {
+      "id": 86,
+      "url": "https://www.keeptxred.com/news/2026-07-11-texas-judge-suspended-following-indictment-in-drug-possession-case",
+      "expected": null,
+      "reason": "Unresolved historical article; no exact current/archived article or redirect record. Research equivalent content before any restoration."
+    },
+    {
+      "id": 87,
+      "url": "https://keeptxred.com/news/live-2026-07-11-unpacking-the-growth-of-texas-themed-mental-puzzles-and-digital-entert-pntib2",
+      "expected": null,
+      "reason": "Unresolved historical article; no exact current/archived article or redirect record. Research equivalent content before any restoration."
+    },
+    {
+      "id": 88,
+      "url": "https://keeptxred.com/news/2026-07-10-breaking-texas-officials-respond-to-fatal-ice-shooting-in-houston",
+      "expected": null,
+      "reason": "Unresolved historical article; no exact current/archived article or redirect record. Research equivalent content before any restoration."
+    },
+    {
+      "id": 90,
+      "url": "https://keeptxred.com/news/2026-07-10-former-texas-tech-marketing-professor-pleads-guilty-to-drug-trafficking",
+      "expected": null,
+      "reason": "Unresolved historical article; no exact current/archived article or redirect record. Research equivalent content before any restoration."
+    },
+    {
+      "id": 57,
+      "url": "https://www.keeptxred.com/news/texas-school-finance-explained",
+      "expected": "html-observed",
+      "finalUrl": "https://keeptxred.com/news/texas-school-finance-explained",
+      "reason": "Permanent canonical WWW alias."
+    },
+    {
+      "id": 21,
+      "url": "https://keeptxred.com/news/moving-to-texas-guide",
+      "expected": "cross-site-destination",
+      "reason": "Owner-directed lifestyle migration to TexasDefined."
+    },
+    {
+      "id": 92,
+      "url": "https://keeptxred.com/texas/property-taxes-2026",
+      "expected": "cross-site-destination",
+      "finalUrl": "https://texasdefined.com/learn/property-taxes",
+      "reason": "Owner-directed homeowner guide migration to TexasDefined."
+    }
+  ]
+}
