@@ -1,5 +1,5 @@
 {
-  "note": "reviewed is a substantiated editorial review date, not an automatic crawl date; null means release/editorial verification pending. Add reviewed destinations as they are verified. Never advance dates solely because a source returns HTTP 200. Four November 25 revisions remain null until their release evidence is obtained. Historical election guides are not rewritten as current deadlines.",
+  "note": "reviewed is a substantiated editorial review date, not an automatic crawl date; null means release/editorial verification pending. Add reviewed destinations as they are verified. Never advance dates solely because a source returns HTTP 200. Unreleased or unverified revisions remain null until release evidence is obtained. Historical election guides are not rewritten as current deadlines.",
   "records": [
     {
       "path": "/register-to-vote",
@@ -217,6 +217,45 @@
         "https://www.ferc.gov/industries-data/electric/electric-power-markets/ercot",
         "https://www.ferc.gov/reliability-explainer",
         "https://www.puc.texas.gov/"
+      ]
+    },
+    {
+      "path": "/texas-government/agencies/texas-department-public-safety",
+      "reviewed": null,
+      "reviewDays": 90,
+      "group": "agency-authority",
+      "sources": [
+        "https://www.dps.texas.gov/section/driver-license",
+        "https://www.txdmv.gov/motorists/register-your-vehicle",
+        "https://www.dps.texas.gov/section/office-inspector-general/how-file-complaint",
+        "https://www.dps.texas.gov/section/crime-records/contact-crime-records-service",
+        "https://www.dps.texas.gov/section/general-counsel/public-information-requests"
+      ]
+    },
+    {
+      "path": "/texas-government/agencies/health-human-services-commission",
+      "reviewed": null,
+      "reviewDays": 90,
+      "group": "agency-authority",
+      "sources": [
+        "https://statutes.capitol.texas.gov/Docs/GV/pdf/GV.523.pdf",
+        "https://www.yourtexasbenefits.com/",
+        "https://www.hhs.texas.gov/contact/complaints-appeals/fair-fraud-hearings",
+        "https://www.hhs.texas.gov/contact/complaints-appeals/complaint-incident-intake/how-do-i-make-a-complaint-about-hhs-service-provider",
+        "https://oig.hhs.texas.gov/contact"
+      ]
+    },
+    {
+      "path": "/texas-government/agencies/texas-commission-environmental-quality",
+      "reviewed": null,
+      "reviewDays": 90,
+      "group": "agency-authority",
+      "sources": [
+        "https://www.tceq.texas.gov/permitting/central_registry/",
+        "https://www.tceq.texas.gov/permitting/permit_data.html",
+        "https://www.tceq.texas.gov/compliance/complaints",
+        "https://www.tceq.texas.gov/permitting/water_rights",
+        "https://www.tceq.texas.gov/agency/decisions/cc/cc_db.html"
       ]
     }
   ]
