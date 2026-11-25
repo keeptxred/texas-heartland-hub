@@ -249,15 +249,15 @@ export const ARTICLES: Article[] = [
   {
     slug: "2026-07-11-unt-appoints-scholar-focused-on-race-and-neoliberalism-as-interim-provost",
     category: "Education",
-    title: "UNT Appoints Scholar Focused on Race and Neoliberalism as Interim Provost",
+    title: "Albert Bimper Named UNT Interim Provost: Role and Responsibilities",
     dek: "Albert Bimper, a higher-education administrator whose scholarship includes race, college athletics, and neoliberalism, has been selected as the University of North Texas interim provost.",
     author: "Keep TX Red Newsroom",
     date: "July 11, 2026",
     publishedAt: "2026-07-11T09:00:00-05:00",
     image: classroom,
     contentCategory: "government-policy",
-    lastReviewedDate: "2026-07-25",
-    dateModified: "2026-07-25",
+    lastReviewedDate: "2026-11-25",
+    dateModified: "2026-11-25",
     topics: ["education", "higher education", "UNT"],
   },
   {
