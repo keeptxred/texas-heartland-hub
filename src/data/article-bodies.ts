@@ -3885,7 +3885,8 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
       {
         "heading": "What Texas collected in fiscal 2026",
         "paragraphs": [
-          "The Comptroller's September 11, 2026 release reports $188.89 billion in All Funds revenue and $88.23 billion in All Funds tax collections for fiscal 2026, which ended August 31. The categories below are state tax collections, not combined state and local revenue. Amounts are rounded as reported; the remaining-tax category is calculated by subtraction."
+          "The Comptroller's September 11, 2026 release reports $188.89 billion in All Funds revenue and $88.23 billion in All Funds tax collections for fiscal 2026, which ended August 31. The categories below are state tax collections, not combined state and local revenue. Amounts are rounded as reported; the remaining-tax category is calculated by subtraction.",
+          "Sales tax accounted for approximately 59.2% of the reported $88.23 billion in state tax collections, calculated by dividing $52.24 billion by $88.23 billion. This is a share of state tax collections in the All Funds report, not a share of all government revenue, combined state and local taxes, or an individual family's tax bill. Rounding means category shares may not sum to exactly 100%."
         ],
         "table": {
           "headers": [
@@ -3934,8 +3935,30 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
       {
         "heading": "Why local property taxes are a separate question",
         "paragraphs": [
-          "Texas does not levy a statewide property tax. Local taxing units set rates and local appraisal districts establish property values under the applicable law. A property owner's bill depends on taxable value, exemptions and the specific taxing units, not a statewide uniform percentage.",
-          "For illustration only, a $300,000 taxable value and combined local rate of $1.50 per $100 of value produce $4,500 in tax before any further adjustments. This is not a forecast of a particular bill. See [Texas property tax relief](/issues/texas-property-tax-relief), [Comptroller office guide](/texas-government/comptroller) and the [school finance guide](/news/texas-school-finance-explained) for the institutional distinctions."
+          "Texas has no state property tax. Local taxing units set rates and local appraisal districts establish property values under the applicable law. A property owner's bill depends on taxable value, exemptions and the specific taxing units, not a statewide uniform percentage.",
+          "For illustration only, a $300,000 taxable value and combined local rate of $1.50 per $100 of value produce $4,500 in tax before any further adjustments. This is not a forecast of a particular bill. See [Texas property tax relief](/issues/texas-property-tax-relief), [Comptroller office guide](/texas-government/comptroller) and the [school finance guide](/news/texas-school-finance-explained) for the institutional distinctions.",
+          "For the broader legal framework, read [Texas property tax laws](/news/texas-property-tax-laws-explained). Household-specific estimates, exemption applications and protest guidance are maintained separately at [TexasDefined's property tax guide](https://texasdefined.com/learn/property-taxes). Keeping those tasks separate helps distinguish legal and policy reporting from a homeowner's decision about a particular parcel or bill."
+        ]
+      },
+      {
+        "heading": "Why revenue and spending reports are not the same as tax collections",
+        "paragraphs": [
+          "The All Funds revenue figure in the Comptroller's annual announcement is broader than the tax collections figure. Government receipts can include nontax sources, such as fees and federal transfers. Consequently, dividing a tax category by total revenue answers a different question from dividing it by total taxes. The fiscal 2026 figures above should be read using the report's stated fund scope and time period.",
+          "An appropriation is legal spending authority, while actual expenditures are transactions reported for a particular accounting period. A state budget is not a list of all actual receipts and spending. The [Comptroller's cash reports](https://comptroller.texas.gov/transparency/reports/cash-report/) and [Monthly State Revenue Watch](https://comptroller.texas.gov/transparency/revenue/watch/) can help reconcile collections, but use comparable fund definitions and periods. The state's fiscal year runs from September 1 through August 31, which is different from the calendar year."
+        ]
+      },
+      {
+        "heading": "School finance is not a state property tax",
+        "paragraphs": [
+          "School districts levy local maintenance-and-operations and interest-and-sinking-fund taxes under the statutory framework. State aid, local tax revenue and the mechanism that reduces excess local revenue interact through school-finance formulas. Legislative changes may alter the allocation of state and local responsibility without creating a statewide property tax.",
+          "A reduction in one component of a district's rate does not necessarily predict the change in an individual property owner's total bill. Appraised value, exemptions, tax ceilings, other local rates and applicable statutory limitations must also be considered. The [school finance explanation](/news/texas-school-finance-explained) describes the roles of districts, TEA and state law."
+        ]
+      },
+      {
+        "heading": "Follow a tax proposal from filing to implementation",
+        "paragraphs": [
+          "Begin with the bill number, legislature and session. Read the filed and subsequent versions, official actions, fiscal note and final enrolled text where applicable. A bill can be amended during consideration, so a description from an earlier stage may no longer match the final measure. For a constitutional amendment, distinguish legislative approval from the statewide vote on the proposition.",
+          "After enactment, check the effective date and current codified law. Administrative guidance or forms may explain how a new provision is implemented. A fiscal note estimates potential consequences under stated assumptions; it does not certify actual tax receipts or actual savings. The [bill research guide](/texas-government/reference/how-to-read-a-texas-bill) explains the document sequence and the [fiscal note guide](/texas-government/reference/texas-bill-fiscal-notes) describes the difference between estimated and realized impacts."
         ]
       },
       {
@@ -3973,6 +3996,18 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
       {
         "q": "Does living in Texas eliminate federal income tax?",
         "a": "No. Federal income tax obligations remain separate."
+      },
+      {
+        "q": "Why is the All Funds revenue figure larger than state tax collections?",
+        "a": "The revenue total includes receipts beyond taxes. Use the stated fund scope and denominator when calculating tax-category shares."
+      },
+      {
+        "q": "Can the Legislature enact a personal income tax by an ordinary bill?",
+        "a": "The current constitutional prohibition would need to be changed through the constitutional amendment process. A filed bill or campaign promise does not change the constitution."
+      },
+      {
+        "q": "Does a lower school district tax rate guarantee a lower total property tax bill?",
+        "a": "No. A bill depends on the specific taxable values, exemptions, applicable ceilings and rates of all relevant local taxing units."
       }
     ],
     "sources": [
@@ -4012,7 +4047,8 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
     "related": [
       "texas-school-finance-explained",
       "what-local-governments-control",
-      "how-texas-counties-spend"
+      "how-texas-counties-spend",
+      "texas-property-tax-laws-explained"
     ],
     "cta": {
       "label": "Explore Texas tax policy",
