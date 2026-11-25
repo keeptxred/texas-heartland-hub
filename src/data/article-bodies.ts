@@ -3500,40 +3500,158 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
   },
 
   "texas-water-rights-explained": {
-    updated: "2026-05-25",
-    intro: [
-      "Water law in Texas turns on one strange fact: surface water and groundwater are governed by completely different rules. Above ground, the state owns the water. Below ground, you own it.",
+    "updated": "2026-11-25",
+    "editorNote": "Expanded with statutory distinctions, qualified exemptions, source pathways and worked examples.",
+    "intro": [
+      "Texas regulates water according to its legal source, not simply whether it is visible above or below ground. State water in natural watercourses is generally held by the state; groundwater ownership is recognized as a real-property interest, subject to statutory and local restrictions. Rainfall before it reaches a defined watercourse can be treated differently from state water.",
+      "A rancher installing a well, a city buying a supply contract and a farmer diverting from a river face different authorization requirements. Before spending money or relying on a seller's assertion about water, identify the source, proposed use and responsible regulator."
     ],
-    sections: [
+    "sections": [
       {
-        heading: "Surface Water: Prior Appropriation",
-        paragraphs: [
-          "Texas surface water (rivers, lakes, springs) is owned by the state and allocated through permits administered by the TCEQ. Older permits get water first when supplies fall — 'first in time, first in right.'",
-        ],
+        "heading": "Texas water rights at a glance",
+        "table": {
+          "headers": [
+            "Water source",
+            "General legal starting point",
+            "Who to contact"
+          ],
+          "rows": [
+            [
+              "Natural river or stream",
+              "State water; permit or applicable statutory exemption",
+              "TCEQ water rights"
+            ],
+            [
+              "Percolating groundwater",
+              "Landowner property interest; district rules and common-law limits",
+              "Applicable groundwater conservation or special district"
+            ],
+            [
+              "Diffuse runoff before reaching a watercourse",
+              "Not automatically state water; circumstances matter",
+              "TCEQ or qualified water-law adviser"
+            ],
+            [
+              "Delivered public water",
+              "Utility service, rate and use restrictions",
+              "Local water supplier and relevant regulator"
+            ]
+          ]
+        }
       },
       {
-        heading: "Groundwater: Rule of Capture",
-        paragraphs: [
-          "Groundwater belongs to the surface landowner, who may pump as much as can be put to beneficial use — subject to limits set by local Groundwater Conservation Districts.",
-        ],
-      },
-    ],
-    faq: [
-      {
-        q: "Can my neighbor drain my well?",
-        a: "Under classic rule of capture, generally yes — though most aquifers are now overseen by a GCD with permit limits.",
+        "heading": "Surface water: prior appropriation and exemptions",
+        "paragraphs": [
+          "Texas Water Code Chapter 11 establishes the framework for state water. A water right ordinarily authorizes use under specified conditions, not ownership of the entire river. Review the permit for diversion location, authorized purpose, volume, priority date and other conditions.",
+          "Priority matters during shortage: senior rights generally take precedence over junior rights. The date for a new appropriation generally relates to administrative completeness of the application. Existing authorizations and watermaster administration can complicate the practical order of delivery.",
+          "Section 11.142 contains specific permit exemptions, including certain domestic and livestock uses. An exemption is not permission for unlimited commercial diversion, a large impoundment or an unrelated use. Ask TCEQ to confirm the applicable exemption for your proposed project."
+        ]
       },
       {
-        q: "Who decides Rio Grande shares with Mexico?",
-        a: "The 1944 Water Treaty, administered by the International Boundary and Water Commission.",
+        "heading": "Groundwater: ownership is not a guaranteed volume",
+        "paragraphs": [
+          "Water Code §36.002 recognizes ownership of groundwater beneath real property. It does not establish an unconditional right to produce a particular quantity. District rules may govern well spacing, permits, production, reporting and transfers. Courts also recognize limits on wasteful or malicious drainage, negligent subsidence and wells crossing property boundaries.",
+          "A mineral or groundwater conveyance, lease or other title instrument may affect who owns the right. Do not assume the surface deed resolves every water interest. For property-specific decisions, review recorded instruments and the district's rules with a qualified professional."
+        ]
       },
+      {
+        "heading": "When an exempt well still needs registration",
+        "paragraphs": [
+          "Under §36.117(b)(1), a district generally must exempt a well used only for domestic use or livestock or poultry if it is on a tract larger than ten acres and cannot produce more than 25,000 gallons a day. Read the full section and local rules for exceptions and other exemptions. A district can still require registration and compliance with relevant construction or spacing requirements.",
+          "For example, a domestic well on a 12-acre tract designed to produce 10,000 gallons a day could qualify for the statutory permit exemption, depending on the facts and applicable district. A well on eight acres does not qualify under that particular acreage provision, though another local exemption may exist. Neither example establishes a right to sell water commercially."
+        ]
+      },
+      {
+        "heading": "How drought restrictions affect the same property differently",
+        "paragraphs": [
+          "A ranch may have a permitted river diversion and a groundwater well. During drought, the surface-water right may be constrained by senior rights or watermaster instructions, while the groundwater well may be subject to district drought and production rules. A household connected to a utility may face separate watering restrictions. An authorization for one source is not an exemption from restrictions on another.",
+          "Check [TCEQ drought and water rights guidance](https://www.tceq.texas.gov/response/drought/waterrights.html/) and the relevant district or water supplier. Save the current permit or restriction notice; a statewide drought declaration alone does not describe every legal obligation."
+        ]
+      },
+      {
+        "heading": "Rio Grande water and the international boundary",
+        "paragraphs": [
+          "The 1944 treaty allocates waters in the international reach of the Rio Grande from Fort Quitman to the Gulf of Mexico, as well as other covered rivers. The International Boundary and Water Commission maintains treaty and delivery records. Interstate or international allocation does not itself grant an individual Texas property owner a diversion permit.",
+          "Use the IBWC's treaty documents and cycle-status data for an international delivery question. Use TCEQ's water-rights and watermaster resources for a Texas diversion question. See [Texas border geography](/news/texas-border-geography-101) for the river's geographic context."
+        ]
+      },
+      {
+        "heading": "Before buying land or installing a well",
+        "bullets": [
+          "Identify the exact property and whether a groundwater conservation district, subsidence district or other special authority covers it.",
+          "Obtain the well report and available testing records; ask a licensed driller or the district about construction, spacing and registration.",
+          "Read the actual water-rights permit or exemption, including volume, purpose, priority and conditions; confirm whether a change in ownership or use requires approval.",
+          "Check recorded conveyances, leases, easements, water-supply contracts and any transfer restrictions.",
+          "Confirm current drought rules and the expected reliability of the source before relying on it for irrigation, a business or a home."
+        ]
+      }
     ],
-    sources: [
-      { label: "Texas Water Development Board", url: "https://www.twdb.texas.gov/" },
-      { label: "TCEQ — Water Rights", url: "https://www.tceq.texas.gov/permitting/water_rights/" },
+    "faq": [
+      {
+        "q": "Can I pump unlimited groundwater on my property?",
+        "a": "No universal entitlement to a specific amount exists. Applicable district rules, title rights, statutory limitations and common-law duties may restrict production."
+      },
+      {
+        "q": "Is every creek or spring automatically state water?",
+        "a": "No. The legal classification depends on the watercourse and source. Diffuse runoff and spring water before reaching a watercourse are among the distinctions identified by TCEQ."
+      },
+      {
+        "q": "Does a groundwater permit authorize me to take river water?",
+        "a": "No. The two authorizations involve different legal frameworks."
+      },
+      {
+        "q": "Where can I find my district?",
+        "a": "Start with the TWDB groundwater conservation districts directory and confirm your property with the identified district."
+      },
+      {
+        "q": "Who can answer a question about the specific terms of a water right?",
+        "a": "The relevant district or TCEQ can explain its rules and records; seek qualified legal advice for title, disputes or proposed transfers."
+      }
     ],
-    related: ["texas-energy-policy-guide", "texas-border-geography-101"],
-    cta: { label: "Read Policy Coverage", href: "/news" },
+    "sources": [
+      {
+        "label": "Texas Water Code Chapter 36",
+        "url": "https://statutes.capitol.texas.gov/GetStatute.aspx?Code=WA&Value=36.351"
+      },
+      {
+        "label": "Texas Water Code Chapter 11",
+        "url": "https://statutes.capitol.texas.gov/Docs/WA/htm/WA.11.htm"
+      },
+      {
+        "label": "TCEQ — Am I regulated?",
+        "url": "https://www.tceq.texas.gov/permitting/water_rights/wr-permitting/wr_amiregulated.html"
+      },
+      {
+        "label": "TWDB — groundwater and private well FAQ",
+        "url": "https://www.twdb.texas.gov/groundwater/faq/faqgwm.asp"
+      },
+      {
+        "label": "TWDB — groundwater conservation districts",
+        "url": "https://www.twdb.texas.gov/groundwater/conservation_districts/"
+      },
+      {
+        "label": "IBWC — treaties",
+        "url": "https://www.ibwc.gov/treaties"
+      },
+      {
+        "label": "IBWC — Mexico deliveries cycle status",
+        "url": "https://www.ibwc.gov/water-data/mexico-deliveries/"
+      }
+    ],
+    "related": [
+      "texas-border-geography-101",
+      "what-local-governments-control",
+      "texas-grid-ercot-explained"
+    ],
+    "cta": {
+      "label": "Texas government and agency responsibilities",
+      "href": "/texas-government"
+    },
+    "keyTakeaways": [
+      "Classify the water source before identifying the rule.",
+      "Groundwater ownership does not guarantee a particular pumping volume.",
+      "Check the actual permit and district rules rather than assuming landownership grants unrestricted use."
+    ]
   },
 
   "texas-constitutional-amendments-guide": {
@@ -3578,86 +3696,139 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
   },
 
   "texas-open-meetings-public-info": {
-    updated: "2026-06-26",
-    editorNote: "New evergreen explainer — June 2026.",
-    intro: [
-      "Texas runs on sunshine laws. The Open Meetings Act (OMA) requires almost every governing body — from your ISD board to the Railroad Commission — to deliberate in public, with posted agendas and recorded votes. The Public Information Act (PIA) gives every Texan the right to request government records and get a written response within 10 business days.",
-      "These two statutes are the most powerful tools a conservative citizen has at the local level. They are how you find out what your school board is actually voting on, how your county is spending bond money, and what your city manager wrote in that email to the developer.",
+    "updated": "2026-11-25",
+    "editorNote": "Substantive legal reference revision. Corrects the obsolete 72-hour rule and distinguishes prompt disclosure from the Attorney General ruling deadline.",
+    "intro": [
+      "Texas has two separate public-access laws. Government Code Chapter 551, the Open Meetings Act, governs meetings of covered governmental bodies. Chapter 552, the Public Information Act, governs access to existing government records. Neither requires a government to answer every question a resident asks.",
+      "The ordinary local meeting-notice requirement is now three business days, not 72 hours. House Bill 1522 changed Government Code §551.043 effective September 1, 2025. The Public Information Act separately requires prompt production of disclosable records, with procedural deadlines if records cannot be released immediately. This distinction matters when following school-board, city-council and county decisions."
     ],
-    sections: [
+    "sections": [
       {
-        heading: "What the Open Meetings Act Requires",
-        bullets: [
-          "Written notice posted at least 72 hours before a meeting (Government Code Ch. 551).",
-          "An agenda listing every subject to be discussed — vague items like 'other business' are not allowed.",
-          "Public access to the room and the right to record audio or video.",
-          "Roll-call votes on final action; secret ballots are prohibited.",
-          "Executive (closed) sessions only for narrowly defined topics — real estate, litigation, personnel, security.",
-        ],
+        "heading": "Read the meeting notice before attending",
+        "paragraphs": [
+          "Under §551.043, the general rule is continuous public accessibility of notice for at least three business days before the scheduled meeting. Check the actual statutory exceptions: statewide bodies ordinarily have a seven-day posting requirement, and a qualifying emergency or urgent public necessity can permit at least one hour of notice under §551.045. Other special provisions apply to legislative committees and certain university boards.",
+          "Notice identifies the time, place and subject of the meeting. When a covered body will discuss or adopt a budget, the 2025 amendment generally requires the proposed budget to be physically available with the notice unless clearly accessible from the body's homepage, plus a taxpayer-impact statement. Check the university-board exception in the statute. Do not substitute a press release for the actual notice."
+        ]
       },
       {
-        heading: "How to File a Public Information Request",
-        paragraphs: [
-          "Write a short letter or email to the governmental body's designated PIA officer. Describe the records you want with enough detail that staff can find them — date ranges, sender/recipient names, subject keywords.",
-        ],
-        bullets: [
-          "The agency has 10 business days to produce records, ask for a deposit, or seek an Attorney General ruling.",
-          "Charges are limited by Comptroller rules — typically $0.10 per page, no charge for under 50 pages of email.",
-          "If the agency wants to withhold records, it must ask the Attorney General — and you get to argue your side in writing.",
-        ],
+        "heading": "What can happen in public and closed sessions",
+        "paragraphs": [
+          "The Act ordinarily requires meetings of covered bodies to be open. Members of the public may record an open meeting, subject to reasonable rules for maintaining order. Section 551.007 generally provides a public-comment opportunity on agenda items at meetings of covered local bodies, subject to reasonable rules.",
+          "A closed session needs a statutory basis, such as qualifying attorney consultation, particular personnel matters or certain property discussions. A public announcement identifies the statutory basis before the closed session. Any final action, decision or vote on a matter considered in closed session must be taken in open session under §551.102. Not every vote requires an individual roll call; inspect the actual meeting record."
+        ]
       },
       {
-        heading: "When the Rules Are Broken",
-        table: {
-          headers: ["Violation", "Remedy"],
-          rows: [
-            ["No 72-hour notice", "Action taken at the meeting is voidable in district court"],
-            [
-              "Walking quorum (members meeting in groups to dodge OMA)",
-              "Criminal misdemeanor under §551.143",
-            ],
-            [
-              "Improperly withheld records",
-              "Sue in district court for mandamus and attorney's fees",
-            ],
+        "heading": "Send a request for records, not an investigation",
+        "paragraphs": [
+          "Find the designated public-information officer and use an accepted submission method. Specify existing documents and a useful date range. Request an electronic copy if available and ask for an estimate before substantial charges. Keep the request and submission confirmation; do not assume a message to any employee starts the statutory clock.",
+          "Example: 'Please provide electronic copies of the executed contract, amendments, final approved invoice totals and the meeting record approving the contract for the city’s drainage project discussed on October 20, 2026. Please let me know if clarification or a cost estimate is needed.' Substitute the actual project and date. This requests identifiable records rather than asking the city to create a new report."
+        ]
+      },
+      {
+        "heading": "How the ten-business-day rule actually works",
+        "paragraphs": [
+          "Section 552.221 requires prompt production. What is prompt depends on the circumstances. If production will take more than ten business days, the agency generally must certify that in writing and give a reasonable date and time for availability. When seeking an Attorney General decision to withhold information, §552.301 generally imposes a ten-business-day deadline to request that decision and identify the exceptions.",
+          "Exceptions, previous determinations, confidentiality requirements and statutory special procedures matter. A response may lawfully include redactions. The ten-day rule is not a universal guarantee that every responsive record will be delivered by day ten. The Attorney General's public guidance explains complaint options, charges and ruling procedures."
+        ]
+      },
+      {
+        "heading": "Which remedy matches the problem?",
+        "table": {
+          "headers": [
+            "Concern",
+            "What to check",
+            "Next step"
           ],
-        },
+          "rows": [
+            [
+              "Notice or closed-session issue",
+              "Chapter 551, notice, meeting minutes",
+              "Preserve the evidence; seek legal advice or contact the appropriate prosecutor."
+            ],
+            [
+              "Request delayed",
+              "Accepted delivery, date received, any written timeline",
+              "Ask the agency for status; consult the OAG Open Records Division."
+            ],
+            [
+              "Records withheld",
+              "Claimed exception, any ruling request or previous determination",
+              "Check the OAG ruling process and available complaint or court remedies."
+            ],
+            [
+              "Unreasonable cost",
+              "Written estimate and applicable charge rules",
+              "Ask for an itemized explanation and contact the Open Records Division if needed."
+            ]
+          ]
+        }
       },
+      {
+        "heading": "Use the records to follow a local decision",
+        "paragraphs": [
+          "A posted agenda shows what might be considered, not what was finally adopted. Match the agenda item with the meeting minutes, approved ordinance or contract, and later implementation records. For school boards see [school board powers](/news/texas-school-board-powers); for jurisdiction use [what local governments control](/news/what-local-governments-control). The [Houston public records guide](/houston) offers city and county examples.",
+          "This is general legal information, not advice about a particular dispute. Courts may invalidate actions under Chapter 551 or provide other relief; eligibility for damages, costs, attorney fees or a criminal complaint depends on the relevant provision and facts. Do not assume a violation automatically voids every vote or guarantees recovery of attorney fees."
+        ]
+      }
     ],
-    faq: [
+    "faq": [
       {
-        q: "Does the OMA apply to my HOA?",
-        a: "No — the OMA covers governmental bodies. HOAs are private corporations governed by Property Code Ch. 209.",
+        "q": "Is the usual meeting notice still 72 hours?",
+        "a": "No. Since September 1, 2025, §551.043 generally requires at least three business days of public accessibility. Exceptions have different rules."
       },
       {
-        q: "Can my school board go into closed session to discuss curriculum?",
-        a: "No. Curriculum is not one of the enumerated exceptions in §551.071-§551.089. Personnel discussions about a specific teacher are.",
+        "q": "Can a government refuse a request because I did not give a reason?",
+        "a": "The PIA generally does not require a requester to explain the purpose of a request; statutory exceptions and clarification procedures may apply."
       },
       {
-        q: "What if my PIA request is ignored?",
-        a: "File a complaint with your county or district attorney, or sue for mandamus. The agency pays your attorney's fees if you win.",
+        "q": "Does Chapter 551 apply to a private HOA?",
+        "a": "A private association is not automatically a governmental body under Chapter 551. Its meeting and record obligations may instead arise under the applicable Property Code and governing documents."
       },
+      {
+        "q": "Can I insist that a new analysis be created for me?",
+        "a": "The PIA is a right to existing information, subject to its provisions. It does not generally compel creation of a new report or answers to questions."
+      },
+      {
+        "q": "Where can I complain about public records?",
+        "a": "The Attorney General's Open Records Division provides assistance and a complaint process. A county or district attorney and judicial remedies may also be appropriate."
+      }
     ],
-    sources: [
+    "sources": [
       {
-        label: "Texas Government Code Ch. 551 — Open Meetings",
-        url: "https://statutes.capitol.texas.gov/Docs/GV/htm/GV.551.htm",
+        "label": "Texas Government Code Chapter 551",
+        "url": "https://statutes.capitol.texas.gov/?chapter=GV.551&code=GV&tab=1"
       },
       {
-        label: "Texas Government Code Ch. 552 — Public Information",
-        url: "https://statutes.capitol.texas.gov/Docs/GV/htm/GV.552.htm",
+        "label": "Texas Government Code Chapter 552",
+        "url": "https://statutes.capitol.texas.gov/Docs/GV/htm/GV.552.htm"
       },
       {
-        label: "Attorney General — Open Government",
-        url: "https://www.texasattorneygeneral.gov/open-government",
+        "label": "Attorney General — Public Information Act overview",
+        "url": "https://www.texasattorneygeneral.gov/open-government/members-public/overview-public-information-act"
       },
+      {
+        "label": "Attorney General — requester rights",
+        "url": "https://www.texasattorneygeneral.gov/open-government/members-public/requestors-rights"
+      },
+      {
+        "label": "Attorney General — Open Meetings Act handbook",
+        "url": "https://www.texasattorneygeneral.gov/sites/default/files/files/divisions/open-government/openmeetings_hb.pdf"
+      }
     ],
-    related: [
-      "how-a-bill-becomes-texas-law",
+    "related": [
       "what-local-governments-control",
       "texas-school-board-powers",
+      "how-a-bill-becomes-texas-law"
     ],
-    cta: { label: "Find Your Local Officials", href: "/find-representative" },
+    "cta": {
+      "label": "Find county and local records resources",
+      "href": "/houston"
+    },
+    "keyTakeaways": [
+      "Three business days is the ordinary notice rule, with statutory exceptions.",
+      "Final action on a closed-session matter takes place in open session.",
+      "Prompt production and a ten-business-day ruling deadline are different obligations."
+    ]
   },
 
   "why-texas-has-no-income-tax": {
@@ -5053,93 +5224,148 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
   },
 
   "school-choice-esa-guide": {
-    updated: "2026-06-05",
-    intro: [
-      "Texas' Education Savings Account (ESA) program is the largest school choice expansion in state history, giving eligible families access to state funds they can direct to private tuition, tutoring, curriculum, therapy, and testing services.",
-      "This guide walks through how the program actually works, who qualifies, what expenses are covered, and the application timeline every parent should mark before the fall enrollment window.",
+    "updated": "2026-11-25",
+    "editorNote": "Revised against the official Texas Education Freedom Accounts family guidance and dated 2026 program releases. Future application dates are not assumed.",
+    "intro": [
+      "The Texas Education Freedom Accounts (TEFA) program is the education savings account initiative established by Senate Bill 2 in 2025, with an initial $1 billion appropriation. The Texas Comptroller administers the program. It funds approved educational expenses for selected eligible students rather than paying unrestricted cash to parents.",
+      "Applications for the 2026–27 school year are closed. As of this review, the official family page directs families who missed that cycle to the 2027–28 interest list. Joining the interest list is not an application or award. Current families should use their official parent portal to confirm their award and deadlines."
     ],
-    sections: [
+    "sections": [
       {
-        heading: "How the ESA Works",
-        bullets: [
-          "Eligible students receive a per-pupil allotment set by statute, deposited into a state-administered account.",
-          "Funds may be spent on approved education expenses from a state-published vendor list.",
-          "Unused funds roll forward each year and can be saved for later education costs.",
-          "Families must renew eligibility annually.",
-        ],
-      },
-      {
-        heading: "Who Qualifies",
-        paragraphs: [
-          "The program is broadly eligible in its first years: any Texas resident student aged 5–17 who is eligible to attend a public school. Priority is given in the initial enrollment tiers to students from low-income households, students with disabilities, and students zoned to underperforming campuses.",
-          "Once priority tiers are seated, remaining slots are filled by lottery from the general applicant pool.",
-        ],
-      },
-      {
-        heading: "What You Can Spend On",
-        bullets: [
-          "Tuition and fees at an approved private school.",
-          "Curriculum and instructional materials.",
-          "Tutoring from a certified tutor.",
-          "Therapy services for students with disabilities (speech, OT, PT, ABA).",
-          "Testing fees (AP, SAT/ACT, industry certifications).",
-          "Educational technology from the approved vendor list.",
-        ],
-      },
-      {
-        heading: "Application Timeline",
-        table: {
-          headers: ["Milestone", "Window"],
-          rows: [
-            ["Application portal opens", "Early spring (annually)"],
-            ["Priority application deadline", "Late spring"],
-            ["Award notifications", "Early summer"],
-            ["Vendor selection and enrollment", "Summer"],
-            ["Funds available for use", "By start of fall term"],
+        "heading": "What a 2026–27 account may provide",
+        "table": {
+          "headers": [
+            "Student pathway",
+            "2026–27 award",
+            "Important qualification"
           ],
-        },
+          "rows": [
+            [
+              "Participating private school",
+              "$10,474",
+              "Standard amount for a participating private-school student"
+            ],
+            [
+              "Qualifying student with disability and active IEP",
+              "Up to $30,000",
+              "Amount depends on qualifying documentation and calculation; not a guaranteed flat award"
+            ],
+            [
+              "Homeschool or other eligible nonpublic education",
+              "$2,000",
+              "Separate annual funding category; approved expenses only"
+            ]
+          ]
+        }
       },
       {
-        heading: "The Texas Angle",
-        paragraphs: [
-          "Texas came to ESAs later than many red states but arrived with the largest per-pupil funding and broadest expense eligibility of any comparable program. Combined with the state's booming private and micro-school sector, the ESA program is likely to produce more measurable data on parental choice than any previous experiment in the country.",
-        ],
-      },
-    ],
-    faq: [
-      {
-        q: "Can I use ESA funds for homeschool?",
-        a: "Yes, for curriculum, tutoring, and testing expenses. ESA funds cannot pay a parent for teaching their own child.",
+        "heading": "Eligibility and priority are separate",
+        "paragraphs": [
+          "The official family guidance requires Texas residence, qualifying citizenship or lawful admission status, and eligibility to attend a Texas public or open-enrollment charter school, including applicable pre-K or kindergarten eligibility. Pre-K eligibility has additional criteria; use the official guidance instead of assuming every three- or four-year-old qualifies.",
+          "The first-year program was oversubscribed. The priority scheme gives first preference to eligible children with disabilities in households at or below 500% of the applicable federal poverty guidelines. Subsequent groups are determined by income. Award decisions are not first-come, first-served, and school assignment to an underperforming campus is not the general priority test. Check current priority tables and applicable family-size thresholds at the program site."
+        ]
       },
       {
-        q: "Does using an ESA affect my public school enrollment?",
-        a: "Yes. Accepting an ESA means the student is not simultaneously enrolled in a traditional public school. You can return to public school in a future year.",
+        "heading": "What an approved expense means",
+        "paragraphs": [
+          "Approved categories include eligible private-school tuition and fees, instructional materials, tutoring, assessments, certain transportation and qualifying educational therapies. Program rules restrict hardware and software to no more than 10% of the annual transfer. Payments go through the authorized program portal; families cannot simply reimburse themselves or pay a family member as a provider.",
+          "Before enrolling or purchasing, check that the school or provider and particular expense qualify. Therapy covered by another government benefit may be excluded. The official family page describes rollover of unused funds while a student continues participating."
+        ]
       },
       {
-        q: "Is the ESA award taxable?",
-        a: "No. ESA funds used for qualified education expenses are not treated as taxable income.",
+        "heading": "Compare an award with actual school costs",
+        "paragraphs": [
+          "For an illustrative private school charging $12,000 in approved annual tuition, a standard $10,474 award would leave $1,526 in tuition before any separate fees, transportation or aid. Do not assume fees are approved, that an award is guaranteed or that every school participates.",
+          "For an illustrative homeschool student with a $2,000 award, the 10% hardware/software limit would be $200. A $500 computer would not become fully reimbursable merely because it is educational. The remaining costs and eligibility depend on approved products and program rules."
+        ]
       },
       {
-        q: "What if my private school costs more than the ESA?",
-        a: "You pay the difference out of pocket. Some private schools offer additional financial aid that stacks on top of the ESA.",
+        "heading": "First-year milestones and the next cycle",
+        "paragraphs": [
+          "The first application window opened February 4, 2026 and was extended through March 31. The Comptroller's August 13 release reported 101,600 funded students and more than 100,000 still on the waitlist; these are dated first-year figures, not a current count or a forecast.",
+          "The June 30 funding announcement described standard private-school installments of 25% on July 1, 25% on October 1 and 50% on February 1, 2027, contingent on continued eligible enrollment. It described the homeschool/other category's full annual payment on July 1 for the initial group. Later award or enrollment dates can change an individual schedule; use the parent portal. Check the official 2027–28 announcement before planning around next year's dates."
+        ]
       },
+      {
+        "heading": "What families should compare before changing schools",
+        "paragraphs": [
+          "Private schools do not have the same special-education obligations as public school districts or charter schools. For a child with an IEP, compare the actual service plan, provider availability, school contract and procedural protections before deciding. A funding award does not ensure a particular service will be available.",
+          "Continuing participation depends on eligibility. The official family page identifies enrollment in a public or charter school, moving out of Texas and graduation among the events ending eligibility. Contact the administrator before changing pathways or making an irreversible enrollment decision. For public-school governance, see [school board powers](/news/texas-school-board-powers); for public-school funding, see [school finance and recapture](/news/texas-school-finance-explained)."
+        ]
+      },
+      {
+        "heading": "How to evaluate the program as a public policy",
+        "paragraphs": [
+          "Compare the number of eligible applications, awards, funded accounts, waitlisted students, payments and verified participation as distinct measures. An award count is not a measured academic outcome. Evaluate administrative spending and educational results using documented, comparable cohorts and reporting periods. See [the Texas Legislature](/texas-legislature) and official bill records for future statutory or funding changes."
+        ]
+      }
     ],
-    sources: [
-      { label: "Texas Education Agency — School Choice", url: "https://tea.texas.gov/" },
-      { label: "Texas Comptroller — Education Programs", url: "https://comptroller.texas.gov/" },
+    "faq": [
+      {
+        "q": "Can I still apply for 2026–27?",
+        "a": "The official program says that cycle is closed. Use the official interest list for updates about the next application period."
+      },
+      {
+        "q": "Does every eligible student get $10,474?",
+        "a": "No. Available funding, priority, participation and educational pathway determine awards. The amount stated is the 2026–27 standard private-school award."
+      },
+      {
+        "q": "Can TEFA pay a parent to teach a child?",
+        "a": "No. Official rules prohibit payments to family members."
+      },
+      {
+        "q": "Does a private school have to provide the same special education as a public school?",
+        "a": "No. The official program warns of differences in legal obligations. Review the actual services and protections before changing placement."
+      },
+      {
+        "q": "Are unused funds lost at the end of each school year?",
+        "a": "The official family guidance says unused funds roll over while the child remains in the program."
+      },
+      {
+        "q": "Will the 2027–28 application open on the same date?",
+        "a": "Do not assume that. Follow the official announcement and interest-list updates."
+      }
     ],
-    related: [
-      "school-board-elections",
-      "how-a-bill-becomes-texas-law",
-      "texas-political-terminology",
+    "sources": [
+      {
+        "label": "Official TEFA program and next-cycle updates",
+        "url": "https://educationfreedom.texas.gov/"
+      },
+      {
+        "label": "TEFA family eligibility, priorities and expenses",
+        "url": "https://educationfreedom.texas.gov/families/"
+      },
+      {
+        "label": "Comptroller — first-year award amounts",
+        "url": "https://comptroller.texas.gov/economy/fiscal-notes/government/2026/esa-ftd/"
+      },
+      {
+        "label": "Comptroller — March 31 extended deadline",
+        "url": "https://comptroller.texas.gov/about/media-center/news/20260317-texas-education-freedom-account-application-deadline-extended-through-march-31-1773784632313"
+      },
+      {
+        "label": "Comptroller — initial funding schedule",
+        "url": "https://comptroller.texas.gov/about/media-center/news/20260630-nearly-73000-texas-education-freedom-accounts-to-receive-initial-funding-july-1-1782833580152"
+      },
+      {
+        "label": "Comptroller — August 13 participation milestone",
+        "url": "https://comptroller.texas.gov/about/media-center/news/20260813-comptroller-don-huffines-announces-100000-students-receiving-texas-education-freedom-accounts-1786645098165"
+      }
     ],
-    cta: { label: "Read Our Education Coverage", href: "/news" },
-    keyTakeaways: [
-      "Largest school choice expansion in Texas history.",
-      "Priority tiers favor low-income, disabled, and zoned-to-underperforming students.",
-      "Funds cover tuition, tutoring, curriculum, therapy, and testing.",
-      "Applications open in early spring; funds available by fall term.",
+    "related": [
+      "texas-school-board-powers",
+      "texas-school-finance-explained",
+      "how-a-bill-becomes-texas-law"
     ],
+    "cta": {
+      "label": "Official TEFA application information",
+      "href": "https://educationfreedom.texas.gov/"
+    },
+    "keyTakeaways": [
+      "The 2026–27 application period is closed; use the official interest list for the next cycle.",
+      "Award amounts depend on the student's pathway and eligibility.",
+      "Compare actual expenses and special-education services before changing schools."
+    ]
   },
 
   "appraisal-protest-playbook": {
@@ -5236,80 +5462,163 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
   },
 
   "texas-grid-ercot-explained": {
-    updated: "2026-05-27",
-    intro: [
-      "Texas is the only state in the continental United States that runs its own electric grid. The Electric Reliability Council of Texas (ERCOT) manages roughly 90% of the state's electric load, operating almost entirely inside state borders and outside the jurisdiction of the Federal Energy Regulatory Commission (FERC).",
-      "That independence is why Texans set their own reliability rules, absorb the political heat when the grid strains, and retain policy flexibility that no other state has. Here is what ERCOT actually does, what the Public Utility Commission (PUC) actually controls, and why the state has doubled down on independence after the 2021 winter storm.",
+    "updated": "2026-11-25",
+    "editorNote": "Expanded primary-source grid reference, distinguishing state oversight from federal reliability jurisdiction; unsupported counterfactual and reliability claims removed.",
+    "intro": [
+      "ERCOT is the independent system operator for the electricity system serving roughly 90% of Texas's electric load. It does not operate every Texas utility, own most power plants or set an individual household's electricity rate. Some regions of Texas are served by other grid systems.",
+      "Understanding grid reliability requires separating electricity generation, wholesale markets, transmission and distribution, retail billing and regulatory authority. A neighborhood outage can occur while the ERCOT system has adequate generation; a statewide reserve shortage is a different problem."
     ],
-    sections: [
+    "sections": [
       {
-        heading: "Who Does What",
-        bullets: [
-          "ERCOT: real-time grid operator — balances supply and demand every five minutes.",
-          "Public Utility Commission of Texas (PUC): sets market rules, reliability standards, and rates for regulated utilities.",
-          "Texas Legislature: passes structural reforms and appropriates funds like the Texas Energy Fund.",
-          "Generators: private companies that own and operate power plants.",
-          "Transmission and Distribution Utilities (TDUs): own the poles and wires that deliver power.",
-        ],
+        "heading": "Who does what in the ERCOT region",
+        "table": {
+          "headers": [
+            "Entity",
+            "Responsibility",
+            "Not the same as"
+          ],
+          "rows": [
+            [
+              "ERCOT",
+              "Coordinates system balance, wholesale dispatch, market operations and reliability",
+              "Owning the neighborhood distribution lines"
+            ],
+            [
+              "Public Utility Commission of Texas",
+              "State oversight, regulated utility and market rules",
+              "Running each plant or repairing every outage"
+            ],
+            [
+              "Generators and storage operators",
+              "Produce or discharge electricity subject to operating conditions",
+              "Guaranteeing available capacity at every hour"
+            ],
+            [
+              "Transmission and distribution utilities",
+              "Maintain lines, substations and delivery infrastructure",
+              "Retail energy billing in competitive areas"
+            ],
+            [
+              "Retail electric providers",
+              "Sell electricity under customer contracts in competitive areas",
+              "Operating the bulk grid"
+            ],
+            [
+              "Municipal utilities and cooperatives",
+              "Provide service under their applicable local structure",
+              "Necessarily offering retail competition"
+            ]
+          ]
+        }
       },
       {
-        heading: "Why Texas Runs Its Own Grid",
-        paragraphs: [
-          "The historical answer is federalism: interconnecting substantively with neighboring grids would subject ERCOT to FERC jurisdiction, giving federal regulators authority over generation buildout, rate design, and market structure inside Texas. The practical answer is that Texas has the resource base to be self-sufficient — abundant natural gas, world-leading wind, fast-growing solar, and a competitive market that has attracted more generation investment than any other state.",
-          "Keeping the seam with the Eastern and Western Interconnections limited preserves state-level control over every one of those decisions.",
-        ],
+        "heading": "Why ERCOT's federal jurisdiction is different",
+        "paragraphs": [
+          "The main ERCOT network operates within Texas without synchronous connection to the major interstate interconnections. FERC's ERCOT overview explains that transmission occurring wholly within the ERCOT system is generally outside federal jurisdiction under sections 203, 205 and 206 of the Federal Power Act. Limited interconnection arrangements and other legal obligations require separate analysis.",
+          "That does not mean ERCOT is exempt from all federal rules. Federal bulk-power reliability oversight, including applicable NERC standards, is a separate issue from wholesale rate jurisdiction. Avoid claiming that grid integration would automatically prevent or worsen any particular weather-related failure. Such a conclusion requires an engineering and economic counterfactual, not simply a statement about jurisdiction."
+        ]
       },
       {
-        heading: "Reforms Since 2021",
-        bullets: [
-          "Mandatory weatherization for gas and electric infrastructure.",
-          "New reliability standards including a Dispatchable Reliability Reserve Service.",
-          "The Texas Energy Fund — low-cost state loans for dispatchable generation.",
-          "Market redesign incentivizing on-demand power alongside intermittent renewables.",
-          "Improved communication protocols between the gas system and the electric grid.",
-        ],
+        "heading": "Read the ERCOT dashboard without confusing the numbers",
+        "paragraphs": [
+          "Open the [grid and market dashboard](https://www.ercot.com/gridmktinfo/dashboards). Compare actual demand and available supply for the same timestamp. A forecast line is not measured demand. Installed nameplate capacity is not the amount a resource can deliver during a particular hour. Plant outages, weather, fuel constraints, transmission constraints and storage duration can change available output.",
+          "Power is measured in megawatts (MW) and energy in megawatt-hours (MWh). A 100 MW resource operating for two hours produces 200 MWh. A 100 MW battery with 200 MWh of usable storage has a nominal two-hour discharge duration at that output, subject to state of charge and operating limits. A capacity number alone cannot establish how long the resource can supply power."
+        ]
       },
       {
-        heading: "The Texas Angle",
-        paragraphs: [
-          "The 2021 winter storm cost Texas roughly $130 billion and 200+ lives — a catastrophic reliability failure that federal integration would not have prevented and might have worsened by removing state authority to force the reforms since enacted. Texas' answer since has been to keep the grid independent, tighten the rules, and pay directly for the reliability investment. That approach is under continuous stress-test every summer peak and every winter cold snap.",
-        ],
+        "heading": "Reserves, scarcity and local outages",
+        "paragraphs": [
+          "Operating reserves are available resources that help respond when demand changes or equipment trips. ERCOT publishes operating conditions and alert information. Compare the specific reserve measure, the relevant time horizon and the current operating status rather than subtracting two unrelated capacity and forecast numbers.",
+          "For a local outage, first consult your transmission/distribution utility or municipal/cooperative utility. A storm can damage neighborhood wires even when the bulk grid is balanced. During a systemwide reliability emergency, ERCOT may direct actions under its procedures; a conservation appeal is not itself evidence that every customer will lose service."
+        ]
       },
+      {
+        "heading": "How to evaluate reliability reforms after 2021",
+        "paragraphs": [
+          "Texas adopted additional weather preparedness requirements and market changes after the February 2021 winter emergency. The Texas Energy Fund is a separate financing mechanism administered through the PUC, including financing for eligible generation projects. A proposed project, an approved loan, a construction milestone and an operating plant are different stages.",
+          "Judge reliability using comparable seasonal assessments, actual outages and performance under stress. Load growth, demand response, fuel arrangements, generation mix, storage and transmission all matter. A favorable weather season cannot establish that a reform alone caused a reliability improvement. Track the relevant rule, effective date, implementation and measured result."
+        ]
+      },
+      {
+        "heading": "Electricity bills versus wholesale prices",
+        "paragraphs": [
+          "The customer's bill depends on the applicable retail contract or utility rate, consumption and delivery charges. A short wholesale price spike is not automatically the price a residential fixed-rate customer pays for all electricity that month. Compare the rate plan, fees, contract term and usage rather than using wholesale market price as a direct retail bill estimate.",
+          "Illustration: 1,000 kWh at a hypothetical all-in average of 15 cents per kWh yields $150. A separate fixed customer charge or a different applicable pricing structure changes the result. This example is not a market quote."
+        ]
+      },
+      {
+        "heading": "Where to check the underlying record",
+        "paragraphs": [
+          "ERCOT's grid information and reports provide operating data; PUC filings document regulatory actions. The Legislature and its bill records establish statutory changes. Use [Texas Energy](/texas-energy) for the related policy context, [Texas Data Center](/data) for source methodology, and [the bill-reading guide](/texas-government/reference/how-to-read-a-texas-bill) to distinguish a proposal from enacted law."
+        ]
+      }
     ],
-    faq: [
+    "faq": [
       {
-        q: "Does ERCOT set my electric rate?",
-        a: "No. Your rate is set by your retail electric provider in deregulated areas, or by your municipal utility or co-op in regulated areas.",
+        "q": "Does ERCOT serve every Texas address?",
+        "a": "No. ERCOT reports about 90% of the state's electric load; other systems serve parts of Texas."
       },
       {
-        q: "Can Texas 'join' the national grid?",
-        a: "It could increase interconnections technically, but doing so at scale would trigger FERC jurisdiction — which is why the state has consistently opted against it.",
+        "q": "Does ERCOT set my residential electric rate?",
+        "a": "No. The applicable retail contract or utility rate and delivery charges determine the bill."
       },
       {
-        q: "Who pays for reliability reforms?",
-        a: "A mix of ratepayers, generators, and state general revenue (through the Texas Energy Fund). The exact allocation is set by the PUC and Legislature.",
+        "q": "Is ERCOT entirely exempt from federal regulation?",
+        "a": "No. The intra-ERCOT transmission exemption under particular Federal Power Act provisions is distinct from applicable federal reliability obligations."
       },
       {
-        q: "Is the grid more reliable now?",
-        a: "Objectively yes on winter preparation; the summer picture depends on how quickly new dispatchable generation comes online relative to load growth.",
+        "q": "Do more installed megawatts guarantee reliability?",
+        "a": "No. Available capacity, delivery constraints, duration, demand and contingency requirements matter at the relevant time."
       },
+      {
+        "q": "Where do I report a neighborhood outage?",
+        "a": "Contact the utility responsible for delivering electricity to your address, not the grid operator's wholesale market desk."
+      }
     ],
-    sources: [
-      { label: "ERCOT", url: "https://www.ercot.com/" },
-      { label: "Public Utility Commission of Texas", url: "https://www.puc.texas.gov/" },
+    "sources": [
       {
-        label: "Texas Energy Fund",
-        url: "https://www.puc.texas.gov/agency/resources/reports/TEF.aspx",
+        "label": "ERCOT — organization and grid coverage",
+        "url": "https://www.ercot.com/about"
       },
+      {
+        "label": "ERCOT — grid information",
+        "url": "https://www.ercot.com/gridinfo"
+      },
+      {
+        "label": "ERCOT — public dashboards",
+        "url": "https://www.ercot.com/gridmktinfo/dashboards"
+      },
+      {
+        "label": "FERC — ERCOT jurisdiction overview",
+        "url": "https://www.ferc.gov/industries-data/electric/electric-power-markets/ercot"
+      },
+      {
+        "label": "FERC — reliability standards explainer",
+        "url": "https://www.ferc.gov/reliability-explainer"
+      },
+      {
+        "label": "Public Utility Commission of Texas",
+        "url": "https://www.puc.texas.gov/"
+      },
+      {
+        "label": "Texas Energy Fund",
+        "url": "https://www.puc.texas.gov/agency/resources/reports/TEF.aspx"
+      }
     ],
-    related: ["permian-energy", "how-a-bill-becomes-texas-law", "texas-political-terminology"],
-    cta: { label: "Read Our Energy Coverage", href: "/news" },
-    keyTakeaways: [
-      "Texas runs the only state-level grid in the lower 48.",
-      "Independence preserves state control over generation, market, and reliability rules.",
-      "Post-2021 reforms include weatherization, reserves, and the Texas Energy Fund.",
-      "Reliability is a continuous stress-test at every seasonal peak.",
+    "related": [
+      "texas-water-rights-explained",
+      "how-a-bill-becomes-texas-law",
+      "why-texas-has-no-income-tax"
     ],
+    "cta": {
+      "label": "Texas energy policy and reporting",
+      "href": "/texas-energy"
+    },
+    "keyTakeaways": [
+      "ERCOT operates the bulk grid for roughly 90% of Texas load, not all utilities.",
+      "Wholesale jurisdiction and reliability obligations are separate.",
+      "Compare actual available supply, demand and time horizon before drawing conclusions about reliability."
+    ]
   },
 
   "border-security-state-role": {
