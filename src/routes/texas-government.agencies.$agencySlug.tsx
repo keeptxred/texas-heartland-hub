@@ -3,6 +3,7 @@ import { getAgencyAuthorityProfile } from "@/data/agency-authority";
 import { getExtraAgencyAuthorityProfile } from "@/data/agency-authority-extra";
 import { upgradeAgencyAuthorityProfile } from "@/data/agency-authority-upgrades";
 import { getAgencyAuthoritySupplement } from "@/data/agency-authority-supplements";
+import { getAgencyPracticalGuide } from "@/data/agency-practical-guides";
 import { buildSeo, SITE_URL } from "@/lib/seo";
 import { isAgencyAuthorityIndexable } from "@/lib/agency-authority-indexability";
 import { getAgencyRelatedAuthorityLinks } from "@/lib/agency-related-authority";
@@ -21,7 +22,6 @@ export const Route = createFileRoute("/texas-government/agencies/$agencySlug")({
       description: loaderData.dek,
       path,
       type: "article",
-      publishedTime: `${loaderData.reviewed}T12:00:00-05:00`,
       modifiedTime: `${loaderData.reviewed}T12:00:00-05:00`,
       section: "Texas Government Authority",
       author: "Keep TX Red Government Desk",
@@ -44,7 +44,6 @@ export const Route = createFileRoute("/texas-government/agencies/$agencySlug")({
                 "@id": `${canonical}#article`,
                 headline: `${loaderData.name}: Authority, Responsibilities & Oversight`,
                 description: loaderData.dek,
-                datePublished: loaderData.reviewed,
                 dateModified: loaderData.reviewed,
                 author: { "@type": "Organization", name: "Keep TX Red Government Desk", url: `${SITE_URL}/about` },
                 publisher: { "@type": "Organization", name: "Keep TX Red", url: SITE_URL },
@@ -71,6 +70,7 @@ export const Route = createFileRoute("/texas-government/agencies/$agencySlug")({
 
 function AgencyAuthorityPage() {
   const profile = Route.useLoaderData();
+  const practicalGuide = getAgencyPracticalGuide(profile.slug);
   const supplements = getAgencyAuthoritySupplement(profile.slug);
   const relatedLinks = getAgencyRelatedAuthorityLinks(profile.slug, profile.related);
   return (
@@ -96,6 +96,11 @@ function AgencyAuthorityPage() {
         <p className="mt-5 font-serif text-[17px] leading-8">{profile.authority}</p>
         {supplements.length ? <div className="mt-5 space-y-4">{supplements.map((item) => <p key={item} className="font-serif text-[17px] leading-8">{item}</p>)}</div> : null}
       </section>
+
+      {practicalGuide.length > 0 && <section className="mt-10" aria-labelledby="agency-practical-guide">
+        <h2 id="agency-practical-guide" className="border-b pb-2 font-display text-3xl tracking-tight">Where to start: services, records and complaints</h2>
+        <div className="mt-5 grid gap-4 md:grid-cols-2">{practicalGuide.map((item) => <article key={item.url} className="rounded-xl border bg-card p-5"><h3 className="font-semibold">{item.question}</h3><p className="mt-2 text-sm leading-6">{item.explanation}</p><a href={item.url} className="mt-3 inline-block text-sm font-semibold text-primary underline underline-offset-4">{item.label} →</a></article>)}</div>
+      </section>}
 
       <section className="mt-10 grid gap-6 md:grid-cols-2">
         <div className="rounded-xl border bg-card p-6">
