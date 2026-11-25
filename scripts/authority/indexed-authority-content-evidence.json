@@ -484,32 +484,32 @@
     {
       "id": 85,
       "url": "https://www.keeptxred.com/news/2026-07-12-texas-a-m-officials-respond-to-project-launching-wine-grapes-into-space",
-      "expected": null,
-      "reason": "Unresolved historical article; no exact current/archived article or redirect record. Research equivalent content before any restoration."
+      "expected": "not-found-observed",
+      "reason": "Preserve observed 404 under historical recovery policy: original KTR text and source packet unavailable, no verified equivalent canonical; related June 17 Texas A&M wine-grape space research is not a current civic news story. Editorial disposition, not a preexisting registry record."
     },
     {
       "id": 86,
       "url": "https://www.keeptxred.com/news/2026-07-11-texas-judge-suspended-following-indictment-in-drug-possession-case",
-      "expected": null,
-      "reason": "Unresolved historical article; no exact current/archived article or redirect record. Research equivalent content before any restoration."
+      "expected": "not-found-observed",
+      "reason": "Existing article_url_registry retired_low_value disposition: original text/source packet unavailable and no surviving verified equivalent; do not restore merely because related disciplinary records exist."
     },
     {
       "id": 87,
       "url": "https://keeptxred.com/news/live-2026-07-11-unpacking-the-growth-of-texas-themed-mental-puzzles-and-digital-entert-pntib2",
-      "expected": null,
-      "reason": "Unresolved historical article; no exact current/archived article or redirect record. Research equivalent content before any restoration."
+      "expected": "not-found-observed",
+      "reason": "Preserve observed 404 under owner-directed lifestyle and puzzle-content retirement policy. No verified original or equivalent. Editorial disposition, not a preexisting registry record."
     },
     {
       "id": 88,
       "url": "https://keeptxred.com/news/2026-07-10-breaking-texas-officials-respond-to-fatal-ice-shooting-in-houston",
-      "expected": null,
-      "reason": "Unresolved historical article; no exact current/archived article or redirect record. Research equivalent content before any restoration."
+      "expected": "not-found-observed",
+      "reason": "Existing article_url_registry retired_low_value disposition: original text/source packet unavailable and no verified equivalent; related official statements do not establish the missing original article."
     },
     {
       "id": 90,
       "url": "https://keeptxred.com/news/2026-07-10-former-texas-tech-marketing-professor-pleads-guilty-to-drug-trafficking",
-      "expected": null,
-      "reason": "Unresolved historical article; no exact current/archived article or redirect record. Research equivalent content before any restoration."
+      "expected": "not-found-observed",
+      "reason": "Preserve observed 404 under historical recovery policy: original KTR text/source packet unavailable and no verified equivalent. Official DEA July 7 plea and DOJ October 23 sentencing are related but different historical events. Editorial disposition, not a preexisting registry record; any future reporting must use independently substantiated publication dates."
     },
     {
       "id": 57,
