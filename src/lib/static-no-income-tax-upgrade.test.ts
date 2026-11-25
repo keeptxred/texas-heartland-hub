@@ -38,7 +38,7 @@ function visibleWords(body: ArticleBodyShape): number {
 describe("Texas no-income-tax static authority upgrade", () => {
   it("turns the short legacy explainer into a substantive current guide", () => {
     const body = renderedBody();
-    expect(body.updated).toBe("2026-08-16");
+    expect(body.updated).toBe("2026-11-25");
     expect(visibleWords(body)).toBeGreaterThanOrEqual(1400);
     expect(body.sections?.length).toBeGreaterThanOrEqual(9);
     expect(body.faq?.length).toBeGreaterThanOrEqual(8);
@@ -48,7 +48,9 @@ describe("Texas no-income-tax static authority upgrade", () => {
     const text = JSON.stringify(renderedBody());
     expect(text).toContain("Texas has no state property tax");
     expect(text).toContain("Local taxing units");
-    expect(text).toContain("58% of state tax collections");
+    expect(text).toContain("59.2% of the reported $88.23 billion in state tax collections");
+    expect(text).toContain("$52.24 billion");
+    expect(text).toContain("$188.89 billion");
     expect(text).not.toContain("Share of State+Local Revenue");
   });
 

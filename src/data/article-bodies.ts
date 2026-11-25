@@ -3878,74 +3878,206 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
   },
 
   "why-texas-has-no-income-tax": {
-    updated: "2026-06-26",
-    editorNote: "New evergreen explainer — June 2026.",
-    intro: [
-      "Texas is one of nine states without a personal income tax — and thanks to Proposition 4 in 2019, it would now take a two-thirds vote of both chambers plus a statewide referendum to enact one. That low-tax structure is the single biggest reason Texas led the nation in job creation and net domestic migration through the 2020s.",
-      "But government still has to be paid for. This explainer walks through the three pillars that replace an income tax: the state sales tax, local property taxes, and severance taxes on oil and gas — and the trade-offs each one creates.",
+    "updated": "2026-11-25",
+    "editorNote": "Updated with official fiscal 2026 state tax collections and the current franchise tax threshold. State and local revenue bases are separated; unsupported causal and percentage claims removed.",
+    "intro": [
+      "Texas does not impose a state personal income tax. Article VIII, Section 24-a of the Texas Constitution prohibits a tax on the net incomes of individuals, including their shares of partnership and unincorporated association income. Voters adopted that prohibition in 2019 through Proposition 4.",
+      "That does not mean Texans pay no taxes. State sales taxes, business franchise taxes and other state revenue sources help finance state services. Local property taxes support local governments and schools. Federal income tax obligations are separate."
     ],
-    sections: [
+    "sections": [
       {
-        heading: "The Three Pillars of Texas Revenue",
-        table: {
-          headers: ["Source", "Rate", "Share of State+Local Revenue"],
-          rows: [
-            ["State sales tax", "6.25% state + up to 2% local", "~26%"],
-            ["Local property tax", "Set by ISDs, counties, cities", "~45%"],
-            ["Severance (oil & gas)", "4.6% oil / 7.5% gas", "~7%"],
-            ["Franchise (margin) tax", "0.375%–0.75% on businesses over $2.47M", "~3%"],
+        "heading": "Why the constitution matters",
+        "paragraphs": [
+          "The earlier 1993 constitutional arrangement required voter approval for a personal income tax. The 2019 amendment went further by prohibiting it. Reversing that constitutional prohibition would require another constitutional amendment, proposed with the required two-thirds vote of elected members of each legislative chamber and approved by a majority of participating voters under Article XVII.",
+          "A proposed bill or campaign statement alone cannot change that rule. Read the [constitutional amendments guide](/news/texas-constitutional-amendments-guide) for the separate stages of constitutional change."
+        ]
+      },
+      {
+        "heading": "What Texas collected in fiscal 2026",
+        "paragraphs": [
+          "The Comptroller's September 11, 2026 release reports $188.89 billion in All Funds revenue and $88.23 billion in All Funds tax collections for fiscal 2026, which ended August 31. The categories below are state tax collections, not combined state and local revenue. Amounts are rounded as reported; the remaining-tax category is calculated by subtraction.",
+          "Sales tax accounted for approximately 59.2% of the reported $88.23 billion in state tax collections, calculated by dividing $52.24 billion by $88.23 billion. This is a share of state tax collections in the All Funds report, not a share of all government revenue, combined state and local taxes, or an individual family's tax bill. Rounding means category shares may not sum to exactly 100%."
+        ],
+        "table": {
+          "headers": [
+            "State tax category",
+            "Fiscal 2026 collections"
           ],
-        },
+          "rows": [
+            [
+              "Sales tax",
+              "$52.24 billion"
+            ],
+            [
+              "Motor vehicle sales and rental taxes",
+              "$7.45 billion"
+            ],
+            [
+              "Franchise tax",
+              "$6.96 billion"
+            ],
+            [
+              "Oil production tax",
+              "$5.88 billion"
+            ],
+            [
+              "Natural gas production tax",
+              "$2.43 billion"
+            ],
+            [
+              "Other state taxes (calculated residual)",
+              "$13.27 billion"
+            ],
+            [
+              "Total All Funds tax collections",
+              "$88.23 billion"
+            ]
+          ]
+        }
       },
       {
-        heading: "How Proposition 4 Locked the Door",
-        paragraphs: [
-          "In November 2019, Texas voters approved Proposition 4 by 74% to 26%, amending Article 8 of the Texas Constitution to prohibit a state tax on the net incomes of natural persons. Repealing the ban would require another two-thirds legislative vote and statewide approval — a much steeper hill than simply passing a tax.",
-          "The amendment built on the older Bullock Amendment (1993), which had already required voter approval for any new income tax. Proposition 4 went further by banning the tax outright, not merely making it harder to enact.",
-        ],
+        "heading": "How sales and franchise taxes work",
+        "paragraphs": [
+          "Texas's state sales and use tax rate is 6.25%. Local jurisdictions may add up to 2 percentage points, bringing the maximum combined rate to 8.25%. A taxable $100 purchase at the maximum combined rate therefore incurs $8.25 in sales tax. Exemptions and the actual local rate affect individual transactions.",
+          "For the 2026 franchise tax report, the Comptroller lists a no-tax-due threshold of $2.65 million in annualized total revenue. The standard tax rates are 0.375% for qualifying retail or wholesale entities and 0.75% for other taxable entities. These rates apply under the statutory franchise-tax calculation, not simply to all gross receipts; thresholds, exemptions, deductions and reporting obligations depend on the entity and report year."
+        ]
       },
       {
-        heading: "The Trade-Off: High Property Taxes",
-        paragraphs: [
-          "Because Texas leans on property tax to fund schools, the state has some of the highest effective property tax rates in the country — typically 1.6%–2.2% of market value once ISD, county, and city rates are combined.",
-          "That's why the 88th and 89th Legislatures put record surplus dollars into school-district rate compression and homestead exemption increases. See the [Texas Property Tax Law & Policy Guide](/news/texas-property-tax-laws-explained) for the legal and policy framework.",
-        ],
+        "heading": "Why local property taxes are a separate question",
+        "paragraphs": [
+          "Texas has no state property tax. Local taxing units set rates and local appraisal districts establish property values under the applicable law. A property owner's bill depends on taxable value, exemptions and the specific taxing units, not a statewide uniform percentage.",
+          "For illustration only, a $300,000 taxable value and combined local rate of $1.50 per $100 of value produce $4,500 in tax before any further adjustments. This is not a forecast of a particular bill. See [Texas property tax relief](/issues/texas-property-tax-relief), [Comptroller office guide](/texas-government/comptroller) and the [school finance guide](/news/texas-school-finance-explained) for the institutional distinctions.",
+          "For the broader legal framework, read [Texas property tax laws](/news/texas-property-tax-laws-explained). Household-specific estimates, exemption applications and protest guidance are maintained separately at [TexasDefined's property tax guide](https://texasdefined.com/learn/property-taxes). Keeping those tasks separate helps distinguish legal and policy reporting from a homeowner's decision about a particular parcel or bill."
+        ]
       },
+      {
+        "heading": "Why revenue and spending reports are not the same as tax collections",
+        "paragraphs": [
+          "The All Funds revenue figure in the Comptroller's annual announcement is broader than the tax collections figure. Government receipts can include nontax sources, such as fees and federal transfers. Consequently, dividing a tax category by total revenue answers a different question from dividing it by total taxes. The fiscal 2026 figures above should be read using the report's stated fund scope and time period.",
+          "An appropriation is legal spending authority, while actual expenditures are transactions reported for a particular accounting period. A state budget is not a list of all actual receipts and spending. The [Comptroller's cash reports](https://comptroller.texas.gov/transparency/reports/cash-report/) and [Monthly State Revenue Watch](https://comptroller.texas.gov/transparency/revenue/watch/) can help reconcile collections, but use comparable fund definitions and periods. The state's fiscal year runs from September 1 through August 31, which is different from the calendar year."
+        ]
+      },
+      {
+        "heading": "School finance is not a state property tax",
+        "paragraphs": [
+          "School districts levy local maintenance-and-operations and interest-and-sinking-fund taxes under the statutory framework. State aid, local tax revenue and the mechanism that reduces excess local revenue interact through school-finance formulas. Legislative changes may alter the allocation of state and local responsibility without creating a statewide property tax.",
+          "A reduction in one component of a district's rate does not necessarily predict the change in an individual property owner's total bill. Appraised value, exemptions, tax ceilings, other local rates and applicable statutory limitations must also be considered. The [school finance explanation](/news/texas-school-finance-explained) describes the roles of districts, TEA and state law."
+        ]
+      },
+      {
+        "heading": "Follow a tax proposal from filing to implementation",
+        "paragraphs": [
+          "Begin with the bill number, legislature and session. Read the filed and subsequent versions, official actions, fiscal note and final enrolled text where applicable. A bill can be amended during consideration, so a description from an earlier stage may no longer match the final measure. For a constitutional amendment, distinguish legislative approval from the statewide vote on the proposition.",
+          "After enactment, check the effective date and current codified law. Administrative guidance or forms may explain how a new provision is implemented. A fiscal note estimates potential consequences under stated assumptions; it does not certify actual tax receipts or actual savings. The [bill research guide](/texas-government/reference/how-to-read-a-texas-bill) explains the document sequence and the [fiscal note guide](/texas-government/reference/texas-bill-fiscal-notes) describes the difference between estimated and realized impacts."
+        ]
+      },
+      {
+        "heading": "Oil and gas taxes and changing revenue",
+        "paragraphs": [
+          "Production taxes are separate sources of state tax collections. Standard statutory rates are 4.6% of taxable oil value and 7.5% of taxable natural gas value, subject to applicable exemptions and adjustments. Price, production and statutory changes can affect revenue from year to year.",
+          "Use dated collections reports to compare fiscal years. Revenue estimates are forecasts; cash reports document collections. The [Comptroller office guide](/texas-government/comptroller) and [fiscal notes guide](/texas-government/reference/texas-bill-fiscal-notes) explain the difference between actual revenue, estimates and proposed policy."
+        ]
+      },
+      {
+        "heading": "Comparing tax systems fairly",
+        "paragraphs": [
+          "No state personal income tax is one part of a broader tax system. To compare household costs across states, consider taxable purchases, housing costs, property taxes, other fees and federal obligations. Do not infer an individual's total tax burden from one statutory rate.",
+          "Economic and migration trends also have multiple possible causes, including employment, housing, demographics and policy. This guide does not claim that the constitutional tax prohibition alone caused economic growth."
+        ]
+      },
+      {
+        "heading": "Compare the right tax base before interpreting the rate",
+        "paragraphs": [
+          "Consider two illustrative taxpayers: one makes $1,000 of fully taxable purchases in a jurisdiction charging the maximum combined sales tax rate, while another makes $1,000 of purchases that qualify for applicable exemptions. The first would pay $82.50 in sales tax; the second would not owe that tax on the exempt purchases. The statutory percentage alone cannot establish their total tax payments, and real shopping baskets contain items subject to different tax treatment.",
+          "Likewise, franchise tax rates are not interchangeable with the personal income tax rates imposed by some other states. Texas franchise tax reporting concerns taxable entities and a statutory business tax base; state personal income taxes generally concern an individual's taxable income under that state's law. Comparing percentages without distinguishing the taxpayer and base can produce a misleading conclusion. Consult the Comptroller's reporting-year forms and instructions before drawing conclusions about an actual business.",
+          "For property taxes, ask which taxing units apply, which value each uses, and whether a limitation or exemption changes the amount subject to tax. A statewide property-value average cannot answer those parcel-specific questions. These distinctions also explain why news stories about aggregate tax collections, tax relief appropriations and household savings should be evaluated separately. For example, a budget appropriation for relief does not establish the amount of savings realized by every homeowner."
+        ]
+      }
     ],
-    faq: [
+    "faq": [
       {
-        q: "Could Texas ever add an income tax?",
-        a: "Only with two-thirds of the Legislature and a statewide voter referendum — Proposition 4 (2019) wrote the prohibition into the constitution.",
+        "q": "Does Texas have a state personal income tax?",
+        "a": "No. Article VIII, Section 24-a of the Texas Constitution prohibits a tax on individuals' net incomes."
       },
       {
-        q: "Do Texas businesses pay an income tax?",
-        a: "No — but most businesses with over $2.47M in revenue pay the franchise (margin) tax, which is calculated on gross receipts minus deductions, not net income.",
+        "q": "How much did Texas collect in state taxes in fiscal 2026?",
+        "a": "The Comptroller reports $88.23 billion in All Funds state tax collections. That figure does not include local property tax revenue."
       },
       {
-        q: "Why are Texas property taxes so high?",
-        a: "Because there is no income tax, schools and local government rely heavily on property tax. State surplus dollars have been used to compress ISD M&O rates since 2019.",
+        "q": "What is the 2026 franchise tax no-tax-due threshold?",
+        "a": "$2.65 million in annualized total revenue for the 2026 report. Check the Comptroller's current reporting guidance for other obligations."
       },
+      {
+        "q": "Does Texas have a statewide property tax?",
+        "a": "No. Local taxing units levy property taxes under state law."
+      },
+      {
+        "q": "Does living in Texas eliminate federal income tax?",
+        "a": "No. Federal income tax obligations remain separate."
+      },
+      {
+        "q": "Why is the All Funds revenue figure larger than state tax collections?",
+        "a": "The revenue total includes receipts beyond taxes. Use the stated fund scope and denominator when calculating tax-category shares."
+      },
+      {
+        "q": "Can the Legislature enact a personal income tax by an ordinary bill?",
+        "a": "The current constitutional prohibition would need to be changed through the constitutional amendment process. A filed bill or campaign promise does not change the constitution."
+      },
+      {
+        "q": "Does a lower school district tax rate guarantee a lower total property tax bill?",
+        "a": "No. A bill depends on the specific taxable values, exemptions, applicable ceilings and rates of all relevant local taxing units."
+      }
     ],
-    sources: [
+    "sources": [
       {
-        label: "Texas Comptroller — Sources of Revenue",
-        url: "https://comptroller.texas.gov/transparency/reports/sources-of-revenue/",
+        "label": "Comptroller — fiscal 2026 state revenue, September 11",
+        "url": "https://comptroller.texas.gov/about/media-center/news/20260911-texas-comptroller-huffines-announces-state-revenue-for-fiscal-2026-1788892132074"
       },
       {
-        label: "Texas Constitution Article 8 §24-a (Income Tax Prohibition)",
-        url: "https://statutes.capitol.texas.gov/Docs/CN/htm/CN.8.htm",
+        "label": "Comptroller — cash reports",
+        "url": "https://comptroller.texas.gov/transparency/reports/cash-report/"
       },
       {
-        label: "Tax Foundation — State Tax Climate Index",
-        url: "https://taxfoundation.org/research/state-tax/",
+        "label": "Comptroller — 2026 franchise tax forms",
+        "url": "https://comptroller.texas.gov/taxes/franchise/forms/2026-franchise.php"
       },
+      {
+        "label": "Comptroller — franchise tax rates and thresholds",
+        "url": "https://comptroller.texas.gov/taxes/franchise/"
+      },
+      {
+        "label": "Comptroller — sales tax",
+        "url": "https://comptroller.texas.gov/taxes/sales/"
+      },
+      {
+        "label": "Comptroller — oil and gas tax FAQ",
+        "url": "https://comptroller.texas.gov/taxes/crude-oil/oil-gas-faq.php"
+      },
+      {
+        "label": "Texas Constitution Article VIII",
+        "url": "https://statutes.capitol.texas.gov/Docs/CN/htm/CN.8.htm"
+      },
+      {
+        "label": "Texas Constitution Article XVII",
+        "url": "https://statutes.capitol.texas.gov/Docs/CN/htm/CN.17.htm"
+      }
     ],
-    related: [
-      "texas-property-tax-laws-explained",
+    "related": [
+      "texas-school-finance-explained",
       "what-local-governments-control",
       "how-texas-counties-spend",
+      "texas-property-tax-laws-explained"
     ],
-    cta: { label: "Estimate Your Property Tax", href: "https://texasdefined.com/decide/property-taxes" },
+    "cta": {
+      "label": "Explore Texas tax policy",
+      "href": "/issues/texas-property-tax-relief"
+    },
+    "keyTakeaways": [
+      "The constitution prohibits a state tax on personal net incomes.",
+      "Fiscal 2026 state tax collections totaled $88.23 billion.",
+      "Local property taxes and federal income taxes are distinct.",
+      "The 2026 franchise tax threshold is $2.65 million."
+    ]
   },
   "texas-attorney-general-powers": {
     "updated": "2026-11-25",
@@ -5217,84 +5349,103 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
   },
 
   "constitutional-carry-one-year-later": {
-    updated: "2026-06-12",
-    intro: [
-      "House Bill 1927 — Texas' 'constitutional carry' law — took effect September 1, 2021, allowing eligible Texans 21 and older to carry a handgun in most public places without a state-issued License to Carry (LTC).",
-      "Several years in, the law has settled into a workable framework, but a handful of common misconceptions still trip up otherwise law-abiding gun owners. Here is what the statute actually says, where you still cannot carry, and how reciprocity works when you cross state lines.",
+    "updated": "2026-11-25",
+    "editorNote": "Corrected the earlier retrospective to distinguish the 2021 enactment from current enforcement and remove unsupported reciprocity and population claims.",
+    "intro": [
+      "Texas House Bill 1927 took effect September 1, 2021. It changed the state's handgun carry licensing framework, commonly described as constitutional or permitless carry. It did not repeal the state's entire firearm code or federal law.",
+      "The original article examined the law after enactment. This reviewed version retains that history while separating the 2021 statutory change from subsequent developments in legal interpretation."
     ],
-    sections: [
+    "sections": [
       {
-        heading: "Who Is Eligible",
-        bullets: [
-          "At least 21 years old.",
-          "Legally allowed to possess a firearm under state and federal law.",
-          "Not subject to a protective order, active felony indictment, or certain misdemeanor convictions from the past five years.",
-          "Not intoxicated at the time of carry.",
-        ],
+        "heading": "What changed in September 2021",
+        "paragraphs": [
+          "The Legislature amended several provisions governing handgun carry and related offenses. The official bill history and enrolled text show the actual legislative changes; later codified law shows the provisions in force today. Do not assume the words of a bill summary are the current law.",
+          "The license remains a distinct state credential administered by DPS. Its existence does not mean it is required in every situation or that it overrides other restrictions."
+        ]
       },
       {
-        heading: "Where You Still Cannot Carry",
-        bullets: [
-          "Schools (K–12 campuses, buses, and school-sponsored events).",
-          "Polling places on election day and during early voting.",
-          "Courtrooms and courthouse offices used by courts.",
-          "Racetracks.",
-          "Secured airport areas past TSA screening.",
-          "Bars deriving 51%+ of revenue from on-premise alcohol sales (posted with the red '51%' sign).",
-          "Any private property whose owner posts compliant 30.06/30.07 signage prohibiting carry.",
-        ],
+        "heading": "Why the 2022 court ruling matters",
+        "paragraphs": [
+          "The statutory framework includes a minimum age of 21 in the relevant permitless carry provision. As the Texas State Law Library explains, a federal court ruled in 2022 that otherwise eligible adults ages 18 to 20 cannot be prosecuted under this restriction solely on the basis of age. DPS also publishes current eligibility guidance.",
+          "This is a specific age-related enforcement distinction, not a declaration that every younger adult can lawfully possess, transfer or carry a weapon in all circumstances. Federal and other state restrictions continue to apply."
+        ]
       },
       {
-        heading: "Why the LTC Still Matters",
-        paragraphs: [
-          "Constitutional carry did not eliminate the License to Carry — it made it optional. The LTC still provides real advantages: statutory reciprocity with roughly 37 other states, expedited background checks on retail purchases, and access to certain federal buildings and school-adjacent property under federal law.",
-          "For frequent travelers, the LTC remains the practical choice.",
-        ],
+        "heading": "What the 2021 law did not eliminate",
+        "paragraphs": [
+          "Current Penal Code Section 46.03 addresses prohibited places; the older separate Section 46.035 was repealed in 2021. Property notices under Sections 30.05 through 30.07 involve different legal provisions. Respect location and property restrictions even if generally eligible under state law.",
+          "The law of another state and federal restrictions must be checked separately. A Texas credential is not universal authorization. Avoid entering restricted premises with a firearm and seek qualified advice if the applicable restriction is unclear."
+        ]
       },
       {
-        heading: "The Texas Angle",
-        paragraphs: [
-          "Texas was late to constitutional carry by conservative-state standards — Arizona had it since 2010, and by 2021 more than twenty states already permitted it. What Texas added was scale: HB 1927 brought roughly 22 million adults into a permitless-carry framework overnight, more than doubled the total U.S. population living under such a regime, and reset the political conversation on carry policy nationally.",
-        ],
-      },
+        "heading": "How to assess the law's effects",
+        "paragraphs": [
+          "A change in eligibility does not establish how many individuals began carrying or what effect the law had on crime or injury rates. A defensible evaluation would define the outcome and population, identify the data source and comparison period, and consider other policy and population changes. This article does not attribute observed outcomes to HB 1927 without such evidence.",
+          "For broader legal compliance and safe-storage guidance, see [Texas firearm laws](/news/texas-gun-laws-explained). To follow subsequent legislative proposals, use the [bill research guide](/texas-government/reference/how-to-read-a-texas-bill)."
+        ]
+      }
     ],
-    faq: [
+    "faq": [
       {
-        q: "Do I have to notify police I'm carrying?",
-        a: "No. Texas law does not require you to volunteer that you are carrying, though most instructors recommend calmly informing an officer during a traffic stop.",
+        "q": "When did HB 1927 take effect?",
+        "a": "September 1, 2021."
       },
       {
-        q: "Can I carry in my car without a license?",
-        a: "Yes. Texas has allowed licensed and unlicensed adults to carry a handgun in their private vehicle for years, provided they are not otherwise prohibited.",
+        "q": "Did the law repeal the Texas handgun license?",
+        "a": "No. DPS continues to administer the licensing program."
       },
       {
-        q: "Does my Texas LTC work in other states?",
-        a: "Yes, in the roughly 37 states with formal reciprocity. Check each state before traveling — a few states honor the LTC but impose their own carry restrictions.",
+        "q": "Did a later court decision affect the age provision?",
+        "a": "Yes. The 2022 ruling concerns prosecution based solely on the relevant age restriction; see the State Law Library's explanation."
       },
       {
-        q: "Can a business ban carry?",
-        a: "Yes. A private property owner may prohibit carry by posting compliant 30.06 (LTC) or 30.07 (open carry) signage. Ignoring proper signage is a criminal offense.",
-      },
+        "q": "Does permitless carry override property or federal rules?",
+        "a": "No. Those rules are distinct, and their application depends on the setting and circumstances."
+      }
     ],
-    sources: [
+    "sources": [
       {
-        label: "Texas Penal Code Chapter 46",
-        url: "https://statutes.capitol.texas.gov/Docs/PE/htm/PE.46.htm",
+        "label": "Texas Penal Code Chapter 46",
+        "url": "https://statutes.capitol.texas.gov/Docs/PE/htm/PE.46.htm"
       },
-      { label: "Texas DPS — License to Carry", url: "https://www.dps.texas.gov/rsd/ltc/" },
+      {
+        "label": "Texas Penal Code Chapter 30",
+        "url": "https://statutes.capitol.texas.gov/Docs/PE/htm/PE.30.htm"
+      },
+      {
+        "label": "State Law Library — permitless carry",
+        "url": "https://sll.texas.gov/faqs/permitless-carry-guns/"
+      },
+      {
+        "label": "State Law Library — carry of firearms",
+        "url": "https://guides.sll.texas.gov/gun-laws/carry-of-firearms"
+      },
+      {
+        "label": "DPS — handgun licensing eligibility",
+        "url": "https://www.dps.texas.gov/section/handgun-licensing/faq/eligibility-faqs"
+      },
+      {
+        "label": "State Law Library — private property",
+        "url": "https://guides.sll.texas.gov/gun-laws/businesses-private-property"
+      },
+      {
+        "label": "HB 1927 official legislative history",
+        "url": "https://capitol.texas.gov/BillLookup/History.aspx?LegSess=87R&Bill=HB1927"
+      }
     ],
-    related: [
-      "how-a-bill-becomes-texas-law",
-      "texas-political-terminology",
-      "texas-constitutional-amendments-guide",
+    "related": [
+      "texas-gun-laws-explained",
+      "how-a-bill-becomes-texas-law"
     ],
-    cta: { label: "Explore Texas Laws", href: "/laws" },
-    keyTakeaways: [
-      "HB 1927 lets eligible adults 21+ carry without a state permit.",
-      "Schools, courtrooms, polling places, and 51% bars remain off-limits.",
-      "The LTC is optional but still useful for reciprocity and expedited purchases.",
-      "Texas doubled the U.S. population under permitless carry overnight.",
-    ],
+    "cta": {
+      "label": "Read Texas law resources",
+      "href": "/laws"
+    },
+    "keyTakeaways": [
+      "HB 1927 changed state licensing rules in 2021.",
+      "Subsequent court decisions matter when reading the statutory age provision.",
+      "Restrictions on possession, locations and federal law remain."
+    ]
   },
 
   "school-choice-esa-guide": {
@@ -5768,161 +5919,145 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
     ],
   },
   "texas-gun-laws-explained": {
-    updated: "2026-07-15",
-    intro: [
-      "Texas has among the most permissive firearm statutes in the country, but 'Texas gun laws' is a shorthand that hides a real amount of nuance — federal purchase rules apply the same way here as anywhere else, certain places are still off-limits regardless of what you're carrying, and the private-property owner's right to post a firearm notice remains fully enforceable. This guide walks every Texas resident through the framework: who can own, who can carry, where you can't, and what changed after House Bill 1927 made Texas a constitutional-carry state in 2021.",
-      "The audience for this guide is broad on purpose. First-time buyers moving into a Houston or DFW suburb, longtime hunters in East Texas trying to make sense of the new License to Carry rules, and out-of-state residents wondering whether their permit is honored here will all find the answers below. For a companion piece focused specifically on the enabling statute, read [Constitutional Carry in Texas](/news/constitutional-carry-one-year-later).",
+    "updated": "2026-11-25",
+    "editorNote": "Substantive legal accuracy review. Corrected outdated age and enforcement guidance, repealed statutory citations, property notices and misleading statements about federal law. General public-information guide, not individualized legal advice.",
+    "intro": [
+      "Texas firearm law is a combination of state statutes, federal law, court decisions and location-specific restrictions. The 2021 permitless handgun carry law changed the licensing framework, but it did not eliminate the other requirements. A person who may lawfully possess a firearm is not necessarily authorized to carry it in every setting.",
+      "This guide explains how to identify the controlling law and avoid relying on obsolete summaries. For the legislative background, see our [HB 1927 and permitless carry guide](/news/constitutional-carry-one-year-later)."
     ],
-    sections: [
+    "sections": [
       {
-        heading: "The Legal Framework: State Statute on Top of Federal Law",
-        paragraphs: [
-          "Texas firearm law lives primarily in Chapter 46 of the Penal Code and Subchapter H of Chapter 411 of the Government Code, layered on top of the federal Gun Control Act of 1968 and the National Firearms Act. That layering matters: even when Texas law permits a specific behavior, federal prohibitions on possession by felons, unlawful drug users, adjudicated mental defectives, and those subject to certain protective orders continue to apply. Nothing at the state level overrides those.",
-          "The Texas Constitution's Article I, Section 23 guarantees the right to keep and bear arms 'in the lawful defense of himself or the State,' with the Legislature retaining power to 'regulate the wearing of arms, with a view to prevent crime.' Courts have historically read that clause as protecting individual ownership while allowing reasonable place-and-manner restrictions.",
-        ],
+        "heading": "Separate possession, carrying and transfer rules",
+        "paragraphs": [
+          "The Texas Penal Code, particularly Chapter 46, governs several different offenses involving weapons. Federal restrictions also apply independently of state law. A change in a Texas licensing requirement does not automatically change federal possession, transfer or other restrictions.",
+          "Do not infer personal eligibility from a single age, license, conviction or court decision. Criminal history, protective orders and other circumstances can affect eligibility. Seek qualified legal advice before acting if any restriction may apply."
+        ]
       },
       {
-        heading: "Who Can Legally Own a Firearm in Texas",
-        paragraphs: [
-          "Under federal law, a licensed dealer (FFL) must run every buyer through the NICS background check. Texas has no state waiting period, no permit-to-purchase, no registry, and no assault-weapons list. Once NICS returns a proceed, the sale completes the same day.",
-          "Federal prohibited persons categories still apply: felony conviction, misdemeanor domestic violence conviction, active protective order for family violence, dishonorable discharge, illegal drug use (including state-legal marijuana under federal classification), and adjudicated mental illness with commitment. Texas adds a few of its own: someone under a Chapter 411 or Chapter 46 disability, or a minor in most cases.",
-          "Private, in-state, person-to-person sales between two Texas residents are legal without a background check, provided the seller does not have reasonable cause to believe the buyer is prohibited. Serious sellers still route private sales through an FFL for a modest fee — it's the cleanest paper trail if the firearm is ever traced.",
-        ],
+        "heading": "The age rule and subsequent court decision",
+        "paragraphs": [
+          "The statutory text includes a minimum age of 21 for the relevant permitless carry provision. The Texas State Law Library explains that a 2022 federal court ruling prevents prosecution of otherwise eligible 18-to-20-year-olds under that age restriction solely because of age. DPS has also published eligibility guidance reflecting the ruling.",
+          "This distinction matters because a quotation from the statute alone may not describe current enforcement. It is not a general exemption from other state or federal firearm restrictions, and the decision does not resolve every transfer or possession question."
+        ]
       },
       {
-        heading: "Age Requirements — Federal Floor, Texas Ceiling",
-        paragraphs: [
-          "Federal law sets the floor: 18 to purchase a long gun from an FFL, 21 to purchase a handgun from an FFL. Private long-gun sales to those 18 and over are permitted; private handgun sales to those under 21 are federally prohibited.",
-          "Texas layers on the carry age: constitutional carry and the License to Carry both require you to be 21, with a narrow exception for active-duty and honorably discharged military members who may qualify at 18. Long-gun carry in most public contexts does not require a permit at any age but is limited by federal age of purchase.",
-        ],
+        "heading": "Restricted locations and property notices",
+        "paragraphs": [
+          "Consult current Penal Code Section 46.03 and the law applicable to the specific premises. Earlier summaries citing Section 46.035 as a current separate prohibition are obsolete; that section was repealed in 2021. Restrictions involving schools, court facilities, voting locations and other sensitive places must be considered independently of general eligibility.",
+          "Private-property notice is another distinct subject. Sections 30.05, 30.06 and 30.07 address different trespass and handgun notice provisions. Do not assume a single type of sign governs every situation or that a license overrides an owner's lawful restrictions. Respect restrictions and leave a firearm secured rather than entering when uncertain."
+        ]
       },
       {
-        heading: "Constitutional Carry: What HB 1927 Actually Did",
-        paragraphs: [
-          "In September 2021, HB 1927 removed the License to Carry requirement for Texans 21 and older who are not otherwise prohibited from possessing a firearm. Since then, an eligible Texan may carry a handgun openly in a holster or concealed on the person in most public places without any state-issued permit.",
-          "'Constitutional carry' did not repeal the LTC — it made it optional. Many Texans still get the license because it unlocks reciprocity with 37 other states, waives the NICS check on future purchases in Texas, and provides an affirmative defense in specific location-based prosecutions. For anyone who travels or crosses state lines regularly, the LTC remains genuinely useful.",
-          "HB 1927 did not change where you can and cannot carry, did not authorize carry by prohibited persons, and did not affect federal restrictions in federal buildings, federal courthouses, or on federal property. It also did not modify Section 30.06 and 30.07 signage — the notices private property owners post to prohibit carry — both of which remain fully enforceable.",
-        ],
+        "heading": "Licensing and interstate travel",
+        "paragraphs": [
+          "The Department of Public Safety continues to administer Texas handgun licensing. Permitless carry does not abolish the license, nor does a Texas license provide universal authority outside Texas or on federal property. Consult the current official guidance and the jurisdiction involved rather than relying on a fixed number of states recognizing a license.",
+          "For a specific license question, use the [DPS agency profile](/texas-government/agencies/texas-department-public-safety) and the official licensing program. A court decision about one provision does not automatically change the rest of the licensing system."
+        ]
       },
       {
-        heading: "The License to Carry — Still Worth Getting",
-        paragraphs: [
-          "The Texas Department of Public Safety issues the LTC. Applicants must be 21 (18 for qualifying military), a legal U.S. resident, not in default on state taxes or child support, not a felon, not chemically dependent, and mentally sound. The process requires a written application, fingerprints, a four-to-six-hour classroom course, and a written and range proficiency test through a state-certified instructor.",
-          "The license, once issued, is valid for five years initially and every subsequent renewal. It costs less than most people expect and can be done online for renewals. The reciprocity map — the states that honor a Texas LTC — is maintained by DPS and worth checking before an out-of-state trip.",
-        ],
+        "heading": "Storage, children and household safety",
+        "paragraphs": [
+          "Penal Code Section 46.13 addresses making firearms accessible to children under specified circumstances. An injury is not required for every offense under that provision. Treat safe storage as a prevention responsibility, not merely a question of criminal liability.",
+          "Keep firearms unloaded and securely locked against unauthorized access, with ammunition stored separately. Do not leave unsecured firearms in vehicles or accessible to children. Consult official safe-storage information and qualified instruction; if a child may have accessed a firearm or there is immediate danger, move to safety and contact emergency services."
+        ]
       },
       {
-        heading: "Where You Cannot Carry, Permit or No Permit",
-        paragraphs: [
-          "Section 46.03 of the Penal Code lists the places where carry is generally prohibited regardless of LTC or constitutional carry status: school premises, school buses, polling places on election day and during early voting, courts and offices of courts, racetracks, secured areas of airports past the TSA checkpoint, and within 1,000 feet of an execution facility on execution days. Federal law adds federal buildings, post offices, military installations, and secure federal courthouses.",
-          "Section 46.035 layers additional restrictions on LTC holders and, by extension, constitutional carriers: bars deriving 51% or more of receipts from on-premises alcohol sales (marked with a red 51% sign), high school and collegiate sporting events, correctional facilities, hospitals with proper notice, nursing homes with proper notice, amusement parks with proper notice, meetings of governmental bodies where proper notice is posted, and civil-commitment facilities.",
-          "Private property owners in Texas may prohibit carry by giving effective notice — the classic Section 30.06 sign prohibits concealed carry by LTC holders, and Section 30.07 prohibits open carry by LTC holders. After constitutional carry, the effective standard is essentially that private property owners may exclude firearms by posting statutory notice or by giving verbal notice; ignoring either after receiving notice is a criminal trespass.",
-        ],
+        "heading": "Use of force and federal restrictions",
+        "paragraphs": [
+          "Chapter 9 of the Texas Penal Code governs justification and use of force. These provisions depend on the facts and legal conditions; they are not blanket permission to threaten or use a weapon. Avoid confrontation, prioritize safety and call emergency services when necessary. Obtain independent legal advice for a specific incident.",
+          "The National Firearms Act and other federal laws remain relevant. Earlier generalized statements about a fixed federal tax amount, processing time, or a Texas-only exception should not be treated as current law. Federal rules, guidance and court decisions can change independently of the Texas statutes."
+        ]
       },
       {
-        heading: "Castle Doctrine and the Use of Force in Texas",
-        paragraphs: [
-          "Texas has a robust castle doctrine codified in Sections 9.31, 9.32, and 9.42 of the Penal Code. A person is presumed to have acted reasonably in using deadly force against an intruder who unlawfully and with force enters or attempts to enter an occupied habitation, vehicle, or place of business or employment, provided the defender was not engaged in criminal activity at the time.",
-          "Texas also has a stand-your-ground provision — there is no duty to retreat before using force or deadly force in self-defense, provided the person had a right to be at the location and was not engaged in criminal activity. Section 9.42 permits the use of deadly force to protect property under specific, narrow circumstances (at night, to prevent arson, burglary, robbery, aggravated robbery, or theft during the nighttime), and this is one of the more legally aggressive property-defense standards in the country.",
-          "None of this means a shooting is legally uncomplicated. Any use of deadly force triggers a police investigation, a grand jury review, and often a civil suit even after criminal acquittal. Insurance products marketed as 'self-defense coverage' exist for exactly this reason; consulting an attorney immediately after any defensive incident is standard advice.",
-        ],
-      },
-      {
-        heading: "Carrying in Your Vehicle",
-        paragraphs: [
-          "Texas has long allowed a non-LTC holder to carry a handgun in their own motor vehicle or watercraft, so long as the person is not otherwise prohibited, not a member of a criminal street gang, and not engaged in criminal activity other than a Class C traffic offense. The handgun must not be in plain view unless the driver has an LTC or is otherwise legally carrying under constitutional carry (which for a person 21+ effectively resolves the plain-view question).",
-          "Officers may still ask about firearms during a traffic stop. Texas does not require automatic disclosure, but most instructors recommend calm, factual disclosure at the start of any stop — hands on the wheel, license and insurance ready, and a straightforward statement that a firearm is present and where.",
-        ],
-      },
-      {
-        heading: "Long Guns, Suppressors, NFA Items, and the Made-in-Texas Statute",
-        paragraphs: [
-          "Rifles and shotguns are unrestricted at the state level in Texas beyond federal rules. There is no state assault-weapons ban, no state magazine capacity limit, and no state red-flag law.",
-          "Suppressors, short-barreled rifles, and other NFA items require the standard federal ATF Form 4 process, a $200 tax stamp, and typically several months of wait time. Texas passed a Firearms Freedom Act arguing that firearms manufactured, sold, and kept exclusively within Texas fall outside federal Commerce Clause jurisdiction. In practice, federal law still governs — the ATF has not conceded the state's theory — and residents are advised to comply with federal NFA rules regardless.",
-        ],
-      },
-      {
-        heading: "Special Rules by Setting: Home, Work, School, Church, Business",
-        paragraphs: [
-          "At home, Texas has essentially no restrictions on lawful ownership. Storage requirements only kick in when a child under 17 gains access and causes death or serious injury — a Class C misdemeanor unless reckless, in which case it becomes a Class A. Safe storage is best practice regardless.",
-          "At work, private employers may prohibit firearms on the premises but generally cannot prohibit them from being kept locked in an employee's personal vehicle in the parking lot, per Section 52.061 of the Labor Code. Certain regulated employers (school districts, federal contractors, chemical facilities) have carve-outs.",
-          "Churches: after 2019 reforms, licensed carriers may lawfully carry in houses of worship in Texas unless the congregation posts effective notice barring firearms. Many congregations have adopted written security plans that welcome trained congregants to carry.",
-          "Schools: still prohibited without written authorization from the school district. The 'Guardian' and 'School Marshal' programs allow specifically trained employees to carry on campus with school-board approval.",
-        ],
-      },
-      {
-        heading: "How Texas Law Interacts with Federal Firearms Law",
-        paragraphs: [
-          "State permissiveness does not preempt federal restrictions. A Texan cannot use constitutional carry to enter a federal courthouse. A resident cannot buy from an FFL if a federal prohibitor applies. Federal machine-gun rules, silencer rules, and interstate transfer rules still control.",
-          "This friction is most visible in the marijuana context. Texas has no adult-use marijuana program, but any user of a federally controlled substance is federally prohibited from possessing a firearm — a question that shows up honestly on ATF Form 4473 during every FFL purchase. The prohibition is well established in federal case law, though currently under litigation in multiple circuits.",
-        ],
-      },
-      {
-        heading: "Common Situations Texans Ask About",
-        paragraphs: [
-          "New residents relocating from a permit-required state often ask whether their out-of-state license works here. Texas honors permits from any state that honors ours — DPS publishes the reciprocity list — and constitutional carry means most permitless carriers 21 and over are effectively covered anyway.",
-          "Hunters ask about carrying a personal handgun into the field. Legal for anyone 21+ under constitutional carry, and legal for LTC holders regardless of age qualifications, subject to hunting regulations set by Texas Parks and Wildlife.",
-          "Business owners ask whether they can post their own establishment. Yes — Sections 30.06 and 30.07 signage, or verbal notice, are enforceable. A number of chain retailers with corporate policies against carry post statewide.",
-          "Renters ask whether landlords can prohibit firearms in leased dwellings. Texas has narrow tenant protections here; most reasonable, non-discriminatory firearm rules in a lease are enforceable, but blanket prohibitions in a residence face more scrutiny than similar prohibitions in commercial space.",
-        ],
-      },
+        "heading": "How to verify a firearm-law claim",
+        "paragraphs": [
+          "Start with the current codified provision and the specific legislative history. Compare the effective date, subsequent amendments and current court or agency guidance. A filed bill is not an enacted law. Our [Texas bill reading guide](/texas-government/reference/how-to-read-a-texas-bill) explains how to distinguish these records.",
+          "The State Law Library provides a useful public starting point, but neither that library nor this publication determines your individual legal eligibility. If uncertain, do not carry until you obtain reliable legal advice."
+        ]
+      }
     ],
-    faq: [
+    "faq": [
       {
-        q: "Do I need any license to carry a handgun in Texas?",
-        a: "If you are 21 or older, a legal U.S. resident, and not otherwise prohibited under state or federal law, you may lawfully carry a handgun in most public places without a permit under HB 1927. Location restrictions in Sections 46.03 and 46.035 still apply.",
+        "q": "Does permitless carry repeal all Texas firearm restrictions?",
+        "a": "No. Possession, sensitive locations, property restrictions and federal laws remain separate legal questions."
       },
       {
-        q: "Is the Texas License to Carry still worth getting after constitutional carry?",
-        a: "Yes for most active carriers — the LTC provides reciprocity with 37 other states, exempts you from NICS on future purchases, gives you an affirmative defense to certain location prosecutions, and often reduces friction with law enforcement.",
+        "q": "Why do some sources say 21 while others discuss adults aged 18 to 20?",
+        "a": "The statutory age language and the 2022 court ruling differ. Current State Law Library and DPS guidance explain the age-only enforcement limitation."
       },
       {
-        q: "Can I carry openly in Texas?",
-        a: "Open carry of a holstered handgun by someone 21 or older is generally legal in most public places. Long-gun open carry has always been legal but can trigger disorderly conduct scrutiny if used to intimidate.",
+        "q": "Is Section 46.035 still current?",
+        "a": "No. It was repealed in 2021. Consult current Chapter 46 rather than relying on that obsolete citation."
       },
       {
-        q: "Where can I never carry a firearm in Texas regardless of my license?",
-        a: "Schools, courts, polling places during voting, secured airport areas, federal buildings, correctional facilities, and any private property that has posted effective notice under Sections 30.06 or 30.07.",
+        "q": "Can a Texas license override federal restrictions?",
+        "a": "No. A Texas license does not override federal law or the law of another jurisdiction."
       },
       {
-        q: "Do I have to tell an officer I have a firearm during a traffic stop?",
-        a: "Texas law does not require automatic disclosure, but calm, prompt disclosure with your hands visible is the standard recommended practice and usually shortens the encounter.",
-      },
-      {
-        q: "Can a Texas landlord prohibit firearms in a rented home?",
-        a: "Landlords can include reasonable, non-discriminatory firearm provisions in a residential lease, though blanket bans in a private residence face more scrutiny than in commercial contexts.",
-      },
+        "q": "Where should I check current legal requirements?",
+        "a": "Start with the Texas statutes, State Law Library and DPS. Obtain qualified legal advice for individual facts."
+      }
     ],
-    sources: [
+    "sources": [
       {
-        label: "Texas Penal Code Chapter 46",
-        url: "https://statutes.capitol.texas.gov/Docs/PE/htm/PE.46.htm",
+        "label": "Texas Penal Code Chapter 46",
+        "url": "https://statutes.capitol.texas.gov/Docs/PE/htm/PE.46.htm"
       },
-      { label: "Texas DPS License to Carry", url: "https://www.dps.texas.gov/rsd/ltc" },
       {
-        label: "HB 1927 (2021) Bill Text",
-        url: "https://capitol.texas.gov/BillLookup/History.aspx?LegSess=87R&Bill=HB1927",
+        "label": "Texas Penal Code Chapter 30",
+        "url": "https://statutes.capitol.texas.gov/Docs/PE/htm/PE.30.htm"
       },
-      { label: "ATF Firearms Verification", url: "https://www.atf.gov/firearms" },
       {
-        label: "Texas Constitution Article I, Section 23",
-        url: "https://statutes.capitol.texas.gov/Docs/CN/htm/CN.1.htm",
+        "label": "State Law Library — permitless carry",
+        "url": "https://sll.texas.gov/faqs/permitless-carry-guns/"
       },
+      {
+        "label": "State Law Library — carry of firearms",
+        "url": "https://guides.sll.texas.gov/gun-laws/carry-of-firearms"
+      },
+      {
+        "label": "DPS — handgun licensing eligibility",
+        "url": "https://www.dps.texas.gov/section/handgun-licensing/faq/eligibility-faqs"
+      },
+      {
+        "label": "State Law Library — private property",
+        "url": "https://guides.sll.texas.gov/gun-laws/businesses-private-property"
+      },
+      {
+        "label": "HB 1927 official legislative history",
+        "url": "https://capitol.texas.gov/BillLookup/History.aspx?LegSess=87R&Bill=HB1927"
+      },
+      {
+        "label": "Texas Government Code Chapter 411",
+        "url": "https://statutes.capitol.texas.gov/Docs/GV/htm/GV.411.htm"
+      },
+      {
+        "label": "Texas Penal Code Chapter 9",
+        "url": "https://statutes.capitol.texas.gov/Docs/PE/htm/PE.9.htm"
+      },
+      {
+        "label": "State Law Library — storage and safety",
+        "url": "https://guides.sll.texas.gov/gun-laws/storage-safety"
+      },
+      {
+        "label": "ATF — National Firearms Act",
+        "url": "https://www.atf.gov/rules-and-regulations/laws-alcohol-tobacco-firearms-and-explosives/national-firearms-act"
+      }
     ],
-    related: [
+    "related": [
       "constitutional-carry-one-year-later",
-      "texas-new-laws-2026",
-      "texas-election-laws-explained",
-      "how-a-bill-becomes-texas-law",
+      "how-a-bill-becomes-texas-law"
     ],
-    cta: { label: "Explore More Texas Law Guides", href: "/laws" },
-    keyTakeaways: [
-      "Texans 21+ can carry a handgun without a permit under HB 1927, subject to Section 46 place restrictions.",
-      "Federal prohibitor categories (felony, drug use, protective order) still apply regardless of Texas law.",
-      "The License to Carry is optional but still unlocks reciprocity and NICS-exempt future purchases.",
-      "Castle doctrine and stand-your-ground protections are among the strongest in the nation.",
-      "Private property owners retain full authority to prohibit carry via 30.06/30.07 notice.",
-    ],
+    "cta": {
+      "label": "Explore Texas law and statutory resources",
+      "href": "/laws"
+    },
+    "keyTakeaways": [
+      "Permitless carry does not remove state or federal restrictions.",
+      "Read current statutory text alongside court decisions and agency guidance.",
+      "Section 46.035 was repealed; current Chapter 46 controls.",
+      "Safe storage and avoiding confrontation are public-safety priorities."
+    ]
   },
   "texas-property-tax-laws-explained": {
     updated: "2026-07-15",
