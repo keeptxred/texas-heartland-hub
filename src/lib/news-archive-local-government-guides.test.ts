@@ -22,7 +22,7 @@ describe("Phase 2A reviewed local government guides", () => {
       // Original publication chronology is preserved; only the substantive
       // body update date changes after this verified editorial improvement.
       expect(article?.publishedAt).toBe(guide.publishedAt);
-      expect(body.updated).toBe("2026-11-04");
+      expect(body.updated).toBe(guide.slug === "what-local-governments-control" ? "2026-11-25" : "2026-11-04");
 
       expect(articleMainWordCount(body)).toBeGreaterThanOrEqual(850);
       expect(hasMeaningfulArticleStructure(body)).toBe(true);
