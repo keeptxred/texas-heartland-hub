@@ -62,7 +62,7 @@ function EditorialStandardsPage() {
             <li>When an exact government record or official source is available, we identify it separately from third-party reporting.</li>
             <li>We do not treat a general agency homepage as proof of a specific claim.</li>
             <li>Published-source links remain available so readers can inspect the material behind a source-based story.</li>
-            <li>Automated publishing is subject to source-sufficiency, article-length, ownership, and quality validation gates.</li>
+            <li>Publishing workflows use source-sufficiency, article-length, ownership, and quality validation gates. Passing an automated check does not establish that a claim is true, that an editor personally reviewed it, or that a search engine indexed it.</li>
           </ul>
         </section>
 
@@ -113,7 +113,7 @@ function EditorialStandardsPage() {
         <section>
           <h2 className="font-display text-2xl tracking-tight mb-2 text-foreground">Entity &amp; Topic Context</h2>
           <p>
-            News articles are connected to permanent Keep TX Red resources where relevant, including Election Central, Texas Legislature, candidates, officeholders, districts, bills, laws, government pages, topic pages, policy trackers, and public-data references. The goal is to make each useful article an entry point into a durable Texas public-affairs reference network rather than an isolated rewrite.
+            News articles are connected to permanent Keep TX Red resources where relevant, including Texas Legislature, officeholder and district references, laws, government pages, policy trackers, and public-data references. Links should help explain the subject, not merely match a keyword. The goal is to make each useful article an entry point into a durable Texas public-affairs reference network rather than an isolated rewrite.
           </p>
         </section>
 
@@ -132,16 +132,16 @@ function EditorialStandardsPage() {
           <p>If we publish an error, we correct it as quickly as possible.</p>
           <ul className="list-disc pl-6 space-y-1 mt-2">
             <li>Minor corrections such as typos or formatting may be made without a correction note.</li>
-            <li>Substantive factual corrections should be identified on the affected article when appropriate.</li>
+            <li>Substantive factual corrections should be identified on the affected article when appropriate. If a historical article cannot be substantiated from surviving sources, it may be withdrawn rather than reconstructed as if it were the original reporting.</li>
             <li>Readers may submit correction requests through our <a href="/contact" className="text-primary underline underline-offset-4">Contact page</a>.</li>
           </ul>
         </section>
 
         <section>
           <h2 className="font-display text-2xl tracking-tight mb-2 text-foreground">Reader Trust</h2>
-          <p>Our goal is to make the source trail easier—not harder—to inspect.</p>
+          <p>Our goal is to make the source trail easier—not harder—to inspect. Our <a href="/authors" className="text-primary underline underline-offset-4">editorial desk directory</a> identifies coverage areas and links to source guides where available. Desk bylines describe editorial functions, not independently verified individual staff or physical bureaus.</p>
           <ul className="list-disc pl-6 space-y-1 mt-2">
-            <li>Articles retain linked sources and publication/update dates.</li>
+            <li>Articles retain linked sources and publication/update dates. A review or technical deployment does not become the original publication date. Historical reporting is not relabeled as new simply because it has been reviewed.</li>
             <li>Known source types are labeled as government, official, reporting, or analysis sources.</li>
             <li>Related Keep TX Red resources provide durable context around bills, elections, laws, government, districts, officeholders, and Texas issues.</li>
             <li>Our <a href="/glossary" className="text-primary underline underline-offset-4">glossary</a> helps explain Texas political terminology.</li>
