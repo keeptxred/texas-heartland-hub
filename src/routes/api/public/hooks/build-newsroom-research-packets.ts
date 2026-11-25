@@ -142,10 +142,33 @@ async function verifiedResearchRequeue(request: Request): Promise<boolean> {
   return true;
 }
 
+async function verifiedResearchOnly(request: Request): Promise<boolean> {
+  const auth = request.headers.get("authorization") ?? "";
+  const token = auth.match(/^Bearer\s+(.+)$/i)?.[1];
+  if (!token) throw new Error("Missing signed research-only authorization");
+  await verifyGitHubActionsOidc({
+    token,
+    audience: "keeptxred-newsroom-research",
+    repository: "keeptxred/texas-heartland-hub",
+    workflowPath: ".github/workflows/research-newsroom-evidence.yml",
+    allowedEventNames: ["schedule", "workflow_dispatch", "workflow_run"],
+  });
+  return true;
+}
+
 async function handler({ request }: { request: Request }) {
   let researchRequeueAuthorized = false;
+  let researchDiscoveryAuthorized = false;
   try {
-    researchRequeueAuthorized = await verifiedResearchRequeue(request);
+    // The dedicated zero-AI scheduler may collect primary evidence, but never
+    // recover/requeue a failed publishing candidate. Separate audience and
+    // exact workflow identity prevent reuse of its token for paid publishing.
+    const researchOnly = new URL(request.url).searchParams.get("research_only") === "1";
+    if (researchOnly) researchDiscoveryAuthorized = await verifiedResearchOnly(request);
+    else {
+      researchRequeueAuthorized = await verifiedResearchRequeue(request);
+      researchDiscoveryAuthorized = researchRequeueAuthorized;
+    }
   } catch {
     return Response.json({ ok: false, error: "Invalid protected newsroom research authorization", aiCalls: 0 }, { status: 401 });
   }
@@ -199,7 +222,7 @@ async function handler({ request }: { request: Request }) {
   const candidates = [...new Map<string, CandidateRow>(
     [...pending, ...recoverable, ...published].map((candidate): [string, CandidateRow] => [candidate.cluster_id, candidate]),
   ).values()];
-  if (!candidates.length) return Response.json({ ok: true, built: 0, written: 0, unchanged: 0, sourceItems: 0, sourcePagesFetched: 0, sourcePagesUpdated: 0, sourcePagesCoolingDown: 0, aiCalls: 0 });
+  if (!candidates.length) return Response.json({ ok: true, researchDiscoveryAuthorized, researchRescueAuthorized: researchRequeueAuthorized, issuerResearchFeedsFetched: 0, issuerPrimaryRecordsRecovered: 0, researchRescueRequeued: 0, built: 0, written: 0, unchanged: 0, sourceItems: 0, sourcePagesFetched: 0, sourcePagesUpdated: 0, sourcePagesCoolingDown: 0, aiCalls: 0 });
 
   // Each provider request stays below PostgREST UUID/query and row limits.
   // Group related lookups in the same bounded batch; no AI is used here.
@@ -404,11 +427,11 @@ async function handler({ request }: { request: Request }) {
     .sort((a, b) => (priorityByFeedId.get(b.id) ?? 0) - (priorityByFeedId.get(a.id) ?? 0)
       || Number(Boolean(b.source_reputation_score)) - Number(Boolean(a.source_reputation_score))
       || a.id - b.id)
-    .slice(0, SOURCE_PAGE_FETCH_LIMIT - (researchRequeueAuthorized ? LINKED_PRIMARY_FETCH_LIMIT : 0));
+    .slice(0, SOURCE_PAGE_FETCH_LIMIT - (researchDiscoveryAuthorized ? LINKED_PRIMARY_FETCH_LIMIT : 0));
 
   const sourcePageResults = await mapWithConcurrency(sourcePageTargets, SOURCE_PAGE_CONCURRENCY, async (feed) => {
     let primaryLinks: string[] = [];
-    const body = feed.link ? await fetchReadableNewsroomSource(feed.link, researchRequeueAuthorized ? (links) => { primaryLinks = links; } : undefined) : null;
+    const body = feed.link ? await fetchReadableNewsroomSource(feed.link, researchDiscoveryAuthorized ? (links) => { primaryLinks = links; } : undefined) : null;
     return { feed, body, primaryLinks };
   });
 
@@ -480,7 +503,7 @@ async function handler({ request }: { request: Request }) {
   // The total page fetch budget remains 40. A verified title, actual body,
   // publication date, exact URL, and event match are mandatory before storage.
   const linkedTargets = new Map<string, Set<string>>();
-  if (researchRequeueAuthorized) {
+  if (researchDiscoveryAuthorized) {
     const pendingIds = new Set(pending.map((row) => row.cluster_id));
     for (const result of sourcePageResults) {
       if (!result.body || !result.primaryLinks.length) continue;
@@ -504,7 +527,7 @@ async function handler({ request }: { request: Request }) {
     const existing = existingPacketByCluster.get(cluster.id)?.packet_json;
     return !existing || !packetHasVerifiedEventPrimary(existing);
   }).map((cluster) => cluster.canonical_subject);
-  const issuerFeeds = researchRequeueAuthorized
+  const issuerFeeds = researchDiscoveryAuthorized
     ? issuerResearchFeedsForSubjects(issuerSubjects).slice(0, Math.min(2, LINKED_PRIMARY_FETCH_LIMIT))
     : [];
   const issuerRecords = (await Promise.all(issuerFeeds.map((feed) => fetchIssuerResearchRecords(feed, issuerSubjects)))).flat();
@@ -653,6 +676,7 @@ async function handler({ request }: { request: Request }) {
   return Response.json({
     ok: true,
     researchRescueAuthorized: researchRequeueAuthorized,
+    researchDiscoveryAuthorized,
     researchRescueScanned: recoverable.length,
     researchRescueRequeued: researchRequeues.length,
     researchRescueHeld: researchHeld,

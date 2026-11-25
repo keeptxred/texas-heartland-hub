@@ -1,0 +1,47 @@
+name: Research newsroom primary evidence
+
+# Separate from the publishing workflow: no paid AI or candidate requeue.
+on:
+  schedule:
+    - cron: "35 */4 * * *"
+  workflow_dispatch:
+  workflow_run:
+    workflows: ["Deploy verified KeepTXRed to Cloudflare"]
+    types: [completed]
+    branches: [main]
+
+permissions:
+  contents: read
+  id-token: write
+
+concurrency:
+  group: ktr-guarded-production-newsroom-research
+  cancel-in-progress: false
+
+jobs:
+  research:
+    if: github.ref == 'refs/heads/main' && (github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success')
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - name: Collect event-specific primary evidence without publishing
+        shell: bash
+        run: |
+          set -euo pipefail
+          url='https://keeptxred-site.freddy-coppola.workers.dev/api/public/hooks/build-newsroom-research-packets?research_only=1'
+          for attempt in 1 2; do
+            oidc_token="$(curl -fsS --max-time 15 \
+              -H "Authorization: bearer ${ACTIONS_ID_TOKEN_REQUEST_TOKEN}" \
+              "${ACTIONS_ID_TOKEN_REQUEST_URL}&audience=keeptxred-newsroom-research" | jq -er '.value')"
+            echo "::add-mask::$oidc_token"
+            status="$(curl -sS --max-time 180 -X POST -o /tmp/research.json -w '%{http_code}' \
+              -H "Authorization: Bearer $oidc_token" -H 'Accept: application/json' "$url")"
+            if [[ "$status" != 401 || "$attempt" == 2 ]]; then break; fi
+          done
+          echo "Signed research response HTTP $status"
+          if [[ "$status" != 200 ]]; then
+            echo "Research request failed; no publishing call was attempted." >&2
+            exit 1
+          fi
+          jq -e '.ok == true and .researchDiscoveryAuthorized == true and .researchRescueAuthorized == false and .researchRescueRequeued == 0 and .aiCalls == 0' /tmp/research.json >/dev/null
+          jq '{ok, built, written, primarySourceItems, sourcePagesFetched, issuerResearchFeedsFetched, issuerPrimaryRecordsRecovered, linkedPrimaryRecordsRecovered, researchRescueAuthorized, researchRescueRequeued, aiCalls}' /tmp/research.json

@@ -14,7 +14,7 @@ describe("zero-AI research source-page prioritization", () => {
     expect(builder).toContain("independentlySourced: hasPrimary || families.size >= 2");
     expect(builder).toContain("newsroomHydrationPriority({");
     expect(builder.indexOf("newsroomHydrationPriority({")).toBeLessThan(
-      builder.indexOf(".slice(0, SOURCE_PAGE_FETCH_LIMIT - (researchRequeueAuthorized ? LINKED_PRIMARY_FETCH_LIMIT : 0))"),
+      builder.indexOf(".slice(0, SOURCE_PAGE_FETCH_LIMIT - (researchDiscoveryAuthorized ? LINKED_PRIMARY_FETCH_LIMIT : 0))"),
     );
     const rank = (pending: boolean, independentlySourced: boolean, evidenceChars: number) =>
       newsroomHydrationPriority({ pending, independentlySourced, evidenceChars, requiredEvidenceChars: 5_000, editorialScore: 85 });
@@ -56,7 +56,7 @@ describe("zero-AI research source-page prioritization", () => {
     expect(builder).toContain("isNewsroomSourceFetchCoolingDown(");
     expect(builder).toContain(".filter((feed) => !sourcePageCoolingDown(feed.id))");
     expect(builder).toContain('pending: candidate.status === "PENDING"');
-    expect(builder).toContain(".slice(0, SOURCE_PAGE_FETCH_LIMIT - (researchRequeueAuthorized ? LINKED_PRIMARY_FETCH_LIMIT : 0))");
+    expect(builder).toContain(".slice(0, SOURCE_PAGE_FETCH_LIMIT - (researchDiscoveryAuthorized ? LINKED_PRIMARY_FETCH_LIMIT : 0))");
     expect(builder).toContain("aiCalls: 0");
   });
 });

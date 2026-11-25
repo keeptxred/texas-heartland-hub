@@ -117,3 +117,22 @@ describe("protected research rescue execution", () => {
     expect(workflow).toContain("run_zero_ai_stage packets build-newsroom-research-packets 180");
   });
 });
+
+
+describe("dedicated evidence-only workflow", () => {
+  it("requires a different OIDC audience and never grants publication rescue authority", () => {
+    const builder = readFileSync("src/routes/api/public/hooks/build-newsroom-research-packets.ts", "utf8");
+    const workflow = readFileSync(".github/workflows/research-newsroom-evidence.yml", "utf8");
+    expect(builder).toContain('audience: "keeptxred-newsroom-research"');
+    expect(builder).toContain('workflowPath: ".github/workflows/research-newsroom-evidence.yml"');
+    expect(builder).toContain('if (researchOnly) researchDiscoveryAuthorized = await verifiedResearchOnly(request)');
+    expect(builder).toContain('const issuerFeeds = researchDiscoveryAuthorized');
+    expect(builder).toContain('researchRequeueAuthorized ? recoverable : []');
+    expect(workflow).toContain('audience=keeptxred-newsroom-research');
+    expect(workflow).toContain('build-newsroom-research-packets?research_only=1');
+    expect(workflow).toContain('.researchRescueAuthorized == false');
+    expect(workflow).toContain('.researchRescueRequeued == 0');
+    expect(workflow).toContain('.aiCalls == 0');
+    expect(workflow).not.toMatch(/generate-newsroom|publish-overdue-gap|publishing-safety-net|finalize-newsroom-article/);
+  });
+});

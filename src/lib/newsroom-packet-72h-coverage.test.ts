@@ -43,7 +43,7 @@ describe("72-hour publication evidence packet coverage", () => {
     expect(builder).toContain("const SOURCE_PAGE_RETRY_COOLDOWN_MS = 6 * 60 * 60 * 1000");
     expect(builder).toContain('pending: candidate.status === "PENDING"');
     expect(builder).toContain("newsroomHydrationPriority({");
-    expect(builder).toContain(".slice(0, SOURCE_PAGE_FETCH_LIMIT - (researchRequeueAuthorized ? LINKED_PRIMARY_FETCH_LIMIT : 0))");
+    expect(builder).toContain(".slice(0, SOURCE_PAGE_FETCH_LIMIT - (researchDiscoveryAuthorized ? LINKED_PRIMARY_FETCH_LIMIT : 0))");
     expect(builder).toContain("aiCalls: 0");
   });
 });
