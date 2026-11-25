@@ -34,6 +34,19 @@
       ]
     },
     {
+      "id": 7,
+      "url": "https://keeptxred.com/texas-government/agencies/texas-department-public-safety",
+      "requiredText": [
+        "Where to start: services, records and complaints",
+        "Report alleged misconduct by a DPS employee"
+      ],
+      "requiredLinks": [
+        "https://www.dps.texas.gov/section/office-inspector-general/how-file-complaint",
+        "https://www.txdmv.gov/motorists/register-your-vehicle"
+      ],
+      "pendingRelease": true
+    },
+    {
       "id": 9,
       "url": "https://keeptxred.com/news/texas-open-meetings-public-info",
       "requiredText": [
@@ -82,6 +95,32 @@
       ]
     },
     {
+      "id": 29,
+      "url": "https://keeptxred.com/texas-government/agencies/health-human-services-commission",
+      "requiredText": [
+        "Chapter 523",
+        "Challenge a benefit denial or reduction"
+      ],
+      "requiredLinks": [
+        "https://www.hhs.texas.gov/contact/complaints-appeals/fair-fraud-hearings",
+        "https://www.yourtexasbenefits.com/"
+      ],
+      "pendingRelease": true
+    },
+    {
+      "id": 33,
+      "url": "https://keeptxred.com/texas-government/agencies/texas-commission-environmental-quality",
+      "requiredText": [
+        "Identify a regulated facility",
+        "Verify a commission decision or enforcement case"
+      ],
+      "requiredLinks": [
+        "https://www.tceq.texas.gov/permitting/central_registry/",
+        "https://www.tceq.texas.gov/agency/decisions/cc/cc_db.html"
+      ],
+      "pendingRelease": true
+    },
+    {
       "id": 34,
       "url": "https://keeptxred.com/data",
       "requiredText": [
@@ -128,7 +167,7 @@
         "https://agenda.harriscountytx.gov/",
         "https://porthouston.com/about/public-meetings/agendas-minutes/"
       ],
-      "pendingRelease": true
+      "pendingRelease": false
     },
     {
       "id": 47,
