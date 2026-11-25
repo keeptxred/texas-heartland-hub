@@ -501,7 +501,7 @@ export const ARTICLES: Article[] = [
     slug: "constitutional-carry-one-year-later",
     category: "Legislature",
     title: "Constitutional Carry in Texas: What the Law Actually Says",
-    dek: "What HB 1927 changed in 2021, how subsequent court guidance affects the age restriction, and why other state and federal restrictions remain.",
+    dek: "Texas enacted permitless handgun carry under HB 1927. Although the statute specifies age 21, a federal court barred age-only enforcement against otherwise-qualified 18-to-20-year-olds. Restricted places and other eligibility rules still apply.",
     author: "Liberty Desk",
     date: "June 12, 2026",
     publishedAt: "2026-06-12T12:00:00",
