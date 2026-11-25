@@ -257,17 +257,26 @@ async function checkRecentNewsEditorialRestoration() {
     {
       slug: "2026-11-07-tx-dems-sweep-statewide-races-for-first-time-in-generation",
       markers: [
-        "Independent check: state-reported vote totals (unofficial)",
-        "Impact on Texans: what changes after the election",
+        "Statewide results",
+        "Statewide offices are not the entire legislature",
+        "5,230,789",
+        "How to interpret the figures",
+        "Editorial correction",
+        "electionresults.sos.state.tx.us/results.html",
         "Gina_Hinojosa_at_the_AFL-CIO_COPE_convention_in_2024.jpg",
         "Texas Secretary of State",
       ],
       forbidden: ["ending 24 years", "0 primary or official records"],
+      heldForReview: true,
     },
     {
       slug: "2026-11-08-hinojosa-names-transition-team-featuring-anti-voucher-republican-and-labor-allie",
       markers: [
-        "Bipartisan transition team leadership announced",
+        "The initial appointments",
+        "The election context",
+        "What the announcement does not establish",
+        "Editorial correction",
+        "governor-elect-gina-hinojosa-announces-by-and-for-the-people-transition-leadership-team",
         "Ernest Bailes",
         "Ryan Pollock",
         "Gina_Hinojosa_at_the_AFL-CIO_COPE_convention_in_2024.jpg",
@@ -278,6 +287,7 @@ async function checkRecentNewsEditorialRestoration() {
         "generic government building",
         "image generation failed",
       ],
+      heldForReview: true,
     },
   ];
   for (const item of cases) {
@@ -299,6 +309,9 @@ async function checkRecentNewsEditorialRestoration() {
     // Ignore serialized framework state and script declarations: the text
     // and image must actually appear in rendered, crawlable article HTML.
     const visible = html.replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, " ");
+    if (item.heldForReview && !extractMeta(html, "robots").toLowerCase().includes("noindex")) {
+      throw new Error(`article awaiting source review must retain noindex: ${path}`);
+    }
     for (const marker of item.markers) {
       if (!visible.includes(marker)) throw new Error(`verified recent article missing live marker ${JSON.stringify(marker)}: ${path}`);
     }
