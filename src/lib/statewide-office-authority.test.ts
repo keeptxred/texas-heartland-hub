@@ -28,7 +28,7 @@ describe('statewide office authority adapter', () => {
     expect(comptroller).toBeDefined();
 
     const authority = statewideOfficeToAuthorityEntity(comptroller!);
-    expect(authority.lastVerified).toBe('2026-10-13');
+    expect(authority.lastVerified).toBe('2026-11-25');
   });
 
   it('only exports government entities classified as offices', () => {
