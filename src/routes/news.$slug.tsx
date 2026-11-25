@@ -25,6 +25,7 @@ import {
   SITE_URL,
   WEBSITE_ID,
 } from "@/lib/seo";
+import { historicalNewsReferenceContext } from "@/lib/historical-news-reference-context";
 import { dedupeArticleBody } from "@/lib/article-dedupe";
 import { resolveArticleImage } from "@/lib/seo-headline";
 import type { HeadlineVariants } from "@/lib/ctr-score";
@@ -175,13 +176,15 @@ export const Route = createFileRoute("/news/$slug")({
       imageAlt: (ever.image_alt_text ?? "").trim() || displayTitle,
     };
     const materials = await getNewsStaticMaterials({ data: { slug: params.slug, category: ever.category } });
+    const historicalContext = ever.kind === "news" ? historicalNewsReferenceContext(ever.slug) : undefined;
+    const historicalSections = ever.kind === "news" ? ever.body.sections?.filter((section) => !/^Permanent KTR Context$/i.test(section.heading?.trim() ?? "")) : ever.body.sections;
     const rawBody: StructuredArticleBody = {
       updated: ever.body.updated,
       intro: ever.body.intro,
       // Old auto-generated context sections were populated by substring matches.
       // Never render them from historical rows; curated topical context is
       // independently validated by the article router.
-      sections: ever.kind === "news" ? ever.body.sections?.filter((section) => !/^Permanent KTR Context$/i.test(section.heading?.trim() ?? "")) : ever.body.sections,
+      sections: historicalContext ? [...(historicalSections ?? []), historicalContext] : historicalSections,
       faq: ever.body.faq,
       sources: ever.body.sources,
       related: materials.defaultRelatedSlugs,
