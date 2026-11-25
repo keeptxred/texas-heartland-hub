@@ -22,7 +22,7 @@ const SERVICE_AREAS = [
 
 const VERIFIED_ENTRY_POINTS = [
   { name: 'Texas Workforce Commission — unemployment benefits', href: 'https://www.twc.texas.gov/services/apply-benefits', use: 'Apply for unemployment benefits, log in to Unemployment Benefits Services, request payments and check claim status.' },
-  { name: 'Texas Secretary of State — SOSDirect business search', href: 'https://www.sos.state.tx.us/corp/sosda/index.shtml', use: 'Search Texas business entities and use official online business filing services.' },
+  { name: 'Texas Secretary of State — business filing services', href: 'https://www.sos.state.tx.us/corp/index.shtml', use: 'Find current Texas entity search and business filing services, including the SOSPortal system launched September 29, 2026.' },
   { name: 'Texas Comptroller — Webfile and eSystems', href: 'https://comptroller.texas.gov/taxes/file-pay/', use: 'File and pay Texas taxes through Webfile, review electronic filing requirements and find official due-date guidance.' },
   { name: 'Texas Attorney General — child support account', href: 'https://www.texasattorneygeneral.gov/child-support/about-your-online-child-support-account', use: 'Access child-support case status, payment records, court dates and case-specific account information.' },
   { name: 'Texas Health and Human Services — Your Texas Benefits', href: 'https://www.yourtexasbenefits.com/', use: 'Apply for and manage eligible state benefit programs, including SNAP and other HHSC-administered benefits.' },
@@ -106,7 +106,7 @@ function TexasAgencyDirectory() {
       <section className="mt-10" aria-labelledby="verified-agency-entry-points">
         <p className="text-[10px] font-extrabold uppercase tracking-[0.22em] text-primary">High-demand official services</p>
         <h2 id="verified-agency-entry-points" className="mt-2 text-3xl font-bold">Go directly to the responsible Texas agency or portal</h2>
-        <p className="mt-3 max-w-4xl leading-7 text-muted-foreground">These links cover recurring searches such as TWC unemployment login, SOS business search, Comptroller Webfile, child support, benefits, professional-license verification, school ratings, unclaimed property and notary applications. Transactional services stay on the official state system so account status, deadlines and live records are not copied into a stale third-party page.</p>
+        <p className="mt-3 max-w-4xl leading-7 text-muted-foreground">These links cover recurring searches such as TWC unemployment login, SOS business filing, Comptroller Webfile, child support, benefits, professional-license verification, school ratings, unclaimed property and notary applications. Transactional services stay on the official state system so account status, deadlines and live records are not copied into a stale third-party page.</p>
         <div className="mt-6 grid gap-4 md:grid-cols-2 lg:grid-cols-3">{VERIFIED_ENTRY_POINTS.map((agency) => <a key={agency.name} href={agency.href} target="_blank" rel="noopener noreferrer" className="rounded-xl border bg-card p-5 hover:border-primary"><h3 className="text-lg font-bold">{agency.name}</h3><p className="mt-2 text-sm leading-6 text-muted-foreground">{agency.use}</p><span className="mt-3 inline-block text-sm font-semibold text-primary">Open official service →</span></a>)}</div>
       </section>
 
