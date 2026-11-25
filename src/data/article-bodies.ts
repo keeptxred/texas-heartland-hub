@@ -901,9 +901,9 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
     cta: { label: "Calculate How Much Texas Home You Can Afford", href: "/tools/home-affordability-calculator" },
   },
   "2026-07-11-unt-appoints-scholar-focused-on-race-and-neoliberalism-as-interim-provost": {
-    updated: "2026-07-25",
+    updated: "2026-11-25",
     editorNote:
-      "Restored at its original address from the surviving source record. This version uses university records and clearly attributes outside reporting.",
+      "Restored at its original address from the surviving source record. Reviewed November 25, 2026, against current official university leadership and dated academic-affairs communications.",
     keyTakeaways: [
       "Albert Bimper was selected to serve as the University of North Texas interim provost.",
       "The provost is UNT's chief academic officer and oversees the university's academic mission.",
@@ -936,6 +936,13 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
           "Because the appointment is interim, UNT can maintain continuity while determining its longer-term leadership plan. Students, faculty, and taxpayers can follow the provost office and Board of Regents agendas for specific decisions.",
         ],
       },
+      {
+        heading: "What has happened since the interim appointment?",
+        paragraphs: [
+          "UNT's current executive leadership directory identifies Bimper as interim provost and vice president for academic affairs. His November 3, 2026 communication announced new leadership for the Colleges of Education and Science; his November 16 message addressed SMART Scheduling. Both are dated official records of administrative work, not evidence that an earlier research topic determines a university policy.",
+          "To assess a public university's decisions, distinguish a leadership biography, a published administrative announcement and the actual adopted policy or approved expenditure. The [Education Desk source guide](/authors/education-desk) explains how to trace educational claims to responsible institutions and primary records. For the distinct role of elected local school trustees, consult [Texas school board powers](/news/texas-school-board-powers).",
+        ],
+      },
     ],
     faq: [
       { q: "What does a university provost do?", a: "The provost is generally the chief academic officer, overseeing academic programs, faculty affairs, planning, and student-success work." },
@@ -945,6 +952,9 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
     sources: [
       { label: "UNT — Albert Bimper biography", url: "https://president.unt.edu/people/albert-bimper.html" },
       { label: "UNT — Provost McPherson transition announcement", url: "https://www.unt.edu/announcements/2026/provost-mcpherson-stepping-down-named-senior-advisor-to-the-president.html" },
+      { label: "UNT — President’s executive leadership", url: "https://president.unt.edu/presidents-executive-leadership.html" },
+      { label: "UNT — November 3, 2026 deans announcement", url: "https://vpaa.unt.edu/about/communications/deans-named-college-of-education-college-of-science.html" },
+      { label: "UNT — November 16, 2026 SMART Scheduling communication", url: "https://vpaa.unt.edu/about/communications/smart-scheduling-a-message-from-the-provost.html" },
       { label: "Texas Scorecard — Interim provost appointment coverage", url: "https://texasscorecard.com/state/unt-appoints-critical-race-theory-scholar-as-interim-provost/" },
     ],
     related: ["texas-education-laws-explained", "school-choice-esa-guide"],
