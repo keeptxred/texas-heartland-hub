@@ -257,6 +257,123 @@
         "https://www.tceq.texas.gov/permitting/water_rights",
         "https://www.tceq.texas.gov/agency/decisions/cc/cc_db.html"
       ]
+    },
+    {
+      "path": "/news/texas-school-board-powers",
+      "reviewed": null,
+      "reviewDays": 90,
+      "group": "school-governance",
+      "sources": [
+        "https://tea.texas.gov/families-students/resolving-concerns-and-complaints"
+      ]
+    },
+    {
+      "path": "/authors/energy-desk",
+      "reviewed": null,
+      "reviewDays": 90,
+      "group": "editorial-source-guide",
+      "sources": [
+        "https://www.ercot.com/gridinfo",
+        "https://www.rrc.texas.gov/oil-and-gas/research-and-statistics/production-data/"
+      ]
+    },
+    {
+      "path": "/news/texas-governor-powers",
+      "reviewed": null,
+      "reviewDays": 90,
+      "group": "executive-authority",
+      "sources": [
+        "https://statutes.capitol.texas.gov/Docs/CN/htm/CN.3/CN.3.40.htm"
+      ]
+    },
+    {
+      "path": "/authors/education-desk",
+      "reviewed": null,
+      "reviewDays": 90,
+      "group": "editorial-source-guide",
+      "sources": [
+        "https://educationfreedom.texas.gov/families/",
+        "https://tea.texas.gov/school-and-district-leaders/accountability/academic-accountability/performance-reporting/school-report-cards"
+      ]
+    },
+    {
+      "path": "/texas-government/land-commissioner",
+      "reviewed": null,
+      "reviewDays": 30,
+      "group": "statewide-office",
+      "sources": [
+        "https://www.glo.texas.gov/about-glo/about-the-commissioner",
+        "https://www.glo.texas.gov/open-government/boards-committees"
+      ]
+    },
+    {
+      "path": "/texas-government/secretary-of-state",
+      "reviewed": null,
+      "reviewDays": 30,
+      "group": "statewide-office",
+      "sources": [
+        "https://www.sos.state.tx.us/corp/index.shtml",
+        "https://www.sos.state.tx.us/about/sosbio.shtml"
+      ]
+    },
+    {
+      "path": "/authors/elections-desk",
+      "reviewed": null,
+      "reviewDays": 90,
+      "group": "editorial-source-guide",
+      "sources": [
+        "https://www.sos.state.tx.us/elections/historical/elections-results-archive.shtml"
+      ]
+    },
+    {
+      "path": "/news/texas-attorney-general-powers",
+      "reviewed": null,
+      "reviewDays": 90,
+      "group": "executive-authority",
+      "sources": [
+        "https://www.texasattorneygeneral.gov/consumer-protection/file-consumer-complaint",
+        "https://www.texasattorneygeneral.gov/open-government/members-public/what-expect-after-ruling-issued"
+      ]
+    },
+    {
+      "path": "/authors/civics-desk",
+      "reviewed": null,
+      "reviewDays": 90,
+      "group": "editorial-source-guide",
+      "sources": [
+        "https://statutes.capitol.texas.gov/",
+        "https://www.texasattorneygeneral.gov/open-government/members-public/overview-public-information-act"
+      ]
+    },
+    {
+      "path": "/news/what-local-governments-control",
+      "reviewed": null,
+      "reviewDays": 90,
+      "group": "local-government",
+      "sources": [
+        "https://www.txdot.gov/data-maps/reference-maps/departmental-map.html",
+        "https://www.tceq.texas.gov/gis/iwudview.html"
+      ]
+    },
+    {
+      "path": "/texas-government/comptroller",
+      "reviewed": null,
+      "reviewDays": 30,
+      "group": "statewide-office",
+      "sources": [
+        "https://comptroller.texas.gov/transparency/reports/certification-revenue-estimate/",
+        "https://comptroller.texas.gov/taxes/property-tax/county-directory/"
+      ]
+    },
+    {
+      "path": "/authors/border-bureau",
+      "reviewed": null,
+      "reviewDays": 90,
+      "group": "editorial-source-guide",
+      "sources": [
+        "https://www.cbp.gov/newsroom/stats",
+        "https://www.dps.texas.gov/section/general-counsel/public-information-requests"
+      ]
     }
   ]
 }
