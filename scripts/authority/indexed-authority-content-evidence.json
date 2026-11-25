@@ -26,6 +26,19 @@
       ]
     },
     {
+      "id": 3,
+      "url": "https://keeptxred.com/shop/6a45389b4a06e00a2f00683c",
+      "requiredText": [
+        "Selected option:",
+        "Made to order."
+      ],
+      "requiredLinks": [
+        "/shipping-policy",
+        "/return-refund-policy"
+      ],
+      "pendingRelease": true
+    },
+    {
       "id": 4,
       "url": "https://keeptxred.com/news/beginners-guide-texas-elections",
       "requiredText": [],
@@ -98,6 +111,15 @@
       "pendingRelease": true
     },
     {
+      "id": 17,
+      "url": "https://keeptxred.com/shop",
+      "requiredText": [
+        "Browse available made-to-order merchandise"
+      ],
+      "requiredLinks": [],
+      "pendingRelease": true
+    },
+    {
       "id": 18,
       "url": "https://keeptxred.com/news/texas-grid-ercot-explained",
       "requiredText": [
@@ -133,6 +155,42 @@
       ]
     },
     {
+      "id": 24,
+      "url": "https://keeptxred.com/terms-of-service",
+      "requiredText": [
+        "ships only to U.S. addresses"
+      ],
+      "requiredLinks": [
+        "/privacy"
+      ],
+      "pendingRelease": true
+    },
+    {
+      "id": 26,
+      "url": "https://keeptxred.com/privacy",
+      "requiredText": [
+        "Representative Lookup and Browser Storage",
+        "U.S. Census Bureau geocoder",
+        "stores cart selections in your browser"
+      ],
+      "requiredLinks": [
+        "https://www.census.gov/about/policies/privacy.html"
+      ],
+      "pendingRelease": true
+    },
+    {
+      "id": 28,
+      "url": "https://keeptxred.com/about",
+      "requiredText": [
+        "Texas election reporting, voting guidance, and historical election records"
+      ],
+      "requiredLinks": [
+        "/authors",
+        "/editorial-standards"
+      ],
+      "pendingRelease": true
+    },
+    {
       "id": 29,
       "url": "https://keeptxred.com/texas-government/agencies/health-human-services-commission",
       "requiredText": [
@@ -142,6 +200,18 @@
       "requiredLinks": [
         "https://www.hhs.texas.gov/contact/complaints-appeals/fair-fraud-hearings",
         "https://www.yourtexasbenefits.com/"
+      ],
+      "pendingRelease": true
+    },
+    {
+      "id": 30,
+      "url": "https://keeptxred.com/editorial-standards",
+      "requiredText": [
+        "Passing an automated check does not establish",
+        "Historical reporting is not relabeled as new"
+      ],
+      "requiredLinks": [
+        "/authors"
       ],
       "pendingRelease": true
     },
@@ -233,6 +303,19 @@
       "pendingRelease": true
     },
     {
+      "id": 43,
+      "url": "https://keeptxred.com/shop/6a442df46ffc0e3b360ce6bd",
+      "requiredText": [
+        "Selected option:",
+        "Made to order."
+      ],
+      "requiredLinks": [
+        "/shipping-policy",
+        "/return-refund-policy"
+      ],
+      "pendingRelease": true
+    },
+    {
       "id": 46,
       "url": "https://keeptxred.com/texas-government/secretary-of-state",
       "requiredText": [
@@ -271,6 +354,32 @@
       "pendingRelease": true
     },
     {
+      "id": 49,
+      "url": "https://keeptxred.com/shop/6a52e202fd678250810a14fd",
+      "requiredText": [
+        "Selected option:",
+        "Made to order."
+      ],
+      "requiredLinks": [
+        "/shipping-policy",
+        "/return-refund-policy"
+      ],
+      "pendingRelease": true
+    },
+    {
+      "id": 51,
+      "url": "https://keeptxred.com/shop/6a550682b08986747003b066",
+      "requiredText": [
+        "Selected option:",
+        "Made to order."
+      ],
+      "requiredLinks": [
+        "/shipping-policy",
+        "/return-refund-policy"
+      ],
+      "pendingRelease": true
+    },
+    {
       "id": 52,
       "url": "https://keeptxred.com/county-elections",
       "requiredText": [
@@ -281,6 +390,30 @@
       "requiredLinks": [
         "/register-to-vote"
       ]
+    },
+    {
+      "id": 53,
+      "url": "https://keeptxred.com/shop/6a500b2ff2038250b80cad63",
+      "requiredText": [
+        "Selected option:",
+        "Made to order."
+      ],
+      "requiredLinks": [
+        "/shipping-policy",
+        "/return-refund-policy"
+      ],
+      "pendingRelease": true
+    },
+    {
+      "id": 55,
+      "url": "https://keeptxred.com/contact",
+      "requiredText": [
+        "Do not email a full payment card number"
+      ],
+      "requiredLinks": [
+        "/privacy"
+      ],
+      "pendingRelease": true
     },
     {
       "id": 58,
@@ -304,6 +437,19 @@
       "requiredLinks": [
         "https://www.texasattorneygeneral.gov/consumer-protection/file-consumer-complaint",
         "https://www.texasattorneygeneral.gov/open-government/members-public/what-expect-after-ruling-issued"
+      ],
+      "pendingRelease": true
+    },
+    {
+      "id": 60,
+      "url": "https://keeptxred.com/shop/6a45407bf91b2ba6ea0c1afc",
+      "requiredText": [
+        "Selected option:",
+        "Made to order."
+      ],
+      "requiredLinks": [
+        "/shipping-policy",
+        "/return-refund-policy"
       ],
       "pendingRelease": true
     },
@@ -376,6 +522,19 @@
         "/register-to-vote",
         "/county-elections"
       ]
+    },
+    {
+      "id": 81,
+      "url": "https://keeptxred.com/shop/6a466888b706a0bfc50e0a2e",
+      "requiredText": [
+        "Selected option:",
+        "Made to order."
+      ],
+      "requiredLinks": [
+        "/shipping-policy",
+        "/return-refund-policy"
+      ],
+      "pendingRelease": true
     },
     {
       "id": 82,
@@ -484,32 +643,32 @@
     {
       "id": 85,
       "url": "https://www.keeptxred.com/news/2026-07-12-texas-a-m-officials-respond-to-project-launching-wine-grapes-into-space",
-      "expected": null,
-      "reason": "Unresolved historical article; no exact current/archived article or redirect record. Research equivalent content before any restoration."
+      "expected": "not-found-observed",
+      "reason": "Preserve observed 404 under historical recovery policy: original KTR text and source packet unavailable, no verified equivalent canonical; related June 17 Texas A&M wine-grape space research is not a current civic news story. Editorial disposition, not a preexisting registry record."
     },
     {
       "id": 86,
       "url": "https://www.keeptxred.com/news/2026-07-11-texas-judge-suspended-following-indictment-in-drug-possession-case",
-      "expected": null,
-      "reason": "Unresolved historical article; no exact current/archived article or redirect record. Research equivalent content before any restoration."
+      "expected": "not-found-observed",
+      "reason": "Existing article_url_registry retired_low_value disposition: original text/source packet unavailable and no surviving verified equivalent; do not restore merely because related disciplinary records exist."
     },
     {
       "id": 87,
       "url": "https://keeptxred.com/news/live-2026-07-11-unpacking-the-growth-of-texas-themed-mental-puzzles-and-digital-entert-pntib2",
-      "expected": null,
-      "reason": "Unresolved historical article; no exact current/archived article or redirect record. Research equivalent content before any restoration."
+      "expected": "not-found-observed",
+      "reason": "Preserve observed 404 under owner-directed lifestyle and puzzle-content retirement policy. No verified original or equivalent. Editorial disposition, not a preexisting registry record."
     },
     {
       "id": 88,
       "url": "https://keeptxred.com/news/2026-07-10-breaking-texas-officials-respond-to-fatal-ice-shooting-in-houston",
-      "expected": null,
-      "reason": "Unresolved historical article; no exact current/archived article or redirect record. Research equivalent content before any restoration."
+      "expected": "not-found-observed",
+      "reason": "Existing article_url_registry retired_low_value disposition: original text/source packet unavailable and no verified equivalent; related official statements do not establish the missing original article."
     },
     {
       "id": 90,
       "url": "https://keeptxred.com/news/2026-07-10-former-texas-tech-marketing-professor-pleads-guilty-to-drug-trafficking",
-      "expected": null,
-      "reason": "Unresolved historical article; no exact current/archived article or redirect record. Research equivalent content before any restoration."
+      "expected": "not-found-observed",
+      "reason": "Preserve observed 404 under historical recovery policy: original KTR text/source packet unavailable and no verified equivalent. Official DEA July 7 plea and DOJ October 23 sentencing are related but different historical events. Editorial disposition, not a preexisting registry record; any future reporting must use independently substantiated publication dates."
     },
     {
       "id": 57,
