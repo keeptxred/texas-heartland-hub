@@ -200,13 +200,13 @@ export const SEARCH_RECOVERY_AUTHORITY_GUIDES: Record<string, SearchRecoveryAuth
     "title": "Texas Campaign Finance 2026: How to Find Who Is Funding Candidates and PACs",
     "dek": "A practical guide to the Texas Ethics Commission campaign-finance database, including filer IDs, contributions, expenditures, cash on hand, duplicate disclosures, state-versus-local filing limits and reproducible research methods.",
     "eyebrow": "Texas public-record research guide",
-    "updated": "2026-09-28",
+    "updated": "2026-11-25",
     "keyTakeaways": [
       "The Texas Ethics Commission publishes campaign-finance reports filed with the commission, searchable reports and downloadable data.",
       "The TEC database is not a complete repository for every local Texas campaign filer; local reports may be held by the applicable local filing authority.",
       "Advanced transaction searches are most reliable when the correct filer ID and report context are preserved.",
       "Contribution totals, expenditure totals and cash on hand answer different questions and should not be used interchangeably.",
-      "KTR should publish the filing period, filer ID, metric and verification date whenever it summarizes campaign-finance data."
+      "Record the filer ID, report period, metric, verification date and link to the official filing."
     ],
     "snapshot": [
       {
@@ -230,35 +230,35 @@ export const SEARCH_RECOVERY_AUTHORITY_GUIDES: Record<string, SearchRecoveryAuth
         "heading": "Start with the filer, not a headline",
         "paragraphs": [
           "The Texas Ethics Commission provides searches by filer name, filer ID, treasurer name, report number and committee acronym. Once the correct filer is identified, the filer ID is the stable key for detailed transaction research and helps avoid mixing people or committees with similar names.",
-          "KTR should capture the filer ID with every structured profile and display the reporting period used for a calculation. That makes a result reproducible instead of asking a reader to trust an unexplained fundraising or spending number."
+          "Record the filer ID and confirm the office or committee before extracting a number. A similarly named person or committee may have a different filer ID. Keep the report date and reporting period with the result."
         ]
       },
       {
         "heading": "Contributions, expenditures and cash on hand are different metrics",
         "paragraphs": [
           "A contribution total describes reported receipts in a reporting context. An expenditure total describes reported spending. Cash on hand is a balance at a point in time. A campaign can raise substantial money and spend substantial money at the same time, so fundraising does not tell a reader what remains available.",
-          "TEC provides separate tools for contribution and expenditure totals and for contributions maintained. KTR headlines and charts should preserve those distinctions. Words such as raised, spent and cash on hand should only be used when the underlying field supports that description."
+          "Use the corresponding TEC search for the reported metric. Contributions maintained at the end of a period are not the total receipts during that period. Compare like periods and fields."
         ]
       },
       {
         "heading": "Why the same transaction can appear more than once",
         "paragraphs": [
           "TEC warns that some contributions or expenditures disclosed in special pre-election or special-session reports must also appear in later reports. That can produce duplicate-looking transactions. Advanced search controls therefore matter when data is being summed.",
-          "A naive total of every returned row can overstate activity. Before KTR publishes a derived total, the query method, date range, filer ID and duplicate-report treatment should be documented and compared with official report totals when possible."
+          "Open the underlying reports and check amendments and special reports before combining results. Document your filters and compare against the official reported totals instead of assuming that every returned transaction is a separate contribution."
         ]
       },
       {
         "heading": "State database coverage stops where local filing begins",
         "paragraphs": [
           "TEC states that only reports filed with the commission are available on its website. Local candidates or committees can file with a local authority instead. A missing TEC result therefore does not prove that no campaign-finance filing exists.",
-          "For local races, the research path can lead to a city, county, school district or other filing authority. KTR should say that no report was found in TEC when that is the fact, rather than saying no report exists unless the applicable local authority has also been checked."
+          "For a local office, identify the filing authority and request or search its available reports. Record which repositories were checked. A missing search result in the TEC database does not establish that the candidate filed nothing."
         ]
       },
       {
-        "heading": "A reproducible KTR campaign-finance record",
+        "heading": "Build a reproducible campaign-finance record",
         "paragraphs": [
-          "A useful KTR record should show filer name, filer ID, office or committee type, report period, contributions, expenditures and cash-on-hand data when available, with direct links to official reports. Transaction-level analysis should preserve the date range and search settings used.",
-          "Derived analysis should remain separate from the filing record. KTR can calculate trends or geographic shares, but it should describe what rows were included and excluded. That produces unique value while letting readers distinguish official disclosures from KTR calculations."
+          "Save the filer name and ID, report number and type, reporting period, metric, search filters, access date and original filing link. If an amended report supersedes an earlier one, retain the history but do not automatically sum both versions.",
+          "For example, suppose a hypothetical report shows $12,000 in contributions, $7,000 in expenditures and $9,000 in contributions maintained at period end. The $9,000 is a reported balance; it does not have to equal the $5,000 difference because starting balances and other reporting details matter. These are illustrative figures, not an actual candidate's disclosure."
         ],
         "bullets": [
           "Record filer ID and reporting period with every calculation.",
@@ -266,6 +266,13 @@ export const SEARCH_RECOVERY_AUTHORITY_GUIDES: Record<string, SearchRecoveryAuth
           "Check duplicate-report behavior before summing transactions.",
           "Keep contributions, expenditures and cash-on-hand labels distinct.",
           "Link the underlying report whenever a number appears."
+        ]
+      },
+      {
+        "heading": "Find the report and check its deadline",
+        "paragraphs": [
+          "Start at the official campaign-finance search page and open the report for the correct filer. The advanced transaction search and the filing schedules serve different purposes: one retrieves disclosed records, while the other identifies reporting obligations. Check the schedule applicable to the filer and election, not a deadline copied from another race.",
+          "Lobbyist registrations and activity reports are separate disclosure systems. A campaign contribution is not proof of a lobbying expenditure. The [Texas lobbying records guide](/texas-government/reference/texas-lobbying-2026) explains the corresponding distinction."
         ]
       }
     ],
@@ -283,8 +290,8 @@ export const SEARCH_RECOVERY_AUTHORITY_GUIDES: Record<string, SearchRecoveryAuth
         "a": "No. Contributions measure reported receipts in a reporting context, while cash on hand is a balance reported for a point in time."
       },
       {
-        "q": "What should KTR show beside campaign-finance numbers?",
-        "a": "At minimum: filer name, filer ID, reporting period, the metric, a verification date and a link to the official filing or search resource."
+        "q": "What details make a campaign-finance figure verifiable?",
+        "a": "The filer ID, report number or type, report period, metric, query settings, access date and official record link."
       }
     ],
     "sources": [
@@ -302,19 +309,29 @@ export const SEARCH_RECOVERY_AUTHORITY_GUIDES: Record<string, SearchRecoveryAuth
         "name": "Texas Ethics Commission — 2026 Contribution and Expenditure Totals",
         "url": "https://ethics.state.tx.us/search/cf/cANDelists2026-2022.php",
         "note": "Official 2026 report-total resources."
+      },
+      {
+        "name": "TEC — filing schedules",
+        "url": "https://www.ethics.state.tx.us/filinginfo/schedules/filing_schedules.php",
+        "note": "Official filer-specific schedules."
+      },
+      {
+        "name": "TEC — advanced search",
+        "url": "https://webservices.ethics.state.tx.us/search/cf/AdvancedSearch.php",
+        "note": "Detailed campaign-finance transaction research."
       }
     ],
     "related": [
       {
-        "label": "Texas Politics",
-        "href": "/texas-politics"
+        "label": "Texas lobbying records",
+        "href": "/texas-government/reference/texas-lobbying-2026"
       },
       {
-        "label": "Texas candidates",
-        "href": "/representatives"
+        "label": "Texas county elections",
+        "href": "/county-elections"
       },
       {
-        "label": "Texas races",
+        "label": "Texas political records",
         "href": "/texas-politics"
       }
     ],
@@ -811,7 +828,7 @@ export const SEARCH_RECOVERY_AUTHORITY_GUIDES: Record<string, SearchRecoveryAuth
     "title": "Texas Precinct Chairs and County Parties Explained: What They Do and How They’re Chosen",
     "dek": "A neutral guide to Texas county and precinct party offices, county executive committees, primary-election duties, conventions, vacancies, eligibility and the difference between a party office and a government office.",
     "eyebrow": "Texas election administration guide",
-    "updated": "2026-09-28",
+    "updated": "2026-11-25",
     "keyTakeaways": [
       "A precinct chair is a political-party office tied to a county election precinct, not a general county-government office.",
       "County executive committees are chaired by the county chair and include the party’s precinct chairs in that county.",
@@ -845,14 +862,14 @@ export const SEARCH_RECOVERY_AUTHORITY_GUIDES: Record<string, SearchRecoveryAuth
         "heading": "Eligibility and filing are party-office rules",
         "paragraphs": [
           "The Secretary of State’s 2026 candidate guide says a candidate for county or precinct chair must be a qualified voter of the county, and a precinct-chair candidate must reside in the relevant election precinct. The guide also describes restrictions involving candidacy for or holding certain other elective offices.",
-          "KTR should link current SOS guidance when discussing a filing deadline or eligibility rule rather than carrying a date or requirement forward from an older cycle."
+          "The 2026 primary cycle has passed. Do not assume the same filing dates apply to the next cycle. Check the current Secretary of State candidate guide, applicable statute and party filing authority for the particular office."
         ]
       },
       {
         "heading": "Party organization and election administration are connected but separate",
         "paragraphs": [
           "Texas primaries involve both political parties and public election infrastructure. County parties can contract for election services or participate in joint-primary arrangements, while county election officials and other authorities perform duties under the Election Code.",
-          "KTR can make the structure easier to understand by labeling the type of authority on every profile. A party role, county-government role and election-administration role should not be merged into one generic local-official label."
+          "When looking for an official, first determine whether the issue concerns party administration, a county governmental service or an election-administration duty. A county commissioner's office is not interchangeable with the party's county chair."
         ],
         "bullets": [
           "Label precinct chair and county chair as party offices.",
@@ -860,6 +877,14 @@ export const SEARCH_RECOVERY_AUTHORITY_GUIDES: Record<string, SearchRecoveryAuth
           "Use current SOS guidance for filing deadlines and eligibility.",
           "Separate party executive committees from county government bodies.",
           "Link primary-administration claims to the Election Code or SOS handbook."
+        ]
+      },
+      {
+        "heading": "Party affiliation, conventions and vacancies",
+        "paragraphs": [
+          "Voting in a party primary generally affiliates the voter with that party for that voting year. The Secretary of State's affiliation guidance explains how that affects subsequent primary or runoff participation. The general election is a separate election; primary affiliation does not dictate a voter's general-election choices.",
+          "Precinct conventions and county executive committee meetings are party functions governed by applicable law and party rules. A vacancy in a party office and a vacancy in a public nomination can involve different procedures. Identify the exact vacancy and consult the applicable rules; do not assume that the county commissioners court fills it.",
+          "For election location, registration or ballot administration, consult the relevant county elections office. For party office records or party meeting information, contact the applicable county party. For filing eligibility, consult official state guidance for the election cycle."
         ]
       }
     ],
@@ -896,6 +921,16 @@ export const SEARCH_RECOVERY_AUTHORITY_GUIDES: Record<string, SearchRecoveryAuth
         "name": "Texas Secretary of State — Laws and Procedures for County Chairs",
         "url": "https://www.sos.state.tx.us/elections/laws/chair-pol-par-laws.shtml",
         "note": "Current election advisories and resources for county party chairs."
+      },
+      {
+        "name": "Texas Election Code — Chapter 171",
+        "url": "https://statutes.capitol.texas.gov/Docs/EL/htm/EL.171.htm",
+        "note": "County party executive committee provisions."
+      },
+      {
+        "name": "Secretary of State — Party affiliation questions",
+        "url": "https://www.sos.state.tx.us/elections/laws/advisory2020-05.shtml",
+        "note": "Primary and runoff affiliation guidance."
       }
     ],
     "related": [

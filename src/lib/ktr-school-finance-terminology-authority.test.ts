@@ -14,7 +14,7 @@ describe("Phase 2A — school-finance and legislative-term source recovery", () 
       const article = ARTICLES.find(item => item.slug === slug);
       const body = ARTICLE_BODIES[slug];
       expect(article?.publishedAt).toBe(publishedAt);
-      expect(body.updated).toBe("2026-11-04");
+      expect(body.updated).toBe("2026-11-25");
       expect(articleMainWordCount(body)).toBeGreaterThanOrEqual(950);
       expect(hasMeaningfulArticleStructure(body)).toBe(true);
       expect(hasValidArticleSources(body)).toBe(true);

@@ -747,8 +747,8 @@ export const ARTICLES: Article[] = [
     slug: "texas-border-policy-full-guide",
     category: "Border",
     title:
-      "Texas Border Policy Explained: The Full Guide to Operation Lone Star, State Authority & the Rio Grande Fight",
-    dek: "The definitive Keep TX Red guide to Texas border policy in Houston, the Rio Grande Valley, and Austin — Operation Lone Star, state vs. federal authority, DPS, the Texas National Guard, and the 1,254-mile Rio Grande line.",
+      "Texas Border Policy: Operation Lone Star, SB 4 and State Spending",
+    dek: "A source-based guide to state and federal responsibilities, Operation Lone Star, 2026 reimbursement approval, SB 4 litigation and official spending records.",
     author: "Border Bureau",
     date: "June 27, 2026",
     publishedAt: "2026-06-27T09:00:00",

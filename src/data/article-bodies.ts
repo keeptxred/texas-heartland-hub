@@ -2997,7 +2997,7 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
   },
 
   "texas-border-geography-101": {
-    "updated": "2026-11-04",
+    "updated": "2026-11-25",
     "editorNote": "Substantively revised November 2026 against IBWC treaty and boundary material, CBP Border Patrol sector information, and Texas Comptroller ports data. Prior unsupported barrier percentages and river-depth claims were removed.",
     "intro": [
       "Texas's boundary with Mexico is a river boundary, a network of communities and crossings, and a collection of different federal and state jurisdictions—not a single uninterrupted fence or one Border Patrol office. The International Boundary and Water Commission (IBWC) describes the international line along the Rio Grande from the Gulf of Mexico to El Paso and explains how treaties address the river's shifting channel.",
@@ -3071,6 +3071,13 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
           "Use current flood and water condition guidance for river hazards, not a historical assertion about the river's depth.",
           "Separate state DPS or military-support actions from CBP immigration and customs responsibilities."
         ]
+      },
+      {
+        "heading": "Read crossing and trade data as separate records",
+        "paragraphs": [
+          "CBP's official border-wait-time service identifies reported waits by port, direction and traffic category. These operational estimates can change and are not annual cargo or passenger totals. Check the specific official source before relying on any current travel information.",
+          "For a historical comparison, record the source, reporting period and type of measure. The [border policy guide](/news/texas-border-policy-full-guide) distinguishes CBP statistics from Texas program reports."
+        ]
       }
     ],
     "faq": [
@@ -3119,6 +3126,10 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
       {
         "label": "CBP — Texas Tactical Infrastructure Environmental Assessment",
         "url": "https://www.cbp.gov/sites/default/files/documents/Texas%20TIMR%20Final%20EA%20and%20FONSI.pdf"
+      },
+      {
+        "label": "CBP — Border wait times",
+        "url": "https://bwt.cbp.gov/viewAllPorts"
       }
     ],
     "related": [
@@ -3133,7 +3144,7 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
   },
 
   "texas-school-finance-explained": {
-    "updated": "2026-11-04",
+    "updated": "2026-11-25",
     "editorNote": "Substantively revised November 2026 to reflect the current Education Code Chapter 48 funding framework, TEA Summary of Finances and the distinction between formula entitlement, local tax collections and recapture. Unsupported statewide recapture-dollar claims removed.",
     "intro": [
       "Texas public-school finance combines state funding formulas, local property taxes and different program allotments. Two districts can adopt similar tax rates yet receive different revenue per student because their enrollment, attendance, student needs, property wealth, debt and statutory formula entitlements differ. A single statewide spending-per-pupil number does not explain a district's actual finances.",
@@ -3214,6 +3225,13 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
           "This guide is not a current recapture ledger for every district and does not claim a statewide recapture total without a verified school-year report. A public-policy analysis should state exactly which formula, school year and accounting basis it uses. Statutory allotments can change, and temporary provisions may affect the next cycle.",
           "The strongest reader service is to show a district's official SOF beside its public board budget and explain which governmental body controls each decision. Texas Education Code Chapters 48 and 49, TEA's FSP materials and the local board's adopted financial records provide the essential evidence."
         ]
+      },
+      {
+        "heading": "2026 final compression rates and actual district tax rates",
+        "paragraphs": [
+          "TEA issued final 2026 maximum compressed rates, superseding the preliminary August 5 figures, and described updating Summary of Finances calculations before September FSP payments. An MCR is a formula-related rate, not the district's complete adopted tax rate or a particular taxpayer's bill.",
+          "Compare the final MCR notice, the district's adopted M&O and I&S rates, the relevant year's SOF and financial reports. Separate projected entitlements from actual collections. See the [school tax data guide](/news/isd-tax-burdens) and [property tax policy guide](/issues/texas-property-tax-relief) for related context."
+        ]
       }
     ],
     "faq": [
@@ -3262,6 +3280,14 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
       {
         "label": "Texas Comptroller — Property Tax Basics",
         "url": "https://comptroller.texas.gov/taxes/property-tax/basics.php"
+      },
+      {
+        "label": "TEA — Final 2026 maximum compressed tax rates",
+        "url": "https://tea2.tea.texas.gov/taa-letters/final-maximum-compressed-tax-rates-mcr-and-adoption-tax-rate-tax-year-2026"
+      },
+      {
+        "label": "TEA — HB 2 funding formula implementation",
+        "url": "https://tea.texas.gov/taa-letters/house-bill-2-hb-2-implementation-foundation-school-program-fsp-funding-formula-changes"
       }
     ],
     "related": [
@@ -3276,7 +3302,7 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
   },
 
   "texas-political-terminology": {
-    "updated": "2026-11-04",
+    "updated": "2026-11-25",
     "editorNote": "Substantively expanded November 2026 as a practical interpretation guide to Texas legislative and election terminology. Definitions checked against Texas Legislative Council, House and Secretary of State glossaries; historic date remains unchanged.",
     "intro": [
       "A Texas political headline can use familiar words that describe very different legal steps. A bill 'filed' is not a law passed, a 'committee substitute' can replace the text voters first read, and a 'proposition' on a ballot is not necessarily a constitutional amendment. Those distinctions determine whether a news report accurately describes what government has done.",
@@ -3358,6 +3384,14 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
           "For 'agency sunset,' identify the staff review, recommendation, enacted continuation bill or applicable expiration provision.",
           "Keep the relevant source links and dates so readers can reproduce the conclusion."
         ]
+      },
+      {
+        "heading": "Worked example: compare the versions of a proposal",
+        "paragraphs": [
+          "Imagine a filed bill would change a reporting deadline to June 1. A committee substitute changes the date to July 1, and the enrolled bill contains September 1. A headline quoting the original June 1 date would not accurately describe the final text. This is an illustrative example, not a real Texas bill.",
+          "The document sequence matters particularly as prefiled proposals for a future regular session begin appearing. Prefiling does not establish passage or an effective law. Use the exact session and version in [Texas bill research](/texas-government/reference/how-to-read-a-texas-bill).",
+          "For election terminology, distinguish party affiliation created through participation in a party primary from eligibility to vote in a general election. The Secretary of State's affiliation advisory explains the primary and runoff restrictions. Consult the official guidance for the relevant election."
+        ]
       }
     ],
     "faq": [
@@ -3406,6 +3440,10 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
       {
         "label": "Texas Sunset Advisory Commission",
         "url": "https://www.sunset.texas.gov/"
+      },
+      {
+        "label": "Secretary of State — Party affiliation questions",
+        "url": "https://www.sos.state.tx.us/elections/laws/advisory2020-05.shtml"
       }
     ],
     "related": [
@@ -4383,126 +4421,158 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
   },
 
   "texas-border-policy-full-guide": {
-    updated: "2026-06-27",
-    editorNote:
-      "This is a Keep TX Red pillar guide — updated June 2026 by our Border Bureau. We refresh it as Operation Lone Star deployments, federal litigation, and Rio Grande conditions change.",
-    intro: [
-      "No policy fight defines modern Texas like the border. The 1,254-mile line between Texas and Mexico runs from El Paso along the Rio Grande to the Gulf of Mexico — through ranchland, river towns, federal wildlife refuges, and the four most populous border metros in the United States. Roughly two-thirds of the entire southwest border is Texas alone, and the policy choices made in Austin reach further than most people in Washington understand.",
-      "Texas has spent more than $11 billion on state-funded border security since 2021 under Operation Lone Star — a deployment of the Department of Public Safety, the Texas Military Department, and county sheriffs that has fundamentally changed how Texans think about state sovereignty. This pillar guide walks through how it works, who runs it, what the law actually says, and where the policy fight is headed in 2026.",
+    "updated": "2026-11-25",
+    "editorNote": "Revised against dated federal and state records. Corrected the legislative session, litigation chronology, reimbursement status and geographic description. Historical reporting dates remain unchanged.",
+    "intro": [
+      "Texas border policy combines federal immigration and customs authority, state public-safety operations, local government responsibilities, appropriations and judicial review. Those responsibilities overlap geographically but do not constitute a single legal authority.",
+      "Operation Lone Star began in March 2021. Since then, state appropriations, federal reimbursement decisions and litigation have changed. This guide identifies the underlying official records rather than treating an undated cumulative statistic or political claim as a current measurement."
     ],
-    sections: [
+    "sections": [
       {
-        heading: "The 1,254-Mile Line: Geography First",
-        paragraphs: [
-          "Texas's border with Mexico is not a fence on a map. It is the Rio Grande itself — a winding, often shallow river that doubles as the international boundary from the New Mexico state line at El Paso all the way to the Gulf at Boca Chica. The river passes through nine Border Patrol sub-sectors, 28 international ports of entry, and some of the most rugged country in North America, including the Big Bend, where canyon walls drop a thousand feet into the water.",
-          "The four busiest crossing zones are the El Paso sector, the Big Bend sector, the Del Rio sector, and the Rio Grande Valley sector — and they look nothing alike. El Paso is urban, dense, and shares a metroplex with Ciudad Juárez. The RGV is agricultural, hot, and lined with colonias and small river towns. Big Bend is empty. Del Rio is the area where the 2021 Haitian migrant encampment forced a national reckoning.",
-        ],
+        "heading": "Geography and jurisdiction are different questions",
+        "paragraphs": [
+          "The International Boundary and Water Commission describes approximately 1,255 miles of international boundary following the Rio Grande from the Gulf to the El Paso region. Federal Border Patrol sectors associated with Texas include El Paso, Big Bend, Del Rio, Laredo and Rio Grande Valley; El Paso also covers part of New Mexico. These operational areas are not identical to counties or state legislative districts.",
+          "Designated ports of entry are administered through federal inspection authorities. Between-port patrol, a state public-safety deployment and a county criminal proceeding are distinct functions. Our [Texas border geography guide](/news/texas-border-geography-101) explains the differences in records and terminology."
+        ]
       },
       {
-        heading: "What Operation Lone Star Actually Is",
-        paragraphs: [
-          "Operation Lone Star (OLS) is the umbrella name for the state-funded border deployment Governor Greg Abbott launched in March 2021. It is not one agency or one mission — it is a coordinated, ongoing operation that pulls together:",
-        ],
-        bullets: [
-          "Texas Department of Public Safety (DPS) — state troopers patrolling river roads, working trafficking interdiction, and arresting trespassers under state law.",
-          "Texas Military Department (TMD) — Army and Air National Guard soldiers and airmen running observation posts, installing concertina wire, and operating boats on the river.",
-          "Texas Parks & Wildlife Game Wardens — water patrol and rural enforcement.",
-          "Local county sheriffs in Kinney, Val Verde, Maverick, Webb, Zapata, Starr, Hidalgo, and Cameron counties.",
-          "The Texas Facilities Commission, which builds and operates the state border wall and the buoy barrier on the Rio Grande near Eagle Pass.",
-        ],
-        table: {
-          headers: ["OLS Statistic (cumulative since March 2021)", "Reported Figure"],
-          rows: [
-            ["Migrant apprehensions / encounters", "550,000+"],
-            ["Criminal arrests", "50,000+"],
-            ["Felony charges filed", "45,000+"],
-            ["Fentanyl seized (lethal doses)", "Hundreds of millions"],
-            ["State funds appropriated", "$11+ billion"],
-          ],
-        },
+        "heading": "What Operation Lone Star is",
+        "paragraphs": [
+          "The governor announced Operation Lone Star in March 2021 as a state public-safety initiative involving the Texas Department of Public Safety and Texas Military Department. Official state notices describe deployments, grants, enforcement activity and related programs. The scope and staffing can change; a past announcement does not establish current staffing or the result of an individual case.",
+          "Read the dated announcement and identify which agency reported the measure. A reported arrest is not a conviction, a referral is not a final decision and an appropriation is not a completed project. The [DPS authority guide](/texas-government/agencies/texas-department-public-safety) explains the agency's public records and responsibilities."
+        ]
       },
       {
-        heading: "State vs. Federal: The Constitutional Question",
-        paragraphs: [
-          "Immigration enforcement is constitutionally a federal power. But Texas's argument — articulated by Governor Abbott in his 2024 invocation of Article I, Section 10 of the U.S. Constitution — is that when the federal government refuses to defend a state from an 'invasion,' the state retains a residual sovereign authority to defend itself. That clause reads, in part, that no state shall 'engage in War, unless actually invaded, or in such imminent Danger as will not admit of delay.'",
-          "The Biden-era Department of Justice sued Texas repeatedly over the buoy barrier, the concertina wire, and Senate Bill 4 — the 2023 law making illegal entry a state crime. The Fifth Circuit, the Supreme Court's shadow docket, and a series of injunctions ping-ponged the cases. The bottom line as of mid-2026: Texas has retained the buoys, kept most of the wire, and continues to make state-law trespass arrests, while SB4 remains the central legal flashpoint.",
-        ],
+        "heading": "September 18, 2026 — federal reimbursement approval",
+        "paragraphs": [
+          "On June 24, 2026, the governor's office announced a request for reimbursement of state border-security costs. On September 18, the governor announced that the Department of Homeland Security had approved $7.5 billion in reimbursement. These are dated official announcements. An approval should not be represented as cash already received or recorded in a particular state fund unless the corresponding accounting records establish that fact.",
+          "Distinguish legislative appropriations, actual eligible expenditures, a reimbursement request, an approved reimbursement and receipts posted to the state accounts. They measure different stages. Do not add an approved reimbursement to historical appropriations and call the sum current spending. Review official accounting reports and the underlying award documentation before calculating a net state cost."
+        ]
       },
       {
-        heading: "The State Border Wall",
-        paragraphs: [
-          "Texas has built and is building its own physical barrier — separate from the federal wall. The state wall is funded out of OLS appropriations and constructed by the Texas Facilities Commission on land where private owners, the General Land Office, or local governments grant access. Roughly 75 miles of state-funded wall has been constructed across multiple border counties, with hundreds of additional miles planned where rights-of-way can be secured.",
-          "The state wall does not require federal cooperation, which is the point. Texas treats it as a long-term capital investment in deterrence.",
-        ],
+        "heading": "SB 4: April and May 2026 orders",
+        "paragraphs": [
+          "The border-enforcement measure addressed here is Senate Bill 4 of the 88th Legislature's fourth called session, not the regular-session bill bearing the same number. Its official history identifies the enacted text and legislative actions. The litigation concerns the interaction of state criminal provisions and federal immigration authority.",
+          "On April 24, 2026, the en banc Fifth Circuit vacated a preliminary injunction in case 24-50149 on standing grounds. That procedural decision was not a final merits determination upholding every provision. A separate case, L.M.L. and K.G.S. v. Martin (1:26-cv-01170-DAE), produced a May 14 preliminary order concerning certain reentry and removal provisions. On May 29 the Fifth Circuit stayed that order pending appeal. The September 25 district-court docket entry is a later procedural filing, not by itself a final judgment.",
+          "These dates describe documented procedural events, not a guarantee about the enforceability of any provision today. Consult the latest orders, the particular provision and competent legal advice for a specific matter. The Municipal Courts Education Center maintains resources identifying the legislation and court chronology."
+        ]
       },
       {
-        heading: "Senate Bill 4: State Authority to Arrest and Remove",
-        paragraphs: [
-          "Senate Bill 4, passed in 2023 and signed by Governor Abbott, makes illegal entry into Texas from a foreign nation a state crime — a Class B misdemeanor for a first offense, escalating to a state jail felony for repeat offenses. It authorizes state magistrates to order removal to a Mexican port of entry as an alternative to prosecution.",
-          "SB4 is the most aggressive state immigration statute in modern American history. The legal fight over whether Texas can enforce it — and whether it survives federal preemption under Arizona v. United States (2012) — is one of the most important federalism cases of the decade.",
-        ],
+        "heading": "Separate federal data from state-reported activity",
+        "paragraphs": [
+          "CBP publishes southwest land-border encounter data with definitions, geographic groupings and reporting periods. A total can include repeated encounters with the same individual. A state agency's reported arrests, criminal charges or seizures use different definitions and may overlap other reporting systems. Do not sum these figures as if they were mutually exclusive people.",
+          "To compare periods, record the reporting agency, precise measure, dates and geographic scope. Check revisions, distinguish monthly totals from fiscal-year totals and identify whether a figure is a preliminary report or finalized series. A change in a count does not establish a single cause."
+        ]
       },
       {
-        heading: "Ports of Entry and Trade",
-        paragraphs: [
-          "Border policy is not just enforcement. The Texas border is also the largest land-trade interface in the Western Hemisphere. The Laredo port of entry — the World Trade Bridge and the Colombia Solidarity Bridge — handles more truck crossings than any other port in the United States, more than $300 billion in trade with Mexico annually. Mexico is the #1 trading partner of both the United States and the state of Texas.",
-          "That trade reality is why intelligent border policy distinguishes between the river itself, where unlawful crossings happen, and the ports of entry, where legitimate commerce, work visas, and lawful travel move. Conservative border policy in Texas — at its strongest — has done both: secured the river while keeping the ports moving.",
-        ],
+        "heading": "How lawmakers authorize and track costs",
+        "paragraphs": [
+          "The Legislature authorizes spending through the General Appropriations Act and related measures. The Legislative Budget Board provides official budget and fiscal materials. Agency procurement, grants and accounting records establish additional stages of implementation. The governor's fiscal year 2027 Operation Lone Star grant opportunity describes a specific grant program; it does not show that every potential award has been paid.",
+          "A fiscal note estimates a measure's fiscal impact under stated assumptions. A budget sets spending authority, while accounting records show actual transactions. Consult our [fiscal note guide](/texas-government/reference/texas-bill-fiscal-notes) before comparing forecasts with actual costs."
+        ]
       },
       {
-        heading: "Who Pays for It",
-        paragraphs: [
-          "Operation Lone Star is paid for out of the Texas General Revenue Fund — appropriated by the Legislature in successive biennia, with the 2023 session alone adding $5.1 billion in border security funding. That is roughly half of what some entire state agencies receive. The political consensus in Austin to keep funding it has held across two regular sessions and multiple special sessions, with bipartisan votes in the Texas House on key border appropriations.",
-        ],
+        "heading": "Public oversight and official records",
+        "paragraphs": [
+          "Infrastructure announcements, proposed contracts and completed work are not interchangeable. For a policy claim, identify the responsible agency, the dated authorization, contract or budget record, and evidence of implementation. Local governments may participate under separate grants and authorities; their costs cannot be assumed to equal state agency costs.",
+          "The governor's published Operation Lone Star updates are useful primary records of the executive branch's stated actions and reported measures. They are not independent judicial findings or proof of the effectiveness of every action. For public records and oversight processes, see our [Texas open meetings and public information guide](/news/texas-open-meetings-public-info)."
+        ]
       },
       {
-        heading: "What Comes Next",
-        paragraphs: [
-          "Three questions will define Texas border policy in 2026 and beyond. First, does the federal government — under any administration — return to operational control of the border, removing Texas's stated justification for OLS? Second, do the courts ultimately uphold or strike down SB4 and similar state-led enforcement? Third, does Texas continue to scale the state wall and buoy systems into a permanent fortified line, or does it draw down once federal posture changes?",
-          "Read our companion explainers on [Operation Lone Star](/news/border-security-state-role), the [Texas border geography](/news/texas-border-geography-101), and the [Texas border policy](/news/texas-border-policy-full-guide).",
-        ],
-      },
+        "heading": "How to evaluate a proposed policy change",
+        "paragraphs": [
+          "Start by identifying whether the proposal changes criminal law, an appropriation, administrative rules or federal coordination. Find its exact bill or order and check whether it has been adopted, when it becomes effective and whether an applicable court order changes implementation. Statements about anticipated legislation are not descriptions of current law.",
+          "Keep the policy question separate from personal legal eligibility. A public explanation of governmental responsibilities cannot establish an individual's immigration status, rights or obligations. For the original legislative record, use the [Texas bill research guide](/texas-government/reference/how-to-read-a-texas-bill)."
+        ]
+      }
     ],
-    faq: [
+    "faq": [
       {
-        q: "Is Operation Lone Star paid for with federal money?",
-        a: "No. OLS is funded entirely with Texas state appropriations. Texas has formally requested federal reimbursement and has been denied.",
+        "q": "What is Operation Lone Star?",
+        "a": "A state public-safety initiative announced in March 2021, involving DPS, the Texas Military Department and other governmental participants. Consult dated official updates for the scope of particular operations."
       },
       {
-        q: "Can Texas legally arrest people for illegal entry?",
-        a: "Texas argues yes, under SB4 and its sovereign self-defense authority. The federal government has challenged that position in court, and the litigation is ongoing.",
+        "q": "Was federal reimbursement approved?",
+        "a": "The governor announced DHS approval of $7.5 billion on September 18, 2026. Approval and actual recorded receipts are separate accounting events."
       },
       {
-        q: "Does Texas operate its own border wall?",
-        a: "Yes. The Texas Facilities Commission builds the state wall on private and state land, independent of the federal border wall.",
+        "q": "Which SB 4 concerns state border enforcement?",
+        "a": "SB 4 of the 88th Legislature's fourth called session (88(4)); use the exact session and bill history."
       },
       {
-        q: "How many troopers and Guard members are deployed?",
-        a: "OLS deployments have ranged from 5,000 to over 10,000 personnel at peak, including DPS, the Texas Military Department, and supporting agencies.",
+        "q": "Did the April 2026 decision resolve every constitutional issue?",
+        "a": "No. The en banc ruling addressed standing and vacated a preliminary injunction. Later proceedings and orders require separate review."
       },
       {
-        q: "Where does the Texas border actually run?",
-        a: "From the New Mexico line at El Paso, along the Rio Grande, to the Gulf of Mexico at Boca Chica — 1,254 miles total.",
+        "q": "Can state and federal reported numbers simply be added?",
+        "a": "No. Measures may count different events, cover different periods and overlap."
       },
+      {
+        "q": "Where can I verify border-related state spending?",
+        "a": "Use enacted appropriations, Legislative Budget Board records, agency expenditure and grant records, and official state accounting reports."
+      }
     ],
-    sources: [
+    "sources": [
       {
-        label: "Office of the Texas Governor — Operation Lone Star",
-        url: "https://gov.texas.gov/news/category/operation-lone-star",
-      },
-      { label: "Texas Department of Public Safety", url: "https://www.dps.texas.gov/" },
-      { label: "Texas Military Department", url: "https://tmd.texas.gov/" },
-      {
-        label: "Senate Bill 4 (88R)",
-        url: "https://capitol.texas.gov/BillLookup/History.aspx?LegSess=88R&Bill=SB4",
+        "label": "IBWC — About us",
+        "url": "https://www.ibwc.gov/about-us/"
       },
       {
-        label: "U.S. Customs and Border Protection — Southwest Border Sectors",
-        url: "https://www.cbp.gov/newsroom/stats/southwest-land-border-encounters",
+        "label": "CBP — Border Patrol sectors",
+        "url": "https://www.cbp.gov/border-security/along-us-borders/border-patrol-sectors"
       },
+      {
+        "label": "CBP — Southwest land border encounters",
+        "url": "https://www.cbp.gov/newsroom/stats/southwest-land-border-encounters"
+      },
+      {
+        "label": "Governor — Operation Lone Star updates",
+        "url": "https://gov.texas.gov/news/category/operation-lone-star"
+      },
+      {
+        "label": "Governor — June 24 reimbursement request",
+        "url": "https://gov.texas.gov/es/news/post/governor-abbott-submits-request-for-reimbursement-of-state-border-security-costs"
+      },
+      {
+        "label": "Governor — September 18 reimbursement announcement",
+        "url": "https://gov.texas.gov/es/news/post/governor-abbott-delivers-historic-7.5-billion-border-security-reimbursement"
+      },
+      {
+        "label": "Texas Legislature Online — SB 4 (88(4))",
+        "url": "https://capitol.texas.gov/billlookup/History.aspx?Bill=SB4&LegSess=884"
+      },
+      {
+        "label": "Texas Municipal Courts Education Center — SB 4 resources",
+        "url": "https://www.tmcec.com/resources/sb4/"
+      },
+      {
+        "label": "Federal district court docket — procedural record",
+        "url": "https://dockets.justia.com/docket/texas/txwdce/1%3A2026cv01170/1172905663"
+      },
+      {
+        "label": "Legislative Budget Board",
+        "url": "https://www.lbb.texas.gov/"
+      },
+      {
+        "label": "Texas FY 2027 Operation Lone Star grant program",
+        "url": "https://egrants.gov.texas.gov/fundingopp/page/operation-lone-star-grant-program-ols-fy2027"
+      }
     ],
-    related: ["operation-lone-star", "border-security-state-role", "texas-border-geography-101"],
-    cta: { label: "Contact Your Texas Legislators", href: "/contact-legislators" },
+    "related": [
+      "texas-border-geography-101",
+      "border-security-state-role",
+      "texas-open-meetings-public-info"
+    ],
+    "cta": {
+      "label": "Explore Texas public-safety and policy sources",
+      "href": "/texas-government"
+    },
+    "keyTakeaways": [
+      "Texas state public-safety authority and federal immigration authority are distinct.",
+      "The September 18, 2026 reimbursement announcement reported $7.5 billion approved; approval does not prove posted receipts.",
+      "SB 4 was enacted in the 88th Legislature's fourth called session.",
+      "The April and May 2026 orders describe procedural developments, not a final universal merits judgment."
+    ]
   },
 
   "texas-energy-economy-overview": {
