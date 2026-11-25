@@ -1,5 +1,6 @@
 import type { AgencyAuthorityProfile } from "@/data/agency-authority";
 import { upgradeAgencyAuthorityProfile } from "@/data/agency-authority-upgrades";
+import { getAgencyPracticalGuide } from "@/data/agency-practical-guides";
 import { getAgencyAuthoritySupplement } from "@/data/agency-authority-supplements";
 
 export const MIN_AGENCY_AUTHORITY_WORDS = 700;
@@ -9,7 +10,7 @@ function words(value: string) {
 }
 
 function effectiveProfile(profile: AgencyAuthorityProfile) {
-  return profile.reviewed === "2026-08-20" ? profile : upgradeAgencyAuthorityProfile(profile);
+  return upgradeAgencyAuthorityProfile(profile);
 }
 
 export function agencyAuthorityWordCount(profile: AgencyAuthorityProfile) {
@@ -24,6 +25,7 @@ export function agencyAuthorityWordCount(profile: AgencyAuthorityProfile) {
     ...effective.accountability,
     ...effective.programs,
     ...getAgencyAuthoritySupplement(effective.slug),
+    ...getAgencyPracticalGuide(effective.slug).flatMap((item) => [item.question, item.explanation]),
     ...effective.sources.map((source) => source.label),
   ].join(" "));
 }
