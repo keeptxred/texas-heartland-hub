@@ -1,5 +1,5 @@
 {
-  "note": "reviewed is a substantiated editorial review date, not an automatic crawl date; null means release/editorial verification pending. Add reviewed destinations as they are verified. Never advance dates solely because a source returns HTTP 200.",
+  "note": "reviewed is a substantiated editorial review date, not an automatic crawl date; null means release/editorial verification pending. Add reviewed destinations as they are verified. Never advance dates solely because a source returns HTTP 200. Four November 25 revisions remain null until their release evidence is obtained. Historical election guides are not rewritten as current deadlines.",
   "records": [
     {
       "path": "/register-to-vote",
@@ -26,7 +26,7 @@
     },
     {
       "path": "/bills",
-      "reviewed": null,
+      "reviewed": "2026-11-24",
       "reviewDays": 30,
       "group": "legislative-reference",
       "sources": [
@@ -36,7 +36,7 @@
     },
     {
       "path": "/texas-legislature",
-      "reviewed": null,
+      "reviewed": "2026-11-24",
       "reviewDays": 30,
       "group": "legislative-reference",
       "sources": [
@@ -46,7 +46,7 @@
     },
     {
       "path": "/texas-government/reference/how-to-read-a-texas-bill",
-      "reviewed": null,
+      "reviewed": "2026-11-24",
       "reviewDays": 90,
       "group": "legislative-reference",
       "sources": [
@@ -57,7 +57,7 @@
     },
     {
       "path": "/texas-government/reference/texas-bill-fiscal-notes",
-      "reviewed": null,
+      "reviewed": "2026-11-24",
       "reviewDays": 90,
       "group": "legislative-reference",
       "sources": [
@@ -91,6 +91,132 @@
         "https://www.harrisvotes.com/Voter/Election-Information",
         "https://porthouston.com/about/public-meetings/agendas-minutes/",
         "https://www.houstontx.gov/pia"
+      ]
+    },
+    {
+      "path": "/news/beginners-guide-texas-elections",
+      "reviewed": "2026-11-24",
+      "reviewDays": 90,
+      "group": "voter-resources",
+      "sources": [
+        "https://www.votetexas.gov/register-to-vote/",
+        "https://www.votetexas.gov/faq/registration",
+        "https://www.sos.state.tx.us/elections/voter/important-election-dates.shtml"
+      ]
+    },
+    {
+      "path": "/news/texas-voter-registration-guide",
+      "reviewed": "2026-11-24",
+      "reviewDays": 30,
+      "group": "voter-resources",
+      "sources": [
+        "https://www.votetexas.gov/register-to-vote/",
+        "https://www.votetexas.gov/faq/registration",
+        "https://www.sos.state.tx.us/elections/voter/important-election-dates.shtml"
+      ]
+    },
+    {
+      "path": "/news/primary-vs-general-election",
+      "reviewed": "2026-11-24",
+      "reviewDays": 90,
+      "group": "voter-resources",
+      "sources": [
+        "https://www.sos.state.tx.us/elections/",
+        "https://www.votetexas.gov/faq/"
+      ]
+    },
+    {
+      "path": "/news/texas-voting-guide-2026",
+      "reviewed": "2026-11-24",
+      "reviewDays": 180,
+      "group": "historical-election-reference",
+      "sources": [
+        "https://www.sos.state.tx.us/elections/voter/important-election-dates.shtml",
+        "https://www.sos.state.tx.us/elections/historical/elections-results-archive.shtml",
+        "https://www.votetexas.gov/voting-by-mail/eligibility-requirements.html"
+      ]
+    },
+    {
+      "path": "/find-representative",
+      "reviewed": "2026-11-24",
+      "reviewDays": 30,
+      "group": "district-lookup",
+      "sources": [
+        "https://geocoding.geo.census.gov/geocoder/Geocoding_Services_API.html",
+        "https://tigerweb.geo.census.gov/arcgis/rest/services/TIGERweb/Legislative/MapServer",
+        "https://wrm.capitol.texas.gov/",
+        "https://www.house.gov/representatives/find-your-representative"
+      ]
+    },
+    {
+      "path": "/data",
+      "reviewed": "2026-11-24",
+      "reviewDays": 90,
+      "group": "public-data",
+      "sources": [
+        "https://comptroller.texas.gov/taxes/property-tax/rates/",
+        "https://lbb.texas.gov/budget.aspx",
+        "https://www.sos.state.tx.us/elections/historical/index.shtml",
+        "https://www.ercot.com/gridinfo"
+      ]
+    },
+    {
+      "path": "/news/isd-tax-burdens",
+      "reviewed": "2026-11-15",
+      "reviewDays": 30,
+      "group": "school-tax-data",
+      "sources": [
+        "https://tea.texas.gov/taa-letters/final-maximum-compressed-tax-rates-mcr-and-adoption-tax-rate-tax-year-2026",
+        "https://tea.texas.gov/about-tea/state-funding/ty2026-final-mcrs.pdf",
+        "https://comptroller.texas.gov/taxes/property-tax/rates/index.php"
+      ]
+    },
+    {
+      "path": "/news/texas-open-meetings-public-info",
+      "reviewed": null,
+      "reviewDays": 90,
+      "group": "legal-reference",
+      "sources": [
+        "https://statutes.capitol.texas.gov/?chapter=GV.551&code=GV&tab=1",
+        "https://statutes.capitol.texas.gov/Docs/GV/htm/GV.552.htm",
+        "https://www.texasattorneygeneral.gov/open-government/members-public/overview-public-information-act",
+        "https://www.texasattorneygeneral.gov/open-government/members-public/requestors-rights"
+      ]
+    },
+    {
+      "path": "/news/texas-water-rights-explained",
+      "reviewed": null,
+      "reviewDays": 90,
+      "group": "legal-reference",
+      "sources": [
+        "https://statutes.capitol.texas.gov/GetStatute.aspx?Code=WA&Value=36.351",
+        "https://www.tceq.texas.gov/permitting/water_rights/wr-permitting/wr_amiregulated.html",
+        "https://www.twdb.texas.gov/groundwater/faq/faqgwm.asp",
+        "https://www.ibwc.gov/treaties"
+      ]
+    },
+    {
+      "path": "/news/school-choice-esa-guide",
+      "reviewed": null,
+      "reviewDays": 30,
+      "group": "education-program",
+      "sources": [
+        "https://educationfreedom.texas.gov/",
+        "https://educationfreedom.texas.gov/families/",
+        "https://comptroller.texas.gov/economy/fiscal-notes/government/2026/esa-ftd/"
+      ]
+    },
+    {
+      "path": "/news/texas-grid-ercot-explained",
+      "reviewed": null,
+      "reviewDays": 90,
+      "group": "grid-reference",
+      "sources": [
+        "https://www.ercot.com/about",
+        "https://www.ercot.com/gridinfo",
+        "https://www.ferc.gov/industries-data/electric/electric-power-markets/ercot",
+        "https://www.ferc.gov/reliability-explainer",
+        "https://www.puc.texas.gov/"
       ]
     }
   ]
