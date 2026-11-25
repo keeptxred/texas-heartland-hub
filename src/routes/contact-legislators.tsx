@@ -107,6 +107,8 @@ function ContactPage() {
           ]}
         />
 
+        <section className="rounded-xl border bg-card p-5" aria-label="Legislative questions versus constituent services"><h2 className="font-display text-2xl">Legislative questions versus constituent services</h2><p className="mt-3 text-sm leading-7">An issue about a pending state bill belongs with the relevant state legislative office or committee; a federal agency case belongs with a federal congressional office or the agency involved. A local tax, utility or school issue may instead belong with the responsible local body. Verify the office and use its official contact channel. Do not send sensitive case documents to a public hearing or a general website feedback address.</p><p className="mt-3 text-sm"><a href="/texas-government" className="text-primary underline">Texas government authority directory</a> · <a href="/texas-government/reference/how-to-read-a-texas-bill" className="text-primary underline">Bill research guide</a> · <a href="https://capitol.texas.gov/resources/contactText.aspx" className="text-primary underline">Official legislative contact guidance</a></p></section>
+
         <CitationTrustPanel
           sources={[
             { name: "Texas Legislature Online — Contact", url: TLO_CONTACT, note: "Official guidance for contacting members or committees about legislative issues." },
@@ -115,7 +117,7 @@ function ContactPage() {
             { name: "Texas Legislature Online", url: TLO_HOME, note: "Official bills, calendars, committees, journals and legislative records." },
           ]}
           methodology="Keep TX Red uses official Legislature sources for contact, committee and witness-registration process claims. The sample script is practical editorial guidance, not a claim that any particular method, timing or volume of contacts will produce a legislative outcome."
-          lastVerified="August 20, 2026"
+          lastVerified="November 25, 2026"
           title="Legislator contact sources and methodology"
         />
       </main>
