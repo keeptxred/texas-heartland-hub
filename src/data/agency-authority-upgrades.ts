@@ -219,6 +219,7 @@ const EXPANSIONS: Record<string, AgencyExpansion> = {
 };
 
 export function upgradeAgencyAuthorityProfile(profile: AgencyAuthorityProfile): AgencyAuthorityProfile {
+  if (profile.reviewed === "2026-08-20" || profile.reviewed === "2026-11-25") return profile;
   const expansion = EXPANSIONS[profile.slug];
   if (!expansion) return profile;
   return {
