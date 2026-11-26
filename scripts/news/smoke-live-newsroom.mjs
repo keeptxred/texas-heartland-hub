@@ -249,10 +249,15 @@ async function checkRecentNewsEditorialRestoration() {
     {
       slug: "2026-11-07-thompson-claims-votes-to-become-texas-house-speaker",
       markers: [
-        "Impact on Texans: what the speaker decision actually changes",
-        "house.texas.gov/speaker",
+        "Pledges are not a formal election",
+        "November 10 transition announcement",
+        "not an official speaker election or independently audited pledge count",
+        "A pledge is not a recorded House vote.",
+        "quorumreport.com/downloadit.cfm?DocID=11943",
+        "house.texas.gov/members/4630/biography",
         "Senfronia_Thompson_2757_",
       ],
+      heldForReview: true,
     },
     {
       slug: "2026-11-07-tx-dems-sweep-statewide-races-for-first-time-in-generation",
