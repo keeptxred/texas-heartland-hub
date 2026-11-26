@@ -184,9 +184,6 @@ for (let cycle = 1; cycle <= maxCycles; cycle++) {
     console.log('Bounded maintenance time budget reached; next schedule resumes backlog');
     break;
   }
-  // First prove both direct kinds with real Storage readback and locked
-  // retirement in the original cycle budget. Never accelerate on mock proof.
-  if (cycle > cycles && provedDirectKinds.size !== 2) break;
   const before = await sizeSnapshot();
   const existing = await stagedMetadata();
   // Staging temporarily duplicates old evidence in PostgreSQL. Refuse NEW
@@ -194,11 +191,13 @@ for (let cycle = 1; cycle <= maxCycles; cycle++) {
   // of a previously staged verified batch; otherwise an interrupted run could
   // leave the database permanently stuck above this limit.
   if (!existing.length && STRICT_LIMIT - before < MIN_HEADROOM) {
-    const kind = cycle % 2 === 1 ? 'newsroom' : 'feed';
-    if (exhaustedDirectKinds.has(kind)) {
-      if (exhaustedDirectKinds.size === 2) break;
-      continue;
-    }
+    let kind = cycle % 2 === 1 ? 'newsroom' : 'feed';
+    if (exhaustedDirectKinds.size === 2) break;
+    // An exhausted shard must not prevent the other kind from draining.
+    if (exhaustedDirectKinds.has(kind)) kind = kind === 'feed' ? 'newsroom' : 'feed';
+    // Beyond the original budget, each selected kind must already have
+    // performed an actual exact Storage readback and locked retirement.
+    if (cycle > cycles && !provedDirectKinds.has(kind)) break;
     const limit = kind === 'newsroom' ? MAX_STAGE_NEWSROOM : MAX_STAGE_FEED;
     // Pending staged claims always take priority. Same age/reference guards.
     const direct = await archiveDirectColdKind(db, kind, limit, { retire: true });
