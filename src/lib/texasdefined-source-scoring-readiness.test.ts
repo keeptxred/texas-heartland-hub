@@ -17,6 +17,10 @@ describe("deployed TexasDefined primary-source scoring handshake", () => {
   });
   it("safely probes the released Worker before calling the source scoring POST", () => {
     expect(workflow).toContain("texasdefined-source-scoring-readiness");
+    expect(workflow).toContain('origin="https://keeptxred.com"');
+    expect(workflow).not.toContain('origin="https://keeptxred-site.freddy-coppola.workers.dev"');
+    expect(workflow).toContain('"${origin}/api/public/hooks/score-viral?mode=td-source-routing"');
+    expect(workflow).not.toContain("--location");
     expect(workflow).toContain('readiness=0');
     expect(workflow).toContain('readiness=1');
     expect(workflow).toContain('if [[ "$readiness" != 1 ]]');
