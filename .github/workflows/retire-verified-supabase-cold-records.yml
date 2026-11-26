@@ -7,10 +7,14 @@ on:
         required: false
         type: string
         default: ''
+  # Exact repository-owner command for immediate verified recovery.
+  issue_comment:
+    types: [created]
   schedule:
     # 12 opportunities/day while backlog and quota pressure are high.
     # Public-repository GitHub Actions; strict concurrency prevents overlap.
-    # Existing 2/4 sequential cycles per run, never more than 25 minutes.
+    # Existing 2/4 staged cycles; up to 24 direct cycles only after live proof.
+    # Never more than 25 minutes, no parallel archive operations.
     - cron: '27 */2 * * *'
   # Recovery opportunity if GitHub delays or drops a scheduled archive.
   # Source is a first-party schedule-only run, never a fork/PR artifact.
@@ -37,7 +41,14 @@ permissions:
 
 # Archive staging must never overlap a second export/retirement sequence.
 concurrency:
-  group: shared-supabase-verified-cold-retention
+  group: >-
+    ${{ github.event_name == 'issue_comment' &&
+        (github.event.issue.number != 2762 ||
+         github.event.comment.user.login != 'keeptxred' ||
+         github.event.comment.body != '/retire-verified-cold-records' ||
+         github.event.issue.pull_request != null) &&
+        format('ignored-retention-comment-{0}', github.run_id) ||
+        'shared-supabase-verified-cold-retention' }}
   cancel-in-progress: false
 
 jobs:
@@ -47,11 +58,17 @@ jobs:
       (github.event_name != 'workflow_run' ||
       (github.event.workflow_run.event == 'schedule' &&
        github.event.workflow_run.head_repository.full_name == 'keeptxred/texas-heartland-hub' &&
-       github.event.workflow_run.head_branch == 'main'))
+       github.event.workflow_run.head_branch == 'main')) &&
+      (github.event_name != 'issue_comment' ||
+      (github.ref == 'refs/heads/main' &&
+       github.event.issue.number == 2762 &&
+       github.event.issue.pull_request == null &&
+       github.event.comment.user.login == 'keeptxred' &&
+       github.event.comment.body == '/retire-verified-cold-records'))
     runs-on: ubuntu-latest
     timeout-minutes: 3
     outputs:
-      run_archive: ${{ steps.decide.outputs.run_archive }}
+      run_archive: ${{ steps.owner.outputs.run_archive || steps.decide.outputs.run_archive }}
     steps:
       - uses: actions/checkout@v5
       - name: Require the protected dispatch revision
@@ -66,8 +83,34 @@ jobs:
             [[ "$GITHUB_SHA" == "$EXPECTED_SHA" ]]
             [[ "$(git rev-parse HEAD)" == "$EXPECTED_SHA" ]]
           fi
+      - name: Require exact protected-main health for owner-triggered recovery
+        id: owner
+        if: github.event_name == 'issue_comment'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          OWNER_LOGIN: ${{ github.event.comment.user.login }}
+          OWNER_ISSUE: ${{ github.event.issue.number }}
+          OWNER_BODY: ${{ github.event.comment.body }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          [[ "$GITHUB_REPOSITORY" == 'keeptxred/texas-heartland-hub' ]]
+          [[ "$GITHUB_REF" == 'refs/heads/main' ]]
+          [[ "$OWNER_LOGIN" == 'keeptxred' && "$OWNER_ISSUE" == '2762' && "$OWNER_BODY" == '/retire-verified-cold-records' ]]
+          [[ "$(git rev-parse HEAD)" == "$GITHUB_SHA" ]]
+          [[ "$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/main" --jq '.object.sha')" == "$GITHUB_SHA" ]]
+          health="$(gh api "repos/$GITHUB_REPOSITORY/actions/workflows/shared-vitest.yml/runs?branch=main&head_sha=$GITHUB_SHA&status=success&per_page=20" | jq -r --arg sha "$GITHUB_SHA" --arg repo "$GITHUB_REPOSITORY" '[.workflow_runs[] | select(.head_sha == $sha and .head_repository.full_name == $repo and (.event == "push" or .event == "workflow_dispatch") and .conclusion == "success") | .id] | first // empty')"
+          [[ -n "$health" ]] || { echo 'Exact main health has not passed; refusing owner-triggered recovery.'; exit 1; }
+          changed="$(gh api "repos/$GITHUB_REPOSITORY/commits/$GITHUB_SHA" --jq '.files[].filename')"
+          if grep -Eq '^(supabase/migrations/|[.]github/workflows/apply-supabase-migrations[.]yml$)' <<<"$changed"; then
+            migration="$(gh api "repos/$GITHUB_REPOSITORY/actions/workflows/apply-supabase-migrations.yml/runs?branch=main&head_sha=$GITHUB_SHA&status=success&per_page=20" | jq -r --arg sha "$GITHUB_SHA" --arg repo "$GITHUB_REPOSITORY" '[.workflow_runs[] | select(.head_sha == $sha and .head_repository.full_name == $repo and (.event == "push" or .event == "workflow_dispatch") and .conclusion == "success") | .id] | first // empty')"
+            [[ -n "$migration" ]] || { echo 'Exact applied migration gate missing; refusing archive.'; exit 1; }
+            gh api "repos/$GITHUB_REPOSITORY/actions/runs/$migration/jobs" | jq -e '.jobs | any(.conclusion == "success" and ([.steps[] | select(.name == "Apply pending production migrations" and .conclusion == "success")] | length == 1) and ([.steps[] | select(.name == "Verify migration state" and .conclusion == "success")] | length == 1))' >/dev/null
+          fi
+          echo 'run_archive=true' >> "$GITHUB_OUTPUT"
       - name: Skip fallback if a verified archive completed in the past 90 minutes
         id: decide
+        if: github.event_name != 'issue_comment'
         env:
           GITHUB_TOKEN: ${{ github.token }}
           WORKFLOW_RUN_SOURCE_EVENT: ${{ github.event.workflow_run.event }}
