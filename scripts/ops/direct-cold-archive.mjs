@@ -88,6 +88,8 @@ export async function archiveDirectColdKind(db, kind, limit, { retire = false, f
   }
   const payload = checked('Direct cold snapshot', snapshot);
   const { parents, rows } = validateDirectSnapshot(payload, kind, effectiveLimit);
+  if (feedShard !== null && JSON.parse(payload).parent_ids.some(id => Number(BigInt(id) % 32n) !== feedShard))
+    throw new Error('Snapshot parent outside requested feed shard');
   if (!parents) return { parents: 0, rows: 0, retired: 0, manifest: null };
   const bucketMeta = checked('Private bucket check', await db.storage.getBucket(BUCKET));
   if (bucketMeta?.id !== BUCKET || bucketMeta.public !== false)
