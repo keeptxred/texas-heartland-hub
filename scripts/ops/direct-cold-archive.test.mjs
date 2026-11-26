@@ -82,6 +82,46 @@ describe('direct private cold archive',()=>{
       expect(files.size).toBe(0);expect(calls.length).toBe(0);
     }
   });
+  it('retries only a canceled dry-run with identical proof before retirement',async()=>{
+    const {db,calls}=fixture();
+    const rpc=db.rpc, attempts=[];
+    db.rpc=async(name,args)=>{
+      if(name==='verify_direct_cold_retirement' && !args.p_retire && args.p_payload===payload){
+        attempts.push({...args});
+        if(attempts.length===1)return {error:{code:'57014'}};
+      }
+      return rpc(name,args);
+    };
+    expect((await archiveDirectColdKind(db,'feed',50,{retire:true})).retired).toBe(1);
+    expect(attempts).toHaveLength(2);expect(attempts[1]).toEqual(attempts[0]);
+    expect(calls.map(c=>c.p_retire)).toEqual([false,false,true]);
+  });
+  it('never retires after repeated or non-cancellation dry-run failure',async()=>{
+    for(const code of ['57014','P0001','42501']){
+      const {db,calls}=fixture();
+      const rpc=db.rpc, attempts=[];
+      db.rpc=async(name,args)=>{
+        if(name==='verify_direct_cold_retirement' && !args.p_retire && args.p_payload===payload){
+          attempts.push(args);return {error:{code}};
+        }
+        return rpc(name,args);
+      };
+      await expect(archiveDirectColdKind(db,'feed',50,{retire:true})).rejects.toThrow();
+      expect(attempts).toHaveLength(code==='57014'?2:1);
+      expect(calls.some(c=>c.p_retire)).toBe(false);
+    }
+  });
+  it('does not automatically retry a failed retirement RPC',async()=>{
+    const {db}=fixture(), rpc=db.rpc, attempts=[];
+    db.rpc=async(name,args)=>{
+      if(name==='verify_direct_cold_retirement' && args.p_retire){
+        attempts.push(args);return {error:{code:'57014'}};
+      }
+      return rpc(name,args);
+    };
+    await expect(archiveDirectColdKind(db,'feed',50,{retire:true})).rejects.toThrow();
+    expect(attempts).toHaveLength(1);
+  });
   it('is read-only unless explicitly activated',async()=>{
     const {db,calls}=fixture();
     expect((await archiveDirectColdKind(db,'feed',50)).retired).toBe(0);
