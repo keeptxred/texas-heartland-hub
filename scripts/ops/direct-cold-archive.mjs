@@ -124,8 +124,15 @@ export async function archiveDirectColdKind(db, kind, limit, { retire = false, f
   if (tampered.error?.code !== 'P0001' ||
       !/Direct manifest does not match snapshot/.test(tampered.error.message || ''))
     throw new Error('Direct archive tamper rejection was not proven');
-  const dry = checked('Direct archive transactional dry-run',
-    await db.rpc('verify_direct_cold_retirement', args));
+  let dryResponse = await db.rpc('verify_direct_cold_retirement', args);
+  // A dry-run transaction cannot retire rows. Retry only a confirmed SQLSTATE
+  // cancellation once, against the same immutable readback and proof. Never
+  // retry an ambiguous transport error or a p_retire=true request here.
+  if (dryResponse.error?.code === '57014') {
+    console.warn('Direct archive transactional dry-run timed out; retry once with identical proof');
+    dryResponse = await db.rpc('verify_direct_cold_retirement', args);
+  }
+  const dry = checked('Direct archive transactional dry-run', dryResponse);
   assertVerification(dry, parents, manifestName, 0);
   if (!retire) return { parents, rows, retired: 0, manifest: manifestName };
   // The RPC reacquires locks and repeats the exact parity/reference checks.
