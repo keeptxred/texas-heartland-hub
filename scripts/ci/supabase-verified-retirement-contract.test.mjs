@@ -40,6 +40,16 @@ describe('verified Free Plan retirement invariants', () => {
     assert.match(exporter,/verifyArchiveBlob\(downloaded,slice\)/);
     assert.match(exporter,/storeAndReadBack\(manifestName, manifestBytes/);
   });
+  it('extends only verified direct retirement during critical pressure', () => {
+    assert.match(runner,/const DIRECT_PRESSURE_CYCLES = 24/);
+    assert.match(runner,/const DIRECT_DRAIN_BUDGET_MS = 17 \* 60 \* 1000/);
+    assert.match(runner,/const maxCycles = initial >= STRICT_LIMIT \? DIRECT_PRESSURE_CYCLES : cycles/);
+    assert.match(runner,/Date\.now\(\) - drainStarted >= DIRECT_DRAIN_BUDGET_MS/);
+    assert.match(runner,/if \(!existing.length && STRICT_LIMIT - before < MIN_HEADROOM\)/);
+    assert.match(runner,/archiveDirectColdKind\(db, kind, limit, \{ retire: true \}\)/);
+    assert.match(runner,/if \(cycle > cycles && !existing.length\) break/);
+    assert.match(runner,/if \(direct.parents === 0\) exhaustedDirectKinds.add\(kind\)/);
+  });
   it('serializes runs, refuses cancellation and preserves daily article backup', () => {
     assert.match(workflow,/shared-supabase-verified-cold-retention/);
     assert.ok(workflow.includes("cron: '27 */2 * * *'"), '2-hour protected archival cadence required while backlog is high');
