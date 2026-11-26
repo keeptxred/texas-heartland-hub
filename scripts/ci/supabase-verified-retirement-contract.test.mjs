@@ -46,12 +46,15 @@ describe('verified Free Plan retirement invariants', () => {
     assert.match(runner,/const maxCycles = initial >= STRICT_LIMIT \? DIRECT_PRESSURE_CYCLES : cycles/);
     assert.match(runner,/Date\.now\(\) - drainStarted >= DIRECT_DRAIN_BUDGET_MS/);
     assert.match(runner,/if \(!existing.length && STRICT_LIMIT - before < MIN_HEADROOM\)/);
-    assert.match(runner,/archiveDirectColdKind\(db, kind, limit, \{ retire: true \}\)/);
+    assert.match(runner,/archiveDirectColdKind\(db, kind, limit, \{ retire: true, feedShard \}\)/);
     assert.match(runner,/if \(cycle > cycles && !existing.length\) break/);
-    assert.match(runner,/if \(cycle > cycles && !provedDirectKinds.has\(kind\)\) break/);
+    assert.match(runner,/if \(cycle > cycles && !provedDirectKinds.has\(kind\)\)/);
+    assert.match(runner,/if \(exhaustedDirectKinds.has\(other\) \|\| !provedDirectKinds.has\(other\)\) break/);
     assert.match(runner,/if \(exhaustedDirectKinds.has\(kind\)\) kind = kind === 'feed' \? 'newsroom' : 'feed'/);
     assert.match(runner,/direct.retired === direct.parents/);
-    assert.match(runner,/if \(direct.parents === 0\) exhaustedDirectKinds.add\(kind\)/);
+    assert.match(runner,/exhaustedFeedShards.add\(feedShard\)/);
+    assert.match(runner,/if \(exhaustedFeedShards.size === 32\) exhaustedDirectKinds.add\(kind\)/);
+    assert.match(runner,/feedShardCursor = \(feedShardCursor \+ 1\) % 32/);
   });
   it('serializes runs, refuses cancellation and preserves daily article backup', () => {
     assert.match(workflow,/shared-supabase-verified-cold-retention/);
