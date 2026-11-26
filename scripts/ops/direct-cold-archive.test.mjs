@@ -15,7 +15,7 @@ function fixture({publicBucket=false, corrupt=false, rejectTamper=true, rejectDr
       }),
     },
     rpc:async(name,args)=>{
-      if(name==='snapshot_direct_cold_records') return {data:snapshot};
+      if(name==='snapshot_direct_cold_records' || name==='snapshot_direct_cold_feed_shard') return {data:snapshot};
       expect(name).toBe('verify_direct_cold_retirement');
       calls.push(args);
       if(args.p_payload!==snapshot && rejectTamper)
@@ -66,6 +66,19 @@ describe('direct private cold archive',()=>{
       db.rpc=async(name,args)=>{expect(name).toBe('snapshot_direct_cold_records');limits.push(args.p_limit);return {error:{code}};};
       await expect(archiveDirectColdKind(db,'feed',50,{retire:true})).rejects.toThrow();
       expect(limits).toEqual(code==='57014'?[50,25]:[50]);
+      expect(files.size).toBe(0);expect(calls.length).toBe(0);
+    }
+  });
+  it('uses the bounded explicit feed shard and verifies returned parent membership',async()=>{
+    const {db,calls}=fixture();
+    const original=db.rpc, requests=[];
+    db.rpc=async(name,args)=>{if(name==='snapshot_direct_cold_feed_shard')requests.push(args);return original(name,args);};
+    expect((await archiveDirectColdKind(db,'feed',50,{retire:true,feedShard:3})).retired).toBe(1);
+    expect(requests).toEqual([{p_shard:3,p_limit:50}]);
+    expect(calls.map(c=>c.p_retire)).toEqual([false,false,true]);
+    for(const feedShard of [-1,32,1.5,4]){
+      const {db,files,calls}=fixture();
+      await expect(archiveDirectColdKind(db,'feed',50,{retire:true,feedShard})).rejects.toThrow();
       expect(files.size).toBe(0);expect(calls.length).toBe(0);
     }
   });

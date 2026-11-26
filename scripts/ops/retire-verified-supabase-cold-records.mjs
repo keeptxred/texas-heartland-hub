@@ -177,6 +177,9 @@ const maxCycles = initial >= STRICT_LIMIT ? DIRECT_PRESSURE_CYCLES : cycles;
 const drainStarted = Date.now();
 const exhaustedDirectKinds = new Set();
 const provedDirectKinds = new Set();
+const exhaustedFeedShards = new Set();
+const runNumber = Number(process.env.GITHUB_RUN_NUMBER || '0');
+let feedShardCursor = (Math.floor(Date.now()/7_200_000) + (Number.isSafeInteger(runNumber) && runNumber >= 0 ? runNumber : 0)) % 32;
 console.log(JSON.stringify({phase:'retention_plan',legacyMax:cycles,maxCycles,directBudgetMs:DIRECT_DRAIN_BUDGET_MS}));
 let totalFeed = 0, totalNewsroom = 0;
 for (let cycle = 1; cycle <= maxCycles; cycle++) {
@@ -197,15 +200,33 @@ for (let cycle = 1; cycle <= maxCycles; cycle++) {
     if (exhaustedDirectKinds.has(kind)) kind = kind === 'feed' ? 'newsroom' : 'feed';
     // Beyond the original budget, each selected kind must already have
     // performed an actual exact Storage readback and locked retirement.
-    if (cycle > cycles && !provedDirectKinds.has(kind)) break;
+    if (cycle > cycles && !provedDirectKinds.has(kind)) {
+      const other = kind === 'feed' ? 'newsroom' : 'feed';
+      if (exhaustedDirectKinds.has(other) || !provedDirectKinds.has(other)) break;
+      kind = other;
+    }
     const limit = kind === 'newsroom' ? MAX_STAGE_NEWSROOM : MAX_STAGE_FEED;
     // Pending staged claims always take priority. Same age/reference guards.
-    const direct = await archiveDirectColdKind(db, kind, limit, { retire: true });
+    let feedShard = null;
+    if (kind === 'feed') {
+      for (let step = 0; step < 32; step++) {
+        const candidate = feedShardCursor;
+        feedShardCursor = (feedShardCursor + 1) % 32;
+        if (!exhaustedFeedShards.has(candidate)) { feedShard = candidate; break; }
+      }
+      if (feedShard === null) { exhaustedDirectKinds.add('feed'); continue; }
+    }
+    const direct = await archiveDirectColdKind(db, kind, limit, { retire: true, feedShard });
     if (kind === 'newsroom') totalNewsroom += direct.retired;
     else totalFeed += direct.retired;
     console.log(JSON.stringify({cycle, phase:'direct_retired_verified',kind,
-      parents:direct.parents, rows:direct.rows, retired:direct.retired,manifest:direct.manifest}));
-    if (direct.parents === 0) exhaustedDirectKinds.add(kind);
+      parents:direct.parents, rows:direct.rows, retired:direct.retired,manifest:direct.manifest,feedShard}));
+    if (direct.parents === 0) {
+      if (kind === 'feed') {
+        exhaustedFeedShards.add(feedShard);
+        if (exhaustedFeedShards.size === 32) exhaustedDirectKinds.add(kind);
+      } else exhaustedDirectKinds.add(kind);
+    }
     else if (direct.retired === direct.parents) provedDirectKinds.add(kind);
     if (exhaustedDirectKinds.size === 2) break;
     continue;
