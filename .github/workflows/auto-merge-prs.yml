@@ -146,6 +146,19 @@ jobs:
             exit 0
           fi
 
+          # Explicit dispatch from the already trusted auto-merge workflow:
+          # token-originated merges may suppress separate push/workflow_run events.
+          if grep -Eq '^(scripts/ops/(retire-verified-supabase-cold-records|direct-cold-archive|verified-cold-archive-proof|should-run-verified-retention).*|scripts/data/export-supabase-cold-archives[.]mjs|[.]github/workflows/(retire-verified-supabase-cold-records|dispatch-verified-retention-after-main)[.]yml|supabase/migrations/.*(cold_archive|cold_retention|cold_records|feed_staging).*[.]sql)$' <<<"$changed_files"; then
+            existing_archive="$(gh api "repos/$REPOSITORY/actions/workflows/retire-verified-supabase-cold-records.yml/runs?branch=main&head_sha=$merged_sha&per_page=50" | jq -r --arg sha "$merged_sha" '[.workflow_runs[] | select(.head_sha == $sha)] | length')"
+            if [[ "$existing_archive" == "0" ]]; then
+              [[ "$(gh api "repos/$REPOSITORY/git/ref/heads/main" --jq '.object.sha')" == "$merged_sha" ]]
+              gh workflow run retire-verified-supabase-cold-records.yml --ref main --repo "$REPOSITORY" -f verified_sha="$merged_sha"
+              echo "Dispatched serialized cold retention after exact main health and applicable migration checks."
+            else
+              echo "An exact-revision archive run exists; no duplicate dispatch."
+            fi
+          fi
+
           before_deploy_run_id="$(gh run list --repo "$REPOSITORY" --workflow deploy-cloudflare-after-verify.yml --branch main --event workflow_dispatch --limit 1 --json databaseId --jq '.[0].databaseId // 0')"
           gh workflow run deploy-cloudflare-after-verify.yml --ref main --repo "$REPOSITORY" -f verified_sha="$merged_sha"
           echo "Main verification and required migration gates passed; dispatched Cloudflare deployment for exact verified revision $merged_sha."
