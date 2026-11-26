@@ -29,6 +29,8 @@ on:
       - 'scripts/ops/verified-cold-archive-proof.mjs'
       - 'scripts/ops/direct-cold-archive.mjs'
       - 'scripts/ops/direct-cold-archive.test.mjs'
+      - 'scripts/ops/probe-supabase-disk-headroom.mjs'
+      - 'scripts/ops/probe-supabase-disk-headroom.test.mjs'
       - 'supabase/migrations/20261126143056_add_direct_private_cold_archive_without_staging.sql'
       - 'scripts/ops/should-run-verified-retention.mjs'
       - 'scripts/data/export-supabase-cold-archives.mjs'
@@ -144,12 +146,17 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          bunx vitest run scripts/ops/direct-cold-archive.test.mjs scripts/ops/verified-cold-archive-proof.test.mjs scripts/ops/should-run-verified-retention.test.mjs scripts/ci/supabase-verified-retirement-contract.test.mjs
+          bunx vitest run scripts/ops/probe-supabase-disk-headroom.test.mjs scripts/ops/direct-cold-archive.test.mjs scripts/ops/verified-cold-archive-proof.test.mjs scripts/ops/should-run-verified-retention.test.mjs scripts/ci/supabase-verified-retirement-contract.test.mjs
           node --check scripts/ops/direct-cold-archive.mjs
           node --check scripts/ops/retire-verified-supabase-cold-records.mjs
           node --check scripts/data/export-supabase-cold-archives.mjs
+      - name: Measure actual provider filesystem availability before archival
+        run: node scripts/ops/probe-supabase-disk-headroom.mjs
       - name: Stage, privately back up, read back, verify, and retire only eligible rows
         run: bun scripts/ops/retire-verified-supabase-cold-records.mjs
+      - name: Measure actual provider filesystem availability after archival
+        if: ${{ always() }}
+        run: node scripts/ops/probe-supabase-disk-headroom.mjs
       - name: Report archive workflow failure on existing capacity issue
         if: ${{ failure() }}
         env:

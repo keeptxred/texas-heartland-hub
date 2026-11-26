@@ -73,10 +73,17 @@ function assertVerification(result, count, manifestName, retired) {
 export async function archiveDirectColdKind(db, kind, limit, { retire = false } = {}) {
   if (typeof retire !== 'boolean' || !SPEC[kind] || !Number.isInteger(limit) ||
       limit < 1 || limit > SPEC[kind].max) throw new Error('Invalid archive invocation');
-  const payload = checked('Direct cold snapshot', await db.rpc('snapshot_direct_cold_records', {
-    p_kind: kind, p_limit: limit,
-  }));
-  const { parents, rows } = validateDirectSnapshot(payload, kind, limit);
+  let snapshot = await db.rpc('snapshot_direct_cold_records', { p_kind: kind, p_limit: limit });
+  // The snapshot RPC is read-only. Only a statement cancellation permits
+  // one smaller-batch retry, before any upload or retirement has occurred.
+  let effectiveLimit = limit;
+  if (snapshot.error?.code === '57014' && limit > 1) {
+    effectiveLimit = Math.max(1, Math.floor(limit / 2));
+    console.warn('Direct cold snapshot timed out; retry once at ' + effectiveLimit + ' parents (' + kind + ')');
+    snapshot = await db.rpc('snapshot_direct_cold_records', { p_kind: kind, p_limit: effectiveLimit });
+  }
+  const payload = checked('Direct cold snapshot', snapshot);
+  const { parents, rows } = validateDirectSnapshot(payload, kind, effectiveLimit);
   if (!parents) return { parents: 0, rows: 0, retired: 0, manifest: null };
   const bucketMeta = checked('Private bucket check', await db.storage.getBucket(BUCKET));
   if (bucketMeta?.id !== BUCKET || bucketMeta.public !== false)
