@@ -15,6 +15,7 @@
 import { spawnSync } from 'node:child_process';
 import { createClient } from '@supabase/supabase-js';
 import { verifyColdArchiveProof } from './verified-cold-archive-proof.mjs';
+import { archiveDirectColdKind } from './direct-cold-archive.mjs';
 
 const PROJECT = 'ftkznprjljkhymknvhye';
 const URL = 'https://' + PROJECT + '.supabase.co';
@@ -178,7 +179,15 @@ for (let cycle = 1; cycle <= cycles; cycle++) {
   // of a previously staged verified batch; otherwise an interrupted run could
   // leave the database permanently stuck above this limit.
   if (!existing.length && STRICT_LIMIT - before < MIN_HEADROOM) {
-    throw new Error('Insufficient temporary archive staging headroom. Fail closed: ' + before);
+    const kind = cycle % 2 === 1 ? 'newsroom' : 'feed';
+    const limit = kind === 'newsroom' ? MAX_STAGE_NEWSROOM : MAX_STAGE_FEED;
+    // Pending staged claims always take priority. Same age/reference guards.
+    const direct = await archiveDirectColdKind(db, kind, limit, { retire: true });
+    if (kind === 'newsroom') totalNewsroom += direct.retired;
+    else totalFeed += direct.retired;
+    console.log(JSON.stringify({cycle, phase:'direct_retired_verified',kind,
+      parents:direct.parents, rows:direct.rows, retired:direct.retired,manifest:direct.manifest}));
+    continue;
   }
   if (!existing.length) {
     // Independent cycles: a slow feed eligibility query must never block the
