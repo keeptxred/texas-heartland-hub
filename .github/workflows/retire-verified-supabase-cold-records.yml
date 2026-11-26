@@ -1,6 +1,12 @@
 name: Verify and safely retire shared Supabase cold records
 on:
   workflow_dispatch:
+    inputs:
+      verified_sha:
+        description: 'Expected exact main revision for protected post-merge dispatch'
+        required: false
+        type: string
+        default: ''
   schedule:
     # 12 opportunities/day while backlog and quota pressure are high.
     # Public-repository GitHub Actions; strict concurrency prevents overlap.
@@ -48,6 +54,18 @@ jobs:
       run_archive: ${{ steps.decide.outputs.run_archive }}
     steps:
       - uses: actions/checkout@v5
+      - name: Require the protected dispatch revision
+        env:
+          EXPECTED_SHA: ${{ inputs.verified_sha }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ -n "$EXPECTED_SHA" ]]; then
+            [[ "$EXPECTED_SHA" =~ ^[0-9a-f]{40}$ ]]
+            [[ "$GITHUB_REF" == 'refs/heads/main' ]]
+            [[ "$GITHUB_SHA" == "$EXPECTED_SHA" ]]
+            [[ "$(git rev-parse HEAD)" == "$EXPECTED_SHA" ]]
+          fi
       - name: Skip fallback if a verified archive completed in the past 90 minutes
         id: decide
         env:
