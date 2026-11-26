@@ -45,13 +45,13 @@ jobs:
             echo 'No cold retention change; no dispatch.'
             exit 0
           fi
-          health="$(gh api "repos/$REPOSITORY/actions/workflows/shared-vitest.yml/runs?branch=main&head_sha=$VERIFIED_SHA&status=success&per_page=20" --jq '.workflow_runs[] | select(.head_sha == env.VERIFIED_SHA and .head_repository.full_name == env.REPOSITORY and (.event == "push" or .event == "workflow_dispatch") and .conclusion == "success") | .id' | head -n 1)"
+          health="$(gh api "repos/$REPOSITORY/actions/workflows/shared-vitest.yml/runs?branch=main&head_sha=$VERIFIED_SHA&status=success&per_page=20" | jq -r --arg sha "$VERIFIED_SHA" --arg repo "$REPOSITORY" '[.workflow_runs[] | select(.head_sha == $sha and .head_repository.full_name == $repo and (.event == "push" or .event == "workflow_dispatch") and .conclusion == "success") | .id] | first // empty')"
           if [[ -z "$health" ]]; then
             echo 'Await exact main health success; later workflow completion will re-evaluate.'
             exit 0
           fi
           if grep -Eq '^(supabase/migrations/|[.]github/workflows/apply-supabase-migrations[.]yml$)' <<<"$changed"; then
-            migration="$(gh api "repos/$REPOSITORY/actions/workflows/apply-supabase-migrations.yml/runs?branch=main&head_sha=$VERIFIED_SHA&status=success&per_page=20" --jq '.workflow_runs[] | select(.head_sha == env.VERIFIED_SHA and .head_repository.full_name == env.REPOSITORY and (.event == "push" or .event == "workflow_dispatch") and .conclusion == "success") | .id' | head -n 1)"
+            migration="$(gh api "repos/$REPOSITORY/actions/workflows/apply-supabase-migrations.yml/runs?branch=main&head_sha=$VERIFIED_SHA&status=success&per_page=20" | jq -r --arg sha "$VERIFIED_SHA" --arg repo "$REPOSITORY" '[.workflow_runs[] | select(.head_sha == $sha and .head_repository.full_name == $repo and (.event == "push" or .event == "workflow_dispatch") and .conclusion == "success") | .id] | first // empty')"
             if [[ -z "$migration" ]]; then
               echo 'Await exact successful migration gate.'
               exit 0
@@ -61,7 +61,7 @@ jobs:
               exit 0
             fi
           fi
-          existing="$(gh api "repos/$REPOSITORY/actions/workflows/retire-verified-supabase-cold-records.yml/runs?branch=main&head_sha=$VERIFIED_SHA&per_page=50" --jq '[.workflow_runs[] | select(.head_sha == env.VERIFIED_SHA)] | length')"
+          existing="$(gh api "repos/$REPOSITORY/actions/workflows/retire-verified-supabase-cold-records.yml/runs?branch=main&head_sha=$VERIFIED_SHA&per_page=50" | jq -r --arg sha "$VERIFIED_SHA" '[.workflow_runs[] | select(.head_sha == $sha)] | length')"
           if [[ "$existing" != "0" ]]; then
             echo 'An archive run already exists for this exact revision; do not duplicate or retry unchanged failures.'
             exit 0
