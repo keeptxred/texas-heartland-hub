@@ -176,6 +176,7 @@ const cycles = initial >= PRESSURE_THRESHOLD_BYTES ? PRESSURE_CYCLES : BASE_CYCL
 const maxCycles = initial >= STRICT_LIMIT ? DIRECT_PRESSURE_CYCLES : cycles;
 const drainStarted = Date.now();
 const exhaustedDirectKinds = new Set();
+const provedDirectKinds = new Set();
 console.log(JSON.stringify({phase:'retention_plan',legacyMax:cycles,maxCycles,directBudgetMs:DIRECT_DRAIN_BUDGET_MS}));
 let totalFeed = 0, totalNewsroom = 0;
 for (let cycle = 1; cycle <= maxCycles; cycle++) {
@@ -183,6 +184,9 @@ for (let cycle = 1; cycle <= maxCycles; cycle++) {
     console.log('Bounded maintenance time budget reached; next schedule resumes backlog');
     break;
   }
+  // First prove both direct kinds with real Storage readback and locked
+  // retirement in the original cycle budget. Never accelerate on mock proof.
+  if (cycle > cycles && provedDirectKinds.size !== 2) break;
   const before = await sizeSnapshot();
   const existing = await stagedMetadata();
   // Staging temporarily duplicates old evidence in PostgreSQL. Refuse NEW
@@ -203,6 +207,7 @@ for (let cycle = 1; cycle <= maxCycles; cycle++) {
     console.log(JSON.stringify({cycle, phase:'direct_retired_verified',kind,
       parents:direct.parents, rows:direct.rows, retired:direct.retired,manifest:direct.manifest}));
     if (direct.parents === 0) exhaustedDirectKinds.add(kind);
+    else if (direct.retired === direct.parents) provedDirectKinds.add(kind);
     if (exhaustedDirectKinds.size === 2) break;
     continue;
   }
