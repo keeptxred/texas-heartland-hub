@@ -1,0 +1,71 @@
+name: Dispatch verified cold retention after protected main checks
+on:
+  workflow_run:
+    workflows: ["Repository test and build health", "Apply Supabase Migrations"]
+    types: [completed]
+    branches: [main]
+
+permissions:
+  actions: write
+  contents: read
+
+concurrency:
+  group: verified-retention-dispatch-${{ github.event.workflow_run.head_sha }}
+  cancel-in-progress: false
+
+jobs:
+  dispatch:
+    if: >-
+      github.repository == 'keeptxred/texas-heartland-hub' &&
+      github.event.workflow_run.head_repository.full_name == github.repository &&
+      github.event.workflow_run.head_branch == 'main' &&
+      github.event.workflow_run.conclusion == 'success' &&
+      (github.event.workflow_run.event == 'workflow_dispatch' ||
+       github.event.workflow_run.event == 'push')
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      GH_TOKEN: ${{ github.token }}
+      REPOSITORY: ${{ github.repository }}
+      VERIFIED_SHA: ${{ github.event.workflow_run.head_sha }}
+    steps:
+      - name: Require exact current main, successful protected checks, and relevant changes
+        shell: bash
+        run: |
+          set -euo pipefail
+          [[ "$REPOSITORY" == 'keeptxred/texas-heartland-hub' ]]
+          [[ "$VERIFIED_SHA" =~ ^[0-9a-f]{40}$ ]]
+          current="$(gh api "repos/$REPOSITORY/git/ref/heads/main" --jq '.object.sha')"
+          if [[ "$current" != "$VERIFIED_SHA" ]]; then
+            echo 'Stale verified revision; no dispatch.'
+            exit 0
+          fi
+          changed="$(gh api "repos/$REPOSITORY/commits/$VERIFIED_SHA" --jq '.files[].filename')"
+          if ! grep -Eq '^(scripts/ops/(retire-verified-supabase-cold-records|direct-cold-archive|verified-cold-archive-proof|should-run-verified-retention).*|scripts/data/export-supabase-cold-archives[.]mjs|[.]github/workflows/(retire-verified-supabase-cold-records|dispatch-verified-retention-after-main)[.]yml|supabase/migrations/.*(cold_archive|cold_retention|cold_records|feed_staging).*[.]sql)$' <<<"$changed"; then
+            echo 'No cold retention change; no dispatch.'
+            exit 0
+          fi
+          health="$(gh api "repos/$REPOSITORY/actions/workflows/shared-vitest.yml/runs?branch=main&head_sha=$VERIFIED_SHA&status=success&per_page=20" | jq -r --arg sha "$VERIFIED_SHA" --arg repo "$REPOSITORY" '[.workflow_runs[] | select(.head_sha == $sha and .head_repository.full_name == $repo and (.event == "push" or .event == "workflow_dispatch") and .conclusion == "success") | .id] | first // empty')"
+          if [[ -z "$health" ]]; then
+            echo 'Await exact main health success; later workflow completion will re-evaluate.'
+            exit 0
+          fi
+          if grep -Eq '^(supabase/migrations/|[.]github/workflows/apply-supabase-migrations[.]yml$)' <<<"$changed"; then
+            migration="$(gh api "repos/$REPOSITORY/actions/workflows/apply-supabase-migrations.yml/runs?branch=main&head_sha=$VERIFIED_SHA&status=success&per_page=20" | jq -r --arg sha "$VERIFIED_SHA" --arg repo "$REPOSITORY" '[.workflow_runs[] | select(.head_sha == $sha and .head_repository.full_name == $repo and (.event == "push" or .event == "workflow_dispatch") and .conclusion == "success") | .id] | first // empty')"
+            if [[ -z "$migration" ]]; then
+              echo 'Await exact successful migration gate.'
+              exit 0
+            fi
+            if ! gh api "repos/$REPOSITORY/actions/runs/$migration/jobs" | jq -e '.jobs | any(.conclusion == "success" and ([.steps[] | select(.name == "Apply pending production migrations" and .conclusion == "success")] | length == 1) and ([.steps[] | select(.name == "Verify migration state" and .conclusion == "success")] | length == 1))' >/dev/null; then
+              echo 'Migration run was not a confirmed applied-and-verified migration; no dispatch.'
+              exit 0
+            fi
+          fi
+          existing="$(gh api "repos/$REPOSITORY/actions/workflows/retire-verified-supabase-cold-records.yml/runs?branch=main&head_sha=$VERIFIED_SHA&per_page=50" | jq -r --arg sha "$VERIFIED_SHA" '[.workflow_runs[] | select(.head_sha == $sha)] | length')"
+          if [[ "$existing" != "0" ]]; then
+            echo 'An archive run already exists for this exact revision; do not duplicate or retry unchanged failures.'
+            exit 0
+          fi
+          [[ "$(gh api "repos/$REPOSITORY/git/ref/heads/main" --jq '.object.sha')" == "$VERIFIED_SHA" ]]
+          gh workflow run retire-verified-supabase-cold-records.yml --repo "$REPOSITORY" --ref main -f verified_sha="$VERIFIED_SHA"
+          echo "Dispatched the serialized private archival workflow for verified main $VERIFIED_SHA."
