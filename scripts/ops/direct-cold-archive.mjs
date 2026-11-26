@@ -70,17 +70,21 @@ function assertVerification(result, count, manifestName, retired) {
  * parsed data is used solely for validation, NEVER reserialized for retirement.
  * Production deletion uses the pre-deployed service-only transactional RPC.
  */
-export async function archiveDirectColdKind(db, kind, limit, { retire = false } = {}) {
+export async function archiveDirectColdKind(db, kind, limit, { retire = false, feedShard = null } = {}) {
   if (typeof retire !== 'boolean' || !SPEC[kind] || !Number.isInteger(limit) ||
-      limit < 1 || limit > SPEC[kind].max) throw new Error('Invalid archive invocation');
-  let snapshot = await db.rpc('snapshot_direct_cold_records', { p_kind: kind, p_limit: limit });
+      limit < 1 || limit > SPEC[kind].max || (feedShard !== null &&
+      (kind !== 'feed' || !Number.isInteger(feedShard) || feedShard < 0 || feedShard > 31)))
+    throw new Error('Invalid archive invocation');
+  const snapshotRpc = feedShard === null ? 'snapshot_direct_cold_records' : 'snapshot_direct_cold_feed_shard';
+  const snapshotArgs = size => feedShard === null ? {p_kind:kind,p_limit:size} : {p_shard:feedShard,p_limit:size};
+  let snapshot = await db.rpc(snapshotRpc, snapshotArgs(limit));
   // The snapshot RPC is read-only. Only a statement cancellation permits
   // one smaller-batch retry, before any upload or retirement has occurred.
   let effectiveLimit = limit;
   if (snapshot.error?.code === '57014' && limit > 1) {
     effectiveLimit = Math.max(1, Math.floor(limit / 2));
     console.warn('Direct cold snapshot timed out; retry once at ' + effectiveLimit + ' parents (' + kind + ')');
-    snapshot = await db.rpc('snapshot_direct_cold_records', { p_kind: kind, p_limit: effectiveLimit });
+    snapshot = await db.rpc(snapshotRpc, snapshotArgs(effectiveLimit));
   }
   const payload = checked('Direct cold snapshot', snapshot);
   const { parents, rows } = validateDirectSnapshot(payload, kind, effectiveLimit);
