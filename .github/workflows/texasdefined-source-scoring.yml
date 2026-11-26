@@ -34,7 +34,10 @@ jobs:
           # Never POST to an older deployed scorer. It ignores the
           # td-source-routing mode and can still create KTR articles.
           # This NEW endpoint is safe for probing: a GET cannot mutate data.
-          origin="https://keeptxred-site.freddy-coppola.workers.dev"
+          # The direct workers.dev hostname canonicalizes GETs with HTTP 301.
+          # Use the canonical production origin for BOTH the read-only handshake
+          # and the POST; never follow a redirect or switch deployment hosts.
+          origin="https://keeptxred.com"
           readiness=0
           for attempt in $(seq 1 30); do
             code="$(curl --silent --show-error --max-time 12 \
