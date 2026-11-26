@@ -23,6 +23,10 @@ const REPO = 'keeptxred/texas-heartland-hub';
 const ARCHIVE_EXPORTER = 'scripts/data/export-supabase-cold-archives.mjs';
 const BASE_CYCLES = 2;
 const PRESSURE_CYCLES = 4;
+// Direct archives never duplicate source payloads in PostgreSQL. Drain one
+// shard with bounded sequential batches, without extending legacy staging.
+const DIRECT_PRESSURE_CYCLES = 24;
+const DIRECT_DRAIN_BUDGET_MS = 17 * 60 * 1000;
 const PRESSURE_THRESHOLD_BYTES = 490_000_000;
 const MAX_STAGE_FEED = 50;
 const MAX_STAGE_NEWSROOM = 65;
@@ -169,9 +173,16 @@ if (!active) {
 // strict Free Plan limit. This restores backlog headroom without overlapping
 // private Storage exports, bypassing staging checks, or increasing batch size.
 const cycles = initial >= PRESSURE_THRESHOLD_BYTES ? PRESSURE_CYCLES : BASE_CYCLES;
-console.log(`Verified retention cycles planned: ${cycles} (capacity-triggered, max 4)`);
+const maxCycles = initial >= STRICT_LIMIT ? DIRECT_PRESSURE_CYCLES : cycles;
+const drainStarted = Date.now();
+const exhaustedDirectKinds = new Set();
+console.log(JSON.stringify({phase:'retention_plan',legacyMax:cycles,maxCycles,directBudgetMs:DIRECT_DRAIN_BUDGET_MS}));
 let totalFeed = 0, totalNewsroom = 0;
-for (let cycle = 1; cycle <= cycles; cycle++) {
+for (let cycle = 1; cycle <= maxCycles; cycle++) {
+  if (cycle > 1 && Date.now() - drainStarted >= DIRECT_DRAIN_BUDGET_MS) {
+    console.log('Bounded maintenance time budget reached; next schedule resumes backlog');
+    break;
+  }
   const before = await sizeSnapshot();
   const existing = await stagedMetadata();
   // Staging temporarily duplicates old evidence in PostgreSQL. Refuse NEW
@@ -180,6 +191,10 @@ for (let cycle = 1; cycle <= cycles; cycle++) {
   // leave the database permanently stuck above this limit.
   if (!existing.length && STRICT_LIMIT - before < MIN_HEADROOM) {
     const kind = cycle % 2 === 1 ? 'newsroom' : 'feed';
+    if (exhaustedDirectKinds.has(kind)) {
+      if (exhaustedDirectKinds.size === 2) break;
+      continue;
+    }
     const limit = kind === 'newsroom' ? MAX_STAGE_NEWSROOM : MAX_STAGE_FEED;
     // Pending staged claims always take priority. Same age/reference guards.
     const direct = await archiveDirectColdKind(db, kind, limit, { retire: true });
@@ -187,8 +202,13 @@ for (let cycle = 1; cycle <= cycles; cycle++) {
     else totalFeed += direct.retired;
     console.log(JSON.stringify({cycle, phase:'direct_retired_verified',kind,
       parents:direct.parents, rows:direct.rows, retired:direct.retired,manifest:direct.manifest}));
+    if (direct.parents === 0) exhaustedDirectKinds.add(kind);
+    if (exhaustedDirectKinds.size === 2) break;
     continue;
   }
+  // Do not extend the original staging budget if headroom has recovered.
+  // Resume an already staged batch first even at the end of a direct drain.
+  if (cycle > cycles && !existing.length) break;
   if (!existing.length) {
     // Independent cycles: a slow feed eligibility query must never block the
     // complete Storage readback and protected retirement of newsroom batches.
