@@ -48,7 +48,8 @@ describe('verified Free Plan retirement invariants', () => {
     assert.match(runner,/if \(!existing.length && STRICT_LIMIT - before < MIN_HEADROOM\)/);
     assert.match(runner,/archiveDirectColdKind\(db, kind, limit, \{ retire: true \}\)/);
     assert.match(runner,/if \(cycle > cycles && !existing.length\) break/);
-    assert.match(runner,/if \(cycle > cycles && provedDirectKinds.size !== 2\) break/);
+    assert.match(runner,/if \(cycle > cycles && !provedDirectKinds.has\(kind\)\) break/);
+    assert.match(runner,/if \(exhaustedDirectKinds.has\(kind\)\) kind = kind === 'feed' \? 'newsroom' : 'feed'/);
     assert.match(runner,/direct.retired === direct.parents/);
     assert.match(runner,/if \(direct.parents === 0\) exhaustedDirectKinds.add\(kind\)/);
   });
