@@ -45,6 +45,30 @@ describe('direct private cold archive',()=>{
     expect(calls[0].p_payload).toBe(payload+' ');expect(calls[1].p_payload).toBe(payload);
     expect(calls[2].p_payload).toBe(payload);
   });
+  it('retries one read-only timeout at half size, then verifies all original guards',async()=>{
+    const {db,calls}=fixture();
+    const rpc=db.rpc, limits=[];
+    db.rpc=async(name,args)=>{
+      if(name==='snapshot_direct_cold_records'){
+        limits.push(args.p_limit);
+        if(limits.length===1)return {error:{code:'57014'}};
+      }
+      return rpc(name,args);
+    };
+    expect((await archiveDirectColdKind(db,'feed',50,{retire:true})).retired).toBe(1);
+    expect(limits).toEqual([50,25]);
+    expect(calls.map(c=>c.p_retire)).toEqual([false,false,true]);
+  });
+  it('fails closed on repeated cancellation or other snapshot error',async()=>{
+    for(const code of ['57014','42501']){
+      const {db,files,calls}=fixture();
+      const limits=[];
+      db.rpc=async(name,args)=>{expect(name).toBe('snapshot_direct_cold_records');limits.push(args.p_limit);return {error:{code}};};
+      await expect(archiveDirectColdKind(db,'feed',50,{retire:true})).rejects.toThrow();
+      expect(limits).toEqual(code==='57014'?[50,25]:[50]);
+      expect(files.size).toBe(0);expect(calls.length).toBe(0);
+    }
+  });
   it('is read-only unless explicitly activated',async()=>{
     const {db,calls}=fixture();
     expect((await archiveDirectColdKind(db,'feed',50)).retired).toBe(0);
