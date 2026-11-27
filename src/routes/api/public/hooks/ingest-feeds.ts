@@ -1,5 +1,5 @@
+import { verifiedRssIngestTimestamp } from "@/lib/newsroom-rss-original-date";
 import { createFileRoute } from "@tanstack/react-router";
-import { resolvePublishTimestamp } from "@/lib/article-slug-integrity";
 import { isLowValueTitle } from "@/lib/low-value-titles";
 import { scoreFeedItem, TEXAS_RELEVANCE_MIN } from "@/lib/viral-score";
 import { isVerifiedTexasInstitutionalDiscovery } from "@/lib/newsroom-institution-source-relevance";
@@ -180,7 +180,7 @@ function parseFeed(xml: string, fallbackSource: string): Item[] {
       const href = block.match(/<link[^>]+href=["']([^"']+)["']/i);
       link = href?.[1] ?? "";
     }
-    const rawDate = pick(block, "pubDate") || pick(block, "updated") || pick(block, "published");
+    const rawDate = pick(block, "pubDate") || pick(block, "published") || pick(block, "updated");
     const description = pick(block, "description") || pick(block, "summary") || pick(block, "content");
     if (!title || !link || isLowValueTitle(title)) continue;
     let source = fallbackSource;
@@ -191,11 +191,13 @@ function parseFeed(xml: string, fallbackSource: string): Item[] {
         title = parts.join(" - ").trim() || title;
       }
     }
+    const publishedAt = verifiedRssIngestTimestamp(rawDate, link);
+    if (!publishedAt) continue;
     const embeddedArticle = extractFirstPartyRssArticleBody(block, fallbackSource, link);
     items.push({
       title: title.slice(0, 500),
       link,
-      pub_date: resolvePublishTimestamp(rawDate || null),
+      pub_date: publishedAt,
       source,
       description: description.slice(0, 1200),
       // Real article body supplied by this direct publisher. Never treat
