@@ -332,8 +332,13 @@ async function checkRecentNewsEditorialRestoration() {
 // correctly be unavailable on KTR; if served, they must remain noindex.
 async function checkSourceIntegrityCorrections() {
   const cases = [
-    { slug: "2026-09-15-paxton-campaign-makes-first-major-ad-buy-in-senate-race", markers: ["Funding committee and federal filings", "C00952218"] },
-    { slug: "2026-09-04-texas-dps-to-continue-using-vast-surveillance-network-despite-abbott-s-order-lim", markers: ["DPS response reported by the Tribune", "signed agreements"] },
+    { slug: "2026-09-15-paxton-campaign-makes-first-major-ad-buy-in-senate-race", markers: ["Funding committee and federal filings", "C00952218", "848113", "1c600b13-055c-4649-9926-85093e3b980e.pdf"] },
+    { slug: "2026-09-04-texas-dps-to-continue-using-vast-surveillance-network-despite-abbott-s-order-lim", markers: ["What the DPS contract register shows", "signed agreements", "contractsover100k.pdf"] },
+    { slug: "2026-08-20-talarico-floods-texas-airwaves-in-u-s-senate-race-as-paxton-gop-stay-quiet", markers: ["What the original data provider measured", "adimpact.com/blogs/texas-senate-most-expensive-2026"] },
+    { slug: "2026-08-28-what-does-it-mean-to-be-a-texas-republican-in-2026", markers: ["What the convention records establish", "texasgop.org/priorities/"] },
+    { slug: "2026-10-01-ken-paxton-says-trump-s-midterm-convention-hurt-his-senate-campaign", markers: ["What the published excerpt establishes", "transcripts.cnn.com/show/ebo/date/2026-09-30/segment/01"] },
+    { slug: "2026-10-14-house-republicans-pull-3-million-reserved-for-ads-against-henry-cuellar", markers: ["What the Laredo invoice establishes", "835390-1", "79e94441-d6eb-4b41-8e08-66deef95776c.pdf"] },
+    { slug: "2026-11-10-ken-paxton-drops-lawsuit-seeking-to-shut-down-el-paso-migrant-shelter-network-an", markers: ["What the November 9 notice establishes", "2024DCV0616", "OAG-Notice-of-Nonsuit.pdf"] },
     { slug: "2026-08-21-trump-keeps-embracing-data-centers-even-as-they-become-toxic-in-midterm-races", markers: ["Editorial correction"] },
     { slug: "2026-09-06-texas-a-m-dominates-missouri-state-in-season-opener", sports: true },
     { slug: "2026-08-30-dallas-cowboys-lose-to-new-orleans-saints-27-24-in-preseason-week-3", sports: true },
