@@ -76,3 +76,17 @@ describe('verified Free Plan retirement invariants', () => {
     assert.match(exporter,/VERIFIED_COLD_RETENTION_JOB !== '1'/);
   });
 });
+
+// Both trusted dispatch entrypoints must recognize the narrow retention-maintenance migration.
+// Keep unrelated migrations outside this scope and preserve their existing protected checks.
+it('dispatches retention visibility maintenance after exact main gates', () => {
+  for (const path of ['.github/workflows/dispatch-verified-retention-after-main.yml','.github/workflows/auto-merge-prs.yml']) {
+    const source = readFileSync(path, 'utf8');
+    const pattern = source.match(/grep -Eq '([^']*feed_visibility_for_verified_retention[^']*)'/)?.[1];
+    assert.ok(pattern, path);
+    const selector = new RegExp(pattern);
+    assert.ok(selector.test('supabase/migrations/20261127134532_maintain_feed_visibility_for_verified_retention.sql'));
+    assert.ok(selector.test('supabase/migrations/20261126143056_add_direct_private_cold_archive_without_staging.sql'));
+    assert.equal(selector.test('supabase/migrations/20261127130000_add_public_article_field.sql'), false);
+  }
+});
