@@ -26,7 +26,17 @@ function field(xml: string, tag: "title" | "link" | "pubDate"): string {
     .replace(/&lt;/gi, "<").replace(/&gt;/gi, ">").replace(/<[^>]+>/g, " ").trim();
 }
 
-export function parseIssuerResearchRecords(xml: string, feed: IssuerResearchFeed, subjects: readonly string[], nowMs: number): ResearchPacketSource[] {
+// The signed research-only archive pass may inspect seven days of issuer releases.
+// The normal publication path retains its original 72-hour bound.
+export const ISSUER_ARCHIVE_HOURS = 168;
+export function issuerRecordNearEvent(publishedAt: string | null, eventAt: string): boolean {
+  if (!publishedAt) return false;
+  const published = Date.parse(publishedAt);
+  const event = Date.parse(eventAt);
+  return Number.isFinite(published) && Number.isFinite(event) && Math.abs(published - event) <= 72 * 3_600_000;
+}
+
+export function parseIssuerResearchRecords(xml: string, feed: IssuerResearchFeed, subjects: readonly string[], nowMs: number, archiveResearch = false): ResearchPacketSource[] {
   if (!ISSUER_RESEARCH_FEEDS.some((known) => known.url === feed.url && known.source === feed.source)) return [];
   if (!/<rss\b/i.test(xml) || xml.length > 2_000_000) return [];
   const relevant = subjects.filter((subject) => feed.subject.test(subject));
@@ -39,7 +49,7 @@ export function parseIssuerResearchRecords(xml: string, feed: IssuerResearchFeed
     const title = field(block, "title");
     const link = field(block, "link");
     const timestamp = Date.parse(field(block, "pubDate"));
-    if (!title || !link || !Number.isFinite(timestamp) || timestamp > nowMs + 3_600_000 || nowMs - timestamp > 72 * 3_600_000) continue;
+    if (!title || !link || !Number.isFinite(timestamp) || timestamp > nowMs + 3_600_000 || nowMs - timestamp > (archiveResearch ? ISSUER_ARCHIVE_HOURS : 72) * 3_600_000) continue;
     if (seen.has(link)) continue;
     try {
       const url = new URL(link);
@@ -56,7 +66,7 @@ export function parseIssuerResearchRecords(xml: string, feed: IssuerResearchFeed
   return records;
 }
 
-export async function fetchIssuerResearchRecords(feed: IssuerResearchFeed, subjects: readonly string[]): Promise<ResearchPacketSource[]> {
+export async function fetchIssuerResearchRecords(feed: IssuerResearchFeed, subjects: readonly string[], archiveResearch = false): Promise<ResearchPacketSource[]> {
   if (!ISSUER_RESEARCH_FEEDS.some((known) => known.url === feed.url && known.source === feed.source)) return [];
   try {
     const response = await fetch(feed.url, {
@@ -66,6 +76,6 @@ export async function fetchIssuerResearchRecords(feed: IssuerResearchFeed, subje
     if (!response.ok || response.url !== feed.url || !/xml|rss/i.test(response.headers.get("content-type") ?? "")) return [];
     const size = Number(response.headers.get("content-length") || "0");
     if (size > 2_000_000) return [];
-    return parseIssuerResearchRecords(await response.text(), feed, subjects, Date.now());
+    return parseIssuerResearchRecords(await response.text(), feed, subjects, Date.now(), archiveResearch);
   } catch { return []; }
 }

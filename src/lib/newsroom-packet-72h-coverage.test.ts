@@ -32,6 +32,13 @@ describe("72-hour publication evidence packet coverage", () => {
     expect(builder).toContain('.gte("published_at", new Date(Date.now() - PUBLISHED_REFRESH_HOURS');
   });
 
+  it("keeps archive discovery separate from publication eligibility", () => {
+    expect(builder).toContain("const archiveResearch = researchOnly && researchDiscoveryAuthorized");
+    expect(builder).toContain("archiveResearch ? newsroomDb.from");
+    expect(builder).toContain("issuerRecordNearEvent(feed.pub_date, candidate.created_at)");
+    expect(builder).toContain("if (archiveIds.has(candidate.cluster_id) && !discovered.length) return []");
+  });
+
   it("limits cluster, feed, and packet reads/writes to bounded requests", () => {
     expect(builder).toContain("const CLUSTER_READ_BATCH_SIZE = 100");
     expect(builder).toContain("const CLUSTER_READ_CONCURRENCY = 2");

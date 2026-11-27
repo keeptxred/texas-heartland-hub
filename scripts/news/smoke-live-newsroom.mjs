@@ -327,6 +327,37 @@ async function checkRecentNewsEditorialRestoration() {
   }
 }
 
+// Regression checks for the source-integrity incident: never accept a stale
+// serialized state payload as visible content. Sports boundary records may
+// correctly be unavailable on KTR; if served, they must remain noindex.
+async function checkSourceIntegrityCorrections() {
+  const cases = [
+    { slug: "2026-09-15-paxton-campaign-makes-first-major-ad-buy-in-senate-race", markers: ["Funding committee and federal filings", "C00952218"] },
+    { slug: "2026-09-04-texas-dps-to-continue-using-vast-surveillance-network-despite-abbott-s-order-lim", markers: ["DPS response reported by the Tribune", "signed agreements"] },
+    { slug: "2026-08-21-trump-keeps-embracing-data-centers-even-as-they-become-toxic-in-midterm-races", markers: ["Editorial correction"] },
+    { slug: "2026-09-06-texas-a-m-dominates-missouri-state-in-season-opener", sports: true },
+    { slug: "2026-08-30-dallas-cowboys-lose-to-new-orleans-saints-27-24-in-preseason-week-3", sports: true },
+    { slug: "2026-08-31-dallas-cowboys-3-key-roster-decisions", sports: true },
+    { slug: "2026-08-29-halftime-update-new-orleans-saints-17-dallas-cowboys-9-2026-nfl-preseason-week-3", sports: true },
+    { slug: "2026-11-24-nvidia-board-reinstates-jensen-huang-as-ceo-following-resignation-and-security-a", markers: ["nvidianews.nvidia.com/news/nvidia-board-reinstates-jensen-huang-as-president-ceo-and-board-director"] },
+  ];
+  for (const item of cases) {
+    const path = `/news/${item.slug}`;
+    const response = await fetchWithTimeout(`${baseUrl}${path}`, { redirect: "manual", headers: { Accept: "text/html", "Cache-Control": "no-cache", "User-Agent": "KeepTXRed-SourceIntegrity-Smoke/1.0" } });
+    const html = await response.text();
+    const visible = html.replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, " ");
+    if (item.sports && [404, 410].includes(response.status)) {
+      console.log(`OK sports site boundary ${path} HTTP ${response.status}`);
+      continue;
+    }
+    if (response.status !== 200 || /article not found|page not found/i.test(visible)) throw new Error(`source-integrity article unavailable ${path}: HTTP ${response.status}`);
+    if (extractCanonical(html) !== `https://keeptxred.com${path}` || !extractMeta(html, "robots").toLowerCase().includes("noindex")) throw new Error(`source-integrity article canonical or hold mismatch: ${path}`);
+    if (/Permanent KTR Context|This story connects to KTR's permanent policy and government coverage/i.test(visible)) throw new Error(`legacy contextual links remain on ${path}`);
+    for (const marker of item.markers ?? []) if (!visible.includes(marker)) throw new Error(`source-integrity marker missing ${path}: ${marker}`);
+    console.log(`OK source-integrity article ${path} HTTP 200 canonical and hold verified`);
+  }
+}
+
 async function checkNewsArchiveIndexability() {
   const checked = [
     { slug: "how-a-bill-becomes-texas-law", indexable: true },
@@ -484,6 +515,7 @@ for (const [label, check] of [
   ["newsroom-health endpoint", () => retry("newsroom-health endpoint", checkNewsroomHealth)],
   ["verified historical news URL recovery", checkRecoveredHistoricalNewsUrls],
   ["recent news editorial accuracy, verified images and retired-route links", checkRecentNewsEditorialRestoration],
+  ["source integrity archive corrections", checkSourceIntegrityCorrections],
   ["Phase 2A production article/sitemap indexability", () => retry("Phase 2A production article/sitemap indexability", checkNewsArchiveIndexability, 3, 5000)],
   ["feed ingestion", checkIngestion],
   ["TexasDefined routed publication", () => retry("TexasDefined routed publication", checkTexasDefinedLive, 10, 30000)],
