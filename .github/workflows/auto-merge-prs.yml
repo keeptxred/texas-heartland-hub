@@ -148,7 +148,7 @@ jobs:
 
           # Explicit dispatch from the already trusted auto-merge workflow:
           # token-originated merges may suppress separate push/workflow_run events.
-          if grep -Eq '^(scripts/ops/(retire-verified-supabase-cold-records|direct-cold-archive|verified-cold-archive-proof|should-run-verified-retention).*|scripts/data/export-supabase-cold-archives[.]mjs|[.]github/workflows/(retire-verified-supabase-cold-records|dispatch-verified-retention-after-main)[.]yml|supabase/migrations/.*(cold_archive|cold_retention|cold_records|feed_staging).*[.]sql)$' <<<"$changed_files"; then
+          if grep -Eq '^(scripts/ops/(retire-verified-supabase-cold-records|direct-cold-archive|verified-cold-archive-proof|should-run-verified-retention).*|scripts/data/export-supabase-cold-archives[.]mjs|[.]github/workflows/(retire-verified-supabase-cold-records|dispatch-verified-retention-after-main)[.]yml|supabase/migrations/.*(cold_archive|cold_retention|cold_records|feed_staging|feed_visibility_for_verified_retention).*[.]sql)$' <<<"$changed_files"; then
             existing_archive="$(gh api "repos/$REPOSITORY/actions/workflows/retire-verified-supabase-cold-records.yml/runs?branch=main&head_sha=$merged_sha&per_page=50" | jq -r --arg sha "$merged_sha" '[.workflow_runs[] | select(.head_sha == $sha)] | length')"
             if [[ "$existing_archive" == "0" ]]; then
               [[ "$(gh api "repos/$REPOSITORY/git/ref/heads/main" --jq '.object.sha')" == "$merged_sha" ]]
