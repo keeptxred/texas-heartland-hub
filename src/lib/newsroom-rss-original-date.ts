@@ -25,16 +25,17 @@ export function verifiedRssIngestTimestamp(raw: string | null | undefined, link:
       date = `${m[1]}-${m[2]}-${m[3]}`;
     }
   }
+  if (!raw || !isPlausiblePublishDate(raw, now)) return null;
+  const parsed = new Date(raw);
   if (date) {
     const original = new Date(date + "T00:00:00Z");
     if (!Number.isFinite(original.getTime()) || original.toISOString().slice(0, 10) !== date
         || !isPlausiblePublishDate(original, now)) return null;
-    // Preserve a real publisher-supplied timestamp if its calendar date
-    // agrees; otherwise retain the original release's day, not crawl time.
-    const parsed = raw ? new Date(raw) : null;
-    if (parsed && Number.isFinite(parsed.getTime()) && parsed.toISOString().slice(0, 10) === date) return parsed.toISOString();
-    return original.toISOString();
+    // The path is an age guard, not an exact publication-clock witness.
+    // Preserve a plausible RSS timestamp within one calendar day of the
+    // release path (timezone/editorial scheduling can differ by a day).
+    const day = Date.parse(parsed.toISOString().slice(0, 10) + "T00:00:00Z");
+    if (Math.abs(day - original.getTime()) > 86_400_000) return null;
   }
-  if (!raw || !isPlausiblePublishDate(raw, now)) return null;
-  return new Date(raw).toISOString();
+  return parsed.toISOString();
 }
