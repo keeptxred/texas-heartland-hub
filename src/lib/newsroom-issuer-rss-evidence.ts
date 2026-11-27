@@ -123,29 +123,66 @@ export type IssuerResearchResult = { records: ResearchPacketSource[]; fetched: n
 export async function fetchIssuerResearchRecords(feed: IssuerResearchFeed, subjects: readonly string[], archiveResearch = false): Promise<IssuerResearchResult> {
   const result: IssuerResearchResult = { records: [], fetched: 0, diagnostics: [] };
   if (!ISSUER_RESEARCH_FEEDS.some((known) => known.url === feed.url && known.source === feed.source)) return result;
+  // Same headers as the working ordinary ingestion path. Observe redirects
+  // explicitly rather than letting redirect:error hide their HTTP status.
+  // Each actual GET counts against the same three-request issuer budget.
+  let upstreamDenied = false;
   async function read(url: string, accept: string, type: RegExp): Promise<string | null> {
-    result.fetched++;
-    try {
-      const response = await fetch(url, {
-        redirect: "error", signal: AbortSignal.timeout(8_000),
-        headers: { Accept: accept, "User-Agent": "Mozilla/5.0 (compatible; KeepTXRedBot/1.2; +https://keeptxred.com)" },
-      });
-      result.diagnostics.push(new URL(url).pathname + " HTTP " + response.status);
-      if (!response.ok || response.url !== url || !type.test(response.headers.get("content-type") ?? "")) return null;
-      if (Number(response.headers.get("content-length") || "0") > 2_000_000) return null;
-      const text = await response.text();
-      return text.length <= 2_000_000 ? text : null;
-    } catch (error) {
-      result.diagnostics.push(new URL(url).pathname + " " + (error instanceof Error ? error.name : "fetch_error"));
-      return null;
+    let current = new URL(url);
+    const original = current;
+    const seen = new Set<string>();
+    while (!upstreamDenied && result.fetched < 3 && !seen.has(current.href)) {
+      seen.add(current.href);
+      result.fetched++;
+      try {
+        const response = await fetch(current.href, {
+          redirect: "manual", signal: AbortSignal.timeout(8_000),
+          headers: {
+            Accept: accept,
+            "User-Agent": "Mozilla/5.0 (compatible; KeepTXRedBot/1.2; +https://keeptxred.com)",
+            "Accept-Language": "en-US,en;q=0.9",
+            "Cache-Control": "no-cache",
+          },
+        });
+        result.diagnostics.push(current.pathname + " HTTP " + response.status);
+        if ([401, 403, 429].includes(response.status)) {
+          upstreamDenied = true;
+          return null;
+        }
+        if ([301, 302, 303, 307, 308].includes(response.status)) {
+          const location = response.headers.get("location");
+          if (!location) return null;
+          const next = new URL(location, current);
+          // Permit a canonical same-resource redirect, never a new destination,
+          // another host, a challenge/login path, credentials or a query string.
+          if (next.origin !== original.origin || next.username || next.password
+              || next.search || next.pathname.replace(/\/+$/, "") !== original.pathname.replace(/\/+$/, "")) {
+            result.diagnostics.push("redirect_rejected");
+            upstreamDenied = true;
+            return null;
+          }
+          next.hash = "";
+          current = next;
+          continue;
+        }
+        if (!response.ok || (response.url && response.url !== current.href) || !type.test(response.headers.get("content-type") ?? "")) return null;
+        if (Number(response.headers.get("content-length") || "0") > 2_000_000) return null;
+        const text = await response.text();
+        return text.length <= 2_000_000 ? text : null;
+      } catch (error) {
+        const reason = error instanceof Error ? error.name + ": " + error.message : "fetch_error";
+        result.diagnostics.push(current.pathname + " " + reason.replace(/\s+/g, " ").slice(0, 180));
+        return null;
+      }
     }
+    return null;
   }
-  const xml = await read(feed.url, "application/rss+xml,application/xml,text/xml", /xml|rss/i);
+  const xml = await read(feed.url, "application/rss+xml,application/atom+xml,application/xml,text/xml,*/*", /xml|rss/i);
   if (xml) result.records = parseIssuerResearchRecords(xml, feed, subjects, Date.now(), archiveResearch);
   result.diagnostics.push("rss_records=" + result.records.length);
   // At most two additional GETs, only when the existing signed archive pass
   // recovered nothing from RSS. Preserve the normal publication path.
-  if (!archiveResearch || result.records.length || feed.url !== ISSUER_RESEARCH_FEEDS[0]?.url) return result;
+  if (!archiveResearch || upstreamDenied || result.records.length || feed.url !== ISSUER_RESEARCH_FEEDS[0]?.url) return result;
   const index = await read(NVIDIA_NEWSROOM, "text/html,application/xhtml+xml", /^(?:text\/html|application\/xhtml\+xml)\b/i);
   if (!index) return result;
   const links = issuerReleaseLinks(index, subjects);

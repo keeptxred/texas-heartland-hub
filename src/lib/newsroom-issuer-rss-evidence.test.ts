@@ -1,5 +1,5 @@
-import { describe, expect, it } from "vitest";
-import { ISSUER_RESEARCH_FEEDS, issuerResearchFeedsForSubjects, parseIssuerResearchRecords, issuerRecordNearEvent, issuerReleaseLinks, parseIssuerReleasePage } from "./newsroom-issuer-rss-evidence";
+import { describe, expect, it, vi } from "vitest";
+import { ISSUER_RESEARCH_FEEDS, issuerResearchFeedsForSubjects, parseIssuerResearchRecords, issuerRecordNearEvent, issuerReleaseLinks, parseIssuerReleasePage, fetchIssuerResearchRecords } from "./newsroom-issuer-rss-evidence";
 import { extractFirstPartyRssArticleBody } from "./newsroom-firstparty-rss-body";
 
 const now = Date.parse("2026-11-24T20:00:00Z");
@@ -46,6 +46,45 @@ describe("issuer evidence research without broad national ingestion", () => {
     expect(parseIssuerReleasePage(html, url, feed, [subject], later, true)?.extractedBody).toBe(release);
     expect(parseIssuerReleasePage(html.replace("November 23, 2026", "No date"), url, feed, [subject], later, true)).toBeNull();
     expect(parseIssuerReleasePage(html, url, feed, ["NVIDIA CEO Jensen Huang resigns"], later, true)).toBeNull();
+  });
+  it("observes bounded same-resource redirects and uses ordinary ingestion headers", async () => {
+    const fetcher = vi.fn().mockResolvedValueOnce(new Response(null, { status: 301, headers: { location: feed.url + "/" } }))
+      .mockResolvedValueOnce(new Response(rss(item()), { headers: { "content-type": "text/xml" } }));
+    vi.stubGlobal("fetch", fetcher);
+    const clock = vi.spyOn(Date, "now").mockReturnValue(Date.parse("2026-11-27T15:00:00Z"));
+    try {
+      const result = await fetchIssuerResearchRecords(feed, [subject], true);
+      expect(result.records).toHaveLength(1);
+      expect(result.fetched).toBe(2);
+      expect(fetcher).toHaveBeenNthCalledWith(1, feed.url, expect.objectContaining({ redirect: "manual", headers: expect.objectContaining({ "Accept-Language": "en-US,en;q=0.9", "Cache-Control": "no-cache" }) }));
+      expect(fetcher).toHaveBeenNthCalledWith(2, feed.url + "/", expect.anything());
+    } finally { clock.mockRestore(); vi.unstubAllGlobals(); }
+  });
+  it("does not follow external redirects or retry access denials", async () => {
+    for (const response of [
+      new Response(null, { status: 302, headers: { location: "https://example.org/rss" } }),
+      new Response(null, { status: 302, headers: { location: "/login" } }),
+      new Response(null, { status: 403 }),
+      new Response(null, { status: 429 }),
+    ]) {
+      const fetcher = vi.fn().mockResolvedValueOnce(response);
+      vi.stubGlobal("fetch", fetcher);
+      try {
+        const result = await fetchIssuerResearchRecords(feed, [subject], true);
+        expect(result.records).toEqual([]);
+        expect(result.fetched).toBe(1);
+        expect(fetcher).toHaveBeenCalledTimes(1);
+      } finally { vi.unstubAllGlobals(); }
+    }
+  });
+  it("reports the actual network error without adding unbounded attempts", async () => {
+    const fetcher = vi.fn().mockRejectedValue(new TypeError("network transport failed"));
+    vi.stubGlobal("fetch", fetcher);
+    try {
+      const result = await fetchIssuerResearchRecords(feed, [subject], true);
+      expect(result.diagnostics).toContain("/cats/press_release.xml TypeError: network transport failed");
+      expect(result.fetched).toBe(2);
+    } finally { vi.unstubAllGlobals(); }
   });
   it("permits nonstandard content only on the verified NVIDIA release path", () => {
     expect(extractFirstPartyRssArticleBody(item(), feed.source, url)).toContain("Jensen Huang");
