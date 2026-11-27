@@ -15,7 +15,7 @@
 import { spawnSync } from 'node:child_process';
 import { createClient } from '@supabase/supabase-js';
 import { verifyColdArchiveProof } from './verified-cold-archive-proof.mjs';
-import { archiveDirectColdKind } from './direct-cold-archive.mjs';
+import { archiveDirectColdKind, DirectFeedSnapshotTimeout } from './direct-cold-archive.mjs';
 
 const PROJECT = 'ftkznprjljkhymknvhye';
 const URL = 'https://' + PROJECT + '.supabase.co';
@@ -178,6 +178,7 @@ const drainStarted = Date.now();
 const exhaustedDirectKinds = new Set();
 const provedDirectKinds = new Set();
 const exhaustedFeedShards = new Set();
+const deferredFeedShards = new Set();
 const runNumber = Number(process.env.GITHUB_RUN_NUMBER || '0');
 let feedShardCursor = (Math.floor(Date.now()/7_200_000) + (Number.isSafeInteger(runNumber) && runNumber >= 0 ? runNumber : 0)) % 32;
 console.log(JSON.stringify({phase:'retention_plan',legacyMax:cycles,maxCycles,directBudgetMs:DIRECT_DRAIN_BUDGET_MS}));
@@ -212,11 +213,22 @@ for (let cycle = 1; cycle <= maxCycles; cycle++) {
       for (let step = 0; step < 32; step++) {
         const candidate = feedShardCursor;
         feedShardCursor = (feedShardCursor + 1) % 32;
-        if (!exhaustedFeedShards.has(candidate)) { feedShard = candidate; break; }
+        if (!exhaustedFeedShards.has(candidate) && !deferredFeedShards.has(candidate)) { feedShard = candidate; break; }
       }
       if (feedShard === null) { exhaustedDirectKinds.add('feed'); continue; }
     }
-    const direct = await archiveDirectColdKind(db, kind, limit, { retire: true, feedShard });
+    let direct;
+    try {
+      direct = await archiveDirectColdKind(db, kind, limit, { retire: true, feedShard });
+    } catch (error) {
+      if (!(error instanceof DirectFeedSnapshotTimeout) || kind !== 'feed' || error.shard !== feedShard) throw error;
+      // No upload, dry-run or retirement has occurred for this shard. Isolate
+      // it for this run only, keep the failure visible, and allow unrelated
+      // eligible records to complete their own full independent proof.
+      deferredFeedShards.add(feedShard);
+      console.warn(JSON.stringify({cycle,phase:'direct_feed_snapshot_deferred',feedShard,sqlstate:'57014'}));
+      continue;
+    }
     if (kind === 'newsroom') totalNewsroom += direct.retired;
     else totalFeed += direct.retired;
     console.log(JSON.stringify({cycle, phase:'direct_retired_verified',kind,
@@ -263,6 +275,9 @@ for (let cycle = 1; cycle <= maxCycles; cycle++) {
   console.log(JSON.stringify({cycle, phase:'complete', feed:totalFeed, newsroom:totalNewsroom}));
 }
 const finalBytes = await sizeSnapshot();
-console.log(JSON.stringify({ok:true,feedRowsRetired:totalFeed,
+console.log(JSON.stringify({ok:deferredFeedShards.size === 0,deferredFeedShards:[...deferredFeedShards],feedRowsRetired:totalFeed,
   newsroomClustersRetired:totalNewsroom,initialBytes:initial,finalBytes,
   warning: finalBytes >= 450_000_000 ? 'Free Plan capacity pressure remains' : null}));
+
+// Partial recovery is never reported as a successful complete archive.
+if (deferredFeedShards.size) process.exitCode = 1;

@@ -90,3 +90,10 @@ it('dispatches retention visibility maintenance after exact main gates', () => {
     assert.equal(selector.test('supabase/migrations/20261127130000_add_public_article_field.sql'), false);
   }
 });
+
+it('isolates only canceled read-only feed snapshots and reports partial recovery as failure', () => {
+  assert.match(runner,/error instanceof DirectFeedSnapshotTimeout/);
+  assert.match(runner,/error\.shard !== feedShard/);
+  assert.match(runner,/!deferredFeedShards\.has\(candidate\)/);
+  assert.match(runner,/if \(deferredFeedShards\.size\) process\.exitCode = 1/);
+});
