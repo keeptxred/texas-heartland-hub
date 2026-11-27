@@ -19,6 +19,16 @@ function checked(label, response) {
     (response?.error?.code || response?.error?.statusCode || 'unknown') + ')');
   return response.data;
 }
+// Only this specific pre-upload read-only failure may be deferred by the
+// orchestrator. Never classify dry-run, write, transport or retirement errors
+// as a safely skippable shard.
+export class DirectFeedSnapshotTimeout extends Error {
+  constructor(shard) {
+    super('Direct feed snapshot still canceled after bounded retry (57014), shard ' + shard);
+    this.name = 'DirectFeedSnapshotTimeout';
+    this.shard = shard;
+  }
+}
 export function validateDirectSnapshot(payload, kind, limit) {
   const spec = SPEC[kind];
   if (!spec || !Number.isInteger(limit) || limit < 1 || limit > spec.max ||
@@ -85,6 +95,9 @@ export async function archiveDirectColdKind(db, kind, limit, { retire = false, f
     effectiveLimit = Math.max(1, Math.floor(limit / 2));
     console.warn('Direct cold snapshot timed out; retry once at ' + effectiveLimit + ' parents (' + kind + ')');
     snapshot = await db.rpc(snapshotRpc, snapshotArgs(effectiveLimit));
+  }
+  if (feedShard !== null && snapshot.error?.code === '57014') {
+    throw new DirectFeedSnapshotTimeout(feedShard);
   }
   const payload = checked('Direct cold snapshot', snapshot);
   const { parents, rows } = validateDirectSnapshot(payload, kind, effectiveLimit);
