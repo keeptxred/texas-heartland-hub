@@ -544,7 +544,10 @@ async function handler({ request }: { request: Request }) {
   const issuerFeeds = researchDiscoveryAuthorized
     ? issuerResearchFeedsForSubjects(issuerSubjects).slice(0, Math.min(2, LINKED_PRIMARY_FETCH_LIMIT))
     : [];
-  const issuerRecords = (await Promise.all(issuerFeeds.map((feed) => fetchIssuerResearchRecords(feed, issuerSubjects, archiveResearch)))).flat();
+  const issuerResults = await Promise.all(issuerFeeds.slice(0, archiveResearch ? 1 : 2).map((feed) => fetchIssuerResearchRecords(feed, issuerSubjects, archiveResearch)));
+  const issuerFetches = issuerResults.reduce((sum, result) => sum + result.fetched, 0);
+  const issuerRecords = issuerResults.flatMap((result) => result.records);
+  const issuerResearchDiagnostics = issuerResults.flatMap((result) => result.diagnostics);
   let issuerRecordsRecovered = 0;
   for (const record of issuerRecords) {
     const { error: writeError } = await newsroomDb.from("texas_news_feed").upsert({
@@ -566,7 +569,7 @@ async function handler({ request }: { request: Request }) {
   }
   const linkedPrimaryTargets = [...linkedTargets.entries()]
     .filter(([url]) => !issuerRecords.some((record) => record.url === url))
-    .slice(0, LINKED_PRIMARY_FETCH_LIMIT - issuerFeeds.length);
+    .slice(0, LINKED_PRIMARY_FETCH_LIMIT - issuerFetches);
   for (const [url, subjects] of linkedPrimaryTargets) {
     const record = await fetchLinkedPrimaryRecord(url);
     if (!record) continue;
@@ -712,8 +715,9 @@ async function handler({ request }: { request: Request }) {
     unchanged: packets.length - packetsToWrite.length,
     sourceItems: packets.reduce((sum, packet) => sum + packet.source_count, 0),
     primarySourceItems: packets.reduce((sum, packet) => sum + packet.primary_source_count, 0),
-    sourcePagesFetched: sourcePageTargets.length + linkedPrimaryTargets.length + issuerFeeds.length,
-    issuerResearchFeedsFetched: issuerFeeds.length,
+    sourcePagesFetched: sourcePageTargets.length + linkedPrimaryTargets.length + issuerFetches,
+    issuerResearchFeedsFetched: issuerResults.length,
+    issuerResearchDiagnostics,
     issuerPrimaryRecordsRecovered: issuerRecordsRecovered,
     linkedPrimaryPagesFetched: linkedPrimaryTargets.length,
     linkedPrimaryRecordsRecovered: linkedPrimaryFeeds.length - issuerRecordsRecovered,

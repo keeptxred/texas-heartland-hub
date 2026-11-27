@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { ISSUER_RESEARCH_FEEDS, issuerResearchFeedsForSubjects, parseIssuerResearchRecords, issuerRecordNearEvent } from "./newsroom-issuer-rss-evidence";
+import { ISSUER_RESEARCH_FEEDS, issuerResearchFeedsForSubjects, parseIssuerResearchRecords, issuerRecordNearEvent, issuerReleaseLinks, parseIssuerReleasePage } from "./newsroom-issuer-rss-evidence";
 import { extractFirstPartyRssArticleBody } from "./newsroom-firstparty-rss-body";
 
 const now = Date.parse("2026-11-24T20:00:00Z");
@@ -34,6 +34,18 @@ describe("issuer evidence research without broad national ingestion", () => {
     expect(issuerRecordNearEvent("2026-11-23T13:55:00Z", "2026-11-27T14:00:00Z")).toBe(false);
     expect(issuerRecordNearEvent(null, "2026-11-23T18:11:02Z")).toBe(false);
     expect(issuerRecordNearEvent("invalid", "2026-11-23T18:11:02Z")).toBe(false);
+  });
+  it("follows matching first-party release anchors and extracts only the dated release", () => {
+    const heading = "NVIDIA Board Reinstates Jensen Huang as President, CEO and Board Director";
+    const index = '<a href="https://nvidianews.nvidia.com.evil.example/news/fake">' + heading + '</a><a href="' + url + '"><span>' + heading + '</span></a><a href="' + url + '">Read More</a>';
+    expect(issuerReleaseLinks(index, ["nvidia s board directors brings jensen huang back as ceo"])).toEqual([url]);
+    expect(issuerReleaseLinks(index, ["NVIDIA CEO Jensen Huang resigns"])).toEqual([]);
+    const html = "<h1>" + heading + "</h1><div>November 23, 2026</div><p>" + release + "</p><h2>Media Contacts</h2><p>Unrelated story</p>";
+    const later = Date.parse("2026-11-27T14:00:00Z");
+    expect(parseIssuerReleasePage(html, url, feed, [subject], later, false)).toBeNull();
+    expect(parseIssuerReleasePage(html, url, feed, [subject], later, true)?.extractedBody).toBe(release);
+    expect(parseIssuerReleasePage(html.replace("November 23, 2026", "No date"), url, feed, [subject], later, true)).toBeNull();
+    expect(parseIssuerReleasePage(html, url, feed, ["NVIDIA CEO Jensen Huang resigns"], later, true)).toBeNull();
   });
   it("permits nonstandard content only on the verified NVIDIA release path", () => {
     expect(extractFirstPartyRssArticleBody(item(), feed.source, url)).toContain("Jensen Huang");
