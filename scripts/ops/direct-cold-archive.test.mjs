@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { archiveDirectColdKind, validateDirectSnapshot } from './direct-cold-archive.mjs';
+import { archiveDirectColdKind, validateDirectSnapshot, DirectFeedSnapshotTimeout } from './direct-cold-archive.mjs';
 const id = '3';
 const payload = JSON.stringify({format:'direct-cold-v1',project:'ftkznprjljkhymknvhye',kind:'feed',parent_ids:[id],records:{
   texas_news_feed:[{id:3,body:'exact'}],news_feed_normalization:[{feed_item_id:3}],newsroom_source_page_fetch_state:[],
@@ -134,4 +134,14 @@ describe('direct private cold archive',()=>{
       expect(calls.some(c=>c.p_retire)).toBe(false);
     });
   }
+});
+
+it('marks only repeated pre-upload explicit feed shard cancellation as safely deferrable',async()=>{
+  const {db,files,calls}=fixture(); const limits=[];
+  db.rpc=async(name,args)=>{expect(name).toBe('snapshot_direct_cold_feed_shard');limits.push(args.p_limit);return {error:{code:'57014'}};};
+  await expect(archiveDirectColdKind(db,'feed',50,{retire:true,feedShard:31})).rejects.toBeInstanceOf(DirectFeedSnapshotTimeout);
+  expect(limits).toEqual([50,25]); expect(files.size).toBe(0);expect(calls.length).toBe(0);
+  db.rpc=async()=>({error:{code:'42501'}});
+  try { await archiveDirectColdKind(db,'feed',50,{retire:true,feedShard:31}); throw Error('unexpected pass'); }
+  catch(error){ expect(error).not.toBeInstanceOf(DirectFeedSnapshotTimeout);expect(error.message).toContain('42501'); }
 });
