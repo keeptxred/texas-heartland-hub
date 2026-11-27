@@ -40,7 +40,13 @@ jobs:
           set -euo pipefail
           case "$SOURCE_WORKFLOW" in
             "Refresh Election Central data") branch='automation/election-data-refresh' ;;
-            "Update Election Central forecasts") branch='automation/election-forecast-refresh' ;;
+            "Update Election Central forecasts")
+              if [[ "$(date -u +%Y-%m-%d)" > "2026-11-03" ]]; then
+                echo '2026 forecast cycle ended; no post-election forecast PR will be finalized.'
+                echo "skip=true" >> "$GITHUB_OUTPUT"
+                exit 0
+              fi
+              branch='automation/election-forecast-refresh' ;;
             "Statewide election audit") branch='automation/statewide-election-refresh' ;;
             "")
               echo "Manual dispatch has no source workflow to resolve; nothing to finalize."
