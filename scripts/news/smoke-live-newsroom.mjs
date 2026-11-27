@@ -340,6 +340,8 @@ async function checkSourceIntegrityCorrections() {
     { slug: "2026-10-14-house-republicans-pull-3-million-reserved-for-ads-against-henry-cuellar", markers: ["What the Laredo invoice establishes", "835390-1", "79e94441-d6eb-4b41-8e08-66deef95776c.pdf"] },
     { slug: "2026-11-10-ken-paxton-drops-lawsuit-seeking-to-shut-down-el-paso-migrant-shelter-network-an", markers: ["What the November 9 notice establishes", "2024DCV0616", "OAG-Notice-of-Nonsuit.pdf"] },
     { slug: "2026-08-21-trump-keeps-embracing-data-centers-even-as-they-become-toxic-in-midterm-races", markers: ["Editorial correction"] },
+    { slug: "2026-10-02-president-trump-visits-peterbilt-factory-in-denton-to-tout-economic-policy", markers: ["What the official transcript establishes", "DCPD-202600664.htm"] },
+    { slug: "2026-08-17-texas-college-football-players-named-to-2026-ray-guy-award-watch-list", sports: true },
     { slug: "2026-09-06-texas-a-m-dominates-missouri-state-in-season-opener", sports: true },
     { slug: "2026-08-30-dallas-cowboys-lose-to-new-orleans-saints-27-24-in-preseason-week-3", sports: true },
     { slug: "2026-08-31-dallas-cowboys-3-key-roster-decisions", sports: true },
@@ -358,6 +360,7 @@ async function checkSourceIntegrityCorrections() {
     if (response.status !== 200 || /article not found|page not found/i.test(visible)) throw new Error(`source-integrity article unavailable ${path}: HTTP ${response.status}`);
     if (extractCanonical(html) !== `https://keeptxred.com${path}` || !extractMeta(html, "robots").toLowerCase().includes("noindex")) throw new Error(`source-integrity article canonical or hold mismatch: ${path}`);
     if (/Permanent KTR Context|This story connects to KTR's permanent policy and government coverage/i.test(visible)) throw new Error(`legacy contextual links remain on ${path}`);
+    if (item.sports && /Related Keep TX Red Resources/i.test(visible)) throw new Error(`unrelated sports resource section remains on ${path}`);
     for (const marker of item.markers ?? []) if (!visible.includes(marker)) throw new Error(`source-integrity marker missing ${path}: ${marker}`);
     console.log(`OK source-integrity article ${path} HTTP 200 canonical and hold verified`);
   }
