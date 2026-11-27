@@ -44,4 +44,4 @@ jobs:
             exit 1
           fi
           jq -e '.ok == true and .researchDiscoveryAuthorized == true and .researchRescueAuthorized == false and .researchRescueRequeued == 0 and .aiCalls == 0' /tmp/research.json >/dev/null
-          jq '{ok, built, written, primarySourceItems, sourcePagesFetched, issuerResearchFeedsFetched, issuerPrimaryRecordsRecovered, linkedPrimaryRecordsRecovered, researchRescueAuthorized, researchRescueRequeued, aiCalls}' /tmp/research.json
+          jq '{ok, built, written, primarySourceItems, sourcePagesFetched, issuerResearchFeedsFetched, issuerPrimaryRecordsRecovered, issuerResearchDiagnostics, linkedPrimaryRecordsRecovered, researchRescueAuthorized, researchRescueRequeued, aiCalls}' /tmp/research.json
