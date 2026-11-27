@@ -47,6 +47,14 @@ jobs:
           REPOSITORY: ${{ github.repository }}
         run: |
           set -euo pipefail
+          # This workflow generates forecasts for the completed 2026 general election only.
+          # Preserve historical snapshots; do not restamp projections after election day.
+          # Re-enable forecast generation with the next election cycle's data and dates.
+          if [[ "$(date -u +%Y-%m-%d)" > "2026-11-03" ]]; then
+            echo 'run=false' >> "$GITHUB_OUTPUT"
+            echo '2026 general-election forecast cycle ended; historical snapshots preserved.'
+            exit 0
+          fi
           if [[ "$TRIGGER" != "workflow_run" ]]; then
             echo 'run=true' >> "$GITHUB_OUTPUT"
             exit 0
