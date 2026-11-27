@@ -1,3 +1,4 @@
+import { verifiedRssIngestTimestamp } from "@/lib/newsroom-rss-original-date";
 import { createFileRoute } from "@tanstack/react-router";
 import { dedupeArticleBody } from "@/lib/article-dedupe";
 import { detectDiscoverCategory } from "@/lib/seo-headline";
@@ -780,10 +781,10 @@ function parseFeed(xml: string, source: string): Item[] {
       const m = b.match(/<link[^>]*href=["']([^"']+)["']/i);
       if (m) link = m[1];
     }
-    const rawDate = pick(b, "pubDate") || pick(b, "updated") || pick(b, "published") || "";
+    const rawDate = pick(b, "pubDate") || pick(b, "published") || pick(b, "updated") || "";
     const description = pick(b, "description") || pick(b, "summary") || pick(b, "content");
-    const ts = Date.parse(rawDate);
-    if (title && link) {
+    const publishedAt = verifiedRssIngestTimestamp(rawDate, link);
+    if (title && link && publishedAt) {
       // Skip junk titles like "PDF format" / "HTML format" that some feeds
       // (e.g. Texas Register) emit as separate items pointing to the same
       // issue in a different file format. They aren't headlines.
@@ -797,10 +798,7 @@ function parseFeed(xml: string, source: string): Item[] {
       items.push({
         title: title.slice(0, 500),
         link,
-        // Feeds sometimes emit wildly wrong pubDates (e.g. 2001 for a 2026
-        // story). Clamp implausible dates to ingestion time so they can never
-        // leak into published_at or the slug's date prefix.
-        pub_date: resolvePublishTimestamp(isNaN(ts) ? null : ts),
+        pub_date: publishedAt,
         source,
         description: description.slice(0, 1000),
       });
