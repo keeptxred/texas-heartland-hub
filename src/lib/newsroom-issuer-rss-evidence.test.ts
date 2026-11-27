@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { ISSUER_RESEARCH_FEEDS, issuerResearchFeedsForSubjects, parseIssuerResearchRecords } from "./newsroom-issuer-rss-evidence";
+import { ISSUER_RESEARCH_FEEDS, issuerResearchFeedsForSubjects, parseIssuerResearchRecords, issuerRecordNearEvent } from "./newsroom-issuer-rss-evidence";
 import { extractFirstPartyRssArticleBody } from "./newsroom-firstparty-rss-body";
 
 const now = Date.parse("2026-11-24T20:00:00Z");
@@ -24,6 +24,16 @@ describe("issuer evidence research without broad national ingestion", () => {
   it("rejects stale, fabricated-date, foreign-host, and repeated records", () => {
     expect(parseIssuerResearchRecords(rss(item(url, "Mon, 16 Nov 2026 13:55:00 GMT"), item(url, "invalid"), item("https://nvidianews.nvidia.com.example.org/news/fake"), item(), item()), feed, [subject], now)).toHaveLength(1);
     expect(parseIssuerResearchRecords(rss(item()), {...feed, url: "https://example.org/rss"}, [subject], now)).toEqual([]);
+  });
+  it("allows older issuer evidence only for the bounded research archive and checks event timing", () => {
+    const later = Date.parse("2026-11-27T14:00:00Z");
+    expect(parseIssuerResearchRecords(rss(item()), feed, [subject], later)).toEqual([]);
+    expect(parseIssuerResearchRecords(rss(item()), feed, [subject], later, true)).toHaveLength(1);
+    expect(parseIssuerResearchRecords(rss(item()), feed, [subject], Date.parse("2026-12-01T14:00:00Z"), true)).toEqual([]);
+    expect(issuerRecordNearEvent("2026-11-23T13:55:00Z", "2026-11-23T18:11:02Z")).toBe(true);
+    expect(issuerRecordNearEvent("2026-11-23T13:55:00Z", "2026-11-27T14:00:00Z")).toBe(false);
+    expect(issuerRecordNearEvent(null, "2026-11-23T18:11:02Z")).toBe(false);
+    expect(issuerRecordNearEvent("invalid", "2026-11-23T18:11:02Z")).toBe(false);
   });
   it("permits nonstandard content only on the verified NVIDIA release path", () => {
     expect(extractFirstPartyRssArticleBody(item(), feed.source, url)).toContain("Jensen Huang");

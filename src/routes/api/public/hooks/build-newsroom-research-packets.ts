@@ -1,6 +1,6 @@
 import { sourceUrlSupportsPrimaryRecord } from "@/data/source-authority";
 import { findEventPrimaryFeedRecords, isSubstantiveEventPrimary, packetHasVerifiedEventPrimary } from "@/lib/newsroom-primary-evidence";
-import { issuerResearchFeedsForSubjects, fetchIssuerResearchRecords } from "@/lib/newsroom-issuer-rss-evidence";
+import { issuerResearchFeedsForSubjects, fetchIssuerResearchRecords, ISSUER_ARCHIVE_HOURS, issuerRecordNearEvent } from "@/lib/newsroom-issuer-rss-evidence";
 import { createFileRoute } from "@tanstack/react-router";
 import { buildResearchPacket, type ResearchPacket } from "@/lib/newsroom-research-packet";
 import { evaluateResearchRescue, isRecoverableResearchFailure, type RecoverableResearchCandidate } from "@/lib/newsroom-research-rescue";
@@ -159,11 +159,11 @@ async function verifiedResearchOnly(request: Request): Promise<boolean> {
 async function handler({ request }: { request: Request }) {
   let researchRequeueAuthorized = false;
   let researchDiscoveryAuthorized = false;
+  const researchOnly = new URL(request.url).searchParams.get("research_only") === "1";
   try {
     // The dedicated zero-AI scheduler may collect primary evidence, but never
     // recover/requeue a failed publishing candidate. Separate audience and
     // exact workflow identity prevent reuse of its token for paid publishing.
-    const researchOnly = new URL(request.url).searchParams.get("research_only") === "1";
     if (researchOnly) researchDiscoveryAuthorized = await verifiedResearchOnly(request);
     else {
       researchRequeueAuthorized = await verifiedResearchRequeue(request);
@@ -178,7 +178,9 @@ async function handler({ request }: { request: Request }) {
   const newsroomDb = supabaseAdmin as any;
   const since = new Date(Date.now() - LOOKBACK_HOURS * 60 * 60 * 1000).toISOString();
 
-  // Paid generation considers the top 500 PENDING candidates over 72 hours.
+  // Paid generation considers the top ranked PENDING candidates over 72 hours.
+  // Only the separately signed research job gets the bounded archive window.
+  const archiveResearch = researchOnly && researchDiscoveryAuthorized;
   // Build those packets FIRST, without allowing held/published items to
   // displace them. A separate bounded published cohort still supplies the
   // existing source-backed in-place refresh workflow.
@@ -186,6 +188,7 @@ async function handler({ request }: { request: Request }) {
     { data: pendingData, error: pendingError },
     { data: publishedData, error: publishedError },
     { data: heldData, error: heldError },
+    { data: archiveData, error: archiveError },
   ] = await Promise.all([
     newsroomDb.from("news_publish_candidates")
       .select("id,cluster_id,editorial_score,recommended_format,status,created_at")
@@ -200,6 +203,7 @@ async function handler({ request }: { request: Request }) {
       .select("id,cluster_id,editorial_score,recommended_format,status,created_at")
       .eq("status", "PUBLISHED")
       .gte("published_at", new Date(Date.now() - PUBLISHED_REFRESH_HOURS * 60 * 60 * 1000).toISOString())
+      // In-place publication refresh retains the original 48-hour policy.
       .order("published_at", { ascending: false })
       .limit(PUBLISHED_REFRESH_LIMIT),
     newsroomDb.from("news_publish_candidates")
@@ -209,18 +213,28 @@ async function handler({ request }: { request: Request }) {
       .gte("created_at", since)
       .order("created_at", { ascending: false })
       .limit(FAILED_RESEARCH_LIMIT),
+    archiveResearch ? newsroomDb.from("news_publish_candidates")
+      .select("id,cluster_id,editorial_score,recommended_format,status,created_at")
+      .eq("status", "PUBLISHED")
+      .gte("published_at", new Date(Date.now() - ISSUER_ARCHIVE_HOURS * 3_600_000).toISOString())
+      .lt("published_at", new Date(Date.now() - PUBLISHED_REFRESH_HOURS * 3_600_000).toISOString())
+      .order("published_at", { ascending: false })
+      .limit(PUBLISHED_REFRESH_LIMIT) : Promise.resolve({ data: [], error: null }),
   ]);
   if (pendingError) return Response.json({ ok: false, error: pendingError.message }, { status: 500 });
   if (publishedError) return Response.json({ ok: false, error: publishedError.message }, { status: 500 });
   // An unavailable recovery read must be visible; do not quietly skip retry
   // observability or upgrade candidates with unknown status.
   if (heldError) return Response.json({ ok: false, error: heldError.message }, { status: 500 });
+  if (archiveError) return Response.json({ ok: false, error: archiveError.message }, { status: 500 });
   const pending = (pendingData ?? []) as CandidateRow[];
   const published = (publishedData ?? []) as CandidateRow[];
   const recoverable = ((heldData ?? []) as CandidateRow[])
     .filter(isRecoverableResearchFailure);
+  const archive = (archiveData ?? []) as CandidateRow[];
+  const archiveIds = new Set(archive.map((candidate) => candidate.cluster_id));
   const candidates = [...new Map<string, CandidateRow>(
-    [...pending, ...recoverable, ...published].map((candidate): [string, CandidateRow] => [candidate.cluster_id, candidate]),
+    [...pending, ...recoverable, ...published, ...archive].map((candidate): [string, CandidateRow] => [candidate.cluster_id, candidate]),
   ).values()];
   if (!candidates.length) return Response.json({ ok: true, researchDiscoveryAuthorized, researchRescueAuthorized: researchRequeueAuthorized, issuerResearchFeedsFetched: 0, issuerPrimaryRecordsRecovered: 0, researchRescueRequeued: 0, built: 0, written: 0, unchanged: 0, sourceItems: 0, sourcePagesFetched: 0, sourcePagesUpdated: 0, sourcePagesCoolingDown: 0, aiCalls: 0 });
 
@@ -530,7 +544,7 @@ async function handler({ request }: { request: Request }) {
   const issuerFeeds = researchDiscoveryAuthorized
     ? issuerResearchFeedsForSubjects(issuerSubjects).slice(0, Math.min(2, LINKED_PRIMARY_FETCH_LIMIT))
     : [];
-  const issuerRecords = (await Promise.all(issuerFeeds.map((feed) => fetchIssuerResearchRecords(feed, issuerSubjects)))).flat();
+  const issuerRecords = (await Promise.all(issuerFeeds.map((feed) => fetchIssuerResearchRecords(feed, issuerSubjects, archiveResearch)))).flat();
   let issuerRecordsRecovered = 0;
   for (const record of issuerRecords) {
     const { error: writeError } = await newsroomDb.from("texas_news_feed").upsert({
@@ -599,7 +613,19 @@ async function handler({ request }: { request: Request }) {
         sourceReputationScore: feed.source_reputation_score ?? null,
       }];
     });
-    const discovered = findEventPrimaryFeedRecords(cluster.canonical_subject, officialFeeds, new Set(sources.map((source) => source.feedItemId)));
+    // A release from a previous occurrence of the same event must not become
+    // evidence for a later story. Older signed-archive records are scoped by
+    // the original candidate date; ordinary publishing retains its lookback.
+    const candidateOfficialFeeds = officialFeeds.filter((feed) => issuerRecordNearEvent(feed.pub_date, candidate.created_at));
+    const existing = existingPacketByCluster.get(candidate.cluster_id)?.packet_json;
+    const prior = (existing?.sources ?? []).filter((source) => source.isPrimarySource
+      && issuerRecordNearEvent(source.publishedAt, candidate.created_at)
+      && isSubstantiveEventPrimary(source, cluster.canonical_subject)
+      && !sources.some((member) => member.feedItemId === source.feedItemId || member.url === source.url));
+    const discovered = findEventPrimaryFeedRecords(cluster.canonical_subject, candidateOfficialFeeds, new Set([...sources, ...prior].map((source) => source.feedItemId)));
+    // Archive-only records are never requeued or rebuilt without new evidence.
+    if (archiveIds.has(candidate.cluster_id) && !discovered.length) return [];
+    sources.push(...prior);
     const verifiedSources = [...sources, ...discovered].map((source) => ({ ...source, isPrimarySource: isSubstantiveEventPrimary(source, cluster.canonical_subject) }));
     const packet = buildResearchPacket({
       clusterId: candidate.cluster_id,
