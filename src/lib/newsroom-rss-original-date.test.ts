@@ -11,8 +11,10 @@ describe("verified RSS ingestion publication dates", () => {
       "https://www.tdi.texas.gov/news/2026/tdi07272026.html",
     ]) expect(verifiedRssIngestTimestamp(now.toISOString(), url, now)).toBeNull();
   });
-  it("preserves an authentic recent dated release instead of its refreshed feed date", () => {
-    expect(verifiedRssIngestTimestamp("2026-11-27T14:00:00Z", "https://www.sos.state.tx.us/about/newsreleases/2026/112526.shtml", now)).toBe("2026-11-25T00:00:00.000Z");
+  it("rejects refreshed dates while preserving plausible publisher timestamps", () => {
+    expect(verifiedRssIngestTimestamp("2026-11-27T14:00:00Z", "https://www.sos.state.tx.us/about/newsreleases/2026/112526.shtml", now)).toBeNull();
+    expect(verifiedRssIngestTimestamp("2026-11-26T02:00:00Z", "https://www.sos.state.tx.us/about/newsreleases/2026/112526.shtml", now)).toBe("2026-11-26T02:00:00.000Z");
+    expect(verifiedRssIngestTimestamp(null, "https://www.sos.state.tx.us/about/newsreleases/2026/112526.shtml", now)).toBeNull();
     expect(verifiedRssIngestTimestamp("2026-11-25T18:00:00Z", "https://www.tdi.texas.gov/news/2026/tdi11252026.html", now)).toBe("2026-11-25T18:00:00.000Z");
   });
   it("rejects invalid, stale, contradictory and absent dates", () => {
