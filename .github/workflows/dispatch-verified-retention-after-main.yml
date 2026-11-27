@@ -41,7 +41,7 @@ jobs:
             exit 0
           fi
           changed="$(gh api "repos/$REPOSITORY/commits/$VERIFIED_SHA" --jq '.files[].filename')"
-          if ! grep -Eq '^(scripts/ops/(retire-verified-supabase-cold-records|direct-cold-archive|verified-cold-archive-proof|should-run-verified-retention).*|scripts/data/export-supabase-cold-archives[.]mjs|[.]github/workflows/(retire-verified-supabase-cold-records|dispatch-verified-retention-after-main)[.]yml|supabase/migrations/.*(cold_archive|cold_retention|cold_records|feed_staging).*[.]sql)$' <<<"$changed"; then
+          if ! grep -Eq '^(scripts/ops/(retire-verified-supabase-cold-records|direct-cold-archive|verified-cold-archive-proof|should-run-verified-retention).*|scripts/data/export-supabase-cold-archives[.]mjs|[.]github/workflows/(retire-verified-supabase-cold-records|dispatch-verified-retention-after-main)[.]yml|supabase/migrations/.*(cold_archive|cold_retention|cold_records|feed_staging|feed_visibility_for_verified_retention).*[.]sql)$' <<<"$changed"; then
             echo 'No cold retention change; no dispatch.'
             exit 0
           fi
