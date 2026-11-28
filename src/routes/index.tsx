@@ -328,6 +328,7 @@ function PoliticalHomepage() {
         </aside>
       </section>
 
+<section className="mt-8 rounded-xl border bg-card p-5 md:p-7" aria-label="Start with the Texas public record"><h2 className="font-display text-2xl tracking-tight">Start with the Texas public record</h2><p className="mt-3 text-sm leading-7 text-muted-foreground">Use a current report to learn what happened, then verify the underlying decision. A filed bill is not a law, an agency press release is not a final court ruling, and a revenue forecast is not actual collections. Keep TX Red links permanent civic references separately from dated news and editorial positions.</p><ul className="mt-4 space-y-2 text-sm"><li><a href="/laws" className="font-semibold text-primary underline underline-offset-4">Texas laws</a> — Read the controlling statutory framework.</li><li><a href="/texas-government" className="font-semibold text-primary underline underline-offset-4">Texas government offices</a> — Find the office responsible for a decision.</li><li><a href="/data" className="font-semibold text-primary underline underline-offset-4">Data center</a> — Compare official sources and reporting periods.</li><li><a href="/editorial-standards" className="font-semibold text-primary underline underline-offset-4">Editorial standards</a> — Understand attribution, corrections and editorial boundaries.</li></ul></section>
       <HomepageFaqs />
     </main>
   );

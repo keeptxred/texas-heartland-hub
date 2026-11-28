@@ -14,6 +14,9 @@ const GLOSSARY_TITLE = "Texas Political Glossary";
 const GLOSSARY_DESCRIPTION =
   "Plain-English definitions of Texas political terms: special session, sunset review, recapture, ERCOT, homestead exemption, and more.";
 
+const SOS_AFFILIATION = "https://www.sos.state.tx.us/elections/laws/advisory2020-05.shtml";
+const SUNSET_PROCESS = "https://www.sunset.texas.gov/how-sunset-works";
+const TWDB_GROUNDWATER = "https://www.twdb.texas.gov/groundwater/faq/faqgwm.asp";
 const TERMS: Term[] = [
   {
     term: "Appraisal Review Board (ARB)",
@@ -24,7 +27,7 @@ const TERMS: Term[] = [
   {
     term: "Basic Allotment",
     definition:
-      "The per-student dollar amount the Legislature sets as the funding floor in the Foundation School Program. The lever that drives nearly every ISD funding formula.",
+      "A base amount used in state school-finance formulas, with adjustments and separate allotments. It is not the total per-student funding or an individual payment to a family.",
   },
   {
     term: "Biennium",
@@ -54,7 +57,7 @@ const TERMS: Term[] = [
   {
     term: "Constitutional Amendment",
     definition:
-      "A voter-approved change to the Texas Constitution. Requires a two-thirds vote of each legislative chamber plus a simple majority of statewide voters.",
+      "A change to the Texas Constitution proposed by two-thirds of the elected members of each legislative chamber and approved by a majority of voters voting on that amendment.",
     seeAlso: [
       { label: "Amendment Process Guide", href: "/laws/constitutional-amendments" },
     ],
@@ -67,7 +70,7 @@ const TERMS: Term[] = [
   {
     term: "County Appraisal District (CAD)",
     definition:
-      "Independent local entity that sets market values on every property in the county for tax purposes.",
+      "Local appraisal entity responsible for appraising taxable property under state law. Taxable values may differ from market values, and taxing units set tax rates separately.",
   },
   {
     term: "ERCOT",
@@ -91,7 +94,7 @@ const TERMS: Term[] = [
   {
     term: "Joint Resolution",
     definition:
-      "A measure passed by both legislative chambers that proposes a constitutional amendment. Not subject to gubernatorial veto.",
+      "A legislative resolution used, among other purposes, to propose a constitutional amendment. A proposed constitutional amendment does not require the governor's signature.",
   },
   {
     term: "Local & Consent Calendar",
@@ -106,12 +109,12 @@ const TERMS: Term[] = [
   {
     term: "MUD",
     definition:
-      "Municipal Utility District. A special local government created to provide water, sewer, and drainage to areas outside city limits.",
+      "Municipal Utility District. A special-purpose district that may provide water, wastewater, drainage and other authorized services. District boundaries and services vary; some include territory within municipalities.",
   },
   {
     term: "Open Primary",
     definition:
-      "A primary election in which voters do not pre-register with a party. Texas runs open primaries — you choose your party ballot on election day.",
+      "Texas does not require advance party registration. Participation in a party's primary affiliates the voter with that party for the voting year, and the voter cannot participate in another party's primary or runoff during that year. General-election voting is separate.",
   },
   {
     term: "Point of Order",
@@ -121,7 +124,7 @@ const TERMS: Term[] = [
   {
     term: "Recapture",
     definition:
-      "The 'Robin Hood' system that redirects property tax revenue from property-wealthy ISDs to property-poor ISDs through the state.",
+      "The school-finance mechanism requiring districts with local revenue exceeding their applicable entitlement to reduce excess local revenue under Education Code Chapter 49. It operates within the broader state funding formulas.",
     seeAlso: [{ label: "School Finance Explained", href: "/news/texas-school-finance-explained" }],
   },
   {
@@ -132,7 +135,7 @@ const TERMS: Term[] = [
   {
     term: "Rule of Capture",
     definition:
-      "The Texas common-law doctrine under which groundwater belongs to the surface landowner, who may pump to beneficial use.",
+      "A common-law groundwater production doctrine subject to statutory and judicial limits. Groundwater ownership may be severed from the surface estate; conservation districts may regulate production, spacing and permits.",
   },
   {
     term: "Special Session",
@@ -142,12 +145,12 @@ const TERMS: Term[] = [
   {
     term: "Sunset Review",
     definition:
-      "Periodic legislative audit that automatically abolishes a state agency unless the Legislature reauthorizes it.",
+      "A statutory review process for agencies subject to Sunset. Most face a scheduled abolition date unless legislation continues them; recommendations may also change or transfer functions.",
   },
   {
     term: "Taxable Value",
     definition:
-      "The value of a property after exemptions are subtracted from the market value. The number tax rates are actually applied to.",
+      "The value subject to tax for a particular taxing unit after applicable appraisal limitations and exemptions. It may differ from market value and from the taxable value used by another taxing unit.",
   },
 ];
 
@@ -171,8 +174,8 @@ export function glossaryHead() {
           "@type": "DefinedTermSet",
           name: "Texas Political Glossary",
           url: `${SITE_URL}/glossary`,
-          dateModified: "2026-08-20",
-          isBasedOn: [TLC_GLOSSARY, LRL_SESSIONS, COMPTROLLER_PROPERTY_TAX, COMPTROLLER_EXEMPTIONS, TEA_SCHOOL_FINANCE],
+          dateModified: "2026-11-25",
+          isBasedOn: [TLC_GLOSSARY, LRL_SESSIONS, COMPTROLLER_PROPERTY_TAX, COMPTROLLER_EXEMPTIONS, TEA_SCHOOL_FINANCE, SOS_AFFILIATION, SUNSET_PROCESS, TWDB_GROUNDWATER],
           hasDefinedTerm: TERMS.map((t) => ({
             "@type": "DefinedTerm",
             name: t.term,
@@ -255,6 +258,9 @@ function GlossaryPage() {
         <CitationTrustPanel
           className="mt-12"
           sources={[
+            { name: "Secretary of State — Party affiliation", url: SOS_AFFILIATION, note: "Primary and runoff affiliation rules." },
+            { name: "Texas Sunset Advisory Commission — process", url: SUNSET_PROCESS, note: "Agency review and scheduled abolition." },
+            { name: "Texas Water Development Board — groundwater FAQ", url: TWDB_GROUNDWATER, note: "Ownership, rule of capture and district regulation." },
             { name: "Texas Legislative Council — Legislative Glossary", url: TLC_GLOSSARY, note: "Official terminology for legislative procedure and measures." },
             { name: "Texas Legislative Reference Library — Sessions and Years", url: LRL_SESSIONS, note: "Official-reference session dates and lengths." },
             { name: "Texas Comptroller — Property Tax System Basics", url: COMPTROLLER_PROPERTY_TAX, note: "Property appraisal, ARB and local property-tax process." },
@@ -262,7 +268,7 @@ function GlossaryPage() {
             { name: "Texas Education Agency — School Finance Topics", url: TEA_SCHOOL_FINANCE, note: "Basic allotment, Foundation School Program, recapture and school-finance references." },
           ]}
           methodology="Keep TX Red summarizes recurring Texas government and policy terminology in plain English, then checks legislative terms against Texas Legislative Council/Legislative Reference Library materials, property-tax terms against Comptroller guidance, and school-finance terms against Texas Education Agency references. Definitions are intentionally short and should not be read to erase statutory exceptions."
-          lastVerified="August 20, 2026"
+          lastVerified="November 25, 2026"
           title="Glossary sources and verification"
         />
       </main>

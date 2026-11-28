@@ -9,7 +9,7 @@ describe("legislator contact trust contract", () => {
     expect(source).toContain("TLO_COMMITTEES");
     expect(source).toContain("HOUSE_WITNESS");
     expect(source).toContain("CitationTrustPanel");
-    expect(source).toContain('lastVerified="August 20, 2026"');
+    expect(source).toContain('lastVerified="November 25, 2026"');
   });
 
   it("does not revive undocumented persuasion claims", () => {

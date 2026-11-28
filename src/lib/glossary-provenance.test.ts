@@ -15,7 +15,7 @@ describe("Texas political glossary provenance", () => {
   it("keeps official source families attached to the glossary", () => {
     for (const marker of officialSourceMarkers) expect(source).toContain(marker);
     expect(source).toContain("CitationTrustPanel");
-    expect(source).toContain('lastVerified="August 20, 2026"');
+    expect(source).toContain('lastVerified="November 25, 2026"');
     expect(source).toContain("isBasedOn");
   });
 
